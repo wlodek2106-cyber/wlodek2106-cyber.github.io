@@ -6,8 +6,8 @@ from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from web3 import Web3
 
-# Настройки токена бота от BotFather
-TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_FROM_BOTFATHER"
+# Ваш токен бота
+TELEGRAM_BOT_TOKEN = "8769994364:AAHweih892xmvvRjaDd8azekZ6huM6l0HN4"
 RPC_URL = "https://rpc.mainnet.chain.robinhood.com"  # Нода Robinhood Chain
 ZRL_TOKEN_ADDRESS = "0xВашКонтрактТокенаZRL"
 PROJECT_WALLET = "0xВашКошелекКудаПриходятZRL"
