@@ -13,8 +13,6 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 PORT = int(os.getenv("PORT", 10000))
-
-# Жестко прописанный рабочий URL, чтобы исключить любые ошибки
 WEBAPP_URL = "https://zer0life-robinhood-sniper.onrender.com"
 
 if not TELEGRAM_BOT_TOKEN:
@@ -64,32 +62,32 @@ async def cmd_start(message: types.Message):
         reply_markup=builder.as_markup()
     )
 
-async def on_startup(bot: Bot):
-    webhook_url = f"{WEBAPP_URL}/webhook"
-    await bot.set_webhook(webhook_url, drop_pending_updates=True)
-    logging.info(f"🔗 Вебхук успешно установлен: {webhook_url}")
-
-async def main():
+def main():
     app = web.Application()
+    
+    # Главная страница сайта
     app.router.add_get('/', handle_index)
     
-    dp.startup.register(on_startup)
-    
-    webhook_requests_handler = SimpleRequestHandler(
+    # Регистрируем вебхук для бота
+    webhook_handler = SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
     )
-    webhook_requests_handler.register(app, path="/webhook")
+    webhook_handler.register(app, path="/webhook")
     
     setup_application(app, dp, bot=bot)
     
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', PORT)
-    await site.start()
-    logging.info(f"🌐 HTTP сервер запущен на порту {PORT}")
+    # Установка вебхука при старте приложения
+    async def on_startup(app):
+        webhook_url = f"{WEBAPP_URL}/webhook"
+        await bot.set_webhook(webhook_url, drop_pending_updates=True)
+        logging.info(f"🔗 Вебхук принудительно установлен на: {webhook_url}")
 
-    await asyncio.Event().wait()
+    app.on_startup.append(on_startup)
+
+    # Запуск сервера
+    logging.info(f"🌐 Запуск aiohttp сервера на порту {PORT}")
+    web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
