@@ -13,7 +13,6 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 PORT = int(os.getenv("PORT", 10000))
 
-# Надежная страховка для ссылки: если Render не передаст внешнюю ссылку, берем железобетонный дефолт
 RENDER_URL = os.getenv("RENDER_EXTERNAL_URL")
 if not RENDER_URL:
     WEBAPP_URL = "https://zer0life-robinhood-sniper.onrender.com"
@@ -63,6 +62,7 @@ HTML_CONTENT = """
 </html>
 """
 
+# Обрабатываем абсолютно любые входящие пути, чтобы убрать Not Found
 async def handle_index(request):
     return web.Response(text=HTML_CONTENT, content_type='text/html')
 
@@ -84,12 +84,15 @@ async def cmd_start(message: types.Message):
 
 async def start_web_server():
     app = web.Application()
+    # Ловим и корень, и любые подпути / параметры от телеграма
     app.router.add_get('/', handle_index)
+    app.router.add_get('/{tail:.*}', handle_index)
+    
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
-    logging.info(f"🌐 Встроенный веб-сервер запущен на порту {PORT} с URL: {WEBAPP_URL}")
+    logging.info(f"🌐 Встроенный веб-сервер запущен на порту {PORT}")
 
 async def main():
     await start_web_server()
