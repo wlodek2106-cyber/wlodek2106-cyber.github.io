@@ -32,15 +32,14 @@ ERC20_ABI = [
     }
 ]
 
-# /start команда с кнопкой Web App
+# /start команда с кнопкой Web App (указан чистый корень GitHub Pages)
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     builder = InlineKeyboardBuilder()
     
-    # Кнопка, открывающая мини-приложение по правильному адресу репозитория
     builder.button(
         text="🌐 Открыть Web App", 
-        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/zer0life-robinhood-sniper/")
+        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/")
     )
     builder.adjust(1)
     
