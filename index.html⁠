@@ -4,281 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zer0life Robinhood Sniper</title>
+    <!-- Подключаем Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0b0e14;
-            --card-bg: #131823;
-            --accent: #00ffcc;
-            --accent-glow: rgba(0, 255, 204, 0.2);
-            --text-main: #ffffff;
-            --text-muted: #8b9bb4;
-            --border: #1e2636;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--tg-theme-bg-color, #121212);
+            color: var(--tg-theme-text-color, #ffffff);
             margin: 0;
-            padding: 16px;
-            padding-bottom: 50px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .header h1 {
-            font-size: 22px;
-            margin: 0 0 6px 0;
-            background: linear-gradient(90deg, #00ffcc, #0099ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 13px;
-            margin: 0;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-
-        .profile-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-badge {
-            background: rgba(255, 71, 87, 0.15);
-            color: #ff4757;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .section-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tier-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .tier-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .tier-card:active {
-            border-color: var(--accent);
-            background: var(--accent-glow);
-        }
-
-        .tier-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .tier-name {
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .tier-price {
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .tier-desc {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
-
-        .btn {
-            width: 100%;
-            background: linear-gradient(135deg, #00ffcc, #00b3ff);
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: flex-end;
-            z-index: 100;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 500px;
-            border-radius: 20px 20px 0 0;
             padding: 20px;
-            border-top: 1px solid var(--border);
-            animation: slideUp 0.3s ease;
+            display: flex;
+            flexDirection: column;
+            align-items: center;
         }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        .currency-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .currency-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .currency-btn.active {
-            border-color: var(--accent);
-            background: var(--accent-glow);
-        }
-
-        .wallet-box {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            word-break: break-all;
-            color: var(--accent);
-            margin: 10px 0;
-            text-align: center;
-        }
-
-        .close-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
+        .container {
+            max-width: 400px;
             width: 100%;
-            padding: 10px;
-            font-size: 14px;
+            text-align: center;
+        }
+        .lang-switch {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: bold;
+        }
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #1e1e1e);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 22px; margin-bottom: 10px; }
+        p { font-size: 14px; opacity: 0.8; line-height: 1.4; }
+        .btn {
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Zer0life Sniper</h1>
-        <p>Robinhood Chain Terminal & Analytics</p>
-    </div>
+    <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">EN</button>
 
-    <!-- Профиль -->
-    <div class="card profile-card">
-        <div>
-            <div style="font-size: 13px; color: var(--text-muted);">Статус аккаунта</div>
-            <div id="username" style="font-weight: 700; font-size: 16px; margin-top: 2px;">Trader</div>
-        </div>
-        <div class="status-badge" id="sub-status">Не активна</div>
-    </div>
-
-    <!-- Тарифы -->
-    <div class="card">
-        <div class="section-title">🚀 Выбор подписки</div>
-        <div class="tier-grid">
-            
-            <div class="tier-card" onclick="openCheckout('Lite', 50)">
-                <div class="tier-header">
-                    <span class="tier-name">📦 Lite</span>
-                    <span class="tier-price">50 ZRL</span>
-                </div>
-                <div class="tier-desc">Базовые алерты мемкоинов (MC ~$100k).</div>
-                <button class="btn" style="padding: 6px; font-size: 12px;">Выбрать Lite</button>
-            </div>
-
-            <div class="tier-card" onclick="openCheckout('Pro', 150)">
-                <div class="tier-header">
-                    <span class="tier-name">⚡️ Pro</span>
-                    <span class="tier-price">150 ZRL</span>
-                </div>
-                <div class="tier-desc">Мгновенные алерты + трекер крупных покупок.</div>
-                <button class="btn" style="padding: 6px; font-size: 12px;">Выбрать Pro</button>
-            </div>
-
-            <div class="tier-card" onclick="openCheckout('Alpha', 300)">
-                <div class="tier-header">
-                    <span class="tier-name">🔥 Alpha</span>
-                    <span class="tier-price">300 ZRL</span>
-                </div>
-                <div class="tier-desc">Ранний доступ + инсайдерская аналитика.</div>
-                <button class="btn" style="padding: 6px; font-size: 12px;">Выбрать Alpha</button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Модальное окно оплаты -->
-    <div class="modal" id="checkoutModal">
-        <div class="modal-content">
-            <div class="section-title" id="modalTitle">Оплата подписки</div>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 10px 0;">Выберите удобную валюту для перевода:</p>
-            
-            <div class="currency-grid">
-                <div class="currency-btn active" onclick="setCurrency('ZRL', this)">💎 ZRL Token</div>
-                <div class="currency-btn" onclick="setCurrency('SOL', this)">🟣 Solana</div>
-                <div class="currency-btn" onclick="setCurrency('BNB', this)">🟡 BNB</div>
-                <div class="currency-btn" onclick="setCurrency('USDC', this)">💵 USDC</div>
-            </div>
-
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">Сумма к оплате:</div>
-            <div id="payAmount" style="font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 8px;">50 ZRL</div>
-
-            <div style="font-size: 12px; color: var(--text-muted);">Адрес кошелька проекта:</div>
-            <div class="wallet-box" id="walletAddress">0xВашКошелекКудаПриходятZRL</div>
-
-            <button class="btn" onclick="confirmPayment()" style="margin-top: 10px;">Я отправил перевод</button>
-            <button class="close-btn" onclick="closeCheckout()">Отмена</button>
+    <div class="container">
+        <div class="card">
+            <h1 id="title">Zer0life Robinhood Sniper</h1>
+            <p id="desc">Инструмент для поиска и отслеживания новых мемкоинов в сети Robinhood Chain в реальном времени.</p>
+            <button class="btn" id="actionBtn" onclick="alert('Скоро!')">Подключить кошелек</button>
         </div>
     </div>
 
@@ -286,44 +73,35 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name || "Trader";
+        // Словари переводов
+        const translations = {
+            ru: {
+                langBtn: "EN",
+                title: "Zer0life Robinhood Sniper",
+                desc: "Инструмент для поиска и отслеживания новых мемкоинов в сети Robinhood Chain в реальном времени.",
+                actionBtn: "Подключить кошелек"
+            },
+            en: {
+                langBtn: "RU",
+                title: "Zer0life Robinhood Sniper",
+                desc: "A real-time tool for tracking and sniping new memecoins on the Robinhood Chain network.",
+                actionBtn: "Connect Wallet"
+            }
+        };
+
+        // Текущий язык (по умолчанию русский)
+        let currentLang = 'ru';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            updateContent();
         }
 
-        let selectedTier = '';
-        let basePriceZRL = 50;
-
-        function openCheckout(tier, price) {
-            selectedTier = tier;
-            basePriceZRL = price;
-            document.getElementById('modalTitle').innerText = `Подписка: ${tier}`;
-            updatePriceDisplay('ZRL');
-            document.getElementById('checkoutModal').style.display = 'flex';
-        }
-
-        function setCurrency(currency, el) {
-            document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            updatePriceDisplay(currency);
-        }
-
-        function updatePriceDisplay(currency) {
-            let priceText = '';
-            if (currency === 'ZRL') priceText = `${basePriceZRL} ZRL`;
-            if (currency === 'SOL') priceText = `~${(basePriceZRL * 0.02).toFixed(2)} SOL`;
-            if (currency === 'BNB') priceText = `~${(basePriceZRL * 0.003).toFixed(3)} BNB`;
-            if (currency === 'USDC') priceText = `~$${(basePriceZRL * 0.5).toFixed(2)} USDC`;
-            
-            document.getElementById('payAmount').innerText = priceText;
-        }
-
-        function closeCheckout() {
-            document.getElementById('checkoutModal').style.display = 'none';
-        }
-
-        function confirmPayment() {
-            tg.showAlert("Запрос на проверку отправлен! Администратор подтвердит подписку после проверки хэша транзакции.");
-            closeCheckout();
+        function updateContent() {
+            document.getElementById('langBtn').innerText = translations[currentLang].langBtn;
+            document.getElementById('title').innerText = translations[currentLang].title;
+            document.getElementById('desc').innerText = translations[currentLang].desc;
+            document.getElementById('actionBtn').innerText = translations[currentLang].actionBtn;
         }
     </script>
 </body>
