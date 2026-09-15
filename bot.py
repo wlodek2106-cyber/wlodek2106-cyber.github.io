@@ -36,10 +36,10 @@ ERC20_ABI = [
 async def cmd_start(message: types.Message):
     builder = InlineKeyboardBuilder()
     
-    # Кнопка, открывающая ваше мини-приложение с GitHub Pages
+    # Кнопка, открывающая ваше мини-приложение
     builder.button(
         text="🌐 Открыть Web App", 
-        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/zer0life-robinhood-sniper/")
+        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/")
     )
     builder.adjust(1)
     
@@ -48,7 +48,7 @@ async def cmd_start(message: types.Message):
         "Бот для отслеживания новых мемкоинов в сети **Robinhood Chain**.\n\n"
         "Нажмите кнопку ниже, чтобы открыть полноценный торговый терминал и выбрать тариф:"
     )
-    await message.answer(text, parse_print="Markdown", parse_mode="Markdown", reply_markup=builder.as_markup())
+    await message.answer(text, parse_mode="Markdown", reply_markup=builder.as_markup())
 
 async def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
