@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import sys
@@ -7,6 +6,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import WebAppInfo
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
@@ -61,25 +61,31 @@ async def cmd_start(message: types.Message):
         reply_markup=builder.as_markup()
     )
 
-async def start_web_server():
-    app = web.Application()
-    app.router.add_get('/', handle_index)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', PORT)
-    await site.start()
-    logging.info(f"🌐 Dummy веб-сервер запущен на порту {PORT}")
-
-async def main():
-    # 1. Сбрасываем вебхуки на всякий случай, чтобы они не перехватывали запросы
+async def on_startup(app):
+    # Принудительно очищаем старые конфликтующие соединения и ставим вебхук
     await bot.delete_webhook(drop_pending_updates=True)
+    webhook_url = f"{WEBAPP_URL}/webhook"
+    await bot.set_webhook(webhook_url, drop_pending_updates=True)
+    logging.info(f"🔗 Вебхук успешно установлен: {webhook_url}")
+
+def main():
+    app = web.Application()
     
-    # 2. Запускаем легкий aiohttp сервер, чтобы Render видел открытый порт
-    asyncio.create_task(start_web_server())
+    # Главная страница сайта
+    app.router.add_get('/', handle_index)
     
-    # 3. Запускаем бота через стабильный Long Polling
-    logging.info("🚀 Запуск Telegram Polling...")
-    await dp.start_polling(bot)
+    # Обработчик вебхуков для бота
+    webhook_handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot,
+    )
+    webhook_handler.register(app, path="/webhook")
+    
+    setup_application(app, dp, bot=bot)
+    app.on_startup.append(on_startup)
+
+    logging.info(f"🌐 Запуск сервера на порту {PORT}")
+    web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
