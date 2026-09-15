@@ -62,8 +62,8 @@ HTML_CONTENT = """
 </html>
 """
 
-# Обрабатываем абсолютно любые входящие пути, чтобы убрать Not Found
-async def handle_index(request):
+# Функция, которая гарантированно шлет HTML на любой запрос
+async def handle_all(request):
     return web.Response(text=HTML_CONTENT, content_type='text/html')
 
 @dp.message(Command("start"))
@@ -84,15 +84,14 @@ async def cmd_start(message: types.Message):
 
 async def start_web_server():
     app = web.Application()
-    # Ловим и корень, и любые подпути / параметры от телеграма
-    app.router.add_get('/', handle_index)
-    app.router.add_get('/{tail:.*}', handle_index)
+    # Вешаем обработчик на абсолютно любые пути и методы
+    app.router.add_route('*', '/{tail:.*}', handle_all)
     
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
-    logging.info(f"🌐 Встроенный веб-сервер запущен на порту {PORT}")
+    logging.info(f"🌐 Железобетонный веб-сервер запущен на порту {PORT}")
 
 async def main():
     await start_web_server()
