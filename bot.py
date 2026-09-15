@@ -31,90 +31,32 @@ ERC20_ABI = [
     }
 ]
 
-# /start команда с кнопкой Web App и меню
+# /start команда с кнопкой Web App
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     builder = InlineKeyboardBuilder()
     
-    # Кнопка, открывающая веб-приложение
+    # Кнопка, открывающая веб-приложение (замените ссылку на свою после деплоя index.html)
     builder.button(
         text="🌐 Открыть Web App", 
         web_app=WebAppInfo(url="https://your-mini-app-url.com")
     )
-    
-    builder.button(text="🚀 Тарифы и подписка", callback_data="pricing")
-    builder.button(text="💎 Мой статус", callback_data="profile")
     builder.adjust(1)
     
     text = (
         "🎯 **Добро пожаловать в Zer0life Robinhood Sniper!**\n\n"
-        "Бот для отслеживания новых мемкоинов в сети **Robinhood Chain** с капитализацией около $100k и фиксации крупных объемов.\n\n"
-        "Нажмите кнопку ниже, чтобы открыть торговый интерфейс или выбрать раздел:"
+        "Бот для отслеживания новых мемкоинов в сети **Robinhood Chain**.\n\n"
+        "Нажмите кнопку ниже, чтобы открыть полноценный торговый терминал и выбрать тариф:"
     )
     await message.answer(text, parse_mode="Markdown", reply_markup=builder.as_markup())
-
-# Меню тарифов
-@dp.callback_query(F.data == "pricing")
-async def cb_pricing(callback: types.CallbackQuery):
-    builder = InlineKeyboardBuilder()
-    builder.button(text="📦 Купить Lite (50 ZRL)", callback_data="buy_lite")
-    builder.button(text="⚡️ Купить Pro (150 ZRL)", callback_data="buy_pro")
-    builder.button(text="🔥 Купить Alpha (300 ZRL)", callback_data="buy_alpha")
-    builder.button(text="⬅️ Назад", callback_data="back_home")
-    builder.adjust(1)
-    
-    text = (
-        "💳 **Тарифные пакеты Zer0life:**\n\n"
-        "1️⃣ **Lite:** Базовые алерты мемкоинов (MC ~$100k).\n"
-        "2️⃣ **Pro:** Мгновенные алерты + трекер крупных покупок (Volume Spikes).\n"
-        "3️⃣ **Alpha:** Ранний доступ + инсайдерская аналитика кошельков.\n\n"
-        "Оплата принимается исключительно в токенах **ZRL**."
-    )
-    await callback.message.edit_text(text, parse_mode="Markdown", reply_markup=builder.as_markup())
-    await callback.answer()
-
-@dp.callback_query(F.data == "back_home")
-async def cb_home(callback: types.CallbackQuery):
-    builder = InlineKeyboardBuilder()
-    builder.button(
-        text="🌐 Открыть Web App", 
-        web_app=WebAppInfo(url="https://your-mini-app-url.com")
-    )
-    builder.button(text="🚀 Тарифы и подписка", callback_data="pricing")
-    builder.button(text="💎 Мой статус", callback_data="profile")
-    builder.adjust(1)
-    
-    text = (
-        "🎯 **Zer0life Robinhood Sniper**\n\n"
-        "Главное меню. Выберите нужный раздел:"
-    )
-    await callback.message.edit_text(text, parse_mode="Markdown", reply_markup=builder.as_markup())
-    await callback.answer()
-
-@dp.callback_query(F.data.startswith("buy_"))
-async def cb_buy(callback: types.CallbackQuery):
-    tier = callback.data.split("_")[1].upper()
-    prices = {"LITE": 50, "PRO": 150, "ALPHA": 300}
-    price = prices.get(tier, 50)
-    
-    text = (
-        f"📥 **Оформление подписки: {tier}**\n\n"
-        f"Стоимость: **{price} ZRL**\n\n"
-        f"Для оплаты отправьте ровно `{price}` токенов ZRL на кошелек проекта:\n"
-        f"`{PROJECT_WALLET}`\n\n"
-        f"После отправки напишите в поддержку или настройте автоматическое подтверждение хэша транзакции."
-    )
-    await callback.message.edit_text(text, parse_mode="Markdown")
-    await callback.answer()
-
-@dp.callback_query(F.data == "profile")
-async def cb_profile(callback: types.CallbackQuery):
-    await callback.message.answer("👤 Ваш профиль: Подписка не активна.")
-    await callback.answer()
 
 async def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     print("Бот Zer0life Robinhood Sniper запущен...")
+    
+    # Принудительно сбрасываем старые соединения, чтобы избежать конфликтов
+    await bot.delete_webhook(drop_pending_updates=True)
+    
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
