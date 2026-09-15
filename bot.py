@@ -36,10 +36,10 @@ ERC20_ABI = [
 async def cmd_start(message: types.Message):
     builder = InlineKeyboardBuilder()
     
-    # Кнопка, открывающая ваше мини-приложение
+    # Кнопка, открывающая мини-приложение по правильному адресу репозитория
     builder.button(
         text="🌐 Открыть Web App", 
-        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/")
+        web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/zer0life-robinhood-sniper/")
     )
     builder.adjust(1)
     
