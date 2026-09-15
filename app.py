@@ -62,10 +62,11 @@ async def cmd_start(message: types.Message):
     )
 
 async def on_startup(app):
-    await bot.delete_webhook(drop_pending_updates=True)
     webhook_url = f"{WEBAPP_URL}/webhook"
-    await bot.set_webhook(webhook_url, drop_pending_updates=True)
-    logging.info(f"🔗 Вебхук успешно установлен: {webhook_url}")
+    # Сбрасываем старый вебхук и ставим новый
+    await bot.delete_webhook(drop_pending_updates=True)
+    await bot.set_webhook(webhook_url)
+    logging.info(f"🚀 СЕРВЕР СТАРТОВАЛ. Вебхук привязан к: {webhook_url}")
 
 def main():
     app = web.Application()
@@ -82,7 +83,7 @@ def main():
     setup_application(app, dp, bot=bot)
     app.on_startup.append(on_startup)
 
-    logging.info(f"🌐 Запуск сервера на порту {PORT}")
+    logging.info(f"🌐 Запуск aiohttp сервера на порту {PORT}")
     web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
