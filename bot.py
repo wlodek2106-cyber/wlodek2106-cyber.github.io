@@ -13,8 +13,10 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 PORT = int(os.getenv("PORT", 10000))
 
-# Твой фиксированный адрес на Render на всякий случай
-WEBAPP_URL = os.getenv("RENDER_EXTERNAL_URL", "https://zer0life-robinhood-sniper.onrender.com")
+# Получаем URL из окружения Render, либо ставим надежный запасной вариант
+WEBAPP_URL = os.getenv("RENDER_EXTERNAL_URL")
+if not WEBAPP_URL or not WEBAPP_URL.startswith("http"):
+    WEBAPP_URL = "https://zer0life-robinhood-sniper.onrender.com"
 
 if not TELEGRAM_BOT_TOKEN:
     logging.error("❌ TELEGRAM_BOT_TOKEN не задан!")
