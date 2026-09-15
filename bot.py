@@ -12,8 +12,13 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 PORT = int(os.getenv("PORT", 10000))
-# Render сам подставит правильный адрес сервиса
-WEBAPP_URL = os.getenv("RENDER_EXTERNAL_URL", "https://zer0life-robinhood-sniper.onrender.com")
+
+# Надежная страховка для ссылки: если Render не передаст внешнюю ссылку, берем железобетонный дефолт
+RENDER_URL = os.getenv("RENDER_EXTERNAL_URL")
+if not RENDER_URL:
+    WEBAPP_URL = "https://zer0life-robinhood-sniper.onrender.com"
+else:
+    WEBAPP_URL = RENDER_URL
 
 if not TELEGRAM_BOT_TOKEN:
     logging.error("❌ TELEGRAM_BOT_TOKEN не задан!")
@@ -22,7 +27,6 @@ if not TELEGRAM_BOT_TOKEN:
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 dp = Dispatcher()
 
-# Стильный интерфейс прямо в коде — никаких внешних хостингов и ошибок 404!
 HTML_CONTENT = """
 <!DOCTYPE html>
 <html lang="ru">
@@ -85,13 +89,10 @@ async def start_web_server():
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
-    logging.info(f"🌐 Встроенный веб-сервер запущен на порту {PORT}")
+    logging.info(f"🌐 Встроенный веб-сервер запущен на порту {PORT} с URL: {WEBAPP_URL}")
 
 async def main():
-    # Запускаем локальный веб-сервер для сайта
     await start_web_server()
-    
-    # Запускаем бота
     logging.info("🚀 Запуск Telegram бота в режиме polling...")
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
