@@ -62,7 +62,6 @@ async def cmd_start(message: types.Message):
     )
 
 async def on_startup(app):
-    # Принудительно очищаем старые конфликтующие соединения и ставим вебхук
     await bot.delete_webhook(drop_pending_updates=True)
     webhook_url = f"{WEBAPP_URL}/webhook"
     await bot.set_webhook(webhook_url, drop_pending_updates=True)
@@ -71,10 +70,9 @@ async def on_startup(app):
 def main():
     app = web.Application()
     
-    # Главная страница сайта
     app.router.add_get('/', handle_index)
+    app.router.add_get('/webhook', handle_index)
     
-    # Обработчик вебхуков для бота
     webhook_handler = SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
