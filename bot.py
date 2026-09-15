@@ -7,13 +7,14 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import WebAppInfo
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 PORT = int(os.getenv("PORT", 10000))
 
-# Получаем URL из окружения Render, либо ставим надежный запасной вариант
+# Получаем URL из окружения Render, либо ставим запасной вариант
 WEBAPP_URL = os.getenv("RENDER_EXTERNAL_URL")
 if not WEBAPP_URL or not WEBAPP_URL.startswith("http"):
     WEBAPP_URL = "https://zer0life-robinhood-sniper.onrender.com"
@@ -51,7 +52,7 @@ HTML_PAGE = """<!DOCTYPE html>
 </body>
 </html>"""
 
-async def handle_everything(request):
+async def handle_index(request):
     return web.Response(text=HTML_PAGE, content_type='text/html')
 
 @dp.message(Command("start"))
@@ -65,21 +66,39 @@ async def cmd_start(message: types.Message):
         reply_markup=builder.as_markup()
     )
 
+async def on_startup(bot: Bot):
+    # Устанавливаем вебхук на твой домен Render
+    webhook_url = f"{WEBAPP_URL}/webhook"
+    await bot.set_webhook(webhook_url, drop_pending_updates=True)
+    logging.info(f"🔗 Вебхук установлен: {webhook_url}")
+
 async def main():
-    # Запуск веб-сервера aiohttp, перехватывающего абсолютно всё
     app = web.Application()
-    app.router.add_route('*', '/{tail:.*}', handle_everything)
     
+    # Регистрируем главную страницу сайта
+    app.router.add_get('/', handle_index)
+    
+    # Регистрируем обработчик старта бота для вебхуков
+    dp.startup.register(on_startup)
+    
+    # Настраиваем обработку входящих запросов от Telegram
+    webhook_requests_handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot,
+    )
+    webhook_requests_handler.register(app, path="/webhook")
+    
+    setup_application(app, dp, bot=bot)
+    
+    # Запускаем веб-сервер
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
-    logging.info(f"🌐 HTTP сервер запущен на порту {PORT}, URL: {WEBAPP_URL}")
+    logging.info(f"🌐 Сервер запущен и слушает порт {PORT}")
 
-    # Запуск бота
-    logging.info("🚀 Запуск Telegram Polling...")
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    # Держим приложение запущенным
+    await asyncio.Event().wait()
 
 if __name__ == "__main__":
     asyncio.run(main())
