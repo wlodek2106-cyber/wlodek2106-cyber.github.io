@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Zer0life Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #0f0f0f; color: #fff; text-align: center; padding-top: 50px; }
+        h1 { color: #00ffcc; }
+    </style>
+</head>
+<body>
+    <h1>Zer0life Robinhood Sniper</h1>
+    <p>Добро пожаловать в торговый терминал!</p>
+</body>
+</html>
