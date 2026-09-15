@@ -32,13 +32,13 @@ ERC20_ABI = [
     }
 ]
 
-# /start команда с кнопкой Web App (указан чистый корень GitHub Pages)
+# /start команда с обновленной кнопкой Web App для сброса кеша Telegram
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     builder = InlineKeyboardBuilder()
     
     builder.button(
-        text="🌐 Открыть Web App", 
+        text="🌐 Открыть Web App (App)", 
         web_app=WebAppInfo(url="https://wlodek2106-cyber.github.io/")
     )
     builder.adjust(1)
