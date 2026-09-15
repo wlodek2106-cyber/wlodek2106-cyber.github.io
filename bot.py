@@ -1,17 +1,18 @@
 import asyncio
 import logging
 import sys
+import os
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import WebAppInfo
 from web3 import Web3
 
-# Ваш новый актуальный токен бота
-TELEGRAM_BOT_TOKEN = "8769994364:AAEr_PHNtiwoB9eUZx0Id7iQ110xZREtrA8"
-RPC_URL = "https://rpc.mainnet.chain.robinhood.com"  # Нода Robinhood Chain
-ZRL_TOKEN_ADDRESS = "0xВашКонтрактТокенаZRL"
-PROJECT_WALLET = "0xВашКошелекКудаПриходятZRL"
+# Безопасно загружаем токен и настройки из переменных окружения Render
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+RPC_URL = os.getenv("RPC_URL", "https://rpc.mainnet.chain.robinhood.com")
+ZRL_TOKEN_ADDRESS = os.getenv("ZRL_TOKEN_ADDRESS", "0xВашКонтрактТокенаZRL")
+PROJECT_WALLET = os.getenv("PROJECT_WALLET", "0xВашКошелекКудаПриходятZRL")
 
 # Инициализация Web3
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
