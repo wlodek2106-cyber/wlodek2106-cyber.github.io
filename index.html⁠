@@ -286,7 +286,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Имя пользователя из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name || "Trader";
         }
