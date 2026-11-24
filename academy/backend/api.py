@@ -58,8 +58,16 @@ def dispatch(method,path,body,token):
         from checkout import create_invoice
         return 201,create_invoice(token,body["plan"])
     if path=="/tutor/ask" and method=="POST":
-        from tutor import ask
-        return 200,ask(token,body["day"],body["mode"],body.get("lang","en"),body["question"])
+        from tutor import ask,save_answer
+        lang=body.get("lang","en")
+        result=ask(token,body["day"],body["mode"],lang,body["question"])
+        return 200,save_answer(token,body["day"],body["mode"],lang,body["question"],result)
+    if path=="/tutor/history" and method=="GET":
+        from tutor import history
+        return 200,history(token)
+    if path=="/tutor/history/clear" and method=="POST":
+        from tutor import clear_history
+        return 200,clear_history(token)
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
