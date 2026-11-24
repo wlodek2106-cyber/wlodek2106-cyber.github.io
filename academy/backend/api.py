@@ -110,6 +110,12 @@ def dispatch(method,path,body,token):
     if path=="/referrals" and method=="GET":
         from referrals import overview
         return 200,overview(token)
+    if path=="/business" and method=="GET":
+        from student_business import dispatch as business
+        return 200,business(token,"overview",{})
+    if path in ("/business/client","/business/order","/business/delete") and method=="POST":
+        from student_business import dispatch as business
+        return 200,business(token,path.rsplit("/",1)[1],body)
     if path=="/career/profile" and method=="GET":
         from career_profile import get_profile
         return 200,get_profile(token)

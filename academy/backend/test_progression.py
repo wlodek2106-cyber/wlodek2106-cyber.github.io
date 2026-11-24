@@ -191,6 +191,15 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError): validate({"name":"Test"})
         with self.assertRaises(ValueError): validate({**EMPTY,"contact":"x"*201})
         with self.assertRaises(ValueError): validate({**EMPTY,"skills":123})
+    def test_student_business(self):
+        from student_business import cents,totals,order_values
+        self.assertEqual(cents("12.30"),1230)
+        for x in ("-1","1.001","NaN","1e3",12,"1000001"):
+            with self.assertRaises(ValueError): cents(x)
+        result=totals([("delivered",10000,8000,2000),("cancelled",5000,1000,500)])
+        self.assertEqual(result["outstanding_cents"],"2000")
+        self.assertEqual(result["cash_margin_cents"],"6500")
+        with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

@@ -158,3 +158,24 @@ CREATE TABLE IF NOT EXISTS career_profiles (
  profile jsonb NOT NULL,
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS business_clients (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ name text NOT NULL, contact text NOT NULL DEFAULT '', notes text NOT NULL DEFAULT '',
+ UNIQUE(student_id,id)
+);
+CREATE TABLE IF NOT EXISTS business_orders (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ client_id bigint NOT NULL,
+ title text NOT NULL,
+ status text NOT NULL CHECK(status IN ('lead','in_progress','delivered','cancelled')),
+ due date,
+ agreed_cents bigint NOT NULL CHECK(agreed_cents>=0),
+ received_cents bigint NOT NULL CHECK(received_cents>=0 AND received_cents<=agreed_cents),
+ expense_cents bigint NOT NULL CHECK(expense_cents>=0),
+ notes text NOT NULL DEFAULT '',
+ FOREIGN KEY(student_id,client_id) REFERENCES business_clients(student_id,id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS business_orders_student_client ON business_orders(student_id,client_id);

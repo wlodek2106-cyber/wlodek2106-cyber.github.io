@@ -81,6 +81,16 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
                 self.assertIn("after_all_commissions_atomic",founder.report(cur,7)["alltime"])
                 self.assertIn("students",admin.statistics(owner))
+                from student_business import save_client,save_order,overview as business_overview,delete as business_delete
+                cid=save_client(cur,buyer_id,{"name":"Test client"})["id"]
+                order={"client_id":cid,"title":"Test order","status":"in_progress","agreed":"100.00","received":"40.00","expense":"10.00"}
+                oid=save_order(cur,buyer_id,order)["id"]
+                self.assertEqual(business_overview(cur,buyer_id)["totals"]["cash_margin_cents"],"3000")
+                self.assertEqual(business_overview(cur,partner_id)["orders"],[])
+                with self.assertRaises(PermissionError): save_order(cur,partner_id,order)
+                with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
+                self.assertTrue(business_delete(cur,buyer_id,"order",oid)["deleted"])
+                self.assertTrue(business_delete(cur,buyer_id,"client",cid)["deleted"])
                 from career_profile import save as save_profile,load as load_profile,EMPTY
                 profile={**EMPTY,"name":"Test Student","headline":"AI creator"}
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
