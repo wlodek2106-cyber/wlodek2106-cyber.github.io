@@ -6,10 +6,10 @@ const langs=["en","ru","uk","pl"];
 const candidate=new URLSearchParams(location.search).get("lang");
 $("lang").value=langs.includes(candidate)?candidate:"en";
 const words=()=>labels[$("lang").value];
-let phase=20,stream=null,recorder=null,timer=null,blob=null,previewURL=null,starting=false;
+let phase=19,stream=null,recorder=null,timer=null,blob=null,previewURL=null,starting=false;
 function render(){
  const lang=$("lang").value,w=words(),i=langs.indexOf(lang);document.documentElement.lang=lang;
- for(const [id,k] of Object.entries({title:0,subtitle:1,notice:2,noteTitle:8,noteHint:9,docLabel:10,textLabel:11,saveNote:12,seo:13,recTitle:14,recHint:15,start:16,stop:17,download:18,clear:24}))$(id).textContent=w[k];
+ for(const [id,k] of Object.entries({title:0,subtitle:1,notice:2,noteTitle:8,noteHint:9,docLabel:10,textLabel:11,saveNote:12,seo:13,recTitle:14,recHint:15,start:16,stop:17,download:18,clear:23}))$(id).textContent=w[k];
  $("status").textContent=w[phase];
  const grid=$("projects");grid.replaceChildren();
  const add=(host,tag,t)=>{const e=document.createElement(tag);e.textContent=t;host.append(e);return e};
@@ -21,12 +21,12 @@ function save(blob,name){const u=URL.createObjectURL(blob);const a=document.crea
 $("saveNote").onclick=()=>{const title=$("doc").value.trim();save(new Blob([(title?"# "+title.replace(/[\r\n]/g," ")+"\n\n":"")+$("notes").value],{type:"text/markdown;charset=utf-8"}),"zer0life-notebook.md")};
 const briefs={en:["SEO brief","Page URL","Audience and intent","Primary keyword hypothesis","Title and description","Headings and content","Internal links","Accessibility and mobile","Measurement plan (manual)"],ru:["SEO-бриф","URL страницы","Аудитория и намерение","Гипотеза ключевой фразы","Заголовок и описание","Структура и контент","Внутренние ссылки","Доступность и мобильная версия","План ручной проверки"],uk:["SEO-бриф","URL сторінки","Аудиторія і намір","Гіпотеза ключової фрази","Заголовок та опис","Структура й контент","Внутрішні посилання","Доступність і мобільна версія","План ручної перевірки"],pl:["Brief SEO","Adres strony","Odbiorcy i intencja","Hipoteza słowa kluczowego","Tytuł i opis","Nagłówki i treść","Linki wewnętrzne","Dostępność i mobilność","Plan ręcznego pomiaru"]};
 $("seo").onclick=()=>{const b=briefs[$("lang").value];if(!$("doc").value)$("doc").value=b[0];const template=b.slice(1).map(x=>"## "+x+"\n\n").join("\n");if($("notes").value.length+template.length<=100000)$("notes").value+=($("notes").value?"\n\n":"")+template;$("notes").focus()};
-$("clear").onclick=()=>{if(confirm(words()[25])){$("doc").value="";$("notes").value=""}};
+$("clear").onclick=()=>{if(confirm(words()[24])){$("doc").value="";$("notes").value=""}};
 const supported=()=>!!(navigator.mediaDevices?.getDisplayMedia&&window.MediaRecorder);
 function update(p){phase=p;$("status").textContent=words()[p];$("start").disabled=starting||!!stream||!supported();$("stop").disabled=!recorder||recorder.state!=="recording";$("download").disabled=!blob}
 function stop(){clearTimeout(timer);if(recorder&&recorder.state==="recording")recorder.stop();if(stream)stream.getTracks().forEach(t=>t.stop())}
 $("start").onclick=async()=>{
- if(starting||stream||!supported())return;starting=true;update(20);
+ if(starting||stream||!supported())return;starting=true;update(19);
  try{
   stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:15,max:30}},audio:false});
   const chunks=[];let size=0;
@@ -34,10 +34,10 @@ $("start").onclick=async()=>{
   recorder=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:2000000});
   blob=null;if(previewURL)URL.revokeObjectURL(previewURL);previewURL=null;$("preview").removeAttribute("src");$("preview").hidden=true;
   recorder.ondataavailable=e=>{if(e.data.size){chunks.push(e.data);size+=e.data.size;if(size>=50*1024*1024)stop()}};
-  recorder.onstop=()=>{clearTimeout(timer);stream?.getTracks().forEach(t=>t.stop());blob=chunks.length?new Blob(chunks,{type:recorder.mimeType||chunks[0].type}):null;stream=null;recorder=null;if(blob){previewURL=URL.createObjectURL(blob);$("preview").src=previewURL;$("preview").hidden=false}update(22)};
-  recorder.onerror=()=>stop();stream.getVideoTracks()[0].addEventListener("ended",stop,{once:true});recorder.start(1000);timer=setTimeout(stop,60000);update(21);
- }catch(e){stream?.getTracks().forEach(t=>t.stop());stream=null;recorder=null;update(23)}finally{starting=false;update(phase)}
+  recorder.onstop=()=>{clearTimeout(timer);stream?.getTracks().forEach(t=>t.stop());blob=chunks.length?new Blob(chunks,{type:recorder.mimeType||chunks[0].type}):null;stream=null;recorder=null;if(blob){previewURL=URL.createObjectURL(blob);$("preview").src=previewURL;$("preview").hidden=false}update(21)};
+  recorder.onerror=()=>stop();stream.getVideoTracks()[0].addEventListener("ended",stop,{once:true});recorder.start(1000);timer=setTimeout(stop,60000);update(20);
+ }catch(e){stream?.getTracks().forEach(t=>t.stop());stream=null;recorder=null;update(22)}finally{starting=false;update(phase)}
 };
 $("stop").onclick=stop;$("download").onclick=()=>{if(blob)save(blob,"zer0life-screen."+(blob.type.includes("mp4")?"mp4":"webm"))};
 window.addEventListener("pagehide",()=>{stop();if(previewURL)URL.revokeObjectURL(previewURL)});
-$("lang").onchange=render;render();update(supported()?19:23);
+$("lang").onchange=render;render();update(supported()?19:22);
