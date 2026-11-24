@@ -218,3 +218,13 @@ CREATE TABLE IF NOT EXISTS privacy_requests (
  closed_by bigint REFERENCES students(id)
 );
 CREATE UNIQUE INDEX IF NOT EXISTS privacy_requests_open_unique ON privacy_requests(student_id,kind) WHERE status='open';
+
+CREATE TABLE IF NOT EXISTS knowledge_notes (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
+ content text NOT NULL CHECK(length(content) BETWEEN 1 AND 3000),
+ tag text NOT NULL DEFAULT '' CHECK(length(tag)<=80),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS knowledge_notes_student ON knowledge_notes(student_id,id);

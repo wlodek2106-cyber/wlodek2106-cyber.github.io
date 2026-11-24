@@ -117,6 +117,12 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
                 self.assertTrue(business_delete(cur,buyer_id,"order",oid)["deleted"])
                 self.assertTrue(business_delete(cur,buyer_id,"client",cid)["deleted"])
+                from knowledge import save as note_save,list_notes,remove as note_remove,public_text
+                note=note_save(cur,buyer_id,{"title":"Test note","content":"Local AI notes","tag":"AI"})
+                self.assertEqual(list_notes(cur,buyer_id,"local")["items"][0]["id"],note["id"])
+                self.assertEqual(list_notes(cur,partner_id)["items"],[])
+                with self.assertRaises(PermissionError): note_remove(cur,partner_id,note["id"])
+                self.assertNotIn("secret",public_text({"title":"Lesson","questions":["secret"]}))
                 from privacy_center import export_data,create_record,list_records,close_record
                 req= create_record(cur,buyer_id,"erasure","Test request")
                 self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
@@ -124,6 +130,8 @@ class LaunchIntegration(unittest.TestCase):
                 exported=export_data(cur,buyer_id)["datasets"]
                 self.assertEqual(exported["account"][0]["id"],buyer_id)
                 self.assertNotIn("password_hash",exported["account"][0])
+                self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
+                self.assertTrue(note_remove(cur,buyer_id,note["id"])["deleted"])
                 self.assertTrue(all("token_digest" not in x for x in exported["sessions"]))
                 self.assertTrue(close_record(cur,owner_id,req["id"],"Test response only")["closed"])
                 self.assertEqual(list_records(cur,buyer_id)["items"][0]["status"],"closed")

@@ -40,6 +40,29 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path in ("/knowledge/list","/knowledge/save","/knowledge/delete") and method=="POST":
+        from knowledge import dispatch_notes
+        return 200,dispatch_notes(token,path.rsplit("/",1)[1],body)
+    if path=="/knowledge/course-search" and method=="POST":
+        from knowledge import public_text
+        from student_business import clean
+        q=clean(body["query"],120,True).casefold()
+        lang=body.get("lang","en")
+        if lang not in ("en","ru","uk","pl"): raise ValueError("Invalid language")
+        p=student_progress(token)
+        # Same entitlement and strict-content checks as the existing lesson endpoint.
+        # Search at most 5 unlocked lessons per request to bound free-tier load.
+        day=body.get("after",0)
+        if type(day) is not int or not 0<=day<=45: raise ValueError("Invalid cursor")
+        days=[x["day"] for x in p["lessons"] if x["unlocked"] and x["day"]>day]
+        results=[]
+        for n in days[:5]:
+            status,lesson=dispatch("GET","/lessons/"+str(n)+"/"+lang,{},token)
+            if status!=200: continue
+            content=public_text(lesson)
+            if q in content.casefold():
+                results.append({"day":n,"title":lesson["title"],"language":lesson.get("content_language","en")})
+        return 200,{"items":results,"next_after":days[4] if len(days)>5 else None}
     if path=="/privacy/export" and method=="POST":
         from privacy_center import export
         return 200,export(token,body["password"],body.get("code"))
@@ -315,7 +338,7 @@ def dispatch(method,path,body,token):
         if day<=30 and lang in ("ru","uk","pl"):
             translations=json.loads(Path(__file__).with_name("lessons02_06_translations.json" if day<=6 else "lessons07_15_translations.json" if day<=15 else "lessons16_30_translations.json").read_text())
             lesson.update(next(item for item in translations[lang] if item["day"]==day))
-            return 200,{**lesson,"content_language":lang,"prompts_language":lang if day<=6 else "en"}
-        return 200,{**lesson,"content_language":"en"}
+            return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":lang,"prompts_language":lang if day<=6 else "en"}
+        return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":"en"}
     return 404,{"error":"Not found"}
 # HTTP adapter must validate request bodies, enforce rate limits and handle errors.
