@@ -1,0 +1,39 @@
+name: Academy native builds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: academy/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - run: gradle :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: academy-android-debug
+          path: academy/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet publish academy/windows/Academy.csproj -c Release -r win-x64 --self-contained true -o academy-output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: academy-windows-x64
+          path: academy-output/
+          if-no-files-found: error
