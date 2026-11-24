@@ -23,6 +23,11 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/checkout/create" and method=="POST":
+        if os.getenv("ACADEMY_CHECKOUT_READY")!="true":
+            return 503,{"error":"Checkout not available"}
+        from checkout import create_invoice
+        return 201,create_invoice(token,body["plan"])
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"])
