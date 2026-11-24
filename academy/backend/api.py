@@ -95,12 +95,18 @@ def dispatch(method,path,body,token):
         from exams import submit_exam
         return 200,submit_exam(token,body["day"],body["attempt_id"],body["answers"])
     if path.startswith("/lessons/") and method=="GET":
-        day=int(path.rsplit("/",1)[1])
+        parts=path.split("/")
+        day=int(parts[2])
+        lang=parts[3] if len(parts)==4 else "en"
         require_lesson(token,day)
         if day==1:
-            return 200,public_lesson()
+            lesson=public_lesson()
+            localized=json.loads(Path(__file__).with_name("lesson01_translations.json").read_text())
+            lesson.update(localized.get(lang,{}))
+            lesson["content_language"]=lang if lang in localized else "en"
+            return 200,lesson
         filename="lessons02_06.json" if day<=6 else "lessons07_30.json"
         lessons=json.loads(Path(__file__).with_name(filename).read_text())
-        return 200,next(item for item in lessons if item["day"]==day)
+        return 200,{**next(item for item in lessons if item["day"]==day),"content_language":"en"}
     return 404,{"error":"Not found"}
 # HTTP adapter must validate request bodies, enforce rate limits and handle errors.
