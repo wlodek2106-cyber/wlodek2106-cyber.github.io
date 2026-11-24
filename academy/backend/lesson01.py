@@ -2,6 +2,7 @@ LESSON = {"day":1,"title":"AI Fundamentals","sections":[
 "Artificial intelligence is software designed to perform tasks such as classification, prediction and generation. Generative models produce outputs based on patterns learned from training data, not guaranteed facts.",
 "A language model generates text from context. Image and video models generate visual content. Choose the tool according to the desired output, budget, rights and quality.",
 "Use a workflow: define the goal, provide context and constraints, generate, verify, revise. Never upload confidential client data without permission. Check factual claims and commercial-use terms.",
+"Workflow: write a one-paragraph fictional client brief, select an appropriate model, generate three concepts, verify claims, then revise the strongest concept. Save the prompt and output versions. Evaluate relevance, clarity, originality and responsible use. Submit the brief, concepts and revision log.",
 "Practice: create three advertising concepts for an imaginary coffee brand. Specify audience, message, tone and output format. Compare results, identify unsupported claims and revise."
 ],"prompts":["Act as a creative strategist. Propose three coffee advertising concepts for commuters. Include audience, message and visual direction. Avoid unsupported claims.","Review these concepts for factual accuracy, clarity and originality. Identify uncertainties and suggest revisions."],
 "questions":[
