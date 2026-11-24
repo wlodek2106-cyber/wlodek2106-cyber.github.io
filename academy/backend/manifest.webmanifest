@@ -1,0 +1,24 @@
+{
+  "name": "ZER0LIFE AI Creator Academy",
+  "short_name": "ZER0LIFE",
+  "id": "/",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090a12",
+  "theme_color": "#090a12",
+  "icons": [
+    {
+      "src": "/academy-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Learning dashboard",
+      "url": "/dashboard"
+    }
+  ]
+}
