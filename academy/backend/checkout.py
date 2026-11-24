@@ -1,0 +1,35 @@
+import secrets
+import uuid
+from accounts import authenticate
+from database import transaction
+from payment_policy import quote
+from solana_pay import payment_url
+
+def reference_key():
+    alphabet="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    raw=secrets.token_bytes(32)
+    n=int.from_bytes(raw,"big")
+    out=""
+    while n:
+        n,i=divmod(n,58)
+        out=alphabet[i]+out
+    return "1"*(len(raw)-len(raw.lstrip(b"\x00")))+out
+
+def create_invoice(token,plan):
+    student=authenticate(token)
+    if student is None:
+        raise PermissionError("Authentication required")
+    q=quote(plan,"USDC")
+    ref=reference_key()
+    invoice=str(uuid.uuid4())
+    with transaction() as cur:
+        cur.execute("SELECT id FROM students WHERE id=%s FOR UPDATE",(student,))
+        cur.execute("SELECT 1 FROM enrollments WHERE student_id=%s AND paid_at IS NOT NULL",(student,))
+        if cur.fetchone():
+            raise ValueError("Already enrolled")
+        cur.execute("SELECT 1 FROM payment_invoices WHERE student_id=%s AND paid_at IS NULL AND expires_at>now()",(student,))
+        if cur.fetchone():
+            raise ValueError("An active invoice already exists")
+        cur.execute("INSERT INTO payment_invoices(id,student_id,plan,asset,amount_atomic,reference,recipient,expires_at) VALUES (%s,%s,%s,'USDC',%s,%s,%s,now()+interval '15 minutes') RETURNING expires_at",(invoice,student,plan,q["amount_atomic"],ref,q["recipient"]))
+        expiry=cur.fetchone()[0].isoformat()
+        return {"id":invoice,"expires_at":expiry,"url":payment_url(plan,ref),"amount_atomic":q["amount_atomic"]}
