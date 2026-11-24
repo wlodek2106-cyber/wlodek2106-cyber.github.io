@@ -239,3 +239,15 @@ CREATE TABLE IF NOT EXISTS student_prompts (
  updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS student_prompts_student ON student_prompts(student_id,id);
+
+CREATE TABLE IF NOT EXISTS creative_workflows (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
+ kind text NOT NULL CHECK(kind IN ('image','video','advertising','animation','audio')),
+ brief text NOT NULL CHECK(length(brief) BETWEEN 1 AND 2000),
+ completed text[] NOT NULL DEFAULT '{}',
+ notes text NOT NULL DEFAULT '' CHECK(length(notes)<=1000),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS creative_workflows_student ON creative_workflows(student_id,id);

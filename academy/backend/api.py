@@ -40,6 +40,9 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path in ("/creative-workflows/list","/creative-workflows/save","/creative-workflows/delete") and method=="POST":
+        from creative_workflow import dispatch as workflow_dispatch
+        return 200,workflow_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/prompts/list","/prompts/save","/prompts/delete","/prompts/templates") and method=="POST":
         from prompt_studio import dispatch as prompt_dispatch
         return 200,prompt_dispatch(token,path.rsplit("/",1)[1],body)

@@ -1,0 +1,2 @@
+# Creative Workflow Studio
+Five localized production checklists (image, video, advertising, animation, audio), six stages per type, 100 private projects per account. Save brief, stage completion and model/license notes; export Markdown and copy a planning prompt to local AI. Progress is self-reported. No asset storage, automatic generation, external transfer, remote inference or billed services. Use compatible local tools from Creator Suite and independently verify rights, model licenses and quality. Included in personal-data export.

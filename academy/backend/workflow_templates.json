@@ -1,0 +1,282 @@
+{
+  "image": [
+    {
+      "id": "brief",
+      "labels": {
+        "en": "Define brief, audience and aspect ratio",
+        "ru": "Определить бриф, аудиторию и формат",
+        "uk": "Визначити бриф, аудиторію та формат",
+        "pl": "Ustal brief, odbiorców i format"
+      }
+    },
+    {
+      "id": "reference",
+      "labels": {
+        "en": "Prepare authorized references and visual style",
+        "ru": "Подготовить разрешённые референсы и стиль",
+        "uk": "Підготувати дозволені референси та стиль",
+        "pl": "Przygotuj dozwolone referencje i styl"
+      }
+    },
+    {
+      "id": "prompt",
+      "labels": {
+        "en": "Write prompt and negative constraints",
+        "ru": "Написать промпт и ограничения",
+        "uk": "Написати промпт та обмеження",
+        "pl": "Napisz prompt i ograniczenia"
+      }
+    },
+    {
+      "id": "generate",
+      "labels": {
+        "en": "Generate locally and record model settings",
+        "ru": "Создать локально и записать настройки модели",
+        "uk": "Створити локально й записати налаштування моделі",
+        "pl": "Wygeneruj lokalnie i zapisz ustawienia modelu"
+      }
+    },
+    {
+      "id": "review",
+      "labels": {
+        "en": "Review anatomy, composition, artifacts and rights",
+        "ru": "Проверить композицию, анатомию, артефакты и права",
+        "uk": "Перевірити композицію, анатомію, артефакти та права",
+        "pl": "Sprawdź kompozycję, anatomię, artefakty i prawa"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Export final image and document sources",
+        "ru": "Экспортировать изображение и указать источники",
+        "uk": "Експортувати зображення й зазначити джерела",
+        "pl": "Eksportuj obraz i zapisz źródła"
+      }
+    }
+  ],
+  "video": [
+    {
+      "id": "brief",
+      "labels": {
+        "en": "Define duration, aspect ratio and message",
+        "ru": "Определить длительность, формат и посыл",
+        "uk": "Визначити тривалість, формат і повідомлення",
+        "pl": "Ustal czas, format i przekaz"
+      }
+    },
+    {
+      "id": "script",
+      "labels": {
+        "en": "Write script and timed shot list",
+        "ru": "Написать сценарий и тайминг кадров",
+        "uk": "Написати сценарій і таймінг кадрів",
+        "pl": "Napisz scenariusz i listę ujęć"
+      }
+    },
+    {
+      "id": "frames",
+      "labels": {
+        "en": "Create consistent reference frames",
+        "ru": "Создать согласованные референс-кадры",
+        "uk": "Створи узгоджені референсні кадри",
+        "pl": "Utwórz spójne klatki referencyjne"
+      }
+    },
+    {
+      "id": "motion",
+      "labels": {
+        "en": "Generate short clips locally with matching settings",
+        "ru": "Генерировать короткие клипы локально с согласованными настройками",
+        "uk": "Генеруй короткі кліпи локально з узгодженими налаштуваннями",
+        "pl": "Generuj lokalnie krótkie klipy ze spójnymi ustawieniami"
+      }
+    },
+    {
+      "id": "edit",
+      "labels": {
+        "en": "Assemble clips, audio and captions in local editor",
+        "ru": "Собрать клипы, звук и титры в локальном редакторе",
+        "uk": "Збери кліпи, звук і титри в локальному редакторі",
+        "pl": "Zmontuj klipy, dźwięk i napisy lokalnie"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Check continuity, rights and export",
+        "ru": "Проверить непрерывность, права и экспорт",
+        "uk": "Перевірити неперервність, права й експорт",
+        "pl": "Sprawdź ciągłość, prawa i eksport"
+      }
+    }
+  ],
+  "advertising": [
+    {
+      "id": "brief",
+      "labels": {
+        "en": "Set objective, audience and verified benefits",
+        "ru": "Определить цель, аудиторию и подтверждённые преимущества",
+        "uk": "Визначити мету, аудиторію й підтверджені переваги",
+        "pl": "Ustal cel, odbiorców i potwierdzone korzyści"
+      }
+    },
+    {
+      "id": "concept",
+      "labels": {
+        "en": "Draft three concepts and choose one",
+        "ru": "Создать три концепции и выбрать одну",
+        "uk": "Створи три концепції та обери одну",
+        "pl": "Przygotuj trzy koncepcje i wybierz jedną"
+      }
+    },
+    {
+      "id": "assets",
+      "labels": {
+        "en": "Prepare approved product references and copy",
+        "ru": "Подготовить согласованные референсы продукта и текст",
+        "uk": "Підготуй погоджені референси продукту та текст",
+        "pl": "Przygotuj zatwierdzone referencje produktu i tekst"
+      }
+    },
+    {
+      "id": "production",
+      "labels": {
+        "en": "Produce visuals or clips locally",
+        "ru": "Создать визуалы или клипы локально",
+        "uk": "Створи візуали або кліпи локально",
+        "pl": "Utwórz wizualizacje lub klipy lokalnie"
+      }
+    },
+    {
+      "id": "review",
+      "labels": {
+        "en": "Check claims, accessibility, CTA and client approval",
+        "ru": "Проверить утверждения, доступность, CTA и согласование",
+        "uk": "Перевір твердження, доступність, CTA та погодження",
+        "pl": "Sprawdź twierdzenia, dostępność, CTA i akceptację"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Export variants and a manual measurement plan",
+        "ru": "Экспортировать варианты и план ручной оценки",
+        "uk": "Експортуй варіанти й план ручного вимірювання",
+        "pl": "Eksportuj warianty i plan ręcznego pomiaru"
+      }
+    }
+  ],
+  "animation": [
+    {
+      "id": "story",
+      "labels": {
+        "en": "Develop original story and scene timings",
+        "ru": "Разработать оригинальную историю и тайминг сцен",
+        "uk": "Розроби оригінальну історію й таймінг сцен",
+        "pl": "Opracuj oryginalną historię i czas scen"
+      }
+    },
+    {
+      "id": "characters",
+      "labels": {
+        "en": "Create character reference sheets",
+        "ru": "Создать листы референсов персонажей",
+        "uk": "Створи аркуші референсів персонажів",
+        "pl": "Utwórz arkusze referencyjne postaci"
+      }
+    },
+    {
+      "id": "boards",
+      "labels": {
+        "en": "Storyboard and define camera continuity",
+        "ru": "Создать раскадровку и непрерывность камеры",
+        "uk": "Створи розкадрування й неперервність камери",
+        "pl": "Stwórz storyboard i ciągłość kamery"
+      }
+    },
+    {
+      "id": "motion",
+      "labels": {
+        "en": "Animate short shots locally",
+        "ru": "Анимировать короткие кадры локально",
+        "uk": "Анімуй короткі кадри локально",
+        "pl": "Animuj krótkie ujęcia lokalnie"
+      }
+    },
+    {
+      "id": "sound",
+      "labels": {
+        "en": "Add authorized voices, effects and captions",
+        "ru": "Добавить разрешённые голоса, эффекты и титры",
+        "uk": "Додай дозволені голоси, ефекти й титри",
+        "pl": "Dodaj autoryzowane głosy, efekty i napisy"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Review character consistency and export",
+        "ru": "Проверить постоянство персонажей и экспорт",
+        "uk": "Перевір сталість персонажів та експортуй",
+        "pl": "Sprawdź spójność postaci i eksportuj"
+      }
+    }
+  ],
+  "audio": [
+    {
+      "id": "brief",
+      "labels": {
+        "en": "Define script, language and target duration",
+        "ru": "Определить текст, язык и длительность",
+        "uk": "Визначити текст, мову й тривалість",
+        "pl": "Ustal tekst, język i czas"
+      }
+    },
+    {
+      "id": "rights",
+      "labels": {
+        "en": "Confirm voice permission and model license",
+        "ru": "Подтвердить разрешение на голос и лицензию модели",
+        "uk": "Підтвердити дозвіл на голос і ліцензію моделі",
+        "pl": "Potwierdź zgodę na głos i licencję modelu"
+      }
+    },
+    {
+      "id": "script",
+      "labels": {
+        "en": "Prepare pronunciation and timing notes",
+        "ru": "Подготовить произношение и тайминг",
+        "uk": "Підготуй вимову й таймінг",
+        "pl": "Przygotuj wymowę i czas"
+      }
+    },
+    {
+      "id": "generate",
+      "labels": {
+        "en": "Generate narration using local TTS",
+        "ru": "Создать озвучку с локальной TTS",
+        "uk": "Створи озвучення локальною TTS",
+        "pl": "Wygeneruj narrację lokalnym TTS"
+      }
+    },
+    {
+      "id": "review",
+      "labels": {
+        "en": "Listen for errors, clipping and timing",
+        "ru": "Проверить ошибки, клиппинг и тайминг",
+        "uk": "Перевір помилки, кліпінг і таймінг",
+        "pl": "Sprawdź błędy, przesterowanie i czas"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Export audio and license notes",
+        "ru": "Экспортировать аудио и сведения о лицензиях",
+        "uk": "Експортуй аудіо й відомості про ліцензії",
+        "pl": "Eksportuj audio i informacje o licencjach"
+      }
+    }
+  ]
+}

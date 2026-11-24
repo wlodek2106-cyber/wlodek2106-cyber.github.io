@@ -128,6 +128,12 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(prompt_list(cur,buyer_id,{"favorite":True,"category":"image","query":"local"})["items"][0]["id"],prompt["id"])
                 self.assertEqual(prompt_list(cur,partner_id,{})["items"],[])
                 with self.assertRaises(PermissionError): prompt_remove(cur,partner_id,prompt["id"])
+                from creative_workflow import save as workflow_save,listing as workflow_list,remove as workflow_remove
+                flow=workflow_save(cur,buyer_id,{"title":"Test flow","kind":"video","brief":"Local clip","completed":["brief"]})
+                self.assertEqual(workflow_list(cur,buyer_id)["items"][0]["completed"],["brief"])
+                self.assertEqual(workflow_list(cur,partner_id)["items"],[])
+                with self.assertRaises(PermissionError): workflow_remove(cur,partner_id,flow["id"])
+                with self.assertRaises(ValueError): workflow_save(cur,buyer_id,{"title":"Invalid","kind":"video","brief":"Test","completed":["unknown"]})
                 from privacy_center import export_data,create_record,list_records,close_record
                 req= create_record(cur,buyer_id,"erasure","Test request")
                 self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
@@ -137,6 +143,8 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertNotIn("password_hash",exported["account"][0])
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
+                self.assertEqual(exported["creative_workflows"][0]["title"],"Test flow")
+                self.assertTrue(workflow_remove(cur,buyer_id,flow["id"])["deleted"])
                 self.assertTrue(prompt_remove(cur,buyer_id,prompt["id"])["deleted"])
                 self.assertTrue(note_remove(cur,buyer_id,note["id"])["deleted"])
                 self.assertTrue(all("token_digest" not in x for x in exported["sessions"]))

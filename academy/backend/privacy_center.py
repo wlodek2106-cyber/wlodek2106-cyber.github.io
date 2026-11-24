@@ -25,6 +25,7 @@ DATASETS={
 "clients":"SELECT id,name,contact,notes FROM business_clients WHERE student_id=%s ORDER BY id",
 "orders":"SELECT id,client_id,title,status,due,agreed_cents,received_cents,expense_cents,notes FROM business_orders WHERE student_id=%s ORDER BY id",
 "tasks":"SELECT id,title,day,category,priority,minutes,done FROM student_tasks WHERE student_id=%s ORDER BY id",
+"creative_workflows":"SELECT id,title,kind,brief,completed,notes,updated_at FROM creative_workflows WHERE student_id=%s ORDER BY id",
 "student_prompts":"SELECT id,title,prompt,category,favorite,updated_at FROM student_prompts WHERE student_id=%s ORDER BY id",
 "knowledge_notes":"SELECT id,title,content,tag,updated_at FROM knowledge_notes WHERE student_id=%s ORDER BY id",
 "privacy_requests":"SELECT id,kind,details,status,response,created_at,closed_at FROM privacy_requests WHERE student_id=%s ORDER BY id DESC"
