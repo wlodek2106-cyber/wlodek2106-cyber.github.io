@@ -165,6 +165,12 @@ def dispatch(method,path,body,token):
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
+    if path=="/admin/content" and method=="GET":
+        from content_vault import admin_inventory
+        return 200,admin_inventory(token)
+    if path=="/admin/content" and method=="POST":
+        from content_vault import admin_save
+        return 200,admin_save(token,body)
     if path=="/admin/founder" and method=="POST":
         from founder import founder_report
         return 200,founder_report(token,body.get("days",30))
@@ -198,6 +204,11 @@ def dispatch(method,path,body,token):
         from exams import start_exam
         day=body["day"]
         require_lesson(token,day)
+        from content_vault import get
+        private=get("exam",day,body.get("lang","en"))
+        if private:
+            attempt=start_exam(token,day,private["content"])
+            return 200,{**attempt,"content_language":private["language"]}
         if day==1:
             from lesson01 import LESSON
             localized=json.loads(Path(__file__).with_name("quiz01_translations.json").read_text()).get(body.get("lang","en"))
@@ -219,6 +230,10 @@ def dispatch(method,path,body,token):
         day=int(parts[2])
         lang=parts[3] if len(parts)==4 else "en"
         require_lesson(token,day)
+        from content_vault import get
+        private=get("lesson",day,lang)
+        if private:
+            return 200,{"day":day,**private["content"],"content_language":private["language"],"prompts_language":private["language"]}
         if day==1:
             lesson=public_lesson()
             localized=json.loads(Path(__file__).with_name("lesson01_translations.json").read_text())

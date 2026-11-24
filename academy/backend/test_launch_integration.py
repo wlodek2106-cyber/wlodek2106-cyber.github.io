@@ -81,6 +81,14 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
                 self.assertIn("after_all_commissions_atomic",founder.report(cur,7)["alltime"])
                 self.assertIn("students",admin.statistics(owner))
+                from content_vault import save,load,inventory
+                private={"title":"Private test","theory":"New material","assignment":"Test task","prompts":[]}
+                self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],1)
+                self.assertEqual(load(cur,"lesson",1,"pl")["content"],private)
+                self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],2)
+                self.assertIn("english_coverage",inventory(cur))
+                self.assertEqual(save(cur,owner_id,"exam",1,"en",bank)["revision"],1)
+                self.assertEqual(load(cur,"exam",1,"en")["content"],bank)
                 raise Rollback()
         except Rollback:
             pass

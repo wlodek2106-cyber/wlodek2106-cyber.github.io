@@ -132,3 +132,23 @@ CREATE TABLE IF NOT EXISTS student_mfa (
  recovery_digests text[] NOT NULL DEFAULT '{}',
  pending_secret text, pending_until timestamptz
 );
+
+CREATE TABLE IF NOT EXISTS private_curriculum (
+ kind text NOT NULL CHECK(kind IN ('lesson','exam')),
+ lesson integer NOT NULL CHECK(lesson BETWEEN 1 AND 45),
+ language text NOT NULL CHECK(language IN ('en','ru','uk','pl')),
+ content jsonb NOT NULL,
+ revision integer NOT NULL DEFAULT 1,
+ updated_by bigint NOT NULL REFERENCES students(id),
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(kind,lesson,language)
+);
+CREATE TABLE IF NOT EXISTS private_curriculum_audit (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ kind text NOT NULL,
+ lesson integer NOT NULL,
+ language text NOT NULL,
+ revision integer NOT NULL,
+ updated_by bigint NOT NULL REFERENCES students(id),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);

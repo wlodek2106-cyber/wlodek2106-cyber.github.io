@@ -151,6 +151,17 @@ class ProgressTests(unittest.TestCase):
             recovery="a"*32
             self.assertEqual(consume(secret,1,[recovery_digest(recovery)],recovery),(1,[]))
             with self.assertRaises(PermissionError): consume(secret,1,[],recovery)
+    def test_private_curriculum_validation(self):
+        from content_vault import validate
+        from copy import deepcopy
+        bank=[{"id":str(i),"question":"Question "+str(i),"options":["A","B","C"],"correct":"A"} for i in range(10)]
+        self.assertEqual(validate("exam",1,"en",bank),bank)
+        broken=deepcopy(bank);broken[1]["question"]=broken[0]["question"]
+        with self.assertRaises(ValueError): validate("exam",1,"en",broken)
+        with self.assertRaises(ValueError): validate("exam",46,"en",bank)
+        lesson={"title":"Private","theory":"Theory","assignment":"Task","prompts":[]}
+        self.assertEqual(validate("lesson",1,"ru",lesson),lesson)
+        with self.assertRaises(ValueError): validate("lesson",1,"ru",{**lesson,"answer":"secret"})
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

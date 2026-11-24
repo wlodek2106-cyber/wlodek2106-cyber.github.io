@@ -9,6 +9,13 @@ STEPS={
 "pl":[["Wyjaśnij główną ideę własnymi słowami.","Podaj własny przykład.","Wskaż ograniczenie i sposób weryfikacji wyniku."],["Napisz brief z mierzalnymi kryteriami.","Przygotuj pierwszy szkic.","Sprawdź jakość, fakty i prawa użytkowania.","Popraw wynik i zapisz zmiany."]]}
 def guidance(token,day,mode,lang="en"):
     require_lesson(token,day)
+    from content_vault import get
+    private=get("lesson",day,lang)
+    if private:
+        material=private["content"]; language=private["language"]
+        if mode=="review": return {"mode":"guided_review","material":[material["theory"]],"steps":STEPS[language][0],"language":language,"engine":"guided_rules"}
+        if mode=="practice": return {"mode":"guided_practice","assignment":material["assignment"],"steps":STEPS[language][1],"language":language,"engine":"guided_rules"}
+        raise ValueError("Unknown guidance mode")
     if day==1:
         from lesson01 import LESSON
         theory=LESSON["sections"]
