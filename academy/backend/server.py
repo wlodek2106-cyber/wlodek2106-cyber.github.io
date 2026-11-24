@@ -27,6 +27,17 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
     def handle_api(self):
         path=urlsplit(self.path).path
+        assets={"/manifest.webmanifest":("manifest.webmanifest","application/manifest+json"),"/academy-icon.svg":("academy-icon.svg","image/svg+xml"),"/academy-sw.js":("academy-sw.js","application/javascript")}
+        if self.command=="GET" and path in assets:
+            name,mime=assets[path]
+            body=Path(__file__).with_name(name).read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type",mime)
+            self.send_header("Cache-Control","no-cache")
+            self.send_header("Content-Length",str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if path in ("/","/dashboard") and self.command=="GET":
             body=Path(__file__).with_name("dashboard.html").read_bytes()
             self.send_response(200)
