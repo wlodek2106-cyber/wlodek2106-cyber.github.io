@@ -42,5 +42,8 @@ def submit_exam(token,day,attempt_id,answers):
             cur.execute("INSERT INTO lesson_progress(enrollment_id,lesson,score) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",(eid,day,result["score"]))
             cur.execute("SELECT passed_at+interval '1 day' FROM lesson_progress WHERE enrollment_id=%s AND lesson=%s",(eid,day))
             result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<30 else None
+            if day==30:
+                from certificates import issue_completed
+                result["certificate"]=issue_completed(cur,eid)
         return result
 # Bank must be supplied by trusted server-side storage, never by the student.
