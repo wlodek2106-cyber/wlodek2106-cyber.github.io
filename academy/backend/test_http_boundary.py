@@ -1,0 +1,35 @@
+"""HTTP adapter checks against an isolated local server; no DB, no real payments."""
+import unittest,threading,os,sys,types,json
+from unittest.mock import patch
+from urllib.request import Request,urlopen
+from urllib.error import HTTPError
+from server import Handler,ThreadingHTTPServer
+class HttpBoundary(unittest.TestCase):
+    def test_http_boundary(self):
+        def fake_dispatch(method,path,body,token):
+            if path=="/private":
+                if token!="test-only": raise PermissionError()
+                return 200,{"ok":True}
+            return 404,{"error":"Not found"}
+        server=ThreadingHTTPServer(("127.0.0.1",0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True)
+        thread.start()
+        url="http://127.0.0.1:"+str(server.server_port)
+        def req(path,body=None,headers=None):
+            try: return urlopen(Request(url+path,data=body,headers=headers or {}),timeout=5)
+            except HTTPError as e: return e
+        try:
+            with patch.dict(os.environ,{"ACADEMY_DATABASE_URL":"test-only-not-a-real-db"}),patch.dict(sys.modules,{"api":types.SimpleNamespace(dispatch=fake_dispatch)}):
+                with req("/health") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertEqual(r.headers["Cache-Control"],"no-store")
+                    self.assertEqual(r.headers["X-Frame-Options"],"DENY")
+                with req("/dashboard") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"academySidebar",r.read())
+                for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
+                    with req(path,body,headers) as r:
+                        self.assertEqual(r.status,status)
+                        self.assertEqual(r.headers["Cache-Control"],"no-store")
+        finally:
+            server.shutdown();server.server_close();thread.join(timeout=5)

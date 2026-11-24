@@ -1,0 +1,38 @@
+name: Academy web smoke checks
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'academy/backend/**'
+      - 'academy/tests/**'
+      - '.github/workflows/academy-web-check.yml'
+permissions:
+  contents: read
+concurrency:
+  group: academy-web-check
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python compilation and unit tests
+        run: |
+          python -m compileall -q academy/backend
+          cd academy/backend
+          python -m unittest -v test_progression test_http_boundary
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test runtime
+        working-directory: academy/tests
+        run: |
+          npm install --no-save --no-package-lock playwright@1.51.1
+          npx playwright install --with-deps chromium
+      - name: Browser smoke test (mocked API, no payments)
+        run: node academy/tests/browser_smoke.cjs
