@@ -121,6 +121,16 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(validate(123,50,""),(123,50,""))
         for values in ((True,0,""),(1,-1,""),(1,0,"x"*121),(0,0,"")):
             with self.assertRaises(ValueError): validate(*values)
+    def test_partner_marketing(self):
+        from marketing import materials,projection
+        code="a"*24
+        for lang in ("en","ru","uk","pl"):
+            kit=materials(code,lang)
+            self.assertEqual(len(kit["materials"]),4)
+            self.assertTrue(all("?ref="+code in x["text"] for x in kit["materials"]))
+        self.assertEqual(projection({"starter":1,"pro":1,"vip":1})["commission_atomic"],509100000)
+        with self.assertRaises(ValueError): projection({"starter":-1,"pro":0,"vip":0})
+        with self.assertRaises(ValueError): materials("invalid","en")
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

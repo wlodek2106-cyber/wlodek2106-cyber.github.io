@@ -66,6 +66,9 @@ def dispatch(method,path,body,token):
     if path=="/partners" and method=="GET":
         from partners import dashboard
         return 200,dashboard(token)
+    if path=="/partners/marketing" and method=="POST":
+        from marketing import kit
+        return 200,kit(token,body.get("lang","en"))
     if path=="/partners/apply" and method=="POST":
         from partners import apply
         return 201,apply(token,body["profile"],body["wallet"],body.get("consent"))
