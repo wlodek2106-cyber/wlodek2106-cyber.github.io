@@ -1,0 +1,317 @@
+[
+  {
+    "day": 1,
+    "en": "Three coffee campaign concepts; fact-check and revised winner",
+    "ru": "Три концепции рекламы кофе; проверка фактов и доработка лучшей",
+    "uk": "Три концепції реклами кави; перевірка фактів і доопрацювання найкращої",
+    "pl": "Trzy koncepcje reklamy kawy; weryfikacja faktów i poprawa najlepszej"
+  },
+  {
+    "day": 2,
+    "en": "Two-model comparison with the same brief; table of accuracy, latency and limitations",
+    "ru": "Сравнение двух моделей на одном брифе; таблица точности, времени и ограничений",
+    "uk": "Порівняння двох моделей за одним брифом; таблиця точності, часу й обмежень",
+    "pl": "Porównanie dwóch modeli na tym samym briefie; tabela dokładności, czasu i ograniczeń"
+  },
+  {
+    "day": 3,
+    "en": "Reusable folder structure, README and production checklist",
+    "ru": "Структура папок, README и производственный чек-лист",
+    "uk": "Структура папок, README та виробничий чекліст",
+    "pl": "Struktura folderów, README i lista produkcyjna"
+  },
+  {
+    "day": 4,
+    "en": "Product brief and three prompt revisions with before/after evidence",
+    "ru": "Бриф продукта и три версии промпта с результатами до и после",
+    "uk": "Бриф продукту і три версії промпту з результатами до та після",
+    "pl": "Brief produktu i trzy wersje promptu z wynikami przed i po"
+  },
+  {
+    "day": 5,
+    "en": "Campaign draft, critique against five criteria and revised campaign",
+    "ru": "Черновик кампании, критика по пяти критериям и новая версия",
+    "uk": "Чернетка кампанії, критика за п'ятьма критеріями та нова версія",
+    "pl": "Szkic kampanii, ocena według pięciu kryteriów i poprawiona wersja"
+  },
+  {
+    "day": 6,
+    "en": "Three reusable templates: image, post and video storyboard; test each",
+    "ru": "Три шаблона: изображение, пост и раскадровка; тест каждого",
+    "uk": "Три шаблони: зображення, допис і розкадрування; тест кожного",
+    "pl": "Trzy szablony: obraz, post i storyboard; test każdego"
+  },
+  {
+    "day": 7,
+    "en": "Three product images using controlled changes; prompt and settings log",
+    "ru": "Три изображения товара с контролируемыми изменениями; журнал промптов и параметров",
+    "uk": "Три зображення товару з контрольованими змінами; журнал промптів і параметрів",
+    "pl": "Trzy obrazy produktu z kontrolowanymi zmianami; zapis promptów i ustawień"
+  },
+  {
+    "day": 8,
+    "en": "One product under three lighting setups; annotated comparison",
+    "ru": "Один товар в трёх схемах света; сравнение с пояснениями",
+    "uk": "Один товар у трьох схемах світла; порівняння з поясненнями",
+    "pl": "Jeden produkt w trzech ustawieniach światła; porównanie z opisem"
+  },
+  {
+    "day": 9,
+    "en": "Three matching commercial photos: hero, detail and lifestyle",
+    "ru": "Три согласованных коммерческих кадра: главный, деталь и lifestyle",
+    "uk": "Три узгоджені комерційні кадри: головний, деталь і lifestyle",
+    "pl": "Trzy spójne zdjęcia komercyjne: główne, detal i lifestyle"
+  },
+  {
+    "day": 10,
+    "en": "Storyboard and one short shot; or an animatic if hardware cannot generate video",
+    "ru": "Раскадровка и короткий кадр; либо аниматик при ограничениях устройства",
+    "uk": "Розкадрування і короткий кадр; або аніматик за обмежень пристрою",
+    "pl": "Storyboard i krótkie ujęcie; lub animatik przy ograniczeniach sprzętu"
+  },
+  {
+    "day": 11,
+    "en": "Three-shot sequence with consistent subject and motion direction",
+    "ru": "Три кадра с сохранением внешности объекта и направления движения",
+    "uk": "Три кадри зі сталою зовнішністю об'єкта й напрямком руху",
+    "pl": "Trzy ujęcia ze spójnym obiektem i kierunkiem ruchu"
+  },
+  {
+    "day": 12,
+    "en": "30-second edit with captions, sound-level check and licensed audio",
+    "ru": "30-секундный монтаж с субтитрами, проверкой звука и лицензированной музыкой",
+    "uk": "30-секундний монтаж із субтитрами, перевіркою звуку й ліцензованою музикою",
+    "pl": "30-sekundowy montaż z napisami, kontrolą dźwięku i licencjonowaną muzyką"
+  },
+  {
+    "day": 13,
+    "en": "Original character sheet with front, side and expression views",
+    "ru": "Лист оригинального персонажа: спереди, сбоку, эмоции",
+    "uk": "Аркуш оригінального персонажа: спереду, збоку, емоції",
+    "pl": "Karta oryginalnej postaci: przód, bok i emocje"
+  },
+  {
+    "day": 14,
+    "en": "Six-shot storyboard with timing and continuity notes",
+    "ru": "Раскадровка из шести кадров с таймингом и непрерывностью",
+    "uk": "Розкадрування із шести кадрів з таймінгом і послідовністю",
+    "pl": "Storyboard sześciu ujęć z czasem i ciągłością"
+  },
+  {
+    "day": 15,
+    "en": "Short animated film or clearly labeled animatic; revision notes",
+    "ru": "Короткий мультфильм или явно обозначенный аниматик; журнал правок",
+    "uk": "Короткий мультфільм або позначений аніматик; журнал правок",
+    "pl": "Krótka animacja lub oznaczony animatik; zapis poprawek"
+  },
+  {
+    "day": 16,
+    "en": "Fictional influencer identity, visual style and disclosure policy",
+    "ru": "Вымышленный инфлюенсер: образ, стиль и политика раскрытия AI",
+    "uk": "Вигаданий інфлюенсер: образ, стиль і політика розкриття ШІ",
+    "pl": "Fikcyjny influencer: tożsamość, styl i zasady ujawniania AI"
+  },
+  {
+    "day": 17,
+    "en": "Short consented voice clip, transcript and lip-sync check",
+    "ru": "Короткий голосовой ролик с согласием, транскриптом и проверкой синхронизации",
+    "uk": "Короткий голосовий ролик зі згодою, транскриптом і перевіркою синхронізації",
+    "pl": "Krótki klip głosowy za zgodą, transkrypcja i kontrola synchronizacji"
+  },
+  {
+    "day": 18,
+    "en": "Five-post calendar with captions, assets and intended audience",
+    "ru": "Календарь пяти постов с текстами, материалами и аудиторией",
+    "uk": "Календар п'яти дописів із текстами, матеріалами й аудиторією",
+    "pl": "Kalendarz pięciu postów z tekstami, materiałami i odbiorcami"
+  },
+  {
+    "day": 19,
+    "en": "Three distinct ad concepts, audience rationale and claim checks",
+    "ru": "Три рекламные идеи, обоснование аудитории и проверка утверждений",
+    "uk": "Три рекламні ідеї, обґрунтування аудиторії й перевірка тверджень",
+    "pl": "Trzy koncepcje reklamy, uzasadnienie grupy i kontrola twierdzeń"
+  },
+  {
+    "day": 20,
+    "en": "Three product ad variants with one measurable difference each",
+    "ru": "Три варианта рекламы товара с одним измеримым отличием",
+    "uk": "Три варіанти реклами товару з однією вимірюваною відмінністю",
+    "pl": "Trzy warianty reklamy produktu z jedną mierzalną różnicą"
+  },
+  {
+    "day": 21,
+    "en": "Brand film storyboard and rough cut with shot list",
+    "ru": "Раскадровка бренд-фильма и черновой монтаж со списком кадров",
+    "uk": "Розкадрування бренд-фільму й чернетка монтажу зі списком кадрів",
+    "pl": "Storyboard filmu marki i wstępny montaż z listą ujęć"
+  },
+  {
+    "day": 22,
+    "en": "Local generation workflow map, device requirements and cost constraints",
+    "ru": "Карта локального AI-процесса, требования к устройству и ограничения затрат",
+    "uk": "Карта локального ШІ-процесу, вимоги до пристрою й обмеження витрат",
+    "pl": "Mapa lokalnego procesu AI, wymagania sprzętowe i ograniczenia kosztów"
+  },
+  {
+    "day": 23,
+    "en": "Automation flow with manual approval, error handling and dry run",
+    "ru": "Схема автоматизации с ручным одобрением, обработкой ошибок и пробным запуском",
+    "uk": "Схема автоматизації з ручним схваленням, помилками й пробним запуском",
+    "pl": "Schemat automatyzacji z ręczną akceptacją, obsługą błędów i próbą"
+  },
+  {
+    "day": 24,
+    "en": "Bounded creative agent with task contract and five mock tests",
+    "ru": "Ограниченный AI-агент с описанием задачи и пятью имитационными тестами",
+    "uk": "Обмежений ШІ-агент з описом завдання та п'ятьма імітаційними тестами",
+    "pl": "Ograniczony agent AI z kontraktem zadania i pięcioma testami symulacji"
+  },
+  {
+    "day": 25,
+    "en": "Portfolio with three case studies and evidence of revisions",
+    "ru": "Портфолио из трёх кейсов с подтверждением доработок",
+    "uk": "Портфоліо з трьох кейсів із підтвердженням доопрацювань",
+    "pl": "Portfolio trzech studiów przypadku z dowodami poprawek"
+  },
+  {
+    "day": 26,
+    "en": "Itemized client quote, scope, revision limit and delivery dates",
+    "ru": "Детальная смета клиента, объём работ, лимит правок и сроки",
+    "uk": "Детальний кошторис клієнта, обсяг, ліміт правок і строки",
+    "pl": "Szczegółowa wycena, zakres, limit poprawek i terminy"
+  },
+  {
+    "day": 27,
+    "en": "Fictional client proposal with deliverables and exclusions",
+    "ru": "Предложение вымышленному клиенту с результатами и исключениями",
+    "uk": "Пропозиція вигаданому клієнту з результатами й винятками",
+    "pl": "Oferta dla fikcyjnego klienta z rezultatami i wyłączeniami"
+  },
+  {
+    "day": 28,
+    "en": "One-page agency plan with roles, expenses and quality gates",
+    "ru": "План AI-агентства на одну страницу: роли, расходы и контроль качества",
+    "uk": "План ШІ-агенції на сторінку: ролі, витрати й контроль якості",
+    "pl": "Jednostronicowy plan agencji AI: role, koszty i kontrola jakości"
+  },
+  {
+    "day": 29,
+    "en": "Marketing experiment with hypothesis, metric and stop rule",
+    "ru": "Маркетинговый эксперимент: гипотеза, метрика и правило остановки",
+    "uk": "Маркетинговий експеримент: гіпотеза, метрика й правило зупинки",
+    "pl": "Eksperyment marketingowy: hipoteza, metryka i reguła zakończenia"
+  },
+  {
+    "day": 30,
+    "en": "Complete campaign and case study; include brief, assets and evaluation",
+    "ru": "Полная кампания и кейс: бриф, материалы и оценка",
+    "uk": "Повна кампанія і кейс: бриф, матеріали й оцінка",
+    "pl": "Pełna kampania i studium przypadku: brief, materiały i ocena"
+  },
+  {
+    "day": 31,
+    "en": "Website brief, sitemap and acceptance checklist",
+    "ru": "Бриф сайта, карта страниц и критерии приёмки",
+    "uk": "Бриф сайту, карта сторінок і критерії приймання",
+    "pl": "Brief strony, mapa witryny i lista akceptacji"
+  },
+  {
+    "day": 32,
+    "en": "Responsive landing page tested at three viewport sizes",
+    "ru": "Адаптивный лендинг, проверенный на трёх размерах экрана",
+    "uk": "Адаптивний лендинг, перевірений на трьох розмірах екрана",
+    "pl": "Responsywny landing page przetestowany w trzech rozmiarach"
+  },
+  {
+    "day": 33,
+    "en": "Local authenticated API, data model and five tests",
+    "ru": "Локальный API с авторизацией, модель данных и пять тестов",
+    "uk": "Локальний API з авторизацією, модель даних і п'ять тестів",
+    "pl": "Lokalne API z uwierzytelnianiem, model danych i pięć testów"
+  },
+  {
+    "day": 34,
+    "en": "Demo deployment or local simulation, health check and rollback instructions",
+    "ru": "Демо-развёртывание или локальная имитация, проверка и откат",
+    "uk": "Демо-розгортання або локальна імітація, перевірка та відкат",
+    "pl": "Wdrożenie demo lub lokalna symulacja, kontrola i instrukcja wycofania"
+  },
+  {
+    "day": 35,
+    "en": "Working website demo, accessibility checklist and test report",
+    "ru": "Рабочее демо сайта, чек-лист доступности и отчёт тестов",
+    "uk": "Робоче демо сайту, чекліст доступності та звіт тестів",
+    "pl": "Działające demo strony, lista dostępności i raport testów"
+  },
+  {
+    "day": 36,
+    "en": "Mobile prototype, navigation map and state transitions",
+    "ru": "Мобильный прототип, карта навигации и переходы состояний",
+    "uk": "Мобільний прототип, карта навігації та переходи станів",
+    "pl": "Prototyp mobilny, mapa nawigacji i przejścia stanów"
+  },
+  {
+    "day": 37,
+    "en": "Three connected mobile screens with empty and error states",
+    "ru": "Три связанных мобильных экрана с пустым состоянием и ошибками",
+    "uk": "Три пов'язані мобільні екрани з порожнім станом і помилками",
+    "pl": "Trzy połączone ekrany mobilne ze stanem pustym i błędami"
+  },
+  {
+    "day": 38,
+    "en": "Test sign-in and data screen with unauthorized-access tests",
+    "ru": "Тестовый вход и экран данных с проверкой неавторизованного доступа",
+    "uk": "Тестовий вхід і екран даних із перевіркою неавторизованого доступу",
+    "pl": "Test logowania i ekran danych z kontrolą nieautoryzowanego dostępu"
+  },
+  {
+    "day": 39,
+    "en": "Optional local AI feature with offline or mock fallback",
+    "ru": "Опциональная локальная AI-функция с резервным офлайн-режимом",
+    "uk": "Опційна локальна ШІ-функція з резервним офлайн-режимом",
+    "pl": "Opcjonalna lokalna funkcja AI z trybem offline lub symulacją"
+  },
+  {
+    "day": 40,
+    "en": "App prototype, test evidence and release checklist",
+    "ru": "Прототип приложения, результаты тестов и чек-лист релиза",
+    "uk": "Прототип застосунку, результати тестів і чекліст релізу",
+    "pl": "Prototyp aplikacji, dowody testów i lista wydania"
+  },
+  {
+    "day": 41,
+    "en": "Support agent state diagram, local mock and three conversations",
+    "ru": "Диаграмма состояний агента поддержки, локальная имитация и три диалога",
+    "uk": "Діаграма станів агента підтримки, локальна імітація й три діалоги",
+    "pl": "Diagram stanów agenta wsparcia, lokalna symulacja i trzy rozmowy"
+  },
+  {
+    "day": 42,
+    "en": "Two local tools with input validation and approval before simulated writes",
+    "ru": "Два локальных инструмента с валидацией и одобрением перед имитацией записи",
+    "uk": "Два локальні інструменти з валідацією та схваленням перед імітацією запису",
+    "pl": "Dwa lokalne narzędzia z walidacją i akceptacją przed symulowanym zapisem"
+  },
+  {
+    "day": 43,
+    "en": "Five sample documents, retrieval with citations and isolation tests",
+    "ru": "Пять документов, поиск с источниками и тесты изоляции",
+    "uk": "П'ять документів, пошук із джерелами й тести ізоляції",
+    "pl": "Pięć dokumentów, wyszukiwanie ze źródłami i testy izolacji"
+  },
+  {
+    "day": 44,
+    "en": "Three-role workflow with ten mocked acceptance cases and failure metrics",
+    "ru": "Трёхролевая схема с десятью имитационными тестами и метриками ошибок",
+    "uk": "Трирольова схема з десятьма імітаційними тестами й метриками помилок",
+    "pl": "Proces trzech ról z dziesięcioma testami symulacji i metrykami błędów"
+  },
+  {
+    "day": 45,
+    "en": "Local agent capstone: two tools, retrieval, approval, ten tests and rollback",
+    "ru": "Итоговый локальный агент: два инструмента, поиск, одобрение, десять тестов и откат",
+    "uk": "Підсумковий локальний агент: два інструменти, пошук, схвалення, десять тестів і відкат",
+    "pl": "Projekt końcowy agenta: dwa narzędzia, wyszukiwanie, akceptacja, dziesięć testów i wycofanie"
+  }
+]

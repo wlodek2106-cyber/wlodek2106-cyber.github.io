@@ -162,6 +162,17 @@ class ProgressTests(unittest.TestCase):
         lesson={"title":"Private","theory":"Theory","assignment":"Task","prompts":[]}
         self.assertEqual(validate("lesson",1,"ru",lesson),lesson)
         with self.assertRaises(ValueError): validate("lesson",1,"ru",{**lesson,"answer":"secret"})
+    def test_practice_catalog(self):
+        from practice_lab import brief
+        for day in range(1,46):
+            for lang in ("en","ru","uk","pl"):
+                d=brief(day,lang)
+                self.assertEqual(d["day"],day)
+                self.assertEqual(d["language"],lang)
+                self.assertTrue(d["deliverable"])
+                self.assertEqual(sum(r["max"] for r in d["rubric"]),100)
+                self.assertEqual(len(d["steps"]),4)
+        with self.assertRaises(ValueError): brief(46)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
