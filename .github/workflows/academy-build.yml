@@ -48,13 +48,37 @@ jobs:
           fi
           test -f "$SDK_ROOT/platforms/android-35/android.jar"
           test -d "$SDK_ROOT/build-tools/35.0.0"
-      - run: gradle :app:assembleDebug --stacktrace
+      - name: Compile Android APK with bounded network retry
+        shell: bash
+        run: |
+          set -uo pipefail
+          for attempt in 1 2 3; do
+            echo "Build attempt $attempt of 3"
+            if gradle :app:assembleDebug --no-daemon --console=plain 2>&1 | tee gradle-build.log; then
+              exit 0
+            fi
+            if ! grep -Eiq 'Could not (GET|HEAD)|timed out|Connection (reset|refused)|status code (429|500|502|503|504)|UnknownHostException|Read timed out' gradle-build.log; then
+              echo "::error::Build failed without a recognized transient network error."
+              exit 1
+            fi
+            if [[ "$attempt" == 3 ]]; then exit 1; fi
+            sleep "$((attempt * 15))"
+          done
+      - name: Upload diagnostic log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academy-android-build-diagnostics
+          path: academy/android/gradle-build.log
+          if-no-files-found: ignore
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: academy-android-debug
           path: academy/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
   windows:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
@@ -70,6 +94,7 @@ jobs:
           if-no-files-found: error
 
   apple:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     timeout-minutes: 25
     strategy:
