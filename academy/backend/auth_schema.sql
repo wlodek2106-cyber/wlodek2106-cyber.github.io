@@ -97,3 +97,22 @@ CREATE TABLE IF NOT EXISTS referrals (
  CHECK(student_id<>referrer_id)
 );
 CREATE INDEX IF NOT EXISTS referrals_referrer_idx ON referrals(referrer_id);
+
+CREATE TABLE IF NOT EXISTS influencer_partners (
+ student_id bigint PRIMARY KEY REFERENCES students(id),
+ profile_url text NOT NULL, wallet text NOT NULL,
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ approved_at timestamptz, reviewed_by bigint REFERENCES students(id)
+);
+CREATE TABLE IF NOT EXISTS influencer_payouts (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ invoice_id uuid NOT NULL UNIQUE REFERENCES payment_invoices(id),
+ partner_id bigint NOT NULL REFERENCES influencer_partners(student_id),
+ amount_atomic bigint NOT NULL CHECK(amount_atomic>0),
+ wallet text NOT NULL,
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','paid')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ reviewed_by bigint REFERENCES students(id), reviewed_at timestamptz,
+ payout_signature text UNIQUE, paid_at timestamptz, paid_by bigint REFERENCES students(id)
+);

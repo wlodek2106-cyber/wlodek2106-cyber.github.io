@@ -63,6 +63,21 @@ def dispatch(method,path,body,token):
         require_lesson(token,41)
         from playground import simulate
         return 200,simulate(body["case"],body["tools"],body["approval"],body["max_steps"])
+    if path=="/partners" and method=="GET":
+        from partners import dashboard
+        return 200,dashboard(token)
+    if path=="/partners/apply" and method=="POST":
+        from partners import apply
+        return 201,apply(token,body["profile"],body["wallet"],body.get("consent"))
+    if path=="/partners/request" and method=="POST":
+        from partners import request
+        return 201,request(token,body["invoice"])
+    if path=="/admin/partners" and method=="GET":
+        from partners import queue
+        return 200,queue(token)
+    if path=="/admin/partners/decide" and method=="POST":
+        from partners import decide
+        return 200,decide(token,body["kind"],body["id"],body["action"],body.get("signature"))
     if path=="/referrals" and method=="GET":
         from referrals import overview
         return 200,overview(token)

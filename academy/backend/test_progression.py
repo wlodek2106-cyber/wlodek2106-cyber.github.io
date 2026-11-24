@@ -90,6 +90,14 @@ class ProgressTests(unittest.TestCase):
         for invalid in ("NaN","Infinity",-1,True):
             with self.assertRaises(ValueError): quote(invalid,20,0,0)
         with self.assertRaises(ValueError): quote(1,1,0,101)
+    def test_partner_commission(self):
+        from partners import commission,base58_valid
+        self.assertEqual(commission(199000000),59700000)
+        self.assertEqual(commission(189050000),56715000)
+        self.assertEqual(commission(999000000),299700000)
+        self.assertTrue(base58_valid("1"*32,32))
+        self.assertFalse(base58_valid("0"*32,32))
+        with self.assertRaises(ValueError): commission(-1)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
