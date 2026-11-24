@@ -250,6 +250,11 @@ CREATE TABLE IF NOT EXISTS creative_workflows (
  notes text NOT NULL DEFAULT '' CHECK(length(notes)<=1000),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE creative_workflows ADD COLUMN IF NOT EXISTS due date;
+ALTER TABLE creative_workflows ADD COLUMN IF NOT EXISTS tasks jsonb NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE creative_workflows ADD COLUMN IF NOT EXISTS materials text NOT NULL DEFAULT '';
+ALTER TABLE creative_workflows DROP CONSTRAINT IF EXISTS creative_workflows_kind_check;
+ALTER TABLE creative_workflows ADD CONSTRAINT creative_workflows_kind_check CHECK(kind IN ('image','video','advertising','animation','audio','product'));
 CREATE INDEX IF NOT EXISTS creative_workflows_student ON creative_workflows(student_id,id);
 
 CREATE TABLE IF NOT EXISTS storyboard_projects (

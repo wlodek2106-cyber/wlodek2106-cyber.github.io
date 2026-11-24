@@ -131,6 +131,15 @@ class LaunchIntegration(unittest.TestCase):
                 from creative_workflow import save as workflow_save,listing as workflow_list,remove as workflow_remove
                 flow=workflow_save(cur,buyer_id,{"title":"Test flow","kind":"video","brief":"Local clip","completed":["brief"]})
                 self.assertEqual(workflow_list(cur,buyer_id)["items"][0]["completed"],["brief"])
+                workflow_save(cur,buyer_id,{"id":flow["id"],"title":"Test flow","kind":"video","brief":"Local clip","completed":["brief"],"due":"2027-01-15","tasks":[{"title":"Edit","done":True}],"materials":"local-file.txt"})
+                project=workflow_list(cur,buyer_id)["items"][0]
+                self.assertEqual(project["due"],"2027-01-15")
+                self.assertEqual(project["tasks"],[{"title":"Edit","done":True}])
+                self.assertEqual(project["materials"],"local-file.txt")
+                with self.assertRaises(ValueError): workflow_save(cur,buyer_id,{"title":"Invalid","kind":"product","brief":"Test","tasks":[{"title":"Bad","done":"yes"}]})
+                with self.assertRaises(PermissionError): workflow_save(cur,partner_id,{"id":flow["id"],"title":"Other","kind":"video","brief":"Test"})
+                product=workflow_save(cur,buyer_id,{"title":"Product","kind":"product","brief":"Prototype"})
+                self.assertTrue(workflow_remove(cur,buyer_id,product["id"])["deleted"])
                 self.assertEqual(workflow_list(cur,partner_id)["items"],[])
                 with self.assertRaises(PermissionError): workflow_remove(cur,partner_id,flow["id"])
                 with self.assertRaises(ValueError): workflow_save(cur,buyer_id,{"title":"Invalid","kind":"video","brief":"Test","completed":["unknown"]})
@@ -161,6 +170,7 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
                 self.assertEqual(exported["creative_workflows"][0]["title"],"Test flow")
+                self.assertEqual(exported["creative_workflows"][0]["tasks"],[{"title":"Edit","done":True}])
                 self.assertEqual(exported["storyboard_projects"][0]["title"],"Test film")
                 self.assertEqual(exported["marketing_posts"][0]["title"],"Test post")
                 self.assertTrue(marketing_remove(cur,buyer_id,{"kind":"post","id":mid})["deleted"])

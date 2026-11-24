@@ -1,5 +1,7 @@
 """Private production checklists, no model execution or asset uploads."""
 import json
+from psycopg.types.json import Jsonb
+from productivity import parse_day
 from pathlib import Path
 from knowledge import student
 from database import transaction
@@ -14,24 +16,33 @@ def values(b):
     ids={x["id"] for x in TEMPLATES[kind]}
     if not isinstance(completed,list) or any(not isinstance(x,str) or x not in ids for x in completed) or len(completed)!=len(set(completed)): raise ValueError("Invalid stages")
     notes=clean(b.get("notes",""),1000)
-    return title,kind,brief,completed,notes
+    due=b.get("due","")
+    due=parse_day(due) if due else None
+    tasks=b.get("tasks",[])
+    if not isinstance(tasks,list) or len(tasks)>20: raise ValueError("Invalid tasks")
+    checked=[]
+    for task in tasks:
+        if not isinstance(task,dict) or type(task.get("done")) is not bool: raise ValueError("Invalid task")
+        checked.append({"title":clean(task.get("title"),120,True),"done":task["done"]})
+    materials=clean(b.get("materials",""),1000)
+    return title,kind,brief,completed,notes,due,Jsonb(checked),materials
 def save(cur,sid,b):
     v=values(b)
     if b.get("id") is None:
         cur.execute("SELECT id FROM students WHERE id=%s FOR UPDATE",(sid,))
         cur.execute("SELECT count(*) FROM creative_workflows WHERE student_id=%s",(sid,))
         if cur.fetchone()[0]>=100: raise ValueError("Workflow limit reached")
-        cur.execute("INSERT INTO creative_workflows(student_id,title,kind,brief,completed,notes) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id",(sid,*v))
+        cur.execute("INSERT INTO creative_workflows(student_id,title,kind,brief,completed,notes,due,tasks,materials) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",(sid,*v))
     else:
-        cur.execute("UPDATE creative_workflows SET title=%s,kind=%s,brief=%s,completed=%s,notes=%s,updated_at=now() WHERE student_id=%s AND id=%s RETURNING id",(*v,sid,ident(b["id"])))
+        cur.execute("UPDATE creative_workflows SET title=%s,kind=%s,brief=%s,completed=%s,notes=%s,due=%s,tasks=%s,materials=%s,updated_at=now() WHERE student_id=%s AND id=%s RETURNING id",(*v,sid,ident(b["id"])))
     row=cur.fetchone()
     if not row: raise PermissionError("Workflow unavailable")
     return {"id":row[0]}
 def listing(cur,sid,after=0):
     if type(after) is not int or not 0<=after<=9223372036854775807: raise ValueError("Invalid cursor")
-    cur.execute("SELECT id,title,kind,brief,completed,notes,updated_at FROM creative_workflows WHERE student_id=%s AND id>%s ORDER BY id LIMIT 21",(sid,after))
+    cur.execute("SELECT id,title,kind,brief,completed,notes,updated_at,due,tasks,materials FROM creative_workflows WHERE student_id=%s AND id>%s ORDER BY id LIMIT 21",(sid,after))
     rows=cur.fetchall()
-    items=[{"id":i,"title":t,"kind":k,"brief":b,"completed":c,"notes":n,"updated_at":u.isoformat()} for i,t,k,b,c,n,u in rows[:20]]
+    items=[{"id":i,"title":t,"kind":k,"brief":b,"completed":c,"notes":n,"updated_at":u.isoformat(),"due":d.isoformat() if d else "","tasks":tasks,"materials":m} for i,t,k,b,c,n,u,d,tasks,m in rows[:20]]
     return {"items":items,"next_after":items[-1]["id"] if len(rows)>20 else None,"templates":TEMPLATES}
 def remove(cur,sid,id):
     cur.execute("DELETE FROM creative_workflows WHERE student_id=%s AND id=%s RETURNING id",(sid,ident(id)))

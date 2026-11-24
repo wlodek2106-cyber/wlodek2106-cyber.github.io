@@ -278,5 +278,61 @@
         "pl": "Eksportuj audio i informacje o licencjach"
       }
     }
+  ],
+  "product": [
+    {
+      "id": "goal",
+      "labels": {
+        "en": "Define product goal, audience and success criteria",
+        "ru": "Определить цель, аудиторию и критерии успеха",
+        "uk": "Визначити мету, аудиторію та критерії успіху",
+        "pl": "Ustal cel, odbiorców i kryteria sukcesu"
+      }
+    },
+    {
+      "id": "scope",
+      "labels": {
+        "en": "Plan scope and requirements",
+        "ru": "Определить объём и требования",
+        "uk": "Визначити обсяг і вимоги",
+        "pl": "Zaplanuj zakres i wymagania"
+      }
+    },
+    {
+      "id": "prototype",
+      "labels": {
+        "en": "Create a prototype",
+        "ru": "Создать прототип",
+        "uk": "Створити прототип",
+        "pl": "Utwórz prototyp"
+      }
+    },
+    {
+      "id": "build",
+      "labels": {
+        "en": "Build the product and document choices",
+        "ru": "Разработать продукт и описать решения",
+        "uk": "Розробити продукт і описати рішення",
+        "pl": "Zbuduj produkt i opisz decyzje"
+      }
+    },
+    {
+      "id": "test",
+      "labels": {
+        "en": "Test quality, security and accessibility",
+        "ru": "Проверить качество, безопасность и доступность",
+        "uk": "Перевірити якість, безпеку й доступність",
+        "pl": "Sprawdź jakość, bezpieczeństwo i dostępność"
+      }
+    },
+    {
+      "id": "deliver",
+      "labels": {
+        "en": "Prepare release and evidence",
+        "ru": "Подготовить релиз и доказательства результата",
+        "uk": "Підготувати реліз і докази результату",
+        "pl": "Przygotuj wydanie i dowody wyników"
+      }
+    }
   ]
 }
