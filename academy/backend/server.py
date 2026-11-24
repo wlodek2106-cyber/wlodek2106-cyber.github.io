@@ -17,6 +17,11 @@ def allow_auth(key):
 from pathlib import Path
 from urllib.parse import urlsplit
 class Handler(BaseHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("X-Content-Type-Options","nosniff")
+        self.send_header("Referrer-Policy","no-referrer")
+        self.send_header("X-Frame-Options","DENY")
+        super().end_headers()
     def respond(self,status,data):
         body=json.dumps(data).encode()
         self.send_response(status)
@@ -99,6 +104,10 @@ if __name__=="__main__":
         checkout_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(CheckoutIntegration))
         if not checkout_result.wasSuccessful() or checkout_result.testsRun!=1 or checkout_result.skipped:
             raise RuntimeError("Checkout integration check failed")
+        from test_launch_integration import LaunchIntegration
+        launch_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(LaunchIntegration))
+        if not launch_result.wasSuccessful() or launch_result.testsRun<1 or launch_result.skipped:
+            raise RuntimeError("Launch integration check failed")
     from certificate_mail import configured,run
     if configured():
         threading.Thread(target=run,daemon=True,name="certificate-email").start()

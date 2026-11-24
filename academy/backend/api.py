@@ -35,6 +35,11 @@ def dispatch(method,path,body,token):
         return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"))}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"])}
+    if path=="/account/me" and method=="GET":
+        from accounts import authenticate
+        student=authenticate(token)
+        if student is None: raise PermissionError("Sign in required")
+        return 200,{"id":student}
     if path=="/logout" and method=="POST":
         if not token: raise PermissionError("Authentication required")
         logout(token)

@@ -1,17 +1,9 @@
-import os
-from accounts import authenticate
 from database import transaction
 
 def statistics(token):
-    student=authenticate(token)
-    if student is None:
-        raise PermissionError("Authentication required")
-    allowed={s.strip().lower() for s in os.getenv("ACADEMY_ADMIN_EMAILS","").split(",") if s.strip()}
+    from partners import owner
+    owner(token)
     with transaction() as cur:
-        cur.execute("SELECT email FROM students WHERE id=%s",(student,))
-        row=cur.fetchone()
-        if not row or row[0].lower() not in allowed:
-            raise PermissionError("Administrator required")
         result={}
         for name,query in (
             ("students","SELECT count(*) FROM students"),
@@ -33,4 +25,4 @@ def statistics(token):
         avg=cur.fetchone()[0]
         result["average_rating"]=round(float(avg),2) if avg is not None else None
         return result
-# Admin allowlist must remain empty until owner identity and email verification are configured.
+# All administration requires explicitly provisioned owner IDs.
