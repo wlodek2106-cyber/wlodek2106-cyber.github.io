@@ -55,3 +55,15 @@ ALTER TABLE students ADD COLUMN IF NOT EXISTS first_name text;
 ALTER TABLE students ADD COLUMN IF NOT EXISTS last_name text;
 ALTER TABLE certificates ADD COLUMN IF NOT EXISTS recipient_name text;
 CREATE TABLE IF NOT EXISTS certificate_email_outbox (enrollment_id bigint PRIMARY KEY REFERENCES certificates(enrollment_id), created_at timestamptz NOT NULL DEFAULT now(), sent_at timestamptz, attempts integer NOT NULL DEFAULT 0);
+
+CREATE TABLE IF NOT EXISTS tutor_history (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ lesson integer NOT NULL CHECK(lesson BETWEEN 1 AND 30),
+ mode text NOT NULL CHECK(mode IN ('review','practice')),
+ language text NOT NULL CHECK(language IN ('en','ru','uk','pl')),
+ question text NOT NULL CHECK(length(question)<=2000),
+ answer text NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS tutor_history_student_idx ON tutor_history(student_id,id DESC);
