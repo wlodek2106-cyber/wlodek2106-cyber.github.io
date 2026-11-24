@@ -59,7 +59,7 @@ def dispatch(method,path,body,token):
         return 201,create_invoice(token,body["plan"])
     if path=="/tutor" and method=="POST":
         from tutor import guidance
-        return 200,guidance(token,body["day"],body["mode"])
+        return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
     if path=="/admin/statistics" and method=="GET":
         if os.getenv("ACADEMY_ADMIN_ENABLED")!="true":
             raise PermissionError("Administration disabled")
