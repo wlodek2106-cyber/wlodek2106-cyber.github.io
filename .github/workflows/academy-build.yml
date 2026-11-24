@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/academy-build.yml'
+      - 'academy/android/**'
 concurrency:
   group: academy-native-${{ github.ref }}
   cancel-in-progress: true
