@@ -375,3 +375,15 @@ CREATE TABLE IF NOT EXISTS academy_job_milestones (
  done boolean NOT NULL DEFAULT false
 );
 CREATE INDEX IF NOT EXISTS academy_job_milestones_job ON academy_job_milestones(job_id,id);
+
+CREATE TABLE IF NOT EXISTS academy_notifications (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ job_id bigint NOT NULL REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ kind text NOT NULL CHECK(kind IN ('job_open','job_rejected','job_cancelled','application','selected','message','delivered','revision','completed','review_approved')),
+ target text NOT NULL CHECK(target IN ('mine','applications','room')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ read_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS academy_notifications_student ON academy_notifications(student_id,id DESC);
+CREATE INDEX IF NOT EXISTS academy_notifications_unread ON academy_notifications(student_id,created_at) WHERE read_at IS NULL;

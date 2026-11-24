@@ -29,6 +29,7 @@ DATASETS={
 "job_reviews_received":"SELECT r.job_id,r.rating,r.comment,r.created_at FROM academy_job_reviews r JOIN academy_jobs j ON j.id=r.job_id JOIN academy_job_applications a ON a.job_id=j.id AND a.id=j.selected_application WHERE a.student_id=%s AND r.status='approved' ORDER BY r.job_id",
 "job_messages":"SELECT m.id,m.job_id,m.kind,m.body,m.created_at FROM academy_job_messages m JOIN academy_jobs j ON j.id=m.job_id LEFT JOIN academy_job_applications a ON a.job_id=j.id AND a.id=j.selected_application WHERE CASE WHEN m.role='client' THEN j.client_id ELSE a.student_id END=%s ORDER BY m.id",
 "job_milestones_created":"SELECT m.id,m.job_id,m.title,m.done FROM academy_job_milestones m JOIN academy_jobs j ON j.id=m.job_id WHERE j.client_id=%s ORDER BY m.id",
+"notifications":"SELECT id,job_id,kind,target,created_at,read_at FROM academy_notifications WHERE student_id=%s ORDER BY id DESC",
 "career_profile":"SELECT profile,updated_at FROM career_profiles WHERE student_id=%s",
 "clients":"SELECT id,name,contact,notes FROM business_clients WHERE student_id=%s ORDER BY id",
 "orders":"SELECT id,client_id,title,status,due,agreed_cents,received_cents,expense_cents,notes FROM business_orders WHERE student_id=%s ORDER BY id",

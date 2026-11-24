@@ -127,6 +127,18 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(rep_stats(cur,buyer_id)["rating"],4.0)
                 self.assertEqual(review_own(cur,buyer_id,{})["items"][0]["comment"],"Synthetic feedback")
                 self.assertEqual(review_own(cur,partner_id,{})["items"],[])
+                from notifications import listing as notices,mark as notice_read,count as notice_count
+                client_notices=notices(cur,partner_id,{})["items"]
+                worker_notices=notices(cur,buyer_id,{})["items"]
+                self.assertTrue({"job_open","application","message","delivered"}<=set(n["kind"] for n in client_notices))
+                self.assertTrue({"selected","revision","completed","review_approved"}<=set(n["kind"] for n in worker_notices))
+                self.assertFalse(any("body" in n or "contact" in n for n in client_notices+worker_notices))
+                self.assertEqual(notice_count(cur,owner_id)["unread"],0)
+                before=notice_count(cur,buyer_id)["unread"]
+                notice_read(cur,partner_id,{"ids":[worker_notices[0]["id"]]})
+                self.assertEqual(notice_count(cur,buyer_id)["unread"],before)
+                notice_read(cur,buyer_id,{"ids":[worker_notices[0]["id"]]})
+                self.assertEqual(notice_count(cur,buyer_id)["unread"],before-1)
                 review_decide(cur,owner_id,{"id":jid,"action":"hidden"})
                 self.assertIsNone(rep_stats(cur,buyer_id)["rating"])
                 from acquisition import report as acquisition_report

@@ -30,7 +30,10 @@ def append(cur,jid,role,kind,body):
 def message(cur,sid,b):
     jid=ident(b["id"]);role,status,_=access(cur,sid,jid)
     if status=="completed": raise PermissionError("Completed room is read-only")
-    return {"id":append(cur,jid,role,"message",clean(b["body"],1600,True))}
+    result=append(cur,jid,role,"message",clean(b["body"],1600,True))
+    from notifications import emit,counterpart
+    emit(cur,counterpart(cur,jid,role),jid,"message","room")
+    return {"id":result}
 
 def milestone(cur,sid,b):
     jid=ident(b["id"]);role,status,_=access(cur,sid,jid)
@@ -56,4 +59,6 @@ def handoff(cur,sid,b):
     body=clean(b["body"],1600,True)
     append(cur,jid,role,action,body)
     cur.execute("UPDATE academy_jobs SET status=%s,updated_at=now() WHERE id=%s",(target,jid))
+    from notifications import emit,counterpart
+    emit(cur,counterpart(cur,jid,role),jid,"delivered" if action=="deliver" else "revision","room")
     return {"status":target}

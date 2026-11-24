@@ -51,4 +51,8 @@ def decide(cur,sid,b):
     cur.execute("""UPDATE academy_job_reviews SET status=%s,reviewed_by=%s,reviewed_at=now()
         WHERE job_id=%s AND ((status='pending' AND %s IN ('approved','rejected')) OR (status='approved' AND %s='hidden')) RETURNING job_id""",(action,sid,ident(b["id"]),action,action))
     if not cur.fetchone(): raise ValueError("Review unavailable")
+    if action=="approved":
+        from notifications import emit,counterpart
+        jid=ident(b["id"])
+        emit(cur,counterpart(cur,jid,"client"),jid,"review_approved","applications")
     return {"status":action}

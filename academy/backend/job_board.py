@@ -49,9 +49,11 @@ def job_lock(cur,jid):
 
 def moderate(cur,sid,b):
     jid=ident(b["id"]); action=b["action"]
-    _,status,_=job_lock(cur,jid)
+    client,status,_=job_lock(cur,jid)
     if not ((status=="pending" and action in ("open","rejected")) or (status=="open" and action=="cancelled")): raise ValueError("Invalid moderation transition")
     cur.execute("UPDATE academy_jobs SET status=%s,reviewed_by=%s,updated_at=now() WHERE id=%s",(action,sid,jid))
+    from notifications import emit
+    emit(cur,client,jid,{"open":"job_open","rejected":"job_rejected","cancelled":"job_cancelled"}[action],"mine")
     return {"status":action}
 
 def apply(cur,sid,b):
@@ -71,6 +73,8 @@ def apply(cur,sid,b):
     cur.execute("INSERT INTO academy_job_applications(job_id,student_id,alias,proposal,quote_cents,contact,share_reputation) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT(job_id,student_id) DO NOTHING RETURNING id",(jid,sid,*vals))
     row=cur.fetchone()
     if not row: raise ValueError("Already applied")
+    from notifications import emit
+    emit(cur,client,jid,"application","mine")
     return {"id":row[0],"status":"submitted"}
 
 def applicants(cur,sid,b):
@@ -98,12 +102,14 @@ def applications(cur,sid,b):
 def transition(cur,sid,b):
     jid=ident(b["id"]);action=b["action"]
     client,status,selected=job_lock(cur,jid)
+    from notifications import emit,counterpart
     if action=="select":
         if client!=sid or status!="open": raise PermissionError()
         aid=ident(b["application"])
         cur.execute("SELECT a.id FROM academy_job_applications a JOIN enrollments e ON e.student_id=a.student_id AND e.paid_at IS NOT NULL WHERE a.id=%s AND a.job_id=%s",(aid,jid))
         if not cur.fetchone(): raise ValueError("Application unavailable")
         cur.execute("UPDATE academy_jobs SET status='assigned',selected_application=%s,updated_at=now() WHERE id=%s",(aid,jid))
+        emit(cur,counterpart(cur,jid,"client"),jid,"selected","room")
         return {"status":"assigned"}
     if action=="deliver":
         if status!="assigned" or not selected: raise PermissionError()
@@ -114,6 +120,8 @@ def transition(cur,sid,b):
     elif action=="cancel" and client==sid and status in ("pending","open"): next_status="cancelled"
     else: raise PermissionError("Transition unavailable")
     cur.execute("UPDATE academy_jobs SET status=%s,updated_at=now() WHERE id=%s",(next_status,jid))
+    if action=="deliver": emit(cur,client,jid,"delivered","room")
+    elif action=="complete": emit(cur,counterpart(cur,jid,"client"),jid,"completed","room")
     return {"status":next_status}
 
 def recommend(cur,sid):

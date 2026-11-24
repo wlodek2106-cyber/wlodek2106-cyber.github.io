@@ -13,6 +13,9 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
+    if path in ("/notifications/count","/notifications/list","/notifications/read") and method=="POST":
+        from notifications import dispatch as notification_dispatch
+        return 200,notification_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/admin/acquisition" and method=="GET":
         from acquisition import admin_report
         return 200,admin_report(token)
