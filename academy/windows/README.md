@@ -1,0 +1,2 @@
+# Windows desktop prototype
+Windows 10/11, .NET 8 SDK and Microsoft Edge WebView2 Runtime required. Run dotnet build, then dotnet run. The application loads the existing academy dashboard over HTTPS. External navigation and popups are blocked, so external wallet links may require opening the academy in a regular browser. No native Windows widget or installer is included. Build and runtime have not been verified.
