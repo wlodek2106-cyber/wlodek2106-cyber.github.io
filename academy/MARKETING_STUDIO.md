@@ -1,2 +1,5 @@
 # Marketing Studio
 Private 31-day calendar, up to 30 campaigns and 300 posts per account. Instagram/TikTok/YouTube/X/other. Campaign goal/audience, planned date, manual status, captions, hashtags and asset notes. Caption outline and deterministic topic-word hashtags (not trend, volume or ranking data). Copy post or local AI planning brief; export the selected calendar period as JSON. Four UI languages. No publishing, social account connection, analytics ingestion, ad spend or billed API. Published status is self-reported. Privacy export includes records.
+
+## Offline exports
+CSV (UTF-8 with BOM, spreadsheet-formula hardening) and ICS (all-day events, stable event UIDs, escaped and folded Unicode lines) export the selected period locally. Drafts and notes may be private. Import manually; no account connection, sync, publishing or scheduling service. Re-import behavior depends on the calendar client.
