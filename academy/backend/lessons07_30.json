@@ -2,8 +2,8 @@
   {
     "day": 7,
     "title": "Image Generation",
-    "theory": "Describe subject, setting, medium and composition; iterate using reference images you have rights to use.",
-    "assignment": "Generate three versions of a fictional product image.",
+    "theory": "Describe subject, setting, medium and composition; iterate using reference images you have rights to use. Workflow: 1. Define product geometry and materials from a reference. 2. Generate three compositions with identical product description and different framing. 3. Compare artifacts, proportions and readability; revise the weakest image.",
+    "assignment": "Generate three versions of a fictional product image. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Image Generation. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Generate three versions of a fictional product image.",
@@ -22,8 +22,8 @@
   {
     "day": 8,
     "title": "Composition and Lighting",
-    "theory": "Use focal points, negative space, camera angle and soft or hard lighting deliberately.",
-    "assignment": "Compare three lighting setups for one product.",
+    "theory": "Use focal points, negative space, camera angle and soft or hard lighting deliberately. Workflow: 1. Set a neutral baseline with a single soft key light. 2. Change only light direction and softness in each experiment. 3. Compare shadow edges, reflections and subject separation.",
+    "assignment": "Compare three lighting setups for one product. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Composition and Lighting. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Compare three lighting setups for one product.",
@@ -42,8 +42,8 @@
   {
     "day": 9,
     "title": "Commercial Photography",
-    "theory": "Maintain product fidelity, accurate colors and readable packaging; avoid misleading claims.",
-    "assignment": "Build a three-image product campaign.",
+    "theory": "Maintain product fidelity, accurate colors and readable packaging; avoid misleading claims. Workflow: 1. Write a shot list covering hero, detail and scale. 2. Produce consistent images with accurate packaging and colors. 3. Inspect every label and compare against the source product.",
+    "assignment": "Build a three-image product campaign. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Commercial Photography. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Build a three-image product campaign.",
@@ -62,8 +62,8 @@
   {
     "day": 10,
     "title": "AI Video Tools",
-    "theory": "Compare text-to-video and image-to-video workflows, duration, motion consistency and licensing.",
-    "assignment": "Generate a short shot from a storyboard.",
+    "theory": "Compare text-to-video and image-to-video workflows, duration, motion consistency and licensing. Workflow: 1. Choose a single action and a start frame. 2. Generate a short clip with explicit duration and motion. 3. Review frame continuity and regenerate only the problematic shot.",
+    "assignment": "Generate a short shot from a storyboard. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for AI Video Tools. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Generate a short shot from a storyboard.",
@@ -82,8 +82,8 @@
   {
     "day": 11,
     "title": "Camera and Motion",
-    "theory": "Specify framing, camera movement, subject movement and continuity separately.",
-    "assignment": "Create a three-shot sequence with consistent subject.",
+    "theory": "Specify framing, camera movement, subject movement and continuity separately. Workflow: 1. Define subject movement separately from camera movement. 2. Test static, dolly and tracking shots with identical subjects. 3. Check horizon stability, motion direction and unwanted distortion.",
+    "assignment": "Create a three-shot sequence with consistent subject. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Camera and Motion. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Create a three-shot sequence with consistent subject.",
@@ -102,8 +102,8 @@
   {
     "day": 12,
     "title": "Editing and Sound",
-    "theory": "Assemble shots, trim pacing, normalize audio and use licensed music.",
-    "assignment": "Edit a 30-second commercial.",
+    "theory": "Assemble shots, trim pacing, normalize audio and use licensed music. Workflow: 1. Arrange shots into a rough cut before adding effects. 2. Add original or licensed sound and timed captions. 3. Export and review on a phone with sound on and off.",
+    "assignment": "Edit a 30-second commercial. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Editing and Sound. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Edit a 30-second commercial.",
@@ -122,8 +122,8 @@
   {
     "day": 13,
     "title": "Character Design",
-    "theory": "Build a reference sheet with silhouette, palette, proportions and expressions.",
-    "assignment": "Create a consistent original character sheet.",
+    "theory": "Build a reference sheet with silhouette, palette, proportions and expressions. Workflow: 1. Define silhouette, proportions and wardrobe. 2. Generate a turnaround and expression reference sheet. 3. Reuse the reference across three poses and compare identity.",
+    "assignment": "Create a consistent original character sheet. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Character Design. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Create a consistent original character sheet.",
@@ -142,8 +142,8 @@
   {
     "day": 14,
     "title": "Storyboarding",
-    "theory": "Map narrative beats into shots with action, framing and duration.",
-    "assignment": "Storyboard a six-shot animated story.",
+    "theory": "Map narrative beats into shots with action, framing and duration. Workflow: 1. Write the story beats and allocate screen time. 2. Sketch six panels with framing and action. 3. Check screen direction, continuity and narrative clarity.",
+    "assignment": "Storyboard a six-shot animated story. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Storyboarding. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Storyboard a six-shot animated story.",
@@ -162,8 +162,8 @@
   {
     "day": 15,
     "title": "Animated Short Film",
-    "theory": "Generate shots separately, preserve continuity and edit with sound.",
-    "assignment": "Produce a short animated film.",
+    "theory": "Generate shots separately, preserve continuity and edit with sound. Workflow: 1. Lock character references and scene descriptions. 2. Generate short shots separately and assemble a rough cut. 3. Review pacing, continuity, sound and credits.",
+    "assignment": "Produce a short animated film. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Animated Short Film. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Produce a short animated film.",
@@ -182,8 +182,8 @@
   {
     "day": 16,
     "title": "Virtual Influencer Design",
-    "theory": "Define an original fictional identity, visual guide and disclosure policy.",
-    "assignment": "Create a fictional influencer profile.",
+    "theory": "Define an original fictional identity, visual guide and disclosure policy. Workflow: 1. Define a fictional persona and audience. 2. Create a visual identity guide and three sample posts. 3. Add clear AI disclosure and check for unintended resemblance.",
+    "assignment": "Create a fictional influencer profile. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Virtual Influencer Design. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Create a fictional influencer profile.",
@@ -202,8 +202,8 @@
   {
     "day": 17,
     "title": "Voice and Lip Sync",
-    "theory": "Use authorized voices, align speech and mouth movement, review pronunciation.",
-    "assignment": "Produce a short spoken clip with consented audio.",
+    "theory": "Use authorized voices, align speech and mouth movement, review pronunciation. Workflow: 1. Write and time an original voiceover. 2. Use a voice you own or have permission to use. 3. Compare audio timing against mouth movement and revise.",
+    "assignment": "Produce a short spoken clip with consented audio. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Voice and Lip Sync. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Produce a short spoken clip with consented audio.",
@@ -222,8 +222,8 @@
   {
     "day": 18,
     "title": "Social Content",
-    "theory": "Define content pillars, audience and publishing cadence; disclose synthetic media where appropriate.",
-    "assignment": "Plan five posts for a fictional creator.",
+    "theory": "Define content pillars, audience and publishing cadence; disclose synthetic media where appropriate. Workflow: 1. Choose three content pillars and audience needs. 2. Produce a seven-post calendar with distinct hooks. 3. Define measurable engagement criteria without inventing results.",
+    "assignment": "Plan five posts for a fictional creator. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Social Content. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Plan five posts for a fictional creator.",
@@ -242,8 +242,8 @@
   {
     "day": 19,
     "title": "Advertising Concepts",
-    "theory": "Translate a client brief into audience insight, message, concept and call to action.",
-    "assignment": "Pitch three distinct concepts.",
+    "theory": "Translate a client brief into audience insight, message, concept and call to action. Workflow: 1. Identify an audience problem and substantiated benefit. 2. Develop three different creative concepts. 3. Review claims, audience fit and calls to action.",
+    "assignment": "Pitch three distinct concepts. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Advertising Concepts. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Pitch three distinct concepts.",
@@ -262,8 +262,8 @@
   {
     "day": 20,
     "title": "Product Advertising",
-    "theory": "Preserve product details and substantiate claims; test creative variations.",
-    "assignment": "Create three product ad variants.",
+    "theory": "Preserve product details and substantiate claims; test creative variations. Workflow: 1. Create a hook, demonstration and closing CTA. 2. Produce three variants with one controlled difference. 3. Check product accuracy and define a test metric.",
+    "assignment": "Create three product ad variants. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Product Advertising. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Create three product ad variants.",
@@ -282,8 +282,8 @@
   {
     "day": 21,
     "title": "Brand Film",
-    "theory": "Develop a narrative arc, visual identity, shot list and sound direction.",
-    "assignment": "Produce a brand film storyboard and rough cut.",
+    "theory": "Develop a narrative arc, visual identity, shot list and sound direction. Workflow: 1. Define the brand message and emotional progression. 2. Create a shot list with a recurring visual motif. 3. Assemble a rough cut and review brand consistency.",
+    "assignment": "Produce a brand film storyboard and rough cut. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Brand Film. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Produce a brand film storyboard and rough cut.",
@@ -302,8 +302,8 @@
   {
     "day": 22,
     "title": "Local AI Studio",
-    "theory": "Check hardware requirements, model licenses and installation sources; use cloud alternatives when needed.",
-    "assignment": "Map a local or cloud generation workflow.",
+    "theory": "Check hardware requirements, model licenses and installation sources; use cloud alternatives when needed. Workflow: 1. Record hardware limits and model requirements. 2. Build a reproducible workflow with saved parameters. 3. Test a second run and document failures and fixes.",
+    "assignment": "Map a local or cloud generation workflow. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Local AI Studio. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Map a local or cloud generation workflow.",
@@ -322,8 +322,8 @@
   {
     "day": 23,
     "title": "Content Automation",
-    "theory": "Separate generation, review, approval and publication; log failures and prevent duplicate posts.",
-    "assignment": "Design a workflow with human approval.",
+    "theory": "Separate generation, review, approval and publication; log failures and prevent duplicate posts. Workflow: 1. Map inputs, generation, review and publishing stages. 2. Add approval gates and duplicate detection. 3. Simulate an API failure and document recovery.",
+    "assignment": "Design a workflow with human approval. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Content Automation. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Design a workflow with human approval.",
@@ -342,8 +342,8 @@
   {
     "day": 24,
     "title": "AI Agents",
-    "theory": "Define agent scope, tools, permissions and evaluation; require approval for consequential actions.",
-    "assignment": "Design a bounded creative assistant.",
+    "theory": "Define agent scope, tools, permissions and evaluation; require approval for consequential actions. Workflow: 1. Define the agent's task, tools and permissions. 2. Specify structured inputs, outputs and validation. 3. Test invalid inputs and require approval for external actions.",
+    "assignment": "Design a bounded creative assistant. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for AI Agents. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Design a bounded creative assistant.",
@@ -362,8 +362,8 @@
   {
     "day": 25,
     "title": "Portfolio",
-    "theory": "Show project briefs, process, deliverables and honest attribution.",
-    "assignment": "Build a portfolio of three projects.",
+    "theory": "Show project briefs, process, deliverables and honest attribution. Workflow: 1. Select projects that demonstrate distinct skills. 2. Write a case study for each with actual evidence. 3. Review rights, consistency and contact information.",
+    "assignment": "Build a portfolio of three projects. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Portfolio. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Build a portfolio of three projects.",
@@ -382,8 +382,8 @@
   {
     "day": 26,
     "title": "Pricing and Clients",
-    "theory": "Estimate labor, generation costs, revisions and margin; specify usage rights.",
-    "assignment": "Prepare a quote with clear scope.",
+    "theory": "Estimate labor, generation costs, revisions and margin; specify usage rights. Workflow: 1. Estimate labor, direct costs and revisions. 2. Calculate a quote and define scope boundaries. 3. Prepare a client-ready proposal with acceptance criteria.",
+    "assignment": "Prepare a quote with clear scope. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Pricing and Clients. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Prepare a quote with clear scope.",
@@ -402,8 +402,8 @@
   {
     "day": 27,
     "title": "Selling AI Services",
-    "theory": "Qualify prospects, personalize outreach and agree on deliverables and payment terms.",
-    "assignment": "Write a proposal for a fictional client.",
+    "theory": "Qualify prospects, personalize outreach and agree on deliverables and payment terms. Workflow: 1. Choose a customer segment and relevant offer. 2. Write personalized outreach and a sample proposal. 3. Track responses and revise the offer without spamming.",
+    "assignment": "Write a proposal for a fictional client. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Selling AI Services. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Write a proposal for a fictional client.",
@@ -422,8 +422,8 @@
   {
     "day": 28,
     "title": "AI Agency",
-    "theory": "Define service packages, responsibilities, quality gates and operating costs.",
-    "assignment": "Create a one-page agency operating plan.",
+    "theory": "Define service packages, responsibilities, quality gates and operating costs. Workflow: 1. Map client intake, production and quality review. 2. Assign roles and estimate weekly capacity. 3. Create a handoff checklist and escalation process.",
+    "assignment": "Create a one-page agency operating plan. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for AI Agency. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Create a one-page agency operating plan.",
@@ -442,8 +442,8 @@
   {
     "day": 29,
     "title": "Marketing and Scaling",
-    "theory": "Measure conversion, retention and contribution margin before expanding spending.",
-    "assignment": "Build a small experiment plan with success criteria.",
+    "theory": "Measure conversion, retention and contribution margin before expanding spending. Workflow: 1. Define a measurable marketing hypothesis. 2. Set a budget cap, test variants and stop criteria. 3. Analyze results and separate evidence from assumptions.",
+    "assignment": "Build a small experiment plan with success criteria. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Marketing and Scaling. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Build a small experiment plan with success criteria.",
@@ -462,8 +462,8 @@
   {
     "day": 30,
     "title": "Final Project",
-    "theory": "Combine research, creative direction, production, review and commercial presentation.",
-    "assignment": "Submit a complete campaign with portfolio case study.",
+    "theory": "Combine research, creative direction, production, review and commercial presentation. Workflow: 1. Select a fictional or authorized client brief. 2. Deliver visual assets, video and campaign strategy. 3. Document rights, review against the rubric and revise.",
+    "assignment": "Submit a complete campaign with portfolio case study. Submit the source brief, final output, and a short revision log. Evaluation: completion, technical quality, consistency with the brief, and documented usage rights.",
     "prompts": [
       "Act as a creative instructor for Final Project. Explain the workflow with an example.",
       "Create a detailed brief for this assignment: Submit a complete campaign with portfolio case study.",
