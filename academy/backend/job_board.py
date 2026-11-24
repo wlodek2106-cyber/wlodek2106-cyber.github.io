@@ -57,7 +57,9 @@ def moderate(cur,sid,b):
 def apply(cur,sid,b):
     jid=ident(b["id"])
     if b.get("consent") is not True: raise ValueError("Consent required")
-    vals=(clean(b["alias"],80,True),clean(b["proposal"],2000,True),positive(b["quote"]),clean(b["contact"],200,True))
+    share=b.get("share_reputation",False)
+    if type(share) is not bool: raise ValueError("Invalid consent")
+    vals=(clean(b["alias"],80,True),clean(b["proposal"],2000,True),positive(b["quote"]),clean(b["contact"],200,True),share)
     cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND paid_at IS NOT NULL FOR UPDATE",(sid,))
     if not cur.fetchone(): raise PermissionError("Paid student required")
     client,status,_=job_lock(cur,jid)
@@ -66,7 +68,7 @@ def apply(cur,sid,b):
     if cur.fetchone()[0]>=100: raise ValueError("Application limit reached")
     cur.execute("SELECT count(*) FROM academy_job_applications WHERE job_id=%s",(jid,))
     if cur.fetchone()[0]>=50: raise ValueError("Job application limit reached")
-    cur.execute("INSERT INTO academy_job_applications(job_id,student_id,alias,proposal,quote_cents,contact) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT(job_id,student_id) DO NOTHING RETURNING id",(jid,sid,*vals))
+    cur.execute("INSERT INTO academy_job_applications(job_id,student_id,alias,proposal,quote_cents,contact,share_reputation) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT(job_id,student_id) DO NOTHING RETURNING id",(jid,sid,*vals))
     row=cur.fetchone()
     if not row: raise ValueError("Already applied")
     return {"id":row[0],"status":"submitted"}
@@ -76,8 +78,13 @@ def applicants(cur,sid,b):
     cur.execute("SELECT client_id,selected_application,status FROM academy_jobs WHERE id=%s",(jid,))
     row=cur.fetchone()
     if not row or row[0]!=sid: raise PermissionError()
-    cur.execute("SELECT id,alias,proposal,quote_cents,CASE WHEN id=%s AND %s IN ('assigned','delivered','completed') THEN contact ELSE NULL END FROM academy_job_applications WHERE job_id=%s ORDER BY id LIMIT 50",(row[1],row[2],jid))
-    return {"items":[{"id":i,"alias":a,"proposal":p,"quote_cents":q,"contact":c,"selected":i==row[1]} for i,a,p,q,c in cur.fetchall()]}
+    cur.execute("SELECT id,alias,proposal,quote_cents,CASE WHEN id=%s AND %s IN ('assigned','delivered','completed') THEN contact ELSE NULL END,student_id,share_reputation FROM academy_job_applications WHERE job_id=%s ORDER BY id LIMIT 50",(row[1],row[2],jid))
+    records=cur.fetchall()
+    from reputation import stats
+    items=[{"id":i,"alias":a,"proposal":p,"quote_cents":q,"contact":c,"selected":i==row[1],"reputation":stats(cur,student) if share else None} for i,a,p,q,c,student,share in records]
+    cur.execute("SELECT status FROM academy_job_reviews WHERE job_id=%s",(jid,))
+    review=cur.fetchone()
+    return {"items":items,"review_status":review[0] if review else None}
 
 def applications(cur,sid,b):
     cur.execute("""SELECT a.id,j.id,j.title,j.status,a.quote_cents,a.proposal,
@@ -126,7 +133,7 @@ def recommend(cur,sid):
     return {"items":rank(candidates,passed,service[0] if service else None),"next_after":None,"candidate_limit":300,"engine":"rules_based"}
 
 def dispatch(token,action,b):
-    if action in ("admin","moderate"): sid=owner(token)
+    if action in ("admin","moderate","review-admin","review-decide"): sid=owner(token)
     else:
         sid=authenticate(token)
         if sid is None: raise PermissionError()
@@ -139,4 +146,10 @@ def dispatch(token,action,b):
         if action=="applicants": return applicants(cur,sid,b)
         if action=="applications": return applications(cur,sid,b)
         if action=="transition": return transition(cur,sid,b)
+        if action in ("review","reputation","review-admin","review-decide"):
+            from reputation import submit,own,queue,decide
+            if action=="review": return submit(cur,sid,b)
+            if action=="reputation": return own(cur,sid,b)
+            if action=="review-admin": return queue(cur,b)
+            if action=="review-decide": return decide(cur,sid,b)
     raise ValueError("Unknown action")

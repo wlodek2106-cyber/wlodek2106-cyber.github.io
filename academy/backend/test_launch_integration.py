@@ -99,7 +99,21 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(job_applications(cur,buyer_id,{})["items"][0]["contact"],"client@example.invalid")
                 with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":jid,"action":"deliver"})
                 self.assertEqual(job_transition(cur,buyer_id,{"id":jid,"action":"deliver"})["status"],"delivered")
+                from reputation import submit as review_submit,stats as rep_stats,decide as review_decide,own as review_own
+                with self.assertRaises(PermissionError): review_submit(cur,partner_id,{"id":jid,"rating":5,"consent":True})
                 self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
+                review={"id":jid,"rating":4,"comment":"Synthetic feedback","consent":True}
+                with self.assertRaises(PermissionError): review_submit(cur,buyer_id,review)
+                self.assertEqual(review_submit(cur,partner_id,review)["status"],"pending")
+                with self.assertRaises(ValueError): review_submit(cur,partner_id,review)
+                self.assertIsNone(rep_stats(cur,buyer_id)["rating"])
+                self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["reputation"])
+                review_decide(cur,owner_id,{"id":jid,"action":"approved"})
+                self.assertEqual(rep_stats(cur,buyer_id)["rating"],4.0)
+                self.assertEqual(review_own(cur,buyer_id,{})["items"][0]["comment"],"Synthetic feedback")
+                self.assertEqual(review_own(cur,partner_id,{})["items"],[])
+                review_decide(cur,owner_id,{"id":jid,"action":"hidden"})
+                self.assertIsNone(rep_stats(cur,buyer_id)["rating"])
                 from acquisition import report as acquisition_report
                 source=next(r for r in acquisition_report(cur)["items"] if r["source"]=="telegram")
                 self.assertGreaterEqual(source["registrations"],1)

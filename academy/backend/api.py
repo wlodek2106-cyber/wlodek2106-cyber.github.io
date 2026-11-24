@@ -16,7 +16,7 @@ def dispatch(method,path,body,token):
     if path=="/admin/acquisition" and method=="GET":
         from acquisition import admin_report
         return 200,admin_report(token)
-    if path in tuple("/jobs/"+x for x in ("feed","mine","admin","create","moderate","apply","applicants","applications","transition","recommended")) and method=="POST":
+    if path in tuple("/jobs/"+x for x in ("feed","mine","admin","create","moderate","apply","applicants","applications","transition","recommended","review","reputation","review-admin","review-decide")) and method=="POST":
         from job_board import dispatch as job_dispatch
         return 200,job_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/community/feed","/community/mine","/community/create","/community/withdraw","/community/admin","/community/decide") and method=="POST":

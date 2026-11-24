@@ -347,3 +347,14 @@ CREATE TABLE IF NOT EXISTS academy_job_applications (
 CREATE INDEX IF NOT EXISTS academy_job_applications_student ON academy_job_applications(student_id,id);
 
 ALTER TABLE students ADD COLUMN IF NOT EXISTS hire_source text CHECK(hire_source IN ('direct','telegram','instagram','youtube','linkedin','facebook','tiktok','x','partner','other'));
+
+ALTER TABLE academy_job_applications ADD COLUMN IF NOT EXISTS share_reputation boolean NOT NULL DEFAULT false;
+CREATE TABLE IF NOT EXISTS academy_job_reviews (
+ job_id bigint PRIMARY KEY REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ rating smallint NOT NULL CHECK(rating BETWEEN 1 AND 5),
+ comment text NOT NULL DEFAULT '' CHECK(length(comment)<=1000),
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','hidden')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,
+ reviewed_at timestamptz
+);
