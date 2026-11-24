@@ -32,7 +32,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
     def handle_api(self):
         path=urlsplit(self.path).path
-        assets={"/ai-workspace.js":("ai-workspace.js","application/javascript; charset=utf-8"),"/automation-studio.js":("automation-studio.js","application/javascript; charset=utf-8"),"/website-builder.js":("website-builder.js","application/javascript; charset=utf-8"),"/music-studio.js":("music-studio.js","application/javascript; charset=utf-8"),"/animation-studio.js":("animation-studio.js","application/javascript; charset=utf-8"),"/design-studio.js":("design-studio.js","application/javascript; charset=utf-8"),"/voice-studio.js":("voice-studio.js","application/javascript; charset=utf-8"),"/local-media.js":("local-media.js","application/javascript; charset=utf-8"),"/creator-suite.js":("creator-suite.js","application/javascript; charset=utf-8"),"/free-ai.js":("free-ai.js","application/javascript; charset=utf-8"),"/manifest.webmanifest":("manifest.webmanifest","application/manifest+json"),"/academy-icon.svg":("academy-icon.svg","image/svg+xml"),"/academy-sw.js":("academy-sw.js","application/javascript")}
+        assets={"/marketplace.js":("marketplace.js","application/javascript; charset=utf-8"),"/ai-workspace.js":("ai-workspace.js","application/javascript; charset=utf-8"),"/automation-studio.js":("automation-studio.js","application/javascript; charset=utf-8"),"/website-builder.js":("website-builder.js","application/javascript; charset=utf-8"),"/music-studio.js":("music-studio.js","application/javascript; charset=utf-8"),"/animation-studio.js":("animation-studio.js","application/javascript; charset=utf-8"),"/design-studio.js":("design-studio.js","application/javascript; charset=utf-8"),"/voice-studio.js":("voice-studio.js","application/javascript; charset=utf-8"),"/local-media.js":("local-media.js","application/javascript; charset=utf-8"),"/creator-suite.js":("creator-suite.js","application/javascript; charset=utf-8"),"/free-ai.js":("free-ai.js","application/javascript; charset=utf-8"),"/manifest.webmanifest":("manifest.webmanifest","application/manifest+json"),"/academy-icon.svg":("academy-icon.svg","image/svg+xml"),"/academy-sw.js":("academy-sw.js","application/javascript")}
         if self.command=="GET" and path in assets:
             name,mime=assets[path]
             body=Path(__file__).with_name(name).read_bytes()
@@ -43,8 +43,8 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if path in ("/","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace") and self.command=="GET":
-            body=Path(__file__).with_name("ai-workspace.html" if path=="/ai-workspace" else "automation-studio.html" if path=="/automation-studio" else "website-builder.html" if path=="/website-builder" else "music-studio.html" if path=="/music-studio" else "animation-studio.html" if path=="/animation-studio" else "design-studio.html" if path=="/design-studio" else "voice-studio.html" if path=="/voice-studio" else "local-media.html" if path=="/local-media" else "creator-suite.html" if path=="/creator-suite" else "legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
+        if path in ("/","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace") and self.command=="GET":
+            body=Path(__file__).with_name("marketplace.html" if path=="/marketplace" else "ai-workspace.html" if path=="/ai-workspace" else "automation-studio.html" if path=="/automation-studio" else "website-builder.html" if path=="/website-builder" else "music-studio.html" if path=="/music-studio" else "animation-studio.html" if path=="/animation-studio" else "design-studio.html" if path=="/design-studio" else "voice-studio.html" if path=="/voice-studio" else "local-media.html" if path=="/local-media" else "creator-suite.html" if path=="/creator-suite" else "legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
             self.send_header("Cache-Control","no-store")
@@ -85,7 +85,7 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             return self.respond(503,{"error":"Service unavailable"})
     def do_HEAD(self):
-        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace") else 404)
+        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace") else 404)
         self.end_headers()
     do_GET=handle_api
     do_POST=handle_api

@@ -290,3 +290,14 @@ CREATE TABLE IF NOT EXISTS marketing_posts (
  FOREIGN KEY(campaign_id,student_id) REFERENCES marketing_campaigns(id,student_id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS marketing_posts_student_day ON marketing_posts(student_id,day,id);
+
+CREATE TABLE IF NOT EXISTS marketplace_services (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL UNIQUE REFERENCES students(id) ON DELETE CASCADE,
+ name text NOT NULL,title text NOT NULL,category text NOT NULL CHECK(category IN ('design','video','audio','web','automation','marketing','other')),
+ description text NOT NULL,price text NOT NULL DEFAULT '',link text NOT NULL,
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','withdrawn','blocked')),
+ revision bigint NOT NULL DEFAULT 1,updated_at timestamptz NOT NULL DEFAULT now(),
+ reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,reviewed_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS marketplace_services_status ON marketplace_services(status,id);

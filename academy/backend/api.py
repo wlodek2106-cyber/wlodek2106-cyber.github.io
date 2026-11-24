@@ -13,6 +13,9 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
+    if path in ("/marketplace/public","/marketplace/mine","/marketplace/save","/marketplace/withdraw","/marketplace/admin","/marketplace/decide") and method=="POST":
+        from marketplace import dispatch as market_dispatch
+        return 200,market_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/reviews/public" and method=="GET":
         from reviews import public_reviews
         return 200,public_reviews()

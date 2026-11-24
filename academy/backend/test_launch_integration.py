@@ -64,6 +64,18 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(PermissionError): certificates.issue_certificate(buyer)
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
                 self.assertTrue(reviews.remove(buyer)["removed"])
+                from marketplace import save as market_save,mine as market_mine,listing as market_list,decide as market_decide,withdraw as market_withdraw
+                service={"name":"Test creator","title":"Test design","category":"design","description":"Test service","price":"100 USD","link":"https://example.invalid/portfolio","consent":True}
+                with self.assertRaises(ValueError): market_save(cur,buyer_id,{**service,"consent":False})
+                listing=market_save(cur,buyer_id,service)
+                self.assertIsNone(market_mine(cur,partner_id)["item"])
+                self.assertFalse(any(x["id"]==listing["id"] for x in market_list(cur,True)["items"]))
+                market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
+                self.assertTrue(any(x["id"]==listing["id"] and "student_id" not in x for x in market_list(cur,True)["items"]))
+                updated=market_save(cur,buyer_id,service)
+                with self.assertRaises(ValueError): market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
+                self.assertEqual(market_mine(cur,buyer_id)["item"]["status"],"pending")
+                self.assertTrue(market_withdraw(cur,buyer_id)["withdrawn"])
                 self.assertEqual(portfolio.save(buyer,1,"Test project")["status"],"submitted")
                 # Backfill progress inside the rollback transaction to exercise graduation.
                 cur.execute("SELECT id FROM enrollments WHERE student_id=%s",(buyer_id,))
@@ -166,6 +178,7 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(list_records(cur,partner_id)["items"],[])
                 exported=export_data(cur,buyer_id)["datasets"]
                 self.assertEqual(exported["account"][0]["id"],buyer_id)
+                self.assertEqual(exported["marketplace"][0]["status"],"withdrawn")
                 self.assertNotIn("password_hash",exported["account"][0])
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
