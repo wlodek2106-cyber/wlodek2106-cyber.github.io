@@ -56,6 +56,9 @@ def dispatch(method,path,body,token):
             raise ValueError("Invalid lab")
         require_lesson(token,day)
         return 200,next(x for x in json.loads(Path(__file__).with_name("agent_lab.json").read_text()) if x["day"]==day)
+    if path=="/adaptive/plan" and method=="GET":
+        from adaptive import student_plan
+        return 200,student_plan(token)
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
     if path=="/checkout/discover" and method=="POST":

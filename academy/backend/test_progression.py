@@ -52,6 +52,18 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(parse_answer("openai",{"choices":[{"message":{"content":"test"}}]}),"test")
         self.assertEqual(parse_answer("anthropic",{"content":[{"type":"text","text":"test"}]}),"test")
         self.assertEqual(parse_answer("gemini",{"candidates":[{"content":{"parts":[{"text":"test"}]}}]}),"test")
+    def test_adaptive_learning(self):
+        from adaptive import recommend
+        lessons=[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}]
+        empty=recommend(lessons,[])
+        self.assertIsNone(empty["mean_latest"])
+        self.assertEqual(empty["next"]["day"],2)
+        r=recommend(lessons,[(2,60),(1,90),(1,50),(3,10)])
+        self.assertEqual([x["day"] for x in r["review"]],[2,1])
+        self.assertEqual(r["mean_latest"],75)
+        self.assertEqual(r["review"][0]["priority"],"high")
+        self.assertEqual(r["completed"],1)
+        self.assertEqual(r["attempted_lessons"],2)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
