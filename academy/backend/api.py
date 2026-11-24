@@ -100,6 +100,9 @@ def dispatch(method,path,body,token):
         return 200,student_plan(token)
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/checkout/history" and method=="POST":
+        from checkout import history
+        return 200,history(token,body.get("offset",0))
     if path=="/checkout/prices" and method=="GET":
         from checkout import prices
         return 200,prices(token)

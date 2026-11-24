@@ -38,6 +38,13 @@ class CheckoutIntegration(unittest.TestCase):
                     self.assertEqual(discounted["amount_atomic"],189050000)
                     self.assertIn("amount=189.05",discounted["url"])
                     self.assertEqual(checkout.active_invoice(token)["invoice"],discounted)
+                    self.assertEqual(checkout.history(token)["items"][0]["id"],discounted["id"])
+                    cur.execute("UPDATE payment_invoices SET expires_at=now()-interval '1 second',created_at=now()-interval '20 minutes' WHERE id=%s",(discounted["id"],))
+                    self.assertIsNone(checkout.active_invoice(token)["invoice"])
+                    self.assertEqual(checkout.history(token)["items"][0]["status"],"expired")
+                    stranger=accounts.login("invite-"+email,password)
+                    self.assertEqual(checkout.history(stranger)["items"],[])
+                    with self.assertRaises(PermissionError): checkout.history(None)
                     from founder import report
                     summary=report(cur,7)
                     self.assertEqual(len(summary["period"]["series"]),7)

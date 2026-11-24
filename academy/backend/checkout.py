@@ -54,3 +54,16 @@ def prices(token):
     with transaction() as cur:
         discount=discount_eligible(cur,student)
     return {"discount_percent":5 if discount else 0,"prices":{p:course_amount(p,discount) for p in PRICES}}
+
+def history(token,offset=0):
+    student=authenticate(token)
+    if student is None: raise PermissionError("Authentication required")
+    if type(offset) is not int or not 0<=offset<=1000000: raise ValueError("Invalid offset")
+    with transaction() as cur:
+        cur.execute("""SELECT id,plan,asset,amount_atomic,created_at,expires_at,paid_at,signature,
+                       CASE WHEN paid_at IS NOT NULL THEN 'paid' WHEN expires_at<=now() THEN 'expired' ELSE 'active' END
+                       FROM payment_invoices WHERE student_id=%s ORDER BY created_at DESC,id DESC LIMIT 51 OFFSET %s""",(student,offset))
+        rows=cur.fetchall()
+    return {"items":[{"id":str(i),"plan":p,"asset":a,"amount_atomic":str(n),"created_at":c.isoformat(),
+            "expires_at":e.isoformat(),"paid_at":t.isoformat() if t else None,"signature":sig,"status":status}
+            for i,p,a,n,c,e,t,sig,status in rows[:50]],"next_offset":offset+50 if len(rows)>50 else None}
