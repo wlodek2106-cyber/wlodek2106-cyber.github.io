@@ -40,6 +40,9 @@ jobs:
       - name: Browser smoke test (mocked API, no payments)
         run: node academy/tests/browser_smoke.cjs
 
+      - name: Website builder unit tests
+        run: node academy/tests/website_unit.cjs
+
       - name: Music studio unit tests
         run: node academy/tests/music_unit.cjs
 

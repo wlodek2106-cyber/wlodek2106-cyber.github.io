@@ -72,6 +72,12 @@ class HttpBoundary(unittest.TestCase):
                 with req("/music-studio.js") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"function wav",r.read())
+                with req("/website-builder") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b'sandbox=""',r.read())
+                with req("/website-builder.js") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"function buildSite",r.read())
                 for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
                     with req(path,body,headers) as r:
                         self.assertEqual(r.status,status)
