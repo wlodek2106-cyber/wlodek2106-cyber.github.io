@@ -7,16 +7,16 @@ from assessment import prepare_attempt, grade_attempt
 
 def enrollment(cur, token, day):
     student=authenticate(token)
-    if student is None or type(day) is not int or not 1<=day<=30:
+    if student is None or type(day) is not int or not 1<=day<=40:
         raise PermissionError("Access denied")
-    cur.execute("SELECT id,paid_at FROM enrollments WHERE student_id=%s FOR UPDATE",(student,))
+    cur.execute("SELECT id,paid_at,plan FROM enrollments WHERE student_id=%s FOR UPDATE",(student,))
     row=cur.fetchone()
     if not row:
         raise PermissionError("Enrollment required")
-    eid,paid=row
+    eid,paid,plan=row
     cur.execute("SELECT lesson,passed_at FROM lesson_progress WHERE enrollment_id=%s",(eid,))
     passed=dict(cur.fetchall())
-    if day in passed or not eligible(day,paid,passed,datetime.now(timezone.utc)):
+    if day in passed or not eligible(day,paid,passed,datetime.now(timezone.utc),plan):
         raise PermissionError("Lesson locked or completed")
     return eid
 
@@ -41,8 +41,8 @@ def submit_exam(token,day,attempt_id,answers):
         if result["passed"]:
             cur.execute("INSERT INTO lesson_progress(enrollment_id,lesson,score) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",(eid,day,result["score"]))
             cur.execute("SELECT passed_at+interval '1 day' FROM lesson_progress WHERE enrollment_id=%s AND lesson=%s",(eid,day))
-            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<30 else None
-            if day==30:
+            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<(40 if day>30 else 30) else None
+            if day in (30,40):
                 from certificates import issue_completed
                 result["certificate"]=issue_completed(cur,eid)
         return result
