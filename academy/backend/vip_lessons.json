@@ -1,0 +1,222 @@
+[
+  {
+    "day": 31,
+    "title": "Website planning",
+    "theory": "Define audience, user journeys and acceptance criteria.",
+    "assignment": "Write a brief and sitemap for a website.",
+    "prompts": [
+      "Act as a technical mentor. Write a brief and sitemap for a website. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Define audience, user journeys and acceptance criteria."
+    ],
+    "questions": [
+      {
+        "id": "vip31",
+        "question": "What should precede implementation?",
+        "options": [
+          "A brief with user needs and acceptance criteria",
+          "Choosing random colors",
+          "Publishing immediately"
+        ],
+        "correct": "A brief with user needs and acceptance criteria"
+      }
+    ]
+  },
+  {
+    "day": 32,
+    "title": "Responsive UI",
+    "theory": "Use semantic HTML, CSS layouts, accessible labels and mobile testing.",
+    "assignment": "Build a responsive landing page.",
+    "prompts": [
+      "Act as a technical mentor. Build a responsive landing page. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Use semantic HTML, CSS layouts, accessible labels and mobile testing."
+    ],
+    "questions": [
+      {
+        "id": "vip32",
+        "question": "What verifies responsive design?",
+        "options": [
+          "Testing multiple viewport sizes",
+          "Testing only desktop",
+          "Removing labels"
+        ],
+        "correct": "Testing multiple viewport sizes"
+      }
+    ]
+  },
+  {
+    "day": 33,
+    "title": "Backend and data",
+    "theory": "Separate client and server, validate inputs, keep secrets server-side and use parameterized queries.",
+    "assignment": "Build a small authenticated API and data model.",
+    "prompts": [
+      "Act as a technical mentor. Build a small authenticated API and data model. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Separate client and server, validate inputs, keep secrets server-side and use parameterized queries."
+    ],
+    "questions": [
+      {
+        "id": "vip33",
+        "question": "Where should private API keys live?",
+        "options": [
+          "On the server",
+          "In public JavaScript",
+          "In a public repository"
+        ],
+        "correct": "On the server"
+      }
+    ]
+  },
+  {
+    "day": 34,
+    "title": "Deployment",
+    "theory": "Use Git branches, environment variables, build logs and rollback plans.",
+    "assignment": "Deploy a demo website and document rollback.",
+    "prompts": [
+      "Act as a technical mentor. Deploy a demo website and document rollback. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Use Git branches, environment variables, build logs and rollback plans."
+    ],
+    "questions": [
+      {
+        "id": "vip34",
+        "question": "What should be checked before deployment?",
+        "options": [
+          "Tests and environment configuration",
+          "Only the logo",
+          "Nothing"
+        ],
+        "correct": "Tests and environment configuration"
+      }
+    ]
+  },
+  {
+    "day": 35,
+    "title": "Website capstone",
+    "theory": "Combine UI, backend, accessibility and functional tests.",
+    "assignment": "Deliver a working website with a test report.",
+    "prompts": [
+      "Act as a technical mentor. Deliver a working website with a test report. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Combine UI, backend, accessibility and functional tests."
+    ],
+    "questions": [
+      {
+        "id": "vip35",
+        "question": "What demonstrates readiness?",
+        "options": [
+          "Verified acceptance criteria",
+          "A screenshot alone",
+          "A promise"
+        ],
+        "correct": "Verified acceptance criteria"
+      }
+    ]
+  },
+  {
+    "day": 36,
+    "title": "Mobile architecture",
+    "theory": "Choose native or cross-platform tooling, define screens and device constraints.",
+    "assignment": "Create a mobile app prototype and navigation map.",
+    "prompts": [
+      "Act as a technical mentor. Create a mobile app prototype and navigation map. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Choose native or cross-platform tooling, define screens and device constraints."
+    ],
+    "questions": [
+      {
+        "id": "vip36",
+        "question": "What guides platform selection?",
+        "options": [
+          "Requirements and device constraints",
+          "Random choice",
+          "Logo size"
+        ],
+        "correct": "Requirements and device constraints"
+      }
+    ]
+  },
+  {
+    "day": 37,
+    "title": "Mobile interface",
+    "theory": "Use accessible controls, safe areas, responsive layouts and navigation.",
+    "assignment": "Implement three connected mobile screens.",
+    "prompts": [
+      "Act as a technical mentor. Implement three connected mobile screens. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Use accessible controls, safe areas, responsive layouts and navigation."
+    ],
+    "questions": [
+      {
+        "id": "vip37",
+        "question": "What improves mobile accessibility?",
+        "options": [
+          "Readable labels and adequate touch targets",
+          "Tiny controls",
+          "Color alone"
+        ],
+        "correct": "Readable labels and adequate touch targets"
+      }
+    ]
+  },
+  {
+    "day": 38,
+    "title": "Mobile data and auth",
+    "theory": "Use secure storage, authenticated APIs and error handling; avoid embedding secrets.",
+    "assignment": "Implement sign-in and a data screen using a test backend.",
+    "prompts": [
+      "Act as a technical mentor. Implement sign-in and a data screen using a test backend. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Use secure storage, authenticated APIs and error handling; avoid embedding secrets."
+    ],
+    "questions": [
+      {
+        "id": "vip38",
+        "question": "Where should service secrets remain?",
+        "options": [
+          "On the backend",
+          "In app source",
+          "In screenshots"
+        ],
+        "correct": "On the backend"
+      }
+    ]
+  },
+  {
+    "day": 39,
+    "title": "AI integration",
+    "theory": "Call models through a controlled backend with budgets, consent and error handling.",
+    "assignment": "Add an optional AI feature with a fallback.",
+    "prompts": [
+      "Act as a technical mentor. Add an optional AI feature with a fallback. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Call models through a controlled backend with budgets, consent and error handling."
+    ],
+    "questions": [
+      {
+        "id": "vip39",
+        "question": "What limits unexpected AI costs?",
+        "options": [
+          "Server-side quotas",
+          "Unlimited requests",
+          "Hiding errors"
+        ],
+        "correct": "Server-side quotas"
+      }
+    ]
+  },
+  {
+    "day": 40,
+    "title": "App capstone",
+    "theory": "Test on devices, document permissions, privacy and release requirements.",
+    "assignment": "Deliver an app prototype and release checklist.",
+    "prompts": [
+      "Act as a technical mentor. Deliver an app prototype and release checklist. Explain tradeoffs, tests and security checks.",
+      "Review my implementation against this objective: Test on devices, document permissions, privacy and release requirements."
+    ],
+    "questions": [
+      {
+        "id": "vip40",
+        "question": "What is required before store submission?",
+        "options": [
+          "Testing and privacy disclosures",
+          "Guaranteed approval",
+          "Only a name"
+        ],
+        "correct": "Testing and privacy disclosures"
+      }
+    ]
+  }
+]
