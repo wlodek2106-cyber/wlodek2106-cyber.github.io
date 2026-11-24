@@ -1,0 +1,30 @@
+name: Zer0LifeAcademy
+options:
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+targets:
+  Academy:
+    type: application
+    platform: iOS
+    sources: [AcademyApp.swift, ProgressStore.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zer0life.academy
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: Academy.entitlements
+    dependencies:
+      - target: AcademyWidget
+  AcademyWidget:
+    type: app-extension
+    platform: iOS
+    sources: [AcademyWidget.swift, WidgetMain.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zer0life.academy.widget
+        CODE_SIGN_ENTITLEMENTS: Academy.entitlements
+    info:
+      path: WidgetInfo.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
