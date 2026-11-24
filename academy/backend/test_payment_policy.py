@@ -16,6 +16,15 @@ class PaymentPolicyTests(unittest.TestCase):
                 self.assertEqual(q["recipient"],TREASURY)
                 self.assertEqual(q["mint"],USDC_MINT)
 
+    def test_referral_discount(self):
+        from solana_pay import payment_url
+        from urllib.parse import parse_qs,urlsplit
+        with patch.dict("os.environ", {"ACADEMY_PAYMENTS_ENABLED":"true"}):
+            for plan,atomic,amount in (("starter",189050000,"189.05"),("pro",474050000,"474.05"),("vip",949050000,"949.05")):
+                self.assertEqual(quote(plan,"USDC",True)["amount_atomic"],atomic)
+                url=payment_url(plan,"1"*32,atomic)
+                self.assertEqual(parse_qs(urlsplit(url).query)["amount"],[amount])
+                with self.assertRaises(ValueError): payment_url(plan,"1"*32,atomic-1)
     def test_sol_without_quote(self):
         with patch.dict("os.environ", {"ACADEMY_PAYMENTS_ENABLED":"true"}):
             with self.assertRaises(PermissionError):

@@ -77,6 +77,9 @@ def dispatch(method,path,body,token):
         return 200,student_plan(token)
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/checkout/prices" and method=="GET":
+        from checkout import prices
+        return 200,prices(token)
     if path=="/checkout/discover" and method=="POST":
         from payment_discovery import discover
         return 200,discover(token,body["invoice"])

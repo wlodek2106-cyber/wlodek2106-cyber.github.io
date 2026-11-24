@@ -14,6 +14,12 @@ def attribute(cur,student,code):
     if row and row[0]!=student:
         cur.execute("INSERT INTO referrals(student_id,referrer_id) VALUES (%s,%s) ON CONFLICT(student_id) DO NOTHING",(student,row[0]))
 
+def discount_eligible(cur,student):
+    cur.execute("""SELECT EXISTS(SELECT 1 FROM referrals r JOIN enrollments e ON e.student_id=r.student_id
+        WHERE r.referrer_id=%s AND e.paid_at IS NOT NULL)
+        AND NOT EXISTS(SELECT 1 FROM enrollments WHERE student_id=%s AND paid_at IS NOT NULL)""",(student,student))
+    return bool(cur.fetchone()[0])
+
 def overview(token):
     from accounts import authenticate
     from database import transaction
@@ -30,4 +36,5 @@ def overview(token):
         cur.execute("""SELECT count(*),count(*) FILTER (WHERE e.paid_at IS NOT NULL)
             FROM referrals r LEFT JOIN enrollments e ON e.student_id=r.student_id WHERE r.referrer_id=%s""",(student,))
         invited,paid=cur.fetchone()
-    return {"code":code,"registered":invited,"paid":paid,"commissions_enabled":False}
+        eligible=discount_eligible(cur,student)
+    return {"code":code,"registered":invited,"paid":paid,"commissions_enabled":False,"discount_percent":5 if eligible else 0}
