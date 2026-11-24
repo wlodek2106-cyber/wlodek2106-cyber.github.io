@@ -50,3 +50,8 @@ CREATE TABLE IF NOT EXISTS payment_invoices (
  CHECK((signature IS NULL)=(paid_at IS NULL))
 );
 CREATE INDEX IF NOT EXISTS payment_invoices_student_idx ON payment_invoices(student_id);
+
+ALTER TABLE students ADD COLUMN IF NOT EXISTS first_name text;
+ALTER TABLE students ADD COLUMN IF NOT EXISTS last_name text;
+ALTER TABLE certificates ADD COLUMN IF NOT EXISTS recipient_name text;
+CREATE TABLE IF NOT EXISTS certificate_email_outbox (enrollment_id bigint PRIMARY KEY REFERENCES certificates(enrollment_id), created_at timestamptz NOT NULL DEFAULT now(), sent_at timestamptz, attempts integer NOT NULL DEFAULT 0);
