@@ -13,7 +13,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
     def handle_api(self):
         path=urlsplit(self.path).path
-        if path=="/dashboard" and self.command=="GET":
+        if path in ("/","/dashboard") and self.command=="GET":
             body=Path(__file__).with_name("dashboard.html").read_bytes()
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
@@ -46,6 +46,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.respond(400,{"error":"Invalid request"})
         except Exception:
             return self.respond(503,{"error":"Service unavailable"})
+    def do_HEAD(self):
+        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/dashboard") else 404)
+        self.end_headers()
     do_GET=handle_api
     do_POST=handle_api
 if __name__=="__main__":
