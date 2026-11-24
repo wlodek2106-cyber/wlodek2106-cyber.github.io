@@ -142,6 +142,9 @@ def dispatch(method,path,body,token):
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
+    if path=="/admin/founder" and method=="POST":
+        from founder import founder_report
+        return 200,founder_report(token,body.get("days",30))
     if path=="/admin/network-access" and method=="GET":
         from partners import owner
         try: owner(token)

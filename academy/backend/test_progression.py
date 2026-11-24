@@ -131,6 +131,15 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(projection({"starter":1,"pro":1,"vip":1})["commission_atomic"],509100000)
         with self.assertRaises(ValueError): projection({"starter":-1,"pro":0,"vip":0})
         with self.assertRaises(ValueError): materials("invalid","en")
+    def test_founder_accounting(self):
+        from founder import summarize,validate_period
+        d=summarize(199000000,1,[("available",10000000),("pending",20000000),("approved",10000000),("paid",10000000),("rejected",9700000)])
+        self.assertEqual(d["unpaid_reserve_atomic"],"49700000")
+        self.assertEqual(d["after_paid_atomic"],"189000000")
+        self.assertEqual(d["after_all_commissions_atomic"],"139300000")
+        self.assertEqual(summarize(0,0,[])["gross_atomic"],"0")
+        with self.assertRaises(ValueError): validate_period(True)
+        with self.assertRaises(ValueError): validate_period(1000)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

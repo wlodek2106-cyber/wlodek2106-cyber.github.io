@@ -38,6 +38,10 @@ class CheckoutIntegration(unittest.TestCase):
                     self.assertEqual(discounted["amount_atomic"],189050000)
                     self.assertIn("amount=189.05",discounted["url"])
                     self.assertEqual(checkout.active_invoice(token)["invoice"],discounted)
+                    from founder import report
+                    summary=report(cur,7)
+                    self.assertEqual(len(summary["period"]["series"]),7)
+                    self.assertIn("unpaid_reserve_atomic",summary["alltime"])
                 raise Rollback()
         except Rollback:
             pass
