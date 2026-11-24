@@ -35,6 +35,14 @@ class ProgressTests(unittest.TestCase):
             self.assertEqual(len(public["questions"]),10)
             self.assertTrue(grade_attempt(key,key)["passed"])
             self.assertTrue(all("correct" not in q for q in public["questions"]))
+    def test_agent_lab_examples(self):
+        import json
+        from pathlib import Path
+        labs=json.loads(Path(__file__).with_name("agent_lab.json").read_text())
+        self.assertEqual([x["day"] for x in labs],list(range(41,46)))
+        for lab in labs:
+            namespace={"__name__":"__main__"}
+            exec(compile(lab["code"],lab["filename"],"exec"),namespace)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

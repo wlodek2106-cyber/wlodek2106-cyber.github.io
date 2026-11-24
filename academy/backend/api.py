@@ -36,6 +36,12 @@ def dispatch(method,path,body,token):
     if path=="/portfolio" and method=="POST":
         from portfolio import save
         return 201,save(token,body["day"],body["submission"])
+    if path.startswith("/agent-lab/") and method=="GET":
+        day=int(path.rsplit("/",1)[1])
+        if not 41<=day<=45:
+            raise ValueError("Invalid lab")
+        require_lesson(token,day)
+        return 200,next(x for x in json.loads(Path(__file__).with_name("agent_lab.json").read_text()) if x["day"]==day)
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
     if path=="/checkout/discover" and method=="POST":

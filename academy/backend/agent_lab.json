@@ -1,0 +1,53 @@
+[
+  {
+    "day": 41,
+    "title": "Bounded support agent",
+    "filename": "support_agent.py",
+    "code": "def agent(message):\n    text = message.strip().lower()\n    if text == \"hours\":\n        return {\"status\": \"answered\", \"answer\": \"09:00–17:00\"}\n    if text == \"returns\":\n        return {\"status\": \"answered\", \"answer\": \"See the sample returns policy.\"}\n    return {\"status\": \"escalate\", \"answer\": \"A human review is required.\"}\n\nif __name__ == \"__main__\":\n    assert agent(\"hours\")[\"status\"] == \"answered\"\n    assert agent(\"returns\")[\"status\"] == \"answered\"\n    assert agent(\"delete account\")[\"status\"] == \"escalate\"\n    print(\"3 tests passed\")\n",
+    "tasks": [
+      "Add one permitted intent and its test.",
+      "Reject unsupported inputs and document the task boundary."
+    ]
+  },
+  {
+    "day": 42,
+    "title": "Validated tool registry",
+    "filename": "tool_agent.py",
+    "code": "CATALOG = {\"A1\": \"Sample camera\", \"B2\": \"Sample microphone\"}\n\ndef dispatch(name, args):\n    if not isinstance(args, dict) or set(args) != {\"sku\"}:\n        raise ValueError(\"Invalid arguments\")\n    sku = args[\"sku\"]\n    if not isinstance(sku, str) or sku not in CATALOG:\n        raise ValueError(\"Unknown SKU\")\n    if name == \"lookup\":\n        return {\"item\": CATALOG[sku]}\n    if name == \"prepare\":\n        return {\"status\": \"draft_only\", \"sku\": sku}\n    raise PermissionError(\"Tool not allowed\")\n\nif __name__ == \"__main__\":\n    assert dispatch(\"lookup\", {\"sku\": \"A1\"})[\"item\"] == \"Sample camera\"\n    assert dispatch(\"prepare\", {\"sku\": \"B2\"})[\"status\"] == \"draft_only\"\n    for name, args in [(\"execute\", {\"sku\":\"A1\"}), (\"lookup\", {\"sku\":\"bad\"})]:\n        try:\n            dispatch(name, args)\n        except (ValueError, PermissionError):\n            pass\n        else:\n            raise AssertionError(\"Unsafe call accepted\")\n    print(\"4 tests passed\")\n",
+    "tasks": [
+      "Add a validated read-only tool.",
+      "Keep every write operation in draft mode."
+    ]
+  },
+  {
+    "day": 43,
+    "title": "Local evidence retrieval",
+    "filename": "retrieval_agent.py",
+    "code": "import re\n\nDOCUMENTS = {\n    \"D1\": \"Returns accepted within 14 days.\",\n    \"D2\": \"Support is available Monday to Friday.\",\n    \"D3\": \"Shipping costs depend on region.\"\n}\n\ndef terms(text):\n    return set(re.findall(r\"\\w+\", text.lower())) - {\"is\",\"the\",\"a\",\"to\",\"on\",\"what\"}\n\ndef retrieve(query):\n    hits = [(len(terms(query) & terms(doc)), key, doc)\n            for key, doc in DOCUMENTS.items()]\n    hits.sort(reverse=True)\n    score, key, doc = hits[0]\n    if not score:\n        return {\"status\": \"insufficient_evidence\", \"sources\": []}\n    return {\"status\": \"evidence\", \"sources\": [key], \"excerpt\": doc}\n\nif __name__ == \"__main__\":\n    assert retrieve(\"returns\")[\"sources\"] == [\"D1\"]\n    assert retrieve(\"shipping\")[\"sources\"] == [\"D3\"]\n    assert retrieve(\"astronomy\")[\"status\"] == \"insufficient_evidence\"\n    print(\"3 tests passed\")\n",
+    "tasks": [
+      "Add two synthetic documents and tests.",
+      "Explain why retrieved text is evidence, not trusted instructions."
+    ]
+  },
+  {
+    "day": 44,
+    "title": "Planner, worker and reviewer",
+    "filename": "multi_agent.py",
+    "code": "def planner(task):\n    return {\"action\": \"summarize\", \"text\": task} if isinstance(task, str) and task.strip() else None\n\ndef worker(plan):\n    if not plan or plan.get(\"action\") != \"summarize\":\n        return None\n    return {\"summary\": plan[\"text\"][:80]}\n\ndef reviewer(plan, output):\n    return bool(plan and output and isinstance(output.get(\"summary\"), str)\n                and output[\"summary\"] == plan[\"text\"][:80])\n\ndef run(task):\n    plan = planner(task)\n    output = worker(plan)\n    if not reviewer(plan, output):\n        return {\"status\":\"escalate\"}\n    return {\"status\":\"ok\", \"output\":output, \"steps\":3}\n\nif __name__ == \"__main__\":\n    assert run(\"Sample task\")[\"status\"] == \"ok\"\n    assert run(\"\")[\"status\"] == \"escalate\"\n    assert run(None)[\"status\"] == \"escalate\"\n    assert not reviewer(planner(\"hello\"), {\"summary\":\"invented\"})\n    print(\"4 tests passed\")\n",
+    "tasks": [
+      "Create ten evaluation fixtures.",
+      "Compare this deterministic three-role workflow with a single function."
+    ]
+  },
+  {
+    "day": 45,
+    "title": "Capstone: bounded agent with approval",
+    "filename": "capstone_agent.py",
+    "code": "import secrets\n\nclass LocalAgent:\n    def __init__(self):\n        self.catalog = {\"A1\": \"Sample camera\"}\n        self.drafts = {}\n\n    def lookup(self, sku):\n        if sku not in self.catalog:\n            return {\"status\":\"not_found\"}\n        return {\"status\":\"evidence\", \"source\":sku, \"item\":self.catalog[sku]}\n\n    def prepare(self, sku):\n        if sku not in self.catalog:\n            return {\"status\":\"not_found\"}\n        if len(self.drafts) >= 20:\n            return {\"status\":\"limit\"}\n        key = secrets.token_hex(16)\n        self.drafts[key] = sku\n        return {\"status\":\"approval_required\", \"draft_id\":key, \"sku\":sku}\n\n    def approve(self, key, human_approved=False):\n        if human_approved is not True or key not in self.drafts:\n            return {\"status\":\"denied\"}\n        sku = self.drafts.pop(key)\n        return {\"status\":\"simulated_only\", \"sku\":sku}\n\nif __name__ == \"__main__\":\n    agent = LocalAgent()\n    assert agent.lookup(\"A1\")[\"source\"] == \"A1\"\n    assert agent.lookup(\"B2\")[\"status\"] == \"not_found\"\n    draft = agent.prepare(\"A1\")\n    assert agent.approve(draft[\"draft_id\"])[\"status\"] == \"denied\"\n    assert agent.approve(draft[\"draft_id\"], True)[\"status\"] == \"simulated_only\"\n    assert agent.approve(draft[\"draft_id\"], True)[\"status\"] == \"denied\"\n    print(\"5 tests passed\")\n",
+    "tasks": [
+      "Expand to ten tests including invalid input, denied approval and replay.",
+      "For any hosted version, implement real authentication and server-side human approval; this example is local only.",
+      "Document limits, architecture and optional model costs."
+    ]
+  }
+]
