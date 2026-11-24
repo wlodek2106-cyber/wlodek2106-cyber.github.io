@@ -133,7 +133,10 @@ def dispatch(method,path,body,token):
             return 200,lesson
         if day>30:
             lesson=next(x for x in json.loads(Path(__file__).with_name("vip_lessons.json").read_text()) if x["day"]==day)
-            return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":"en"}
+            localized=json.loads(Path(__file__).with_name("vip_translations.json").read_text())
+            if lang in localized:
+                lesson.update(next(x for x in localized[lang] if x["day"]==day))
+            return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":lang if lang in localized else "en","prompts_language":"en"}
         filename="lessons02_06.json" if day<=6 else "lessons07_30.json"
         lessons=json.loads(Path(__file__).with_name(filename).read_text())
         lesson=next(item for item in lessons if item["day"]==day)
