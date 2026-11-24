@@ -71,3 +71,31 @@ def ask(token,day,mode,lang,question):
 from threading import Lock
 _quota_lock=Lock()
 _requests=[]
+
+def save_answer(token,day,mode,lang,question,result):
+    from accounts import authenticate
+    from database import transaction
+    student=authenticate(token)
+    if not student: raise PermissionError("Authentication required")
+    if not result.get("available"): return result
+    with transaction() as cur:
+        cur.execute("INSERT INTO tutor_history(student_id,lesson,mode,language,question,answer) VALUES (%s,%s,%s,%s,%s,%s)",(student,day,mode,lang if lang in STEPS else "en",question,result["answer"]))
+    return result
+
+def history(token):
+    from accounts import authenticate
+    from database import transaction
+    student=authenticate(token)
+    if not student: raise PermissionError("Authentication required")
+    with transaction() as cur:
+        cur.execute("SELECT lesson,mode,language,question,answer,created_at FROM tutor_history WHERE student_id=%s ORDER BY id DESC LIMIT 30",(student,))
+        return {"items":[dict(zip(("lesson","mode","language","question","answer","created_at"),(*row[:5],row[5].isoformat()))) for row in cur.fetchall()]}
+
+def clear_history(token):
+    from accounts import authenticate
+    from database import transaction
+    student=authenticate(token)
+    if not student: raise PermissionError("Authentication required")
+    with transaction() as cur:
+        cur.execute("DELETE FROM tutor_history WHERE student_id=%s",(student,))
+    return {"ok":True}
