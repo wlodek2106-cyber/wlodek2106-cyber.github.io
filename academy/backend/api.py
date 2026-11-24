@@ -16,7 +16,9 @@ def dispatch(method,path,body,token):
     if path=="/register" and method=="POST":
         if os.getenv("ACADEMY_REGISTRATION_ENABLED")!="true":
             return 403,{"error":"Registration closed"}
-        return 201,{"id":register(body["email"],body["password"])}
+        if not all(isinstance(body.get(k),str) and body[k].strip() for k in ("first_name","last_name")):
+            raise ValueError("First and last name required")
+        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"])}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"])}
     if path=="/logout" and method=="POST":
