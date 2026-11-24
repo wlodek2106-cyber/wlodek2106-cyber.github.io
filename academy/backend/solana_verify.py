@@ -25,4 +25,24 @@ def verify_usdc(signature,expected,reference,created_at,expires_at):
     def balances(items):
         return sum(int(b["uiTokenAmount"]["amount"]) for b in items if b.get("owner")==TREASURY and b.get("mint")==USDC_MINT and b["uiTokenAmount"]["decimals"]==6)
     meta=tx["meta"]
+    destinations={keys[b["accountIndex"]]["pubkey"] for b in meta.get("postTokenBalances",[]) if b.get("owner")==TREASURY and b.get("mint")==USDC_MINT and b["uiTokenAmount"]["decimals"]==6}
+    # Require the invoice reference on the actual outer SPL transfer instruction.
+    # jsonParsed may omit extra reference accounts, so fetch the raw compiled message.
+    payload["params"][1]["encoding"]="json"
+    with urlopen(Request(url,data=json.dumps(payload).encode(),headers={"Content-Type":"application/json"}),timeout=15) as response:
+        raw=json.load(response).get("result")
+    if not raw or raw["transaction"]["signatures"][0]!=signature or raw["meta"]["err"] is not None:
+        return False
+    message=raw["transaction"]["message"]
+    loaded=raw["meta"].get("loadedAddresses",{})
+    addresses=message["accountKeys"]+loaded.get("writable",[])+loaded.get("readonly",[])
+    matched=False
+    for ix in message["instructions"]:
+        if addresses[ix["programIdIndex"]]!="TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA":
+            continue
+        accounts=[addresses[i] for i in ix["accounts"]]
+        if reference in accounts and any(d in accounts for d in destinations):
+            matched=True
+    if not matched:
+        return False
     return validate_amount(expected,balances(meta.get("postTokenBalances",[]))-balances(meta.get("preTokenBalances",[])))
