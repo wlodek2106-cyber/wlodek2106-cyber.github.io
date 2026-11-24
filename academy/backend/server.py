@@ -75,4 +75,9 @@ if __name__=="__main__":
         subprocess.check_call([sys.executable,"-m","pip","install","-r",str(Path(__file__).with_name("requirements.txt"))])
         from migrate import migrate
         migrate()
+        import unittest
+        from test_accounts_integration import AccountIntegration
+        result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(AccountIntegration))
+        if not result.wasSuccessful() or result.testsRun!=1 or result.skipped:
+            raise RuntimeError("Account integration check failed")
     ThreadingHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()
