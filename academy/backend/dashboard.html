@@ -11,8 +11,18 @@ const translations={en:["Sign in","Sign out","Admin statistics","Claim certifica
 function translateUI(){const lang=$("lang").value;const t=translations[lang];document.documentElement.lang=lang;document.querySelector("#login button").textContent=t[0];["logout","admin","certificate"].forEach((id,i)=>$(id).textContent=t[i+1]);document.querySelector("#panel > h2").textContent=t[4];document.querySelector("[name=email]").placeholder=t[5];document.querySelector("[name=password]").placeholder=t[6];}
 $("lang").onchange=translateUI;
 let invoiceId=null;
-$("invoiceCreate").onclick=async()=>{try{const d=await api("/checkout/create",{plan:$("plan").value});if(!d.url.startsWith("solana:"))throw Error("Invalid payment link");invoiceId=d.id;$("payLink").href=d.url;$("payLink").hidden=false;$("confirmPayment").hidden=false;$("discoverPayment").hidden=false;$("invoiceInfo").textContent="Expires: "+d.expires_at+" | "+(d.amount_atomic/1000000)+" USDC";}catch(e){$("status").textContent=e.message}};
+$("invoiceCreate").onclick=async()=>{try{const d=await api("/checkout/create",{plan:$("plan").value});if(!d.url.startsWith("solana:"))throw Error("Invalid payment link");invoiceId=d.id;startPaymentPolling(d.expires_at);$("payLink").href=d.url;$("payLink").hidden=false;$("confirmPayment").hidden=false;$("discoverPayment").hidden=false;$("invoiceInfo").textContent="Expires: "+d.expires_at+" | "+(d.amount_atomic/1000000)+" USDC";}catch(e){$("status").textContent=e.message}};
 $("confirmPayment").onsubmit=async e=>{e.preventDefault();try{await api("/checkout/confirm",{invoice:invoiceId,signature:new FormData(e.target).get("signature")});$("status").textContent="Payment verified";await progress()}catch(e){$("status").textContent=e.message}};
 $("register").onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector("button");b.disabled=true;try{const f=new FormData(e.target);await api("/register",{email:f.get("email"),password:f.get("password")});$("status").textContent="Account created. Please sign in.";e.target.reset()}catch(err){$("status").textContent=err.message}finally{b.disabled=false}};
 $("discoverPayment").onclick=async()=>{const b=$("discoverPayment");b.disabled=true;try{const d=await api("/checkout/discover",{invoice:invoiceId});$("status").textContent=d.paid?"Payment verified":"Awaiting finalized payment";if(d.paid)await progress()}catch(e){$("status").textContent=e.message}finally{b.disabled=false}};
+let paymentTimer=null;
+function startPaymentPolling(expiry){
+ clearInterval(paymentTimer);
+ const deadline=Date.parse(expiry)+120000;
+ paymentTimer=setInterval(async()=>{
+ if(!token||Date.now()>deadline||$("checkout").hidden){clearInterval(paymentTimer);return}
+ if(document.hidden||$("discoverPayment").disabled)return;
+ await $("discoverPayment").onclick();
+ },30000);
+}
 </script></html>
