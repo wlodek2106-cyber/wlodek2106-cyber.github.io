@@ -24,7 +24,8 @@ jobs:
           python-version: '3.12'
       - name: Python compilation and unit tests
         run: |
-          bash -n academy/ops/backup.sh academy/ops/verify_restore.sh
+          bash -n academy/ops/backup.sh
+          bash -n academy/ops/verify_restore.sh
           python -m compileall -q academy/backend
           cd academy/backend
           python -m unittest -v test_progression test_http_boundary
@@ -38,3 +39,32 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Browser smoke test (mocked API, no payments)
         run: node academy/tests/browser_smoke.cjs
+
+      - name: Encrypted backup and restore (synthetic data only)
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          cid="$(docker run -d --network none -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17)"
+          trap 'docker rm -fv "$cid" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
+          for i in $(seq 1 60); do
+            if docker exec "$cid" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec "$cid" pg_isready -h 127.0.0.1 -U postgres
+          docker exec "$cid" createdb -U postgres academy_test
+          docker exec "$cid" psql -v ON_ERROR_STOP=1 -U postgres -d academy_test -c "CREATE SCHEMA academy; CREATE TABLE academy.students(id int); CREATE TABLE academy.enrollments(id int); CREATE TABLE academy.payment_invoices(id int); CREATE TABLE academy.lesson_progress(id int); INSERT INTO academy.students VALUES (1);"
+          export ACADEMY_TEST_CONTAINER="$cid"
+          export GNUPGHOME="$tmp/gnupg"
+          mkdir -m 700 "$GNUPGHOME"
+          mkdir "$tmp/bin"
+          printf '%s\n' '#!/usr/bin/env bash' 'exec docker exec "$ACADEMY_TEST_CONTAINER" pg_dump -U postgres -d academy_test "$@"' > "$tmp/bin/pg_dump"
+          printf '%s\n' '#!/usr/bin/env bash' 'exec /usr/bin/gpg --batch --yes --pinentry-mode loopback --passphrase synthetic-test-only "$@"' > "$tmp/bin/gpg"
+          chmod 700 "$tmp/bin/"*
+          export PATH="$tmp/bin:$PATH"
+          export ACADEMY_DATABASE_URL="synthetic-test-only"
+          bash academy/ops/backup.sh "$tmp/backup"
+          archive="$(find "$tmp/backup" -name '*.dump.gpg' -type f)"
+          test -n "$archive"
+          bash academy/ops/verify_restore.sh "$archive"
