@@ -139,6 +139,14 @@ def dispatch(method,path,body,token):
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
+    if path=="/admin/network-access" and method=="GET":
+        from partners import owner
+        try: owner(token)
+        except PermissionError: return 200,{"allowed":False}
+        return 200,{"allowed":True}
+    if path=="/admin/network" and method=="POST":
+        from network_admin import network
+        return 200,network(token,body)
     if path=="/admin/statistics" and method=="GET":
         if os.getenv("ACADEMY_ADMIN_ENABLED")!="true":
             raise PermissionError("Administration disabled")

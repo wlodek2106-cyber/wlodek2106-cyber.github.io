@@ -25,6 +25,11 @@ class AccountIntegration(unittest.TestCase):
                     invited=accounts.register("invite-"+email,password,referral=code)
                     cur.execute("SELECT referrer_id FROM referrals WHERE student_id=%s",(invited,))
                     self.assertEqual(cur.fetchone()[0],student)
+                    from network_admin import query
+                    branch=query(cur,parent=student)
+                    self.assertEqual([x["id"] for x in branch["items"]],[invited])
+                    self.assertEqual(branch["items"][0]["parent_id"],student)
+                    self.assertEqual(query(cur,search="invite-"+email)["items"][0]["id"],invited)
                     attribute(cur,student,code)
                     cur.execute("SELECT count(*) FROM referrals WHERE student_id=%s",(student,))
                     self.assertEqual(cur.fetchone()[0],0)

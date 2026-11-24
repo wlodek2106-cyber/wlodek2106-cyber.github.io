@@ -115,6 +115,12 @@ class ProgressTests(unittest.TestCase):
         self.assertFalse(matches(altered,sig,wallet,amount,self.t))
         altered=deepcopy(tx);altered["meta"]["err"]={"failed":True}
         self.assertFalse(matches(altered,sig,wallet,amount,self.t))
+    def test_network_input(self):
+        from network_admin import validate
+        self.assertEqual(validate(None,0,"  example  "),(None,0,"example"))
+        self.assertEqual(validate(123,50,""),(123,50,""))
+        for values in ((True,0,""),(1,-1,""),(1,0,"x"*121),(0,0,"")):
+            with self.assertRaises(ValueError): validate(*values)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
