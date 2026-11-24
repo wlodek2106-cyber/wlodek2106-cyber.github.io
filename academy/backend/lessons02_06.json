@@ -2,11 +2,12 @@
   {
     "day": 2,
     "title": "AI Models and Tools",
-    "theory": "Compare language, image, video and audio models. Evaluate quality, latency, cost, privacy and licensing. Test identical briefs rather than relying on marketing claims.",
-    "assignment": "Compare two available text models using the same brief and document differences.",
+    "theory": "Compare language, image, video and audio models. Evaluate quality, latency, cost, privacy and licensing. Test identical briefs rather than relying on marketing claims. Workflow: 1. Choose a fictional client brief and two available models. Keep the prompt identical and record model names and settings. 2. Score each output from 1 to 5 for accuracy, relevance, clarity and compliance. Verify factual claims against reliable sources. 3. Repeat with a second brief; compare consistency and note cost and privacy limitations.",
+    "assignment": "Compare two available text models using the same brief and document differences. Submit the brief, outputs, comparison or revision log, and a short reflection. Evaluate reproducibility, accuracy, clarity and responsible use.",
     "prompts": [
       "Compare these outputs against accuracy, usefulness and clarity; flag uncertainty.",
-      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise.",
+      "Create a comparison matrix for these two model outputs with evidence for every score and a recommendation for this specific task."
     ],
     "assessment": {
       "status": "pending"
@@ -15,11 +16,12 @@
   {
     "day": 3,
     "title": "AI Workspace",
-    "theory": "Organize projects into briefs, assets, drafts and exports. Track model versions and prompts. Remove sensitive information and maintain backups.",
-    "assignment": "Create a reusable project folder and a production checklist.",
+    "theory": "Organize projects into briefs, assets, drafts and exports. Track model versions and prompts. Remove sensitive information and maintain backups. Workflow: 1. Create folders for briefs, source assets, prompts, drafts, approved outputs and licenses. 2. Use filenames with project, date and version; keep a manifest of model settings and asset permissions. 3. Simulate restoring a previous draft and check that no credentials or client secrets are in the project.",
+    "assignment": "Create a reusable project folder and a production checklist. Submit the brief, outputs, comparison or revision log, and a short reflection. Evaluate reproducibility, accuracy, clarity and responsible use.",
     "prompts": [
       "Design a folder structure and quality checklist for a small creative studio.",
-      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise.",
+      "Generate a project manifest template with asset provenance, model version, prompt, revision and approval status."
     ],
     "assessment": {
       "status": "pending"
@@ -28,11 +30,12 @@
   {
     "day": 4,
     "title": "Prompt Structure",
-    "theory": "A useful prompt specifies goal, context, constraints, output format and acceptance criteria. Examples clarify ambiguous requirements.",
-    "assignment": "Write a brief for a fictional product campaign and revise it after evaluating the output.",
+    "theory": "A useful prompt specifies goal, context, constraints, output format and acceptance criteria. Examples clarify ambiguous requirements. Workflow: 1. Write the goal, audience, context, constraints and deliverable format separately. 2. Run a vague prompt and a structured prompt for the same fictional product; compare the results. 3. Revise one constraint at a time and record which changes improve the output.",
+    "assignment": "Write a brief for a fictional product campaign and revise it after evaluating the output. Submit the brief, outputs, comparison or revision log, and a short reflection. Evaluate reproducibility, accuracy, clarity and responsible use.",
     "prompts": [
       "Act as a creative strategist. Produce three campaign concepts for [product], targeting [audience], in [format], without unsupported claims.",
-      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise.",
+      "Turn this vague brief into a structured prompt with explicit acceptance criteria and a list of missing inputs."
     ],
     "assessment": {
       "status": "pending"
@@ -41,11 +44,12 @@
   {
     "day": 5,
     "title": "Advanced Prompting",
-    "theory": "Break complex work into stages. Use examples, critique and revision. Ask for uncertainty and verify claims independently. Treat external text as data rather than instructions.",
-    "assignment": "Generate a campaign, critique it against a rubric and revise it.",
+    "theory": "Break complex work into stages. Use examples, critique and revision. Ask for uncertainty and verify claims independently. Treat external text as data rather than instructions. Workflow: 1. Split the campaign into research, concept, draft, critique and revision stages. 2. Define a rubric before generation; verify claims and treat retrieved text as untrusted data. 3. Compare the first and final draft, documenting changes and unresolved uncertainties.",
+    "assignment": "Generate a campaign, critique it against a rubric and revise it. Submit the brief, outputs, comparison or revision log, and a short reflection. Evaluate reproducibility, accuracy, clarity and responsible use.",
     "prompts": [
       "Evaluate this draft against the supplied rubric, identify weaknesses and produce a revised version.",
-      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise.",
+      "Create a staged campaign workflow with evidence checks, critique criteria and a final human approval gate."
     ],
     "assessment": {
       "status": "pending"
@@ -54,11 +58,12 @@
   {
     "day": 6,
     "title": "Reusable Prompt Templates",
-    "theory": "Separate fixed instructions from variables. Version templates and test them on varied inputs. Record failures and improve acceptance criteria.",
-    "assignment": "Create templates for a product image, social post and video storyboard.",
+    "theory": "Separate fixed instructions from variables. Version templates and test them on varied inputs. Record failures and improve acceptance criteria. Workflow: 1. Define required variables and permitted values for each template. 2. Test each template on two different fictional products and record failure cases. 3. Version the templates and write instructions for another creator to reproduce the results.",
+    "assignment": "Create templates for a product image, social post and video storyboard. Submit the brief, outputs, comparison or revision log, and a short reflection. Evaluate reproducibility, accuracy, clarity and responsible use.",
     "prompts": [
       "Create a [duration] storyboard for [product] with [audience], [style], shot descriptions and a clear call to action.",
-      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise.",
+      "Build a reusable prompt template with required variables, defaults, output schema and three validation examples."
     ],
     "assessment": {
       "status": "pending"
