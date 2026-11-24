@@ -1,11 +1,19 @@
 name: Academy native builds
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/academy-build.yml'
+concurrency:
+  group: academy-native-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
   android:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: academy/android
@@ -18,7 +26,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - run: gradle :app:assembleDebug
+      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: academy-android-debug
@@ -26,6 +35,7 @@ jobs:
           if-no-files-found: error
   windows:
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -41,13 +51,21 @@ jobs:
   apple:
     runs-on: macos-15
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - scheme: Academy
+            destination: generic/platform=iOS Simulator
+          - scheme: AcademyMac
+            destination: generic/platform=macOS
+          - scheme: AcademyWatch
+            destination: generic/platform=watchOS Simulator
     defaults:
       run:
         working-directory: academy/apple
     steps:
       - uses: actions/checkout@v4
-      - run: brew install xcodegen
+      - run: command -v xcodegen || brew install xcodegen
       - run: xcodegen generate
-      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme Academy -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
-      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme AcademyMac -destination 'generic/platform=macOS' CODE_SIGNING_ALLOWED=NO build
-      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme AcademyWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme '${{ matrix.scheme }}' -destination '${{ matrix.destination }}' CODE_SIGNING_ALLOWED=NO build
