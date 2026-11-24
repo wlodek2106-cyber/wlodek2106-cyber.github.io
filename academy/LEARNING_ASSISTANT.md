@@ -1,0 +1,2 @@
+# Learning Assistant
+Seven suggested sessions with 15/30/60 minute daily options, using only the learner's own quiz scores and unlocked lesson snapshot. Learning, review, practice and reflection; three time blocks per session. Markdown export. Available via existing paid student Adaptive Learning panel; catalog link opens dashboard. No schedule, notifications, automatic grade changes, entitlement bypass or AI inference. No new paid API or persistent records. Tests cover duration, locked lessons and validation; CI and live behavior pending.

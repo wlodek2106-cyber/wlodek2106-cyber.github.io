@@ -196,6 +196,9 @@ def dispatch(method,path,body,token):
     if path=="/career/estimate" and method=="POST":
         from career import estimate
         return 200,estimate(token,body)
+    if path=="/adaptive/week" and method=="POST":
+        from adaptive import student_plan
+        return 200,student_plan(token,body["minutes"])
     if path=="/adaptive/plan" and method=="GET":
         from adaptive import student_plan
         return 200,student_plan(token)

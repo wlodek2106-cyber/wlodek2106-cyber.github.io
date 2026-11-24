@@ -64,6 +64,20 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(r["review"][0]["priority"],"high")
         self.assertEqual(r["completed"],1)
         self.assertEqual(r["attempted_lessons"],2)
+    def test_weekly_learning_plan(self):
+        from adaptive import weekly_plan
+        lessons=[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}]
+        for minutes in (15,30,60):
+            p=weekly_plan(lessons,[(1,70),(3,10)],minutes)
+            self.assertEqual(len(p["sessions"]),7)
+            self.assertEqual(p["total_minutes"],minutes*7)
+            self.assertEqual(p["sessions"][0]["lesson"],2)
+            self.assertTrue(all(sum(s["blocks"])==minutes and s["lesson"] in (None,1,2) for s in p["sessions"]))
+            self.assertEqual(p["sessions"][-1]["kind"],"reflect")
+        locked=weekly_plan([{"day":1,"unlocked":False,"completed":False}],[],15)
+        self.assertTrue(all(s["lesson"] is None for s in locked["sessions"]))
+        for bad in (True,0,31,"30"):
+            with self.assertRaises(ValueError): weekly_plan(lessons,[],bad)
     def test_achievements(self):
         from achievements import calculate
         lessons=[{"completed":n<5} for n in range(45)]
