@@ -11,7 +11,9 @@
       "Create a checklist for evaluating Image Generation.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Generate a studio photograph of [product] on a matte neutral pedestal, 85mm lens look, softbox key light, realistic material texture, negative space for copy. No invented logos.",
+      "Define a visual brief with subject, palette, composition, reference rights, aspect ratio and three measurable acceptance criteria."
     ],
     "assessment": {
       "status": "pending"
@@ -29,7 +31,9 @@
       "Create a checklist for evaluating Composition and Lighting.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Design three lighting diagrams for [product]: soft frontal, dramatic side and backlit silhouette. Specify reflector placement and expected shadows.",
+      "Compare three crops of the same image for 9:16, 4:5 and 16:9, preserving the focal point and safe text areas."
     ],
     "assessment": {
       "status": "pending"
@@ -47,7 +51,9 @@
       "Create a checklist for evaluating Commercial Photography.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Create a six-image ecommerce shot list for [product], including scale, details, packaging and lifestyle. Preserve accurate product features.",
+      "Audit a product image against the original reference for geometry, color, labels and misleading claims."
     ],
     "assessment": {
       "status": "pending"
@@ -65,7 +71,9 @@
       "Create a checklist for evaluating AI Video Tools.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Write a 10-second image-to-video prompt with one subject, one camera movement, stable identity and a clear ending.",
+      "Break a 30-second product video into three coherent shots with continuity anchors and transition instructions."
     ],
     "assessment": {
       "status": "pending"
@@ -83,7 +91,9 @@
       "Create a checklist for evaluating Camera and Motion.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Design a slow dolly-in shot with stable horizon, consistent focal length and no unintended subject deformation.",
+      "Translate a storyboard into camera direction, subject motion, timing and continuity constraints."
     ],
     "assessment": {
       "status": "pending"
@@ -101,7 +111,9 @@
       "Create a checklist for evaluating Editing and Sound.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Create an edit decision list for a 15-second ad with shot durations, cuts, sound cues and caption timing.",
+      "Design a sound brief using licensed or original audio, dialogue clarity and loudness consistency."
     ],
     "assessment": {
       "status": "pending"
@@ -119,7 +131,9 @@
       "Create a checklist for evaluating Character Design.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Build an original character reference sheet with front, side and back views, fixed wardrobe and distinctive silhouette.",
+      "Write a continuity checklist for character proportions, colors, expressions and props across five scenes."
     ],
     "assessment": {
       "status": "pending"
@@ -137,7 +151,9 @@
       "Create a checklist for evaluating Storyboarding.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Create a six-panel storyboard for [story], specifying framing, action, emotion and duration per panel.",
+      "Identify continuity errors and propose a revised shot order that preserves narrative causality."
     ],
     "assessment": {
       "status": "pending"
@@ -155,7 +171,9 @@
       "Create a checklist for evaluating Animated Short Film.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Write a 60-second original animated story with setup, conflict, resolution and four 15-second scenes.",
+      "Create a scene production checklist including character references, backgrounds, audio and final continuity review."
     ],
     "assessment": {
       "status": "pending"
@@ -173,7 +191,9 @@
       "Create a checklist for evaluating Virtual Influencer Design.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Design a fictional virtual creator with consistent visual identity, content pillars and clear AI disclosure.",
+      "Build a brand-safe character style guide without impersonating a real person."
     ],
     "assessment": {
       "status": "pending"
@@ -191,7 +211,9 @@
       "Create a checklist for evaluating Voice and Lip Sync.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Write a natural 15-second voiceover with pronunciation notes, pauses and emphasis.",
+      "Create a lip-sync quality checklist covering phoneme timing, mouth artifacts and consent for voice use."
     ],
     "assessment": {
       "status": "pending"
@@ -209,7 +231,9 @@
       "Create a checklist for evaluating Social Content.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Plan seven short-form posts around [topic] with distinct hooks, educational value and truthful calls to action.",
+      "Adapt one original video concept for three platforms without inventing engagement metrics."
     ],
     "assessment": {
       "status": "pending"
@@ -227,7 +251,9 @@
       "Create a checklist for evaluating Advertising Concepts.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Develop three ad concepts for [product] based on audience problem, evidence-backed benefit and clear CTA.",
+      "Create a claim substantiation checklist and flag unsupported performance promises."
     ],
     "assessment": {
       "status": "pending"
@@ -245,7 +271,9 @@
       "Create a checklist for evaluating Product Advertising.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Write a 15-second product ad with hook, demonstration, benefit and CTA, keeping the product visually accurate.",
+      "Create three creative test variants changing only the hook; define the metric and evaluation period."
     ],
     "assessment": {
       "status": "pending"
@@ -263,7 +291,9 @@
       "Create a checklist for evaluating Brand Film.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Develop a 30-second brand film with emotional arc, visual motif, restrained typography and original sound direction.",
+      "Build a production brief specifying deliverables, rights, aspect ratios and revision limits."
     ],
     "assessment": {
       "status": "pending"
@@ -281,7 +311,9 @@
       "Create a checklist for evaluating Local AI Studio.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Map a local AI image workflow with model, input, seed, sampler, output and reproducibility metadata.",
+      "Create a troubleshooting checklist for missing models, memory limits and incompatible workflow nodes."
     ],
     "assessment": {
       "status": "pending"
@@ -299,7 +331,9 @@
       "Create a checklist for evaluating Content Automation.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Design a content pipeline from brief to draft, human approval, scheduling and analytics, with duplicate prevention.",
+      "Define a failure recovery plan for rejected assets, API limits and missed publishing windows."
     ],
     "assessment": {
       "status": "pending"
@@ -317,7 +351,9 @@
       "Create a checklist for evaluating AI Agents.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Specify an AI agent with bounded tools, input schema, output validation, approval gates and audit logs.",
+      "Create five adversarial test cases for an agent handling untrusted instructions and sensitive data."
     ],
     "assessment": {
       "status": "pending"
@@ -335,7 +371,9 @@
       "Create a checklist for evaluating Portfolio.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Curate a six-project portfolio with brief, process, deliverables, rights and measurable outcomes where available.",
+      "Write a concise case study that distinguishes actual results from hypothetical targets."
     ],
     "assessment": {
       "status": "pending"
@@ -353,7 +391,9 @@
       "Create a checklist for evaluating Pricing and Clients.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Calculate a project quote using hours, direct costs, revision allowance and target margin; show assumptions.",
+      "Draft a client discovery questionnaire covering scope, deadlines, usage rights and acceptance criteria."
     ],
     "assessment": {
       "status": "pending"
@@ -371,7 +411,9 @@
       "Create a checklist for evaluating Selling AI Services.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Write a personalized outreach email offering a relevant AI creative service without fabricated credentials.",
+      "Design a proposal with deliverables, milestones, payment terms and revision boundaries."
     ],
     "assessment": {
       "status": "pending"
@@ -389,7 +431,9 @@
       "Create a checklist for evaluating AI Agency.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Create a small agency operating model with roles, quality gates, client intake and delivery capacity.",
+      "Design a weekly capacity plan and identify bottlenecks before accepting new work."
     ],
     "assessment": {
       "status": "pending"
@@ -407,7 +451,9 @@
       "Create a checklist for evaluating Marketing and Scaling.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Build a marketing experiment with hypothesis, audience, creative variants, budget cap and stop criteria.",
+      "Create a dashboard specification for leads, conversion, revenue, refunds and acquisition costs."
     ],
     "assessment": {
       "status": "pending"
@@ -425,7 +471,9 @@
       "Create a checklist for evaluating Final Project.",
       "Identify risks, licensing issues and quality failures in this draft.",
       "Critique my submission against the assignment and propose revisions.",
-      "Produce a final delivery checklist for this project."
+      "Produce a final delivery checklist for this project.",
+      "Prepare a final capstone brief combining original visual assets, video, campaign strategy and rights documentation.",
+      "Evaluate the capstone using a rubric for craft, consistency, originality, commercial clarity and responsible AI use."
     ],
     "assessment": {
       "status": "pending"
