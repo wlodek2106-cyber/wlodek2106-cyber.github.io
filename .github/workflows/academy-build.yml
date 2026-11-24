@@ -12,7 +12,7 @@ permissions:
   contents: read
 jobs:
   android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
@@ -26,7 +26,28 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify or install Android SDK 35
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          export ANDROID_HOME="$SDK_ROOT"
+          export ANDROID_SDK_ROOT="$SDK_ROOT"
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "sdk.dir=$SDK_ROOT" > local.properties
+          if [[ -f "$SDK_ROOT/platforms/android-35/android.jar" && -d "$SDK_ROOT/build-tools/35.0.0" ]]; then
+            echo "Android SDK 35 is already installed."
+          else
+            SDK_MANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+            if [[ ! -x "$SDK_MANAGER" ]]; then
+              SDK_MANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager -print -quit)"
+            fi
+            test -x "$SDK_MANAGER"
+            "$SDK_MANAGER" --sdk_root="$SDK_ROOT" 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+          test -f "$SDK_ROOT/platforms/android-35/android.jar"
+          test -d "$SDK_ROOT/build-tools/35.0.0"
       - run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
