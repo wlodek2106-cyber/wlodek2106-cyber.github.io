@@ -213,6 +213,12 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["projected_margin_cents"],"14000")
         self.assertEqual(result["projected_margin_percent"],"70.0")
         self.assertIsNone(report([],today)["projected_margin_percent"])
+    def test_productivity(self):
+        from productivity import values,parse_day
+        b={"title":"Test","day":"2026-11-24","category":"study","priority":1,"minutes":30,"done":False}
+        self.assertEqual(values(b)[4],30)
+        for k,v in (("day","2026-02-30"),("minutes",1441),("priority",True),("category","other"),("done",1)):
+            with self.assertRaises(ValueError): values({**b,k:v})
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

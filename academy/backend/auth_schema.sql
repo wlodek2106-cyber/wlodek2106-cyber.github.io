@@ -179,3 +179,15 @@ CREATE TABLE IF NOT EXISTS business_orders (
  FOREIGN KEY(student_id,client_id) REFERENCES business_clients(student_id,id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS business_orders_student_client ON business_orders(student_id,client_id);
+
+CREATE TABLE IF NOT EXISTS student_tasks (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL,
+ day date NOT NULL,
+ category text NOT NULL CHECK(category IN ('study','client','personal')),
+ priority integer NOT NULL CHECK(priority BETWEEN 1 AND 3),
+ minutes integer NOT NULL CHECK(minutes BETWEEN 0 AND 1440),
+ done boolean NOT NULL DEFAULT false
+);
+CREATE INDEX IF NOT EXISTS student_tasks_student_day ON student_tasks(student_id,day);

@@ -86,6 +86,15 @@ class LaunchIntegration(unittest.TestCase):
                 order={"client_id":cid,"title":"Test order","status":"in_progress","agreed":"100.00","received":"40.00","expense":"10.00"}
                 oid=save_order(cur,buyer_id,order)["id"]
                 self.assertEqual(business_overview(cur,buyer_id)["totals"]["cash_margin_cents"],"3000")
+                from productivity import save as task_save,overview as task_overview,remove as task_remove
+                task={"title":"Practice","day":"2026-11-24","category":"study","priority":1,"minutes":30,"done":False}
+                tid=task_save(cur,buyer_id,task)["id"]
+                self.assertEqual(task_overview(cur,buyer_id,"2026-11-24")["total"],1)
+                self.assertEqual(task_overview(cur,partner_id,"2026-11-24")["total"],0)
+                with self.assertRaises(PermissionError): task_save(cur,partner_id,{**task,"id":tid})
+                task_save(cur,buyer_id,{**task,"id":tid,"done":True})
+                self.assertEqual(task_overview(cur,buyer_id,"2026-11-24")["completed"],1)
+                self.assertTrue(task_remove(cur,buyer_id,tid)["deleted"])
                 from invoice_studio import record,render
                 proposal={"order":oid,"lang":"ru","provider":"Тест <&>","scope":"Создать проект","terms":"Две правки"}
                 doc=record(cur,buyer_id,proposal)
