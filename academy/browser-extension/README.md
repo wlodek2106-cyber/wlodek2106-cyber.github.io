@@ -1,0 +1,2 @@
+# Browser extension prototype
+Chrome or Edge: open chrome://extensions or edge://extensions, enable Developer mode, select Load unpacked and choose this folder. No permissions, tokens, background tracking or access to browsing data are requested. This version is a launcher, not an authenticated progress widget. Store publication and browser testing have not been performed. Windows and Linux users can also install the Academy PWA from the browser's install menu.
