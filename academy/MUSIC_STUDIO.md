@@ -1,0 +1,2 @@
+# Music & Sound Studio
+Local procedural audio synthesis (not a generative AI model). Five-track 16-step sequencer, three original patterns, 60–180 BPM, 1/4/8 bars, four root notes, three synthesized effects. Mono 22.05 kHz 16-bit PCM WAV output, native audio preview. No external samples, no upload or paid APIs. No vocal generation or multitrack mixing. Four languages; instrument and preset names are shared English terms. Browser playback not yet device-tested.
