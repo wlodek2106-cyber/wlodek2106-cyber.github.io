@@ -82,6 +82,14 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_career_quote(self):
+        from career import quote
+        self.assertEqual(quote("5","20","10","10")["total"],"121.00")
+        self.assertEqual(quote(0,0,0,0)["total"],"0.00")
+        self.assertEqual(quote("0.5","19.99",0,0)["total"],"10.00")
+        for invalid in ("NaN","Infinity",-1,True):
+            with self.assertRaises(ValueError): quote(invalid,20,0,0)
+        with self.assertRaises(ValueError): quote(1,1,0,101)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

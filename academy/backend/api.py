@@ -63,6 +63,12 @@ def dispatch(method,path,body,token):
         require_lesson(token,41)
         from playground import simulate
         return 200,simulate(body["case"],body["tools"],body["approval"],body["max_steps"])
+    if path=="/career/overview" and method=="GET":
+        from career import overview
+        return 200,overview(token)
+    if path=="/career/estimate" and method=="POST":
+        from career import estimate
+        return 200,estimate(token,body)
     if path=="/adaptive/plan" and method=="GET":
         from adaptive import student_plan
         return 200,student_plan(token)
