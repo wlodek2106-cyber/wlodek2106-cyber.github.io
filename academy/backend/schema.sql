@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS lesson_progress (
  score integer NOT NULL CHECK(score BETWEEN 80 AND 100),
  PRIMARY KEY(enrollment_id,lesson)
 );
-CREATE VIEW academy_next_unlock AS
+CREATE OR REPLACE VIEW academy_next_unlock AS
 SELECT e.id AS enrollment_id, COALESCE(p.completed,0) AS completed,
  CASE WHEN e.paid_at IS NULL OR COALESCE(p.completed,0)=30 THEN NULL
  ELSE GREATEST(e.paid_at + COALESCE(p.completed,0)*interval '1 day', COALESCE(p.last_pass + interval '1 day',e.paid_at)) END AS unlock_at
