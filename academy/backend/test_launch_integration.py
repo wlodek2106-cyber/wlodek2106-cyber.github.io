@@ -84,7 +84,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertNotIn("contact",job_page(cur,buyer_id,"feed",{"after":jid-1})["items"][0])
                 bid={"id":jid,"alias":"Test student","proposal":"Test proposal","quote":"140","contact":"worker@example.invalid","consent":True}
                 with self.assertRaises(PermissionError): job_apply(cur,owner_id,bid)
+                from job_board import recommend
+                with self.assertRaises(PermissionError): recommend(cur,owner_id)
+                self.assertIn("items",recommend(cur,buyer_id))
                 aid=job_apply(cur,buyer_id,bid)["id"]
+                self.assertFalse(any(x["id"]==jid for x in recommend(cur,buyer_id)["items"]))
                 with self.assertRaises(ValueError): job_apply(cur,buyer_id,bid)
                 with self.assertRaises(PermissionError): job_applicants(cur,buyer_id,{"id":jid})
                 self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["contact"])

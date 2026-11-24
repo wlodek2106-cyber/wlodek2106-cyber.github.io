@@ -109,6 +109,22 @@ def transition(cur,sid,b):
     cur.execute("UPDATE academy_jobs SET status=%s,updated_at=now() WHERE id=%s",(next_status,jid))
     return {"status":next_status}
 
+def recommend(cur,sid):
+    from job_matching import rank
+    cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND paid_at IS NOT NULL",(sid,))
+    row=cur.fetchone()
+    if not row: raise PermissionError("Paid student required")
+    cur.execute("SELECT lesson FROM lesson_progress WHERE enrollment_id=%s AND score>=80",(row[0],))
+    passed=[r[0] for r in cur.fetchall()]
+    cur.execute("SELECT category FROM marketplace_services WHERE student_id=%s AND status='approved'",(sid,))
+    service=cur.fetchone()
+    cur.execute("""SELECT j.id,j.title,j.category,j.brief,j.budget_cents,j.status FROM academy_jobs j
+      WHERE j.status='open' AND j.client_id<>%s AND NOT EXISTS
+      (SELECT 1 FROM academy_job_applications a WHERE a.job_id=j.id AND a.student_id=%s)
+      ORDER BY j.id DESC LIMIT 300""",(sid,sid))
+    candidates=[dict(zip(FIELDS,r)) for r in cur.fetchall()]
+    return {"items":rank(candidates,passed,service[0] if service else None),"next_after":None,"candidate_limit":300,"engine":"rules_based"}
+
 def dispatch(token,action,b):
     if action in ("admin","moderate"): sid=owner(token)
     else:
@@ -116,6 +132,7 @@ def dispatch(token,action,b):
         if sid is None: raise PermissionError()
     with transaction() as cur:
         if action in ("feed","mine","admin"): return page(cur,sid,action,b)
+        if action=="recommended": return recommend(cur,sid)
         if action=="create": return create(cur,sid,b)
         if action=="moderate": return moderate(cur,sid,b)
         if action=="apply": return apply(cur,sid,b)

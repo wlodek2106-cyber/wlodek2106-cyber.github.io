@@ -100,6 +100,12 @@ class HttpBoundary(unittest.TestCase):
                 with req("/ai-workspace.js") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"function selectTools",r.read())
+                with req("/hire") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"hire.js",r.read())
+                with req("/hire.js") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"intent=post",r.read())
                 with req("/marketplace") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"marketplace.js",r.read())

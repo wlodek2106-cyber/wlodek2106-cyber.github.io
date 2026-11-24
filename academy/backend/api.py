@@ -13,7 +13,7 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
-    if path in tuple("/jobs/"+x for x in ("feed","mine","admin","create","moderate","apply","applicants","applications","transition")) and method=="POST":
+    if path in tuple("/jobs/"+x for x in ("feed","mine","admin","create","moderate","apply","applicants","applications","transition","recommended")) and method=="POST":
         from job_board import dispatch as job_dispatch
         return 200,job_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/community/feed","/community/mine","/community/create","/community/withdraw","/community/admin","/community/decide") and method=="POST":

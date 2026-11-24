@@ -96,6 +96,13 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_job_matching(self):
+        from job_matching import rank
+        jobs=[{"id":1,"category":"design"},{"id":2,"category":"video"},{"id":3,"category":"web"},{"id":4,"category":"design"}]
+        self.assertEqual(rank(jobs,[]),[])
+        self.assertEqual([j["id"] for j in rank(jobs,[7,8,10],"video")],[2,4,1])
+        self.assertEqual(rank(jobs,[31])[0]["matched_lessons"],1)
+        self.assertTrue(rank(jobs,[],"web")[0]["service_match"])
     def test_career_accelerator(self):
         from career import roadmap,PROFILE_FIELDS
         empty=roadmap({},0,"none",0,0,0,30)
