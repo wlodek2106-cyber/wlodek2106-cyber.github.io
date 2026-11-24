@@ -1,0 +1,188 @@
+{
+  "ru": [
+    {
+      "day": 31,
+      "title": "Планирование сайта",
+      "theory": "Определите аудиторию, пользовательские сценарии и критерии приёмки. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Составьте бриф и карту сайта. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 32,
+      "title": "Адаптивный интерфейс",
+      "theory": "Используйте семантический HTML, CSS, доступные подписи и мобильное тестирование. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Создайте адаптивный лендинг. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 33,
+      "title": "Backend и данные",
+      "theory": "Разделите клиент и сервер, проверяйте ввод, храните секреты на сервере и используйте параметризованные запросы. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Создайте API с авторизацией и модель данных. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 34,
+      "title": "Публикация сайта",
+      "theory": "Используйте Git, переменные окружения, журналы сборки и план отката. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Опубликуйте демонстрационный сайт и опишите откат. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 35,
+      "title": "Веб-проект",
+      "theory": "Объедините интерфейс, сервер, доступность и функциональные тесты. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Представьте работающий сайт и отчёт тестирования. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 36,
+      "title": "Мобильная архитектура",
+      "theory": "Выберите нативную или кроссплатформенную разработку, определите экраны и ограничения устройств. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Создайте прототип и карту навигации. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 37,
+      "title": "Мобильный интерфейс",
+      "theory": "Используйте доступные элементы, безопасные области и адаптивную навигацию. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Реализуйте три связанных экрана. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 38,
+      "title": "Данные и авторизация",
+      "theory": "Используйте защищённое хранилище, авторизованные API и обработку ошибок. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Реализуйте вход и экран данных на тестовом сервере. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 39,
+      "title": "Интеграция AI",
+      "theory": "Вызывайте модели через сервер с лимитами, согласием пользователя и обработкой ошибок. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Добавьте AI-функцию с резервным режимом. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 40,
+      "title": "Финальный App-проект",
+      "theory": "Тестируйте на устройствах, документируйте разрешения, приватность и требования публикации. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
+      "assignment": "Представьте прототип приложения и чек-лист релиза. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    }
+  ],
+  "uk": [
+    {
+      "day": 31,
+      "title": "Планування сайту",
+      "theory": "Визначте аудиторію, сценарії користувачів і критерії приймання. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Складіть бриф і карту сайту. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 32,
+      "title": "Адаптивний інтерфейс",
+      "theory": "Використовуйте семантичний HTML, CSS, доступні підписи й мобільне тестування. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Створіть адаптивний лендинг. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 33,
+      "title": "Backend і дані",
+      "theory": "Розділіть клієнт і сервер, перевіряйте введення, зберігайте секрети на сервері та використовуйте параметризовані запити. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Створіть API з авторизацією та модель даних. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 34,
+      "title": "Публікація сайту",
+      "theory": "Використовуйте Git, змінні середовища, журнали збірки та план відкату. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Опублікуйте демонстраційний сайт і опишіть відкат. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 35,
+      "title": "Вебпроєкт",
+      "theory": "Об’єднайте інтерфейс, сервер, доступність і функціональні тести. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Представте робочий сайт і звіт тестування. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 36,
+      "title": "Мобільна архітектура",
+      "theory": "Оберіть нативну або кросплатформну розробку, визначте екрани й обмеження пристроїв. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Створіть прототип і карту навігації. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 37,
+      "title": "Мобільний інтерфейс",
+      "theory": "Використовуйте доступні елементи, безпечні області й адаптивну навігацію. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Реалізуйте три пов’язані екрани. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 38,
+      "title": "Дані й авторизація",
+      "theory": "Використовуйте захищене сховище, авторизовані API та обробку помилок. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Реалізуйте вхід і екран даних на тестовому сервері. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 39,
+      "title": "Інтеграція ШІ",
+      "theory": "Викликайте моделі через сервер із лімітами, згодою користувача та обробкою помилок. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Додайте функцію ШІ з резервним режимом. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 40,
+      "title": "Фінальний App-проєкт",
+      "theory": "Тестуйте на пристроях, документуйте дозволи, приватність і вимоги публікації. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
+      "assignment": "Представте прототип застосунку й чекліст релізу. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    }
+  ],
+  "pl": [
+    {
+      "day": 31,
+      "title": "Planowanie strony",
+      "theory": "Określ odbiorców, ścieżki użytkownika i kryteria akceptacji. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Przygotuj brief i mapę strony. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 32,
+      "title": "Responsywny interfejs",
+      "theory": "Użyj semantycznego HTML, CSS, dostępnych etykiet i testów mobilnych. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Stwórz responsywny landing page. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 33,
+      "title": "Backend i dane",
+      "theory": "Oddziel klienta od serwera, waliduj dane, przechowuj sekrety na serwerze i stosuj zapytania parametryzowane. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Zbuduj uwierzytelniane API i model danych. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 34,
+      "title": "Publikacja strony",
+      "theory": "Używaj Git, zmiennych środowiskowych, logów kompilacji i planu wycofania zmian. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Opublikuj stronę demonstracyjną i opisz procedurę wycofania. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 35,
+      "title": "Projekt internetowy",
+      "theory": "Połącz interfejs, backend, dostępność i testy funkcjonalne. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Przedstaw działającą stronę i raport testów. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 36,
+      "title": "Architektura mobilna",
+      "theory": "Wybierz technologię natywną lub wieloplatformową, określ ekrany i ograniczenia urządzeń. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Stwórz prototyp i mapę nawigacji. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 37,
+      "title": "Interfejs mobilny",
+      "theory": "Używaj dostępnych kontrolek, bezpiecznych obszarów i adaptacyjnej nawigacji. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Zaimplementuj trzy połączone ekrany. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 38,
+      "title": "Dane i uwierzytelnianie",
+      "theory": "Używaj bezpiecznego magazynu, uwierzytelnianych API i obsługi błędów. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Zaimplementuj logowanie i ekran danych na serwerze testowym. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 39,
+      "title": "Integracja AI",
+      "theory": "Wywołuj modele przez backend z limitami, zgodą użytkownika i obsługą błędów. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Dodaj funkcję AI z trybem awaryjnym. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 40,
+      "title": "Projekt końcowy aplikacji",
+      "theory": "Testuj na urządzeniach, dokumentuj uprawnienia, prywatność i wymagania publikacji. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
+      "assignment": "Przedstaw prototyp aplikacji i listę kontrolną wydania. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    }
+  ]
+}
