@@ -358,3 +358,20 @@ CREATE TABLE IF NOT EXISTS academy_job_reviews (
  reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,
  reviewed_at timestamptz
 );
+
+CREATE TABLE IF NOT EXISTS academy_job_messages (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ job_id bigint NOT NULL REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ role text NOT NULL CHECK(role IN ('client','freelancer')),
+ kind text NOT NULL CHECK(kind IN ('message','deliver','revise')),
+ body text NOT NULL CHECK(length(body) BETWEEN 1 AND 1600),
+ created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS academy_job_messages_job ON academy_job_messages(job_id,id);
+CREATE TABLE IF NOT EXISTS academy_job_milestones (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ job_id bigint NOT NULL REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
+ done boolean NOT NULL DEFAULT false
+);
+CREATE INDEX IF NOT EXISTS academy_job_milestones_job ON academy_job_milestones(job_id,id);

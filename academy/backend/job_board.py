@@ -146,6 +146,9 @@ def dispatch(token,action,b):
         if action=="applicants": return applicants(cur,sid,b)
         if action=="applications": return applications(cur,sid,b)
         if action=="transition": return transition(cur,sid,b)
+        if action in ("room","room-message","room-milestone","room-handoff"):
+            from project_room import room,message,milestone,handoff
+            return {"room":room,"room-message":message,"room-milestone":milestone,"room-handoff":handoff}[action](cur,sid,b)
         if action in ("review","reputation","review-admin","review-decide"):
             from reputation import submit,own,queue,decide
             if action=="review": return submit(cur,sid,b)

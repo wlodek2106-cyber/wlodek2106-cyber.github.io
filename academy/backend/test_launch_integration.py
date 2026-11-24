@@ -98,10 +98,25 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(job_applicants(cur,partner_id,{"id":jid})["items"][0]["contact"],"worker@example.invalid")
                 self.assertEqual(job_applications(cur,buyer_id,{})["items"][0]["contact"],"client@example.invalid")
                 with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":jid,"action":"deliver"})
-                self.assertEqual(job_transition(cur,buyer_id,{"id":jid,"action":"deliver"})["status"],"delivered")
+                from project_room import room,message,milestone,handoff
+                with self.assertRaises(PermissionError): room(cur,owner_id,{"id":jid})
+                self.assertEqual(room(cur,partner_id,{"id":jid})["role"],"client")
+                self.assertEqual(room(cur,buyer_id,{"id":jid})["role"],"freelancer")
+                with self.assertRaises(PermissionError): milestone(cur,buyer_id,{"id":jid,"action":"add","title":"Test"})
+                mid=milestone(cur,partner_id,{"id":jid,"action":"add","title":"Test milestone"})["id"]
+                milestone(cur,buyer_id,{"id":jid,"action":"set","milestone":mid,"done":True})
+                self.assertTrue(room(cur,partner_id,{"id":jid})["milestones"][0]["done"])
+                message(cur,buyer_id,{"id":jid,"body":"Synthetic message"})
+                self.assertEqual(room(cur,partner_id,{"id":jid})["items"][0]["body"],"Synthetic message")
+                self.assertEqual(handoff(cur,buyer_id,{"id":jid,"action":"deliver","body":"Test result"})["status"],"delivered")
+                self.assertEqual(handoff(cur,partner_id,{"id":jid,"action":"revise","body":"Test revision"})["status"],"assigned")
+                milestone(cur,partner_id,{"id":jid,"action":"set","milestone":mid,"done":False})
+                self.assertEqual(handoff(cur,buyer_id,{"id":jid,"action":"deliver","body":"Test revised result"})["status"],"delivered")
                 from reputation import submit as review_submit,stats as rep_stats,decide as review_decide,own as review_own
                 with self.assertRaises(PermissionError): review_submit(cur,partner_id,{"id":jid,"rating":5,"consent":True})
                 self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
+                with self.assertRaises(PermissionError): message(cur,buyer_id,{"id":jid,"body":"Closed"})
+                self.assertEqual(len(room(cur,partner_id,{"id":jid})["items"]),4)
                 review={"id":jid,"rating":4,"comment":"Synthetic feedback","consent":True}
                 with self.assertRaises(PermissionError): review_submit(cur,buyer_id,review)
                 self.assertEqual(review_submit(cur,partner_id,review)["status"],"pending")
