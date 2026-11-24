@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "ZER0LIFE Academy",
+  "version": "1.0.0",
+  "description": "Quick access to your AI Creator Academy",
+  "action": {
+    "default_title": "ZER0LIFE Academy",
+    "default_popup": "popup.html"
+  }
+}
