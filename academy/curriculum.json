@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "languages": [
+    "en",
+    "uk",
+    "pl",
+    "ru"
+  ],
+  "contentLanguage": "en",
+  "passPercent": 80,
+  "unlockHours": 24,
+  "lessons": [
+    {
+      "day": 1,
+      "module": 1,
+      "title": "AI Fundamentals",
+      "prerequisite": null,
+      "status": "planned"
+    },
+    {
+      "day": 2,
+      "module": 1,
+      "title": "AI Models and Tools",
+      "prerequisite": 1,
+      "status": "planned"
+    },
+    {
+      "day": 3,
+      "module": 1,
+      "title": "AI Workspace",
+      "prerequisite": 2,
+      "status": "planned"
+    },
+    {
+      "day": 4,
+      "module": 2,
+      "title": "Prompt Structure",
+      "prerequisite": 3,
+      "status": "planned"
+    },
+    {
+      "day": 5,
+      "module": 2,
+      "title": "Advanced Prompting",
+      "prerequisite": 4,
+      "status": "planned"
+    },
+    {
+      "day": 6,
+      "module": 2,
+      "title": "Reusable Prompt Templates",
+      "prerequisite": 5,
+      "status": "planned"
+    },
+    {
+      "day": 7,
+      "module": 3,
+      "title": "Image Generation",
+      "prerequisite": 6,
+      "status": "planned"
+    },
+    {
+      "day": 8,
+      "module": 3,
+      "title": "Composition and Lighting",
+      "prerequisite": 7,
+      "status": "planned"
+    },
+    {
+      "day": 9,
+      "module": 3,
+      "title": "Commercial Photography",
+      "prerequisite": 8,
+      "status": "planned"
+    },
+    {
+      "day": 10,
+      "module": 4,
+      "title": "AI Video Tools",
+      "prerequisite": 9,
+      "status": "planned"
+    },
+    {
+      "day": 11,
+      "module": 4,
+      "title": "Camera and Motion",
+      "prerequisite": 10,
+      "status": "planned"
+    },
+    {
+      "day": 12,
+      "module": 4,
+      "title": "Editing and Sound",
+      "prerequisite": 11,
+      "status": "planned"
+    },
+    {
+      "day": 13,
+      "module": 5,
+      "title": "Character Design",
+      "prerequisite": 12,
+      "status": "planned"
+    },
+    {
+      "day": 14,
+      "module": 5,
+      "title": "Storyboarding",
+      "prerequisite": 13,
+      "status": "planned"
+    },
+    {
+      "day": 15,
+      "module": 5,
+      "title": "Animated Short Film",
+      "prerequisite": 14,
+      "status": "planned"
+    },
+    {
+      "day": 16,
+      "module": 6,
+      "title": "Virtual Influencer Design",
+      "prerequisite": 15,
+      "status": "planned"
+    },
+    {
+      "day": 17,
+      "module": 6,
+      "title": "Voice and Lip Sync",
+      "prerequisite": 16,
+      "status": "planned"
+    },
+    {
+      "day": 18,
+      "module": 6,
+      "title": "Social Content",
+      "prerequisite": 17,
+      "status": "planned"
+    },
+    {
+      "day": 19,
+      "module": 7,
+      "title": "Advertising Concepts",
+      "prerequisite": 18,
+      "status": "planned"
+    },
+    {
+      "day": 20,
+      "module": 7,
+      "title": "Product Advertising",
+      "prerequisite": 19,
+      "status": "planned"
+    },
+    {
+      "day": 21,
+      "module": 7,
+      "title": "Brand Film",
+      "prerequisite": 20,
+      "status": "planned"
+    },
+    {
+      "day": 22,
+      "module": 8,
+      "title": "Local AI Studio",
+      "prerequisite": 21,
+      "status": "planned"
+    },
+    {
+      "day": 23,
+      "module": 8,
+      "title": "Content Automation",
+      "prerequisite": 22,
+      "status": "planned"
+    },
+    {
+      "day": 24,
+      "module": 8,
+      "title": "AI Agents",
+      "prerequisite": 23,
+      "status": "planned"
+    },
+    {
+      "day": 25,
+      "module": 9,
+      "title": "Portfolio",
+      "prerequisite": 24,
+      "status": "planned"
+    },
+    {
+      "day": 26,
+      "module": 9,
+      "title": "Pricing and Clients",
+      "prerequisite": 25,
+      "status": "planned"
+    },
+    {
+      "day": 27,
+      "module": 9,
+      "title": "Selling AI Services",
+      "prerequisite": 26,
+      "status": "planned"
+    },
+    {
+      "day": 28,
+      "module": 10,
+      "title": "AI Agency",
+      "prerequisite": 27,
+      "status": "planned"
+    },
+    {
+      "day": 29,
+      "module": 10,
+      "title": "Marketing and Scaling",
+      "prerequisite": 28,
+      "status": "planned"
+    },
+    {
+      "day": 30,
+      "module": 10,
+      "title": "Final Project",
+      "prerequisite": 29,
+      "status": "planned"
+    }
+  ]
+}
