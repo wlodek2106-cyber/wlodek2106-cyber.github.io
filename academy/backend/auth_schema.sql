@@ -227,6 +227,8 @@ CREATE TABLE IF NOT EXISTS knowledge_notes (
  tag text NOT NULL DEFAULT '' CHECK(length(tag)<=80),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE knowledge_notes ADD COLUMN IF NOT EXISTS folder text NOT NULL DEFAULT '' CHECK(length(folder)<=80);
+ALTER TABLE knowledge_notes ADD COLUMN IF NOT EXISTS favorite boolean NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS knowledge_notes_student ON knowledge_notes(student_id,id);
 
 CREATE TABLE IF NOT EXISTS student_prompts (

@@ -33,7 +33,7 @@ DATASETS={
 "storyboard_scenes":"SELECT s.id,s.project_id,s.position,s.seconds,s.title,s.action,s.camera,s.audio,s.continuity FROM storyboard_scenes s JOIN storyboard_projects p ON p.id=s.project_id WHERE p.student_id=%s ORDER BY s.project_id,s.position,s.id",
 "creative_workflows":"SELECT id,title,kind,brief,completed,notes,updated_at,due,tasks,materials FROM creative_workflows WHERE student_id=%s ORDER BY id",
 "student_prompts":"SELECT id,title,prompt,category,favorite,updated_at FROM student_prompts WHERE student_id=%s ORDER BY id",
-"knowledge_notes":"SELECT id,title,content,tag,updated_at FROM knowledge_notes WHERE student_id=%s ORDER BY id",
+"knowledge_notes":"SELECT id,title,content,tag,updated_at,folder,favorite FROM knowledge_notes WHERE student_id=%s ORDER BY id",
 "privacy_requests":"SELECT id,kind,details,status,response,created_at,closed_at FROM privacy_requests WHERE student_id=%s ORDER BY id DESC"
 }
 def export_data(cur,sid):

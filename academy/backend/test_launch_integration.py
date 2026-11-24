@@ -148,6 +148,15 @@ class LaunchIntegration(unittest.TestCase):
                 from knowledge import save as note_save,list_notes,remove as note_remove,public_text
                 note=note_save(cur,buyer_id,{"title":"Test note","content":"Local AI notes","tag":"AI"})
                 self.assertEqual(list_notes(cur,buyer_id,"local")["items"][0]["id"],note["id"])
+                from knowledge import folders as note_folders,export_notes
+                note_save(cur,buyer_id,{"id":note["id"],"title":"Test note","content":"Local AI notes","tag":"AI","folder":"Study","favorite":True})
+                self.assertEqual(note_folders(cur,buyer_id)["items"],["Study"])
+                self.assertEqual(list_notes(cur,buyer_id,"notes Local",folder="Study",favorite=True,all_words=True)["items"][0]["id"],note["id"])
+                self.assertEqual(list_notes(cur,buyer_id,"missing Local",all_words=True)["items"],[])
+                self.assertEqual(list_notes(cur,buyer_id,folder="Other")["items"],[])
+                self.assertEqual(export_notes(cur,buyer_id)["items"][0]["favorite"],True)
+                self.assertEqual(export_notes(cur,partner_id)["items"],[])
+                with self.assertRaises(ValueError): note_save(cur,buyer_id,{"title":"Invalid","content":"Test","favorite":"true"})
                 self.assertEqual(list_notes(cur,partner_id)["items"],[])
                 with self.assertRaises(PermissionError): note_remove(cur,partner_id,note["id"])
                 self.assertNotIn("secret",public_text({"title":"Lesson","questions":["secret"]}))
@@ -198,6 +207,7 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(exported["community"][0]["status"],"withdrawn")
                 self.assertNotIn("password_hash",exported["account"][0])
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
+                self.assertEqual(exported["knowledge_notes"][0]["folder"],"Study")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
                 self.assertEqual(exported["creative_workflows"][0]["title"],"Test flow")
                 self.assertEqual(exported["creative_workflows"][0]["tasks"],[{"title":"Edit","done":True}])
