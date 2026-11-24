@@ -40,6 +40,9 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path=="/account/password" and method=="POST":
+        from accounts import change_password
+        return 200,change_password(token,body["current_password"],body["new_password"])
     if path=="/logout" and method=="POST":
         if not token: raise PermissionError("Authentication required")
         logout(token)

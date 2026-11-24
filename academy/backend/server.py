@@ -72,6 +72,10 @@ class Handler(BaseHTTPRequestHandler):
                 email=str(body.get("email","")).strip().lower()[:254]
                 if not allow_auth((path,email)) or not allow_auth((path,"global")):
                     return self.respond(429,{"error":"Too many attempts; retry later"})
+            if self.command=="POST" and path=="/account/password":
+                from hashlib import sha256
+                if not token or not allow_auth((path,sha256(token.encode()).hexdigest())) or not allow_auth((path,"global")):
+                    return self.respond(429,{"error":"Too many attempts; retry later"})
             status,data=dispatch(self.command,path,body,token)
             return self.respond(status,data)
         except PermissionError:

@@ -40,8 +40,17 @@ class AccountIntegration(unittest.TestCase):
                         accounts.login(email,"wrong-password")
                     token=accounts.login(email,password)
                     self.assertEqual(accounts.authenticate(token),student)
-                    accounts.logout(token)
+                    other=accounts.login(email,password)
+                    with self.assertRaises(PermissionError): accounts.change_password(token,"incorrect-password",password+"new")
+                    self.assertEqual(accounts.authenticate(token),student)
+                    self.assertTrue(accounts.change_password(token,password,password+"new")["changed"])
                     self.assertIsNone(accounts.authenticate(token))
+                    self.assertIsNone(accounts.authenticate(other))
+                    with self.assertRaises(ValueError): accounts.login(email,password)
+                    fresh=accounts.login(email,password+"new")
+                    self.assertEqual(accounts.authenticate(fresh),student)
+                    accounts.logout(fresh)
+                    self.assertIsNone(accounts.authenticate(fresh))
                 raise Rollback()
         except Rollback:
             pass
