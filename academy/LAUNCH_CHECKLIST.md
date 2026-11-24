@@ -14,3 +14,6 @@ Remaining launch gates:
 - Free-tier resources can sleep or have quota limits; no paid services enabled.
 
 Public dashboard has registration and checkout enabled for testing, not verified commercial launch.
+
+## Security and performance update
+Dashboard response CSP hashes both inline scripts; external scripts only same origin, no inline event handlers or eval permitted. Inline CSS remains necessary for the current UI. Request handling has 16 concurrent slots, 15-second socket inactivity timeout, POST framing checks, bearer length limit and sanitized request logging. Static asset ETag revalidation avoids redundant downloads. Browser smoke exercises CSP at 320/390/1280 px; production Safari, physical devices and load tests still required. Synthetic backup test is not a production restore. No penetration test, no paid security service and no commercial readiness claim.

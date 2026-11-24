@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import json, os
+import json, os, re, hashlib, base64
 import time, threading
 from collections import OrderedDict
 _limits=OrderedDict()
@@ -16,11 +16,48 @@ def allow_auth(key):
         return True
 from pathlib import Path
 from urllib.parse import urlsplit
+def dashboard_csp(body):
+    text=body.decode("utf-8").replace("\r\n","\n").replace("\r","\n")
+    scripts=re.findall(r"<script>(.*?)</script>",text,re.S)
+    hashes=["'sha256-"+base64.b64encode(hashlib.sha256(s.encode()).digest()).decode()+"'" for s in scripts]
+    return "default-src 'none'; script-src 'self' "+" ".join(hashes)+"; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"
+
+class BoundedHTTPServer(ThreadingHTTPServer):
+    # One small service, bounded thread and database connection pressure.
+    daemon_threads=True
+    def __init__(self,*args,**kwargs):
+        self.slots=threading.BoundedSemaphore(16)
+        super().__init__(*args,**kwargs)
+    def process_request(self,request,client_address):
+        if not self.slots.acquire(blocking=False):
+            try:
+                request.settimeout(1)
+                request.sendall(b"HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nCache-Control: no-store\r\nRetry-After: 2\r\nContent-Length: 0\r\n\r\n")
+            except OSError:
+                pass
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request,client_address)
+        except BaseException:
+            self.slots.release()
+            raise
+    def process_request_thread(self,request,client_address):
+        try:
+            super().process_request_thread(request,client_address)
+        finally:
+            self.slots.release()
+
 class Handler(BaseHTTPRequestHandler):
+    timeout=15
+    def log_request(self,code="-",size="-"):
+        # Do not put query strings, referral codes or supplied path data in logs.
+        self.log_message("request %s %s",self.command,code)
     def end_headers(self):
         self.send_header("X-Content-Type-Options","nosniff")
         self.send_header("Referrer-Policy","no-referrer")
         self.send_header("X-Frame-Options","DENY")
+        self.send_header("Permissions-Policy","geolocation=(), camera=(), microphone=(), payment=(), usb=()")
         super().end_headers()
     def respond(self,status,data):
         body=json.dumps(data).encode()
@@ -36,7 +73,15 @@ class Handler(BaseHTTPRequestHandler):
         if self.command=="GET" and path in assets:
             name,mime=assets[path]
             body=Path(__file__).with_name(name).read_bytes()
+            etag='"'+hashlib.sha256(body).hexdigest()+'"'
+            if self.headers.get("If-None-Match")==etag:
+                self.send_response(304)
+                self.send_header("ETag",etag)
+                self.send_header("Cache-Control","no-cache")
+                self.end_headers()
+                return
             self.send_response(200)
+            self.send_header("ETag",etag)
             self.send_header("Content-Type",mime)
             self.send_header("Cache-Control","no-cache")
             self.send_header("Content-Length",str(len(body)))
@@ -47,6 +92,8 @@ class Handler(BaseHTTPRequestHandler):
             body=Path(__file__).with_name("marketplace.html" if path=="/marketplace" else "ai-workspace.html" if path=="/ai-workspace" else "automation-studio.html" if path=="/automation-studio" else "website-builder.html" if path=="/website-builder" else "music-studio.html" if path=="/music-studio" else "animation-studio.html" if path=="/animation-studio" else "design-studio.html" if path=="/design-studio" else "voice-studio.html" if path=="/voice-studio" else "local-media.html" if path=="/local-media" else "creator-suite.html" if path=="/creator-suite" else "legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
+            if path in ("/","/dashboard"):
+                self.send_header("Content-Security-Policy",dashboard_csp(body))
             self.send_header("Cache-Control","no-store")
             self.send_header("Content-Length",str(len(body)))
             self.end_headers()
@@ -60,14 +107,21 @@ class Handler(BaseHTTPRequestHandler):
             from api import dispatch
             body={}
             if self.command=="POST":
+                if self.headers.get("Transfer-Encoding") or len(self.headers.get_all("Content-Length",[]))!=1:
+                    return self.respond(400,{"error":"Invalid body framing"})
                 n=int(self.headers.get("Content-Length","0"))
                 if not 0<n<=16384:
                     return self.respond(400,{"error":"Invalid body length"})
-                body=json.loads(self.rfile.read(n))
+                raw=self.rfile.read(n)
+                if len(raw)!=n:
+                    return self.respond(400,{"error":"Incomplete body"})
+                body=json.loads(raw)
                 if not isinstance(body,dict):
                     raise ValueError()
             auth=self.headers.get("Authorization","")
             token=auth[7:] if auth.startswith("Bearer ") else None
+            if token is not None and len(token)>128:
+                return self.respond(403,{"error":"Access denied"})
             if self.command=="POST" and path in ("/login","/register"):
                 email=str(body.get("email","")).strip().lower()[:254]
                 if not allow_auth((path,email)) or not allow_auth((path,"global")):
@@ -115,4 +169,4 @@ if __name__=="__main__":
     from certificate_mail import configured,run
     if configured():
         threading.Thread(target=run,daemon=True,name="certificate-email").start()
-    ThreadingHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()
+    BoundedHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()

@@ -10,7 +10,10 @@ CHECKS={
 "certificate_without_complete_course":"""SELECT count(*) FROM certificates c JOIN enrollments e ON e.id=c.enrollment_id WHERE e.paid_at IS NULL OR
 (SELECT count(*) FROM lesson_progress p WHERE p.enrollment_id=e.id AND p.score>=80 AND p.lesson BETWEEN 1 AND CASE WHEN e.plan='vip' THEN 45 ELSE 30 END)
 <>CASE WHEN e.plan='vip' THEN 45 ELSE 30 END""",
-"paid_partner_without_signature":"SELECT count(*) FROM influencer_payouts WHERE status='paid' AND (payout_signature IS NULL OR paid_at IS NULL)"
+"paid_partner_without_signature":"SELECT count(*) FROM influencer_payouts WHERE status='paid' AND (payout_signature IS NULL OR paid_at IS NULL)",
+"invalid_project_tasks":"SELECT count(*) FROM creative_workflows WHERE jsonb_typeof(tasks)<>'array'",
+"invalid_community_parent":"SELECT count(*) FROM community_posts p JOIN community_posts t ON t.id=p.parent_id WHERE t.parent_id IS NOT NULL OR p.category<>t.category",
+"approved_service_without_paid_student":"SELECT count(*) FROM marketplace_services m WHERE m.status='approved' AND NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id=m.student_id AND e.paid_at IS NOT NULL)"
 }
 COUNTS={
 "students":"SELECT count(*) FROM students",

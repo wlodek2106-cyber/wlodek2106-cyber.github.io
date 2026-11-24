@@ -3,7 +3,7 @@ import unittest,threading,os,sys,types,json
 from unittest.mock import patch
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
-from server import Handler,ThreadingHTTPServer
+from server import Handler,BoundedHTTPServer,dashboard_csp
 class HttpBoundary(unittest.TestCase):
     def test_http_boundary(self):
         def fake_dispatch(method,path,body,token):
@@ -11,7 +11,7 @@ class HttpBoundary(unittest.TestCase):
                 if token!="test-only": raise PermissionError()
                 return 200,{"ok":True}
             return 404,{"error":"Not found"}
-        server=ThreadingHTTPServer(("127.0.0.1",0),Handler)
+        server=BoundedHTTPServer(("127.0.0.1",0),Handler)
         thread=threading.Thread(target=server.serve_forever,daemon=True)
         thread.start()
         url="http://127.0.0.1:"+str(server.server_port)
@@ -26,7 +26,17 @@ class HttpBoundary(unittest.TestCase):
                     self.assertEqual(r.headers["X-Frame-Options"],"DENY")
                 with req("/dashboard") as r:
                     self.assertEqual(r.status,200)
-                    self.assertIn(b"academySidebar",r.read())
+                    body=r.read()
+                    self.assertIn(b"academySidebar",body)
+                    self.assertEqual(r.headers["Content-Security-Policy"],dashboard_csp(body))
+                    self.assertNotIn("'unsafe-inline'",r.headers["Content-Security-Policy"].split("script-src ",1)[1].split(";",1)[0])
+                    self.assertIn("camera=()",r.headers["Permissions-Policy"])
+                with req("/ai-workspace.js") as r:
+                    tag=r.headers["ETag"]
+                    self.assertTrue(tag)
+                with req("/ai-workspace.js",headers={"If-None-Match":tag}) as r:
+                    self.assertEqual(r.status,304)
+                    self.assertEqual(r.read(),b"")
                 with req("/legal") as r:
                     self.assertEqual(r.status,200)
                     content=r.read()
@@ -96,7 +106,7 @@ class HttpBoundary(unittest.TestCase):
                 with req("/marketplace.js") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"/marketplace/public",r.read())
-                for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
+                for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/private",None,{"Authorization":"Bearer "+"x"*129},403),("/unknown",None,{},404)]:
                     with req(path,body,headers) as r:
                         self.assertEqual(r.status,status)
                         self.assertEqual(r.headers["Cache-Control"],"no-store")

@@ -2,11 +2,14 @@ const {chromium}=require("playwright");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
-const html=fs.readFileSync(path.join(__dirname,"../backend/dashboard.html"),"utf8");
+const html=fs.readFileSync(path.join(__dirname,"../backend/dashboard.html"),"utf8").replace(/\r\n?/g,"\n");
+const crypto=require("node:crypto");
+const hashes=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>"'sha256-"+crypto.createHash("sha256").update(x[1]).digest("base64")+"'");
+const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
 (async()=>{
  const browser=await chromium.launch({headless:true});
  try{
- for(const [role,width] of [["unpaid",1280],["paid",390],["owner",1280]]){
+ for(const [role,width] of [["unpaid",1280],["paid",390],["paid",320],["owner",1280]]){
  const context=await browser.newContext({viewport:{width,height:844},serviceWorkers:"block"});
  const page=await context.newPage();
  const errors=[], unexpected=[];
@@ -17,7 +20,7 @@ const html=fs.readFileSync(path.join(__dirname,"../backend/dashboard.html"),"utf
   const url=new URL(route.request().url());
   if(url.origin!=="http://academy.test")return route.abort();
   const p=url.pathname;
-  if(p==="/dashboard")return route.fulfill({contentType:"text/html",body:html});
+  if(p==="/dashboard")return route.fulfill({contentType:"text/html",headers:{"Content-Security-Policy":csp},body:html});
   if(p==="/academy-icon.svg"||p==="/manifest.webmanifest"||p==="/favicon.ico")return route.fulfill({status:204});
   calls.push(p);
   if(p==="/login"){signedIn=true;return route.fulfill({json:{token:"test-only-token"}})}
