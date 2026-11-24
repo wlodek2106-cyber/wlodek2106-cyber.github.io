@@ -152,3 +152,9 @@ CREATE TABLE IF NOT EXISTS private_curriculum_audit (
  updated_by bigint NOT NULL REFERENCES students(id),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS career_profiles (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ profile jsonb NOT NULL,
+ updated_at timestamptz NOT NULL DEFAULT now()
+);

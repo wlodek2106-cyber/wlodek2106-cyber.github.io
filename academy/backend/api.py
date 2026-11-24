@@ -110,6 +110,15 @@ def dispatch(method,path,body,token):
     if path=="/referrals" and method=="GET":
         from referrals import overview
         return 200,overview(token)
+    if path=="/career/profile" and method=="GET":
+        from career_profile import get_profile
+        return 200,get_profile(token)
+    if path=="/career/profile" and method=="POST":
+        from career_profile import save_profile
+        return 200,save_profile(token,body["profile"])
+    if path=="/career/profile/delete" and method=="POST":
+        from career_profile import delete_profile
+        return 200,delete_profile(token)
     if path=="/career/overview" and method=="GET":
         from career import overview
         return 200,overview(token)

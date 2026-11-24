@@ -185,6 +185,12 @@ class ProgressTests(unittest.TestCase):
             self.assertFalse(result["official_grade"])
             self.assertEqual(len(result["checks"]),6)
         with self.assertRaises(ValueError): review(1,{"goal":"x"})
+    def test_career_profile(self):
+        from career_profile import validate,EMPTY
+        self.assertEqual(validate({**EMPTY,"name":"  Test  "})["name"],"Test")
+        with self.assertRaises(ValueError): validate({"name":"Test"})
+        with self.assertRaises(ValueError): validate({**EMPTY,"contact":"x"*201})
+        with self.assertRaises(ValueError): validate({**EMPTY,"skills":123})
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

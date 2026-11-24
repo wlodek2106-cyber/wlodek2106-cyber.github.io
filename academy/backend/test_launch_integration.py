@@ -81,6 +81,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
                 self.assertIn("after_all_commissions_atomic",founder.report(cur,7)["alltime"])
                 self.assertIn("students",admin.statistics(owner))
+                from career_profile import save as save_profile,load as load_profile,EMPTY
+                profile={**EMPTY,"name":"Test Student","headline":"AI creator"}
+                self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
+                self.assertEqual(load_profile(cur,buyer_id),profile)
+                self.assertEqual(load_profile(cur,partner_id),EMPTY)
                 from content_vault import save,load,inventory
                 private={"title":"Private test","theory":"New material","assignment":"Test task","prompts":[]}
                 self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],1)
