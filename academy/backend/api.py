@@ -25,6 +25,11 @@ def dispatch(method,path,body,token):
         if not token: raise PermissionError("Authentication required")
         logout(token)
         return 200,{"ok":True}
+    if path=="/pro/library" and method=="GET":
+        p=student_progress(token)
+        if not p.get("paid") or p.get("plan") not in ("pro","vip"):
+            raise PermissionError("Pro or VIP required")
+        return 200,{"items":json.loads(Path(__file__).with_name("pro_library.json").read_text()),"language":"en"}
     if path=="/portfolio" and method=="GET":
         from portfolio import list_projects
         return 200,list_projects(token)
