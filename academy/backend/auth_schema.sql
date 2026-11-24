@@ -205,3 +205,16 @@ CREATE TABLE IF NOT EXISTS payment_support (
  UNIQUE(invoice_id,signature)
 );
 CREATE INDEX IF NOT EXISTS payment_support_invoice ON payment_support(invoice_id);
+
+CREATE TABLE IF NOT EXISTS privacy_requests (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id),
+ kind text NOT NULL CHECK(kind IN ('access','correction','erasure','restriction','objection','portability')),
+ details text NOT NULL DEFAULT '',
+ status text NOT NULL DEFAULT 'open' CHECK(status IN ('open','closed')),
+ response text NOT NULL DEFAULT '',
+ created_at timestamptz NOT NULL DEFAULT now(),
+ closed_at timestamptz,
+ closed_by bigint REFERENCES students(id)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS privacy_requests_open_unique ON privacy_requests(student_id,kind) WHERE status='open';

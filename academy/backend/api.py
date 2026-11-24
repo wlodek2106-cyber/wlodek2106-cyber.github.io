@@ -40,6 +40,21 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path=="/privacy/export" and method=="POST":
+        from privacy_center import export
+        return 200,export(token,body["password"],body.get("code"))
+    if path=="/privacy/request" and method=="POST":
+        from privacy_center import create
+        return 201,create(token,body["password"],body.get("code"),body["kind"],body.get("details",""))
+    if path=="/privacy/list" and method=="POST":
+        from privacy_center import list_user
+        return 200,list_user(token,body.get("after",0))
+    if path=="/admin/privacy" and method=="POST":
+        from privacy_center import list_admin
+        return 200,list_admin(token,body.get("after",0))
+    if path=="/admin/privacy/close" and method=="POST":
+        from privacy_center import close
+        return 200,close(token,body["request"],body["response"])
     if path=="/account/mfa" and method=="GET":
         from accounts import mfa_status
         return 200,mfa_status(token)

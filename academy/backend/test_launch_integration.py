@@ -113,6 +113,17 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
                 self.assertTrue(business_delete(cur,buyer_id,"order",oid)["deleted"])
                 self.assertTrue(business_delete(cur,buyer_id,"client",cid)["deleted"])
+                from privacy_center import export_data,create_record,list_records,close_record
+                req= create_record(cur,buyer_id,"erasure","Test request")
+                self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
+                self.assertEqual(list_records(cur,partner_id)["items"],[])
+                exported=export_data(cur,buyer_id)["datasets"]
+                self.assertEqual(exported["account"][0]["id"],buyer_id)
+                self.assertNotIn("password_hash",exported["account"][0])
+                self.assertTrue(all("token_digest" not in x for x in exported["sessions"]))
+                self.assertTrue(close_record(cur,owner_id,req["id"],"Test response only")["closed"])
+                self.assertEqual(list_records(cur,buyer_id)["items"][0]["status"],"closed")
+                self.assertTrue(learning.student_progress(buyer)["paid"])
                 from career_profile import save as save_profile,load as load_profile,EMPTY
                 profile={**EMPTY,"name":"Test Student","headline":"AI creator"}
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
