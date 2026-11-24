@@ -36,3 +36,37 @@ def verify_certificate(code):
         cur.execute("SELECT issued_at FROM certificates WHERE verification_code=%s",(code,))
         row=cur.fetchone()
         return {"valid":bool(row),"issued_at":row[0].isoformat() if row else None}
+
+def certificate_pdf(record):
+    from io import BytesIO
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import landscape,A4
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.lib.utils import simpleSplit
+    import os
+    font_path=os.getenv("ACADEMY_CERT_FONT","/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
+    pdfmetrics.registerFont(TTFont("AcademyCertificate",font_path))
+    buf=BytesIO()
+    w,h=landscape(A4)
+    c=canvas.Canvas(buf,pagesize=(w,h))
+    c.setTitle("ZER0LIFE Academy Certificate")
+    c.setStrokeColorRGB(.65,.50,.25)
+    c.setLineWidth(3)
+    c.rect(30,30,w-60,h-60)
+    c.rect(38,38,w-76,h-76)
+    def line(value,y,size):
+        c.setFont("AcademyCertificate",size)
+        c.drawCentredString(w/2,y,value)
+    line("ZER0LIFE AI CREATOR ACADEMY",h-100,18)
+    line("Certificate of Completion",h-165,32)
+    line("Presented to",h-215,16)
+    for i,name in enumerate(simpleSplit(record["recipient_name"],"AcademyCertificate",25,w-120)):
+        line(name,h-255-i*32,25)
+    line(record["program"],170,18)
+    line("30 lessons completed | "+record["issued_at"][:10],135,14)
+    line("Verification: "+record["code"],90,11)
+    line("zer0life-academy.onrender.com",65,10)
+    c.showPage()
+    c.save()
+    return buf.getvalue()
