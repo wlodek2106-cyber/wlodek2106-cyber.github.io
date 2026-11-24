@@ -86,6 +86,12 @@ class LaunchIntegration(unittest.TestCase):
                 order={"client_id":cid,"title":"Test order","status":"in_progress","agreed":"100.00","received":"40.00","expense":"10.00"}
                 oid=save_order(cur,buyer_id,order)["id"]
                 self.assertEqual(business_overview(cur,buyer_id)["totals"]["cash_margin_cents"],"3000")
+                from invoice_studio import record,render
+                proposal={"order":oid,"lang":"ru","provider":"Тест <&>","scope":"Создать проект","terms":"Две правки"}
+                doc=record(cur,buyer_id,proposal)
+                self.assertEqual(doc["remaining"],6000)
+                self.assertTrue(render(doc).startswith(b"%PDF"))
+                with self.assertRaises(PermissionError): record(cur,partner_id,proposal)
                 self.assertEqual(business_overview(cur,partner_id)["orders"],[])
                 with self.assertRaises(PermissionError): save_order(cur,partner_id,order)
                 with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
