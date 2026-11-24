@@ -49,4 +49,9 @@ class Handler(BaseHTTPRequestHandler):
     do_GET=handle_api
     do_POST=handle_api
 if __name__=="__main__":
+    if os.getenv("ACADEMY_DATABASE_URL"):
+        import subprocess, sys
+        subprocess.check_call([sys.executable,"-m","pip","install","-r",str(Path(__file__).with_name("requirements.txt"))])
+        from migrate import migrate
+        migrate()
     ThreadingHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()
