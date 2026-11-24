@@ -2,7 +2,9 @@ import re
 from database import transaction
 from security import hash_password, verify_password, new_session, session_digest
 
-def register(email,password,first_name=None,last_name=None):
+def register(email,password,first_name=None,last_name=None,referral=None):
+    from referrals import normalize,attribute
+    referral=normalize(referral)
     if first_name is not None or last_name is not None:
         if not all(isinstance(n,str) and 1<=len(n.strip())<=100 and n.isprintable() for n in (first_name,last_name)):
             raise ValueError('Invalid name')
@@ -16,6 +18,7 @@ def register(email,password,first_name=None,last_name=None):
         row=cur.fetchone()
         if not row:
             raise ValueError("Registration unavailable")
+        attribute(cur,row[0],referral)
         return row[0]
 
 def login(email,password):

@@ -85,3 +85,15 @@ CREATE TABLE IF NOT EXISTS student_reviews (
  hidden_at timestamptz
 );
 CREATE INDEX IF NOT EXISTS student_reviews_date_idx ON student_reviews(updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS referral_codes (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ code text UNIQUE NOT NULL CHECK(code ~ '^[0-9a-f]{24}$')
+);
+CREATE TABLE IF NOT EXISTS referrals (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ referrer_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ CHECK(student_id<>referrer_id)
+);
+CREATE INDEX IF NOT EXISTS referrals_referrer_idx ON referrals(referrer_id);

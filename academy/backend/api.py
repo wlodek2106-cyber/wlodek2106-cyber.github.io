@@ -32,7 +32,7 @@ def dispatch(method,path,body,token):
             return 403,{"error":"Registration closed"}
         if not all(isinstance(body.get(k),str) and body[k].strip() for k in ("first_name","last_name")):
             raise ValueError("First and last name required")
-        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"])}
+        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"))}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"])}
     if path=="/logout" and method=="POST":
@@ -63,6 +63,9 @@ def dispatch(method,path,body,token):
         require_lesson(token,41)
         from playground import simulate
         return 200,simulate(body["case"],body["tools"],body["approval"],body["max_steps"])
+    if path=="/referrals" and method=="GET":
+        from referrals import overview
+        return 200,overview(token)
     if path=="/career/overview" and method=="GET":
         from career import overview
         return 200,overview(token)

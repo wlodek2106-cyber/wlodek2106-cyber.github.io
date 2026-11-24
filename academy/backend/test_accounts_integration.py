@@ -19,6 +19,16 @@ class AccountIntegration(unittest.TestCase):
                     yield cur
                 with patch.object(accounts,"transaction",shared):
                     student=accounts.register(email,password)
+                    from referrals import attribute,normalize
+                    code=uuid.uuid4().hex[:24]
+                    cur.execute("INSERT INTO referral_codes(student_id,code) VALUES (%s,%s)",(student,code))
+                    invited=accounts.register("invite-"+email,password,referral=code)
+                    cur.execute("SELECT referrer_id FROM referrals WHERE student_id=%s",(invited,))
+                    self.assertEqual(cur.fetchone()[0],student)
+                    attribute(cur,student,code)
+                    cur.execute("SELECT count(*) FROM referrals WHERE student_id=%s",(student,))
+                    self.assertEqual(cur.fetchone()[0],0)
+                    with self.assertRaises(ValueError): normalize("invalid")
                     with self.assertRaises(ValueError):
                         accounts.register(email,password)
                     with self.assertRaises(ValueError):
