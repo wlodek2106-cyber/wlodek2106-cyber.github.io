@@ -1,0 +1,434 @@
+[
+  {
+    "day": 7,
+    "title": "Image Generation",
+    "theory": "Describe subject, setting, medium and composition; iterate using reference images you have rights to use.",
+    "assignment": "Generate three versions of a fictional product image.",
+    "prompts": [
+      "Act as a creative instructor for Image Generation. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Generate three versions of a fictional product image.",
+      "Provide three distinct approaches to Generate three versions of a fictional product image.",
+      "Create a checklist for evaluating Image Generation.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 8,
+    "title": "Composition and Lighting",
+    "theory": "Use focal points, negative space, camera angle and soft or hard lighting deliberately.",
+    "assignment": "Compare three lighting setups for one product.",
+    "prompts": [
+      "Act as a creative instructor for Composition and Lighting. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Compare three lighting setups for one product.",
+      "Provide three distinct approaches to Compare three lighting setups for one product.",
+      "Create a checklist for evaluating Composition and Lighting.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 9,
+    "title": "Commercial Photography",
+    "theory": "Maintain product fidelity, accurate colors and readable packaging; avoid misleading claims.",
+    "assignment": "Build a three-image product campaign.",
+    "prompts": [
+      "Act as a creative instructor for Commercial Photography. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Build a three-image product campaign.",
+      "Provide three distinct approaches to Build a three-image product campaign.",
+      "Create a checklist for evaluating Commercial Photography.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 10,
+    "title": "AI Video Tools",
+    "theory": "Compare text-to-video and image-to-video workflows, duration, motion consistency and licensing.",
+    "assignment": "Generate a short shot from a storyboard.",
+    "prompts": [
+      "Act as a creative instructor for AI Video Tools. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Generate a short shot from a storyboard.",
+      "Provide three distinct approaches to Generate a short shot from a storyboard.",
+      "Create a checklist for evaluating AI Video Tools.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 11,
+    "title": "Camera and Motion",
+    "theory": "Specify framing, camera movement, subject movement and continuity separately.",
+    "assignment": "Create a three-shot sequence with consistent subject.",
+    "prompts": [
+      "Act as a creative instructor for Camera and Motion. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Create a three-shot sequence with consistent subject.",
+      "Provide three distinct approaches to Create a three-shot sequence with consistent subject.",
+      "Create a checklist for evaluating Camera and Motion.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 12,
+    "title": "Editing and Sound",
+    "theory": "Assemble shots, trim pacing, normalize audio and use licensed music.",
+    "assignment": "Edit a 30-second commercial.",
+    "prompts": [
+      "Act as a creative instructor for Editing and Sound. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Edit a 30-second commercial.",
+      "Provide three distinct approaches to Edit a 30-second commercial.",
+      "Create a checklist for evaluating Editing and Sound.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 13,
+    "title": "Character Design",
+    "theory": "Build a reference sheet with silhouette, palette, proportions and expressions.",
+    "assignment": "Create a consistent original character sheet.",
+    "prompts": [
+      "Act as a creative instructor for Character Design. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Create a consistent original character sheet.",
+      "Provide three distinct approaches to Create a consistent original character sheet.",
+      "Create a checklist for evaluating Character Design.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 14,
+    "title": "Storyboarding",
+    "theory": "Map narrative beats into shots with action, framing and duration.",
+    "assignment": "Storyboard a six-shot animated story.",
+    "prompts": [
+      "Act as a creative instructor for Storyboarding. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Storyboard a six-shot animated story.",
+      "Provide three distinct approaches to Storyboard a six-shot animated story.",
+      "Create a checklist for evaluating Storyboarding.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 15,
+    "title": "Animated Short Film",
+    "theory": "Generate shots separately, preserve continuity and edit with sound.",
+    "assignment": "Produce a short animated film.",
+    "prompts": [
+      "Act as a creative instructor for Animated Short Film. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Produce a short animated film.",
+      "Provide three distinct approaches to Produce a short animated film.",
+      "Create a checklist for evaluating Animated Short Film.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 16,
+    "title": "Virtual Influencer Design",
+    "theory": "Define an original fictional identity, visual guide and disclosure policy.",
+    "assignment": "Create a fictional influencer profile.",
+    "prompts": [
+      "Act as a creative instructor for Virtual Influencer Design. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Create a fictional influencer profile.",
+      "Provide three distinct approaches to Create a fictional influencer profile.",
+      "Create a checklist for evaluating Virtual Influencer Design.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 17,
+    "title": "Voice and Lip Sync",
+    "theory": "Use authorized voices, align speech and mouth movement, review pronunciation.",
+    "assignment": "Produce a short spoken clip with consented audio.",
+    "prompts": [
+      "Act as a creative instructor for Voice and Lip Sync. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Produce a short spoken clip with consented audio.",
+      "Provide three distinct approaches to Produce a short spoken clip with consented audio.",
+      "Create a checklist for evaluating Voice and Lip Sync.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 18,
+    "title": "Social Content",
+    "theory": "Define content pillars, audience and publishing cadence; disclose synthetic media where appropriate.",
+    "assignment": "Plan five posts for a fictional creator.",
+    "prompts": [
+      "Act as a creative instructor for Social Content. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Plan five posts for a fictional creator.",
+      "Provide three distinct approaches to Plan five posts for a fictional creator.",
+      "Create a checklist for evaluating Social Content.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 19,
+    "title": "Advertising Concepts",
+    "theory": "Translate a client brief into audience insight, message, concept and call to action.",
+    "assignment": "Pitch three distinct concepts.",
+    "prompts": [
+      "Act as a creative instructor for Advertising Concepts. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Pitch three distinct concepts.",
+      "Provide three distinct approaches to Pitch three distinct concepts.",
+      "Create a checklist for evaluating Advertising Concepts.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 20,
+    "title": "Product Advertising",
+    "theory": "Preserve product details and substantiate claims; test creative variations.",
+    "assignment": "Create three product ad variants.",
+    "prompts": [
+      "Act as a creative instructor for Product Advertising. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Create three product ad variants.",
+      "Provide three distinct approaches to Create three product ad variants.",
+      "Create a checklist for evaluating Product Advertising.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 21,
+    "title": "Brand Film",
+    "theory": "Develop a narrative arc, visual identity, shot list and sound direction.",
+    "assignment": "Produce a brand film storyboard and rough cut.",
+    "prompts": [
+      "Act as a creative instructor for Brand Film. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Produce a brand film storyboard and rough cut.",
+      "Provide three distinct approaches to Produce a brand film storyboard and rough cut.",
+      "Create a checklist for evaluating Brand Film.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 22,
+    "title": "Local AI Studio",
+    "theory": "Check hardware requirements, model licenses and installation sources; use cloud alternatives when needed.",
+    "assignment": "Map a local or cloud generation workflow.",
+    "prompts": [
+      "Act as a creative instructor for Local AI Studio. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Map a local or cloud generation workflow.",
+      "Provide three distinct approaches to Map a local or cloud generation workflow.",
+      "Create a checklist for evaluating Local AI Studio.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 23,
+    "title": "Content Automation",
+    "theory": "Separate generation, review, approval and publication; log failures and prevent duplicate posts.",
+    "assignment": "Design a workflow with human approval.",
+    "prompts": [
+      "Act as a creative instructor for Content Automation. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Design a workflow with human approval.",
+      "Provide three distinct approaches to Design a workflow with human approval.",
+      "Create a checklist for evaluating Content Automation.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 24,
+    "title": "AI Agents",
+    "theory": "Define agent scope, tools, permissions and evaluation; require approval for consequential actions.",
+    "assignment": "Design a bounded creative assistant.",
+    "prompts": [
+      "Act as a creative instructor for AI Agents. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Design a bounded creative assistant.",
+      "Provide three distinct approaches to Design a bounded creative assistant.",
+      "Create a checklist for evaluating AI Agents.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 25,
+    "title": "Portfolio",
+    "theory": "Show project briefs, process, deliverables and honest attribution.",
+    "assignment": "Build a portfolio of three projects.",
+    "prompts": [
+      "Act as a creative instructor for Portfolio. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Build a portfolio of three projects.",
+      "Provide three distinct approaches to Build a portfolio of three projects.",
+      "Create a checklist for evaluating Portfolio.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 26,
+    "title": "Pricing and Clients",
+    "theory": "Estimate labor, generation costs, revisions and margin; specify usage rights.",
+    "assignment": "Prepare a quote with clear scope.",
+    "prompts": [
+      "Act as a creative instructor for Pricing and Clients. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Prepare a quote with clear scope.",
+      "Provide three distinct approaches to Prepare a quote with clear scope.",
+      "Create a checklist for evaluating Pricing and Clients.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 27,
+    "title": "Selling AI Services",
+    "theory": "Qualify prospects, personalize outreach and agree on deliverables and payment terms.",
+    "assignment": "Write a proposal for a fictional client.",
+    "prompts": [
+      "Act as a creative instructor for Selling AI Services. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Write a proposal for a fictional client.",
+      "Provide three distinct approaches to Write a proposal for a fictional client.",
+      "Create a checklist for evaluating Selling AI Services.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 28,
+    "title": "AI Agency",
+    "theory": "Define service packages, responsibilities, quality gates and operating costs.",
+    "assignment": "Create a one-page agency operating plan.",
+    "prompts": [
+      "Act as a creative instructor for AI Agency. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Create a one-page agency operating plan.",
+      "Provide three distinct approaches to Create a one-page agency operating plan.",
+      "Create a checklist for evaluating AI Agency.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 29,
+    "title": "Marketing and Scaling",
+    "theory": "Measure conversion, retention and contribution margin before expanding spending.",
+    "assignment": "Build a small experiment plan with success criteria.",
+    "prompts": [
+      "Act as a creative instructor for Marketing and Scaling. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Build a small experiment plan with success criteria.",
+      "Provide three distinct approaches to Build a small experiment plan with success criteria.",
+      "Create a checklist for evaluating Marketing and Scaling.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 30,
+    "title": "Final Project",
+    "theory": "Combine research, creative direction, production, review and commercial presentation.",
+    "assignment": "Submit a complete campaign with portfolio case study.",
+    "prompts": [
+      "Act as a creative instructor for Final Project. Explain the workflow with an example.",
+      "Create a detailed brief for this assignment: Submit a complete campaign with portfolio case study.",
+      "Provide three distinct approaches to Submit a complete campaign with portfolio case study.",
+      "Create a checklist for evaluating Final Project.",
+      "Identify risks, licensing issues and quality failures in this draft.",
+      "Critique my submission against the assignment and propose revisions.",
+      "Produce a final delivery checklist for this project."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  }
+]
