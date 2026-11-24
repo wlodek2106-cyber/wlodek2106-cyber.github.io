@@ -154,6 +154,18 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(summarize(0,0,[])["gross_atomic"],"0")
         with self.assertRaises(ValueError): validate_period(True)
         with self.assertRaises(ValueError): validate_period(1000)
+    def test_founder_activity_helpers(self):
+        from founder import daily_activity,percent
+        self.assertIsNone(percent(0,0))
+        self.assertEqual(percent(1,3),33.33)
+        start=self.t
+        series=daily_activity(start,7,[(start.date(),"registrations",2),((start+timedelta(days=1)).date(),"exam_attempts",3)])
+        self.assertEqual(len(series),7)
+        self.assertEqual(series[0]["registrations"],2)
+        self.assertEqual(series[1]["exam_attempts"],3)
+        self.assertEqual(series[-1]["registrations"],0)
+        self.assertEqual(series[0]["certificates"],0)
+        with self.assertRaises(ValueError): daily_activity(start,7,[(start.date(),"invalid",1)])
     def test_totp_recovery(self):
         from mfa import code_at,check,consume,recovery_digest
         from unittest.mock import patch

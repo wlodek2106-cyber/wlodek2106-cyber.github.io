@@ -114,7 +114,12 @@ class LaunchIntegration(unittest.TestCase):
                 cur.execute("SELECT status,amount_atomic FROM influencer_payouts WHERE id=%s",(req["id"],))
                 self.assertEqual(cur.fetchone(),("paid",59700000))
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
-                self.assertIn("after_all_commissions_atomic",founder.report(cur,7)["alltime"])
+                report=founder.report(cur,7)
+                self.assertIn("after_all_commissions_atomic",report["alltime"])
+                self.assertEqual(len(report["activity"]["series"]),7)
+                self.assertGreaterEqual(report["activity"]["alltime"]["registered"],2)
+                self.assertGreaterEqual(report["activity"]["alltime"]["paid"],1)
+                self.assertGreaterEqual(report["activity"]["alltime"]["paid_referred"],1)
                 self.assertIn("students",admin.statistics(owner))
                 from security_center import inspect as security_inspect,report as security_report
                 self.assertIn("database_checks_pass",security_inspect(cur))
