@@ -29,6 +29,20 @@ def dispatch(method,path,body,token):
     if path=="/checkout/confirm" and method=="POST":
         from settlement import settle
         return 200,settle(token,body["invoice"],body["signature"])
+    if path=="/checkout/qr" and method=="GET":
+        if os.getenv("ACADEMY_CHECKOUT_READY")!="true" or os.getenv("ACADEMY_PAYMENTS_ENABLED")!="true":
+            raise PermissionError("Payments closed")
+        from checkout import active_invoice
+        import qrcode
+        from qrcode.image.svg import SvgPathImage
+        from io import BytesIO
+        import base64
+        invoice=active_invoice(token)["invoice"]
+        if not invoice:
+            raise ValueError("No active invoice")
+        buf=BytesIO()
+        qrcode.make(invoice["url"],image_factory=SvgPathImage).save(buf)
+        return 200,{"svg_base64":base64.b64encode(buf.getvalue()).decode("ascii")}
     if path=="/checkout/active" and method=="GET":
         if os.getenv("ACADEMY_CHECKOUT_READY")!="true" or os.getenv("ACADEMY_PAYMENTS_ENABLED")!="true":
             return 200,{"invoice":None}
