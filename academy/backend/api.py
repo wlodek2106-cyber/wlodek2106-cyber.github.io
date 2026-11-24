@@ -40,6 +40,9 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path in ("/marketing/list","/marketing/campaign","/marketing/post","/marketing/delete") and method=="POST":
+        from marketing_studio import dispatch as marketing_dispatch
+        return 200,marketing_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/storyboard/list","/storyboard/get","/storyboard/project","/storyboard/scene","/storyboard/delete") and method=="POST":
         from storyboard import dispatch as storyboard_dispatch
         return 200,storyboard_dispatch(token,path.rsplit("/",1)[1],body)

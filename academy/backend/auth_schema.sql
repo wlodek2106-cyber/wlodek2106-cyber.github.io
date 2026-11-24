@@ -268,3 +268,20 @@ CREATE TABLE IF NOT EXISTS storyboard_scenes (
  title text NOT NULL, action text NOT NULL, camera text NOT NULL, audio text NOT NULL, continuity text NOT NULL
 );
 CREATE INDEX IF NOT EXISTS storyboard_scenes_project ON storyboard_scenes(project_id,position,id);
+
+CREATE TABLE IF NOT EXISTS marketing_campaigns (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL, goal text NOT NULL, audience text NOT NULL,
+ UNIQUE(id,student_id)
+);
+CREATE TABLE IF NOT EXISTS marketing_posts (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ campaign_id bigint NOT NULL,
+ day date NOT NULL, platform text NOT NULL CHECK(platform IN ('instagram','tiktok','youtube','x','other')),
+ status text NOT NULL CHECK(status IN ('draft','ready','published','cancelled')),
+ title text NOT NULL, caption text NOT NULL, hashtags text NOT NULL, asset_notes text NOT NULL,
+ FOREIGN KEY(campaign_id,student_id) REFERENCES marketing_campaigns(id,student_id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS marketing_posts_student_day ON marketing_posts(student_id,day,id);

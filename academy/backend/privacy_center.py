@@ -25,6 +25,8 @@ DATASETS={
 "clients":"SELECT id,name,contact,notes FROM business_clients WHERE student_id=%s ORDER BY id",
 "orders":"SELECT id,client_id,title,status,due,agreed_cents,received_cents,expense_cents,notes FROM business_orders WHERE student_id=%s ORDER BY id",
 "tasks":"SELECT id,title,day,category,priority,minutes,done FROM student_tasks WHERE student_id=%s ORDER BY id",
+"marketing_campaigns":"SELECT id,title,goal,audience FROM marketing_campaigns WHERE student_id=%s ORDER BY id",
+"marketing_posts":"SELECT id,campaign_id,day,platform,status,title,caption,hashtags,asset_notes FROM marketing_posts WHERE student_id=%s ORDER BY id",
 "storyboard_projects":"SELECT id,title,story,style,characters,format,updated_at FROM storyboard_projects WHERE student_id=%s ORDER BY id",
 "storyboard_scenes":"SELECT s.id,s.project_id,s.position,s.seconds,s.title,s.action,s.camera,s.audio,s.continuity FROM storyboard_scenes s JOIN storyboard_projects p ON p.id=s.project_id WHERE p.student_id=%s ORDER BY s.project_id,s.position,s.id",
 "creative_workflows":"SELECT id,title,kind,brief,completed,notes,updated_at FROM creative_workflows WHERE student_id=%s ORDER BY id",

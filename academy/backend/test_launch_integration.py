@@ -143,6 +143,14 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(storyboard_get(cur,buyer_id,film)["scenes"][1]["start"],15)
                 with self.assertRaises(PermissionError): storyboard_get(cur,partner_id,film)
                 with self.assertRaises(ValueError): save_scene(cur,buyer_id,{**scene,"seconds":0})
+                from marketing_studio import save_campaign,save_post,listing as marketing_list,remove as marketing_remove
+                campaign=save_campaign(cur,buyer_id,{"title":"Test campaign","goal":"Local content"})["id"]
+                post={"campaign_id":campaign,"day":"2027-01-01","platform":"instagram","status":"draft","title":"Test post"}
+                mid=save_post(cur,buyer_id,post)["id"]
+                self.assertEqual(marketing_list(cur,buyer_id,"2027-01-01")["items"][0]["id"],mid)
+                self.assertEqual(marketing_list(cur,partner_id,"2027-01-01")["items"],[])
+                with self.assertRaises(PermissionError): save_post(cur,partner_id,post)
+                with self.assertRaises(ValueError): marketing_remove(cur,buyer_id,{"kind":"campaign","id":campaign})
                 from privacy_center import export_data,create_record,list_records,close_record
                 req= create_record(cur,buyer_id,"erasure","Test request")
                 self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
@@ -154,6 +162,9 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
                 self.assertEqual(exported["creative_workflows"][0]["title"],"Test flow")
                 self.assertEqual(exported["storyboard_projects"][0]["title"],"Test film")
+                self.assertEqual(exported["marketing_posts"][0]["title"],"Test post")
+                self.assertTrue(marketing_remove(cur,buyer_id,{"kind":"post","id":mid})["deleted"])
+                self.assertTrue(marketing_remove(cur,buyer_id,{"kind":"campaign","id":campaign})["deleted"])
                 self.assertEqual(len(exported["storyboard_scenes"]),2)
                 self.assertTrue(storyboard_remove(cur,buyer_id,{"project":film,"scene":first})["deleted"])
                 self.assertTrue(storyboard_remove(cur,buyer_id,{"project":film})["deleted"])
