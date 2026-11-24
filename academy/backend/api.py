@@ -40,6 +40,9 @@ def dispatch(method,path,body,token):
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path in ("/prompts/list","/prompts/save","/prompts/delete","/prompts/templates") and method=="POST":
+        from prompt_studio import dispatch as prompt_dispatch
+        return 200,prompt_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/knowledge/list","/knowledge/save","/knowledge/delete") and method=="POST":
         from knowledge import dispatch_notes
         return 200,dispatch_notes(token,path.rsplit("/",1)[1],body)

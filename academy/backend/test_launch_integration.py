@@ -123,6 +123,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(list_notes(cur,partner_id)["items"],[])
                 with self.assertRaises(PermissionError): note_remove(cur,partner_id,note["id"])
                 self.assertNotIn("secret",public_text({"title":"Lesson","questions":["secret"]}))
+                from prompt_studio import save as prompt_save,listing as prompt_list,remove as prompt_remove
+                prompt=prompt_save(cur,buyer_id,{"title":"Test prompt","prompt":"Local image","category":"image","favorite":True})
+                self.assertEqual(prompt_list(cur,buyer_id,{"favorite":True,"category":"image","query":"local"})["items"][0]["id"],prompt["id"])
+                self.assertEqual(prompt_list(cur,partner_id,{})["items"],[])
+                with self.assertRaises(PermissionError): prompt_remove(cur,partner_id,prompt["id"])
                 from privacy_center import export_data,create_record,list_records,close_record
                 req= create_record(cur,buyer_id,"erasure","Test request")
                 self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
@@ -131,6 +136,8 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(exported["account"][0]["id"],buyer_id)
                 self.assertNotIn("password_hash",exported["account"][0])
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
+                self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
+                self.assertTrue(prompt_remove(cur,buyer_id,prompt["id"])["deleted"])
                 self.assertTrue(note_remove(cur,buyer_id,note["id"])["deleted"])
                 self.assertTrue(all("token_digest" not in x for x in exported["sessions"]))
                 self.assertTrue(close_record(cur,owner_id,req["id"],"Test response only")["closed"])

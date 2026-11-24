@@ -1,0 +1,2 @@
+# Prompt Studio 2.0
+Private library: 200 saved prompts per authenticated account, up to 3000 characters, category, favorite, search, edit/delete, copy and TXT export. 18 original English starter templates across six categories, editable placeholders subject/audience/style/format. Interface EN/RU/UK/PL. No model generation, remote API, external transfer or execution. Optional manual local AI handoff; actual media creation depends on the student's own compatible local tool. Saved prompts included in Privacy Center export.

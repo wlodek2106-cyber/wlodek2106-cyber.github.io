@@ -228,3 +228,14 @@ CREATE TABLE IF NOT EXISTS knowledge_notes (
  updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS knowledge_notes_student ON knowledge_notes(student_id,id);
+
+CREATE TABLE IF NOT EXISTS student_prompts (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
+ prompt text NOT NULL CHECK(length(prompt) BETWEEN 1 AND 3000),
+ category text NOT NULL CHECK(category IN ('image','video','advertising','animation','audio','agent','other')),
+ favorite boolean NOT NULL DEFAULT false,
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS student_prompts_student ON student_prompts(student_id,id);
