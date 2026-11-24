@@ -76,6 +76,22 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
                 self.assertEqual(market_mine(cur,buyer_id)["item"]["status"],"pending")
                 self.assertTrue(market_withdraw(cur,buyer_id)["withdrawn"])
+                from community import create as community_create,page as community_page,decide as community_decide,withdraw as community_withdraw
+                topic={"alias":"Test creator","title":"Test question","category":"question","body":"Test discussion","consent":True}
+                with self.assertRaises(ValueError): community_create(cur,buyer_id,{**topic,"consent":False})
+                post=community_create(cur,buyer_id,topic)["id"]
+                self.assertFalse(any(x["id"]==post for x in community_page(cur,partner_id,{"after":post-1})["items"]))
+                community_decide(cur,owner_id,{"id":post,"action":"approved"})
+                visible=community_page(cur,partner_id,{"after":post-1})["items"][0]
+                self.assertEqual(visible["id"],post)
+                self.assertNotIn("student_id",visible)
+                reply=community_create(cur,partner_id,{**topic,"parent":post})["id"]
+                self.assertEqual(community_page(cur,buyer_id,{"parent":post})["items"],[])
+                community_decide(cur,owner_id,{"id":reply,"action":"approved"})
+                self.assertEqual(community_page(cur,buyer_id,{"parent":post})["items"][0]["id"],reply)
+                with self.assertRaises(PermissionError): community_withdraw(cur,partner_id,{"id":post})
+                community_withdraw(cur,buyer_id,{"id":post})
+                with self.assertRaises(PermissionError): community_page(cur,partner_id,{"parent":post})
                 self.assertEqual(portfolio.save(buyer,1,"Test project")["status"],"submitted")
                 # Backfill progress inside the rollback transaction to exercise graduation.
                 cur.execute("SELECT id FROM enrollments WHERE student_id=%s",(buyer_id,))
@@ -179,6 +195,7 @@ class LaunchIntegration(unittest.TestCase):
                 exported=export_data(cur,buyer_id)["datasets"]
                 self.assertEqual(exported["account"][0]["id"],buyer_id)
                 self.assertEqual(exported["marketplace"][0]["status"],"withdrawn")
+                self.assertEqual(exported["community"][0]["status"],"withdrawn")
                 self.assertNotIn("password_hash",exported["account"][0])
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")

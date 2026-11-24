@@ -21,6 +21,7 @@ DATASETS={
 "referral_code":"SELECT code FROM referral_codes WHERE student_id=%s",
 "partner":"SELECT profile_url,wallet,status,created_at,approved_at FROM influencer_partners WHERE student_id=%s",
 "partner_payouts":"SELECT id,amount_atomic,wallet,status,created_at,reviewed_at,payout_signature,paid_at FROM influencer_payouts WHERE partner_id=%s ORDER BY id DESC",
+"community":"SELECT id,parent_id,alias,category,title,body,status,created_at,reviewed_at FROM community_posts WHERE student_id=%s ORDER BY id",
 "marketplace":"SELECT id,name,title,category,description,price,link,status,revision,updated_at,reviewed_at FROM marketplace_services WHERE student_id=%s",
 "career_profile":"SELECT profile,updated_at FROM career_profiles WHERE student_id=%s",
 "clients":"SELECT id,name,contact,notes FROM business_clients WHERE student_id=%s ORDER BY id",

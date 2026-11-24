@@ -13,6 +13,9 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
+    if path in ("/community/feed","/community/mine","/community/create","/community/withdraw","/community/admin","/community/decide") and method=="POST":
+        from community import dispatch as community_dispatch
+        return 200,community_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/marketplace/public","/marketplace/mine","/marketplace/save","/marketplace/withdraw","/marketplace/admin","/marketplace/decide") and method=="POST":
         from marketplace import dispatch as market_dispatch
         return 200,market_dispatch(token,path.rsplit("/",1)[1],body)

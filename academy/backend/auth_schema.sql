@@ -301,3 +301,17 @@ CREATE TABLE IF NOT EXISTS marketplace_services (
  reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,reviewed_at timestamptz
 );
 CREATE INDEX IF NOT EXISTS marketplace_services_status ON marketplace_services(status,id);
+
+CREATE TABLE IF NOT EXISTS community_posts (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ parent_id bigint REFERENCES community_posts(id) ON DELETE CASCADE,
+ alias text NOT NULL CHECK(length(alias) BETWEEN 1 AND 60),
+ category text NOT NULL CHECK(category IN ('question','project','collaboration','experience')),
+ title text NOT NULL CHECK(length(title)<=140),body text NOT NULL CHECK(length(body) BETWEEN 1 AND 1600),
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','withdrawn','hidden')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,reviewed_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS community_posts_student ON community_posts(student_id,created_at);
+CREATE INDEX IF NOT EXISTS community_posts_feed ON community_posts(parent_id,status,id);
