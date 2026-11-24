@@ -1,7 +1,5 @@
 """Manual, single-tier partner commissions; no automatic transfers or custody."""
 import os
-from accounts import authenticate
-from database import transaction
 from urllib.parse import urlsplit
 from referrals import overview
 ALPHABET="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
@@ -13,7 +11,11 @@ def base58_valid(s,size):
 def commission(amount):
     if type(amount) is not int or amount<=0: raise ValueError("Invalid amount")
     return amount*30//100
+def transaction():
+    from database import transaction as db_transaction
+    return db_transaction()
 def user(token):
+    from accounts import authenticate
     sid=authenticate(token)
     if sid is None: raise PermissionError("Sign in required")
     return sid
