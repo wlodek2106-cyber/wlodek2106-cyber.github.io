@@ -27,10 +27,14 @@ def dispatch(method,path,body,token):
         from exams import start_exam
         day=body["day"]
         require_lesson(token,day)
-        if day!=1:
-            return 503,{"error":"Question bank not available"}
-        from lesson01 import LESSON
-        bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(LESSON["questions"])]
+        if day==1:
+            from lesson01 import LESSON
+            bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(LESSON["questions"])]
+        elif day==2:
+            bank=json.loads(Path(__file__).with_name("quiz02.json").read_text())
+        else:
+            banks=json.loads(Path(__file__).with_name("quiz03_30.json").read_text())
+            bank=next(item["questions"] for item in banks if item["day"]==day)
         return 200,start_exam(token,day,bank)
     if path=="/exams/submit" and method=="POST":
         from exams import submit_exam
