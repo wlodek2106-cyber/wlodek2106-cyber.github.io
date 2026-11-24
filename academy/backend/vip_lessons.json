@@ -2,8 +2,8 @@
   {
     "day": 31,
     "title": "Website planning",
-    "theory": "Define audience, user journeys and acceptance criteria.",
-    "assignment": "Write a brief and sitemap for a website.",
+    "theory": "Define audience, user journeys and acceptance criteria. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Write a brief and sitemap for a website. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Write a brief and sitemap for a website. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Define audience, user journeys and acceptance criteria."
@@ -18,14 +18,54 @@
           "Publishing immediately"
         ],
         "correct": "A brief with user needs and acceptance criteria"
+      },
+      {
+        "id": "vip31_0",
+        "question": "What belongs in a sitemap?",
+        "options": [
+          "Pages and their relationships",
+          "Database passwords",
+          "Only colors"
+        ],
+        "correct": "Pages and their relationships"
+      },
+      {
+        "id": "vip31_1",
+        "question": "What makes acceptance criteria useful?",
+        "options": [
+          "Observable outcomes",
+          "Vague aspirations",
+          "Hidden requirements"
+        ],
+        "correct": "Observable outcomes"
+      },
+      {
+        "id": "vip31_2",
+        "question": "How should AI-generated requirements be treated?",
+        "options": [
+          "Review with the intended user",
+          "Accept without review",
+          "Ignore constraints"
+        ],
+        "correct": "Review with the intended user"
+      },
+      {
+        "id": "vip31_3",
+        "question": "What should a prototype validate first?",
+        "options": [
+          "Core user journey",
+          "Every possible feature",
+          "Logo animation"
+        ],
+        "correct": "Core user journey"
       }
     ]
   },
   {
     "day": 32,
     "title": "Responsive UI",
-    "theory": "Use semantic HTML, CSS layouts, accessible labels and mobile testing.",
-    "assignment": "Build a responsive landing page.",
+    "theory": "Use semantic HTML, CSS layouts, accessible labels and mobile testing. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Build a responsive landing page. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Build a responsive landing page. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Use semantic HTML, CSS layouts, accessible labels and mobile testing."
@@ -40,14 +80,54 @@
           "Removing labels"
         ],
         "correct": "Testing multiple viewport sizes"
+      },
+      {
+        "id": "vip32_0",
+        "question": "Which element is appropriate for a navigation link?",
+        "options": [
+          "An anchor with a destination",
+          "A decorative image",
+          "An unlabeled div"
+        ],
+        "correct": "An anchor with a destination"
+      },
+      {
+        "id": "vip32_1",
+        "question": "How should keyboard focus behave?",
+        "options": [
+          "Remain visible",
+          "Always be hidden",
+          "Jump randomly"
+        ],
+        "correct": "Remain visible"
+      },
+      {
+        "id": "vip32_2",
+        "question": "How should layout handle narrow screens?",
+        "options": [
+          "Adapt without horizontal overflow",
+          "Force desktop width",
+          "Hide all text"
+        ],
+        "correct": "Adapt without horizontal overflow"
+      },
+      {
+        "id": "vip32_3",
+        "question": "What helps screen reader users?",
+        "options": [
+          "Meaningful accessible labels",
+          "Color alone",
+          "Placeholder-only controls"
+        ],
+        "correct": "Meaningful accessible labels"
       }
     ]
   },
   {
     "day": 33,
     "title": "Backend and data",
-    "theory": "Separate client and server, validate inputs, keep secrets server-side and use parameterized queries.",
-    "assignment": "Build a small authenticated API and data model.",
+    "theory": "Separate client and server, validate inputs, keep secrets server-side and use parameterized queries. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Build a small authenticated API and data model. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Build a small authenticated API and data model. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Separate client and server, validate inputs, keep secrets server-side and use parameterized queries."
@@ -62,14 +142,54 @@
           "In a public repository"
         ],
         "correct": "On the server"
+      },
+      {
+        "id": "vip33_0",
+        "question": "How should SQL inputs be handled?",
+        "options": [
+          "Parameterized queries",
+          "String concatenation",
+          "Disable validation"
+        ],
+        "correct": "Parameterized queries"
+      },
+      {
+        "id": "vip33_1",
+        "question": "Who checks authorization?",
+        "options": [
+          "The server on each protected request",
+          "Only CSS",
+          "The browser alone"
+        ],
+        "correct": "The server on each protected request"
+      },
+      {
+        "id": "vip33_2",
+        "question": "What should an API return for invalid input?",
+        "options": [
+          "A controlled validation error",
+          "A database password",
+          "A success response"
+        ],
+        "correct": "A controlled validation error"
+      },
+      {
+        "id": "vip33_3",
+        "question": "How should passwords be stored?",
+        "options": [
+          "With a suitable salted password hash",
+          "Plain text",
+          "Public logs"
+        ],
+        "correct": "With a suitable salted password hash"
       }
     ]
   },
   {
     "day": 34,
     "title": "Deployment",
-    "theory": "Use Git branches, environment variables, build logs and rollback plans.",
-    "assignment": "Deploy a demo website and document rollback.",
+    "theory": "Use Git branches, environment variables, build logs and rollback plans. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Deploy a demo website and document rollback. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Deploy a demo website and document rollback. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Use Git branches, environment variables, build logs and rollback plans."
@@ -84,14 +204,54 @@
           "Nothing"
         ],
         "correct": "Tests and environment configuration"
+      },
+      {
+        "id": "vip34_0",
+        "question": "What should a rollback plan identify?",
+        "options": [
+          "A known good release",
+          "A random commit",
+          "Only a new logo"
+        ],
+        "correct": "A known good release"
+      },
+      {
+        "id": "vip34_1",
+        "question": "Where should deployment secrets be configured?",
+        "options": [
+          "Protected environment variables",
+          "Public README",
+          "Client HTML"
+        ],
+        "correct": "Protected environment variables"
+      },
+      {
+        "id": "vip34_2",
+        "question": "What helps diagnose a failed build?",
+        "options": [
+          "Build logs",
+          "Deleting all files",
+          "Ignoring errors"
+        ],
+        "correct": "Build logs"
+      },
+      {
+        "id": "vip34_3",
+        "question": "Why use a staging environment?",
+        "options": [
+          "Validate changes before production",
+          "Avoid testing",
+          "Expose private data"
+        ],
+        "correct": "Validate changes before production"
       }
     ]
   },
   {
     "day": 35,
     "title": "Website capstone",
-    "theory": "Combine UI, backend, accessibility and functional tests.",
-    "assignment": "Deliver a working website with a test report.",
+    "theory": "Combine UI, backend, accessibility and functional tests. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Deliver a working website with a test report. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Deliver a working website with a test report. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Combine UI, backend, accessibility and functional tests."
@@ -106,14 +266,54 @@
           "A promise"
         ],
         "correct": "Verified acceptance criteria"
+      },
+      {
+        "id": "vip35_0",
+        "question": "How should a contact form be tested?",
+        "options": [
+          "Valid and invalid submissions",
+          "Only its color",
+          "Only its title"
+        ],
+        "correct": "Valid and invalid submissions"
+      },
+      {
+        "id": "vip35_1",
+        "question": "What should a project handoff include?",
+        "options": [
+          "Setup and maintenance instructions",
+          "Unshared passwords",
+          "No documentation"
+        ],
+        "correct": "Setup and maintenance instructions"
+      },
+      {
+        "id": "vip35_2",
+        "question": "What proves a protected route is secure?",
+        "options": [
+          "Unauthorized requests are rejected",
+          "The link is hidden",
+          "The button is purple"
+        ],
+        "correct": "Unauthorized requests are rejected"
+      },
+      {
+        "id": "vip35_3",
+        "question": "What should an accessibility review include?",
+        "options": [
+          "Keyboard navigation and labels",
+          "Only animation speed",
+          "Only branding"
+        ],
+        "correct": "Keyboard navigation and labels"
       }
     ]
   },
   {
     "day": 36,
     "title": "Mobile architecture",
-    "theory": "Choose native or cross-platform tooling, define screens and device constraints.",
-    "assignment": "Create a mobile app prototype and navigation map.",
+    "theory": "Choose native or cross-platform tooling, define screens and device constraints. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Create a mobile app prototype and navigation map. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Create a mobile app prototype and navigation map. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Choose native or cross-platform tooling, define screens and device constraints."
@@ -128,14 +328,54 @@
           "Logo size"
         ],
         "correct": "Requirements and device constraints"
+      },
+      {
+        "id": "vip36_0",
+        "question": "What is a benefit of cross-platform tooling?",
+        "options": [
+          "Shared code across supported platforms",
+          "Guaranteed store approval",
+          "No testing needed"
+        ],
+        "correct": "Shared code across supported platforms"
+      },
+      {
+        "id": "vip36_1",
+        "question": "What should an app prototype show?",
+        "options": [
+          "Core screens and navigation",
+          "Only a logo",
+          "Production secrets"
+        ],
+        "correct": "Core screens and navigation"
+      },
+      {
+        "id": "vip36_2",
+        "question": "What affects device compatibility?",
+        "options": [
+          "OS versions and hardware capabilities",
+          "App name alone",
+          "Brand colors"
+        ],
+        "correct": "OS versions and hardware capabilities"
+      },
+      {
+        "id": "vip36_3",
+        "question": "When should permissions be requested?",
+        "options": [
+          "When needed for a clear feature",
+          "All at startup without explanation",
+          "Never disclose them"
+        ],
+        "correct": "When needed for a clear feature"
       }
     ]
   },
   {
     "day": 37,
     "title": "Mobile interface",
-    "theory": "Use accessible controls, safe areas, responsive layouts and navigation.",
-    "assignment": "Implement three connected mobile screens.",
+    "theory": "Use accessible controls, safe areas, responsive layouts and navigation. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Implement three connected mobile screens. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Implement three connected mobile screens. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Use accessible controls, safe areas, responsive layouts and navigation."
@@ -150,14 +390,54 @@
           "Color alone"
         ],
         "correct": "Readable labels and adequate touch targets"
+      },
+      {
+        "id": "vip37_0",
+        "question": "What are safe areas for?",
+        "options": [
+          "Avoiding system UI overlap",
+          "Hiding error messages",
+          "Storing credentials"
+        ],
+        "correct": "Avoiding system UI overlap"
+      },
+      {
+        "id": "vip37_1",
+        "question": "What should loading states communicate?",
+        "options": [
+          "That work is in progress",
+          "A false success",
+          "Nothing"
+        ],
+        "correct": "That work is in progress"
+      },
+      {
+        "id": "vip37_2",
+        "question": "How should navigation be tested?",
+        "options": [
+          "Forward and back flows",
+          "Only first screen",
+          "Only screenshots"
+        ],
+        "correct": "Forward and back flows"
+      },
+      {
+        "id": "vip37_3",
+        "question": "What helps users recover from input errors?",
+        "options": [
+          "Clear actionable messages",
+          "Silent failure",
+          "Deleting their account"
+        ],
+        "correct": "Clear actionable messages"
       }
     ]
   },
   {
     "day": 38,
     "title": "Mobile data and auth",
-    "theory": "Use secure storage, authenticated APIs and error handling; avoid embedding secrets.",
-    "assignment": "Implement sign-in and a data screen using a test backend.",
+    "theory": "Use secure storage, authenticated APIs and error handling; avoid embedding secrets. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Implement sign-in and a data screen using a test backend. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Implement sign-in and a data screen using a test backend. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Use secure storage, authenticated APIs and error handling; avoid embedding secrets."
@@ -172,14 +452,54 @@
           "In screenshots"
         ],
         "correct": "On the backend"
+      },
+      {
+        "id": "vip38_0",
+        "question": "What is appropriate for session token storage?",
+        "options": [
+          "Platform secure storage",
+          "Public source code",
+          "Analytics logs"
+        ],
+        "correct": "Platform secure storage"
+      },
+      {
+        "id": "vip38_1",
+        "question": "How should expired sessions be handled?",
+        "options": [
+          "Reauthenticate or refresh securely",
+          "Ignore expiration",
+          "Expose credentials"
+        ],
+        "correct": "Reauthenticate or refresh securely"
+      },
+      {
+        "id": "vip38_2",
+        "question": "What should happen offline?",
+        "options": [
+          "Show a useful fallback or retry state",
+          "Invent server data",
+          "Crash intentionally"
+        ],
+        "correct": "Show a useful fallback or retry state"
+      },
+      {
+        "id": "vip38_3",
+        "question": "What prevents access to another user's records?",
+        "options": [
+          "Server-side ownership checks",
+          "Hidden buttons",
+          "Random screen names"
+        ],
+        "correct": "Server-side ownership checks"
       }
     ]
   },
   {
     "day": 39,
     "title": "AI integration",
-    "theory": "Call models through a controlled backend with budgets, consent and error handling.",
-    "assignment": "Add an optional AI feature with a fallback.",
+    "theory": "Call models through a controlled backend with budgets, consent and error handling. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Add an optional AI feature with a fallback. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Add an optional AI feature with a fallback. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Call models through a controlled backend with budgets, consent and error handling."
@@ -194,14 +514,54 @@
           "Hiding errors"
         ],
         "correct": "Server-side quotas"
+      },
+      {
+        "id": "vip39_0",
+        "question": "What should be sent to an AI provider?",
+        "options": [
+          "Only necessary data with appropriate consent",
+          "All private records by default",
+          "Passwords"
+        ],
+        "correct": "Only necessary data with appropriate consent"
+      },
+      {
+        "id": "vip39_1",
+        "question": "How should AI failures be handled?",
+        "options": [
+          "Provide a clear fallback",
+          "Pretend success",
+          "Retry forever"
+        ],
+        "correct": "Provide a clear fallback"
+      },
+      {
+        "id": "vip39_2",
+        "question": "What should model output undergo?",
+        "options": [
+          "Validation before consequential use",
+          "Automatic trust",
+          "No review"
+        ],
+        "correct": "Validation before consequential use"
+      },
+      {
+        "id": "vip39_3",
+        "question": "What helps control prompt injection risk?",
+        "options": [
+          "Treat untrusted content as data and restrict tools",
+          "Grant unlimited permissions",
+          "Expose secrets"
+        ],
+        "correct": "Treat untrusted content as data and restrict tools"
       }
     ]
   },
   {
     "day": 40,
     "title": "App capstone",
-    "theory": "Test on devices, document permissions, privacy and release requirements.",
-    "assignment": "Deliver an app prototype and release checklist.",
+    "theory": "Test on devices, document permissions, privacy and release requirements. Workflow: define measurable acceptance criteria, ask AI for an implementation plan, review generated code before running it, test the result and document revisions. Use a sandbox or test account; never publish secrets.",
+    "assignment": "Deliver an app prototype and release checklist. Submit the brief, implementation or prototype link, test evidence, and a revision log. Explain limitations and any external costs.",
     "prompts": [
       "Act as a technical mentor. Deliver an app prototype and release checklist. Explain tradeoffs, tests and security checks.",
       "Review my implementation against this objective: Test on devices, document permissions, privacy and release requirements."
@@ -216,6 +576,46 @@
           "Only a name"
         ],
         "correct": "Testing and privacy disclosures"
+      },
+      {
+        "id": "vip40_0",
+        "question": "What should a release checklist cover?",
+        "options": [
+          "Tests, privacy, permissions and signing",
+          "Only screenshots",
+          "Only price"
+        ],
+        "correct": "Tests, privacy, permissions and signing"
+      },
+      {
+        "id": "vip40_1",
+        "question": "What is useful in a bug report?",
+        "options": [
+          "Reproduction steps and expected behavior",
+          "Insults",
+          "No device information"
+        ],
+        "correct": "Reproduction steps and expected behavior"
+      },
+      {
+        "id": "vip40_2",
+        "question": "How should app store approval be described?",
+        "options": [
+          "Subject to review",
+          "Guaranteed",
+          "Unnecessary"
+        ],
+        "correct": "Subject to review"
+      },
+      {
+        "id": "vip40_3",
+        "question": "What should final project evidence include?",
+        "options": [
+          "Working demo and test results",
+          "Only a claim",
+          "Only a logo"
+        ],
+        "correct": "Working demo and test results"
       }
     ]
   }
