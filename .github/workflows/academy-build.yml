@@ -37,3 +37,17 @@ jobs:
           name: academy-windows-x64
           path: academy-output/
           if-no-files-found: error
+
+  apple:
+    runs-on: macos-15
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: academy/apple
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme Academy -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme AcademyMac -destination 'generic/platform=macOS' CODE_SIGNING_ALLOWED=NO build
+      - run: xcodebuild -project Zer0LifeAcademy.xcodeproj -scheme AcademyWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build
