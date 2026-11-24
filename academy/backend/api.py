@@ -56,6 +56,13 @@ def dispatch(method,path,body,token):
             raise ValueError("Invalid lab")
         require_lesson(token,day)
         return 200,next(x for x in json.loads(Path(__file__).with_name("agent_lab.json").read_text()) if x["day"]==day)
+    if path=="/achievements" and method=="GET":
+        from achievements import student_achievements
+        return 200,student_achievements(token)
+    if path=="/agent-playground" and method=="POST":
+        require_lesson(token,41)
+        from playground import simulate
+        return 200,simulate(body["case"],body["tools"],body["approval"],body["max_steps"])
     if path=="/adaptive/plan" and method=="GET":
         from adaptive import student_plan
         return 200,student_plan(token)

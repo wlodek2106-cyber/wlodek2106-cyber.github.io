@@ -64,6 +64,24 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(r["review"][0]["priority"],"high")
         self.assertEqual(r["completed"],1)
         self.assertEqual(r["attempted_lessons"],2)
+    def test_achievements(self):
+        from achievements import calculate
+        lessons=[{"completed":n<5} for n in range(45)]
+        r=calculate(lessons,[100,80,90,100,90],1)
+        a={x["id"]:x for x in r["achievements"]}
+        self.assertTrue(a["five_lessons"]["earned"])
+        self.assertTrue(a["first_project"]["earned"])
+        self.assertFalse(a["course_complete"]["earned"])
+        self.assertFalse(a["agent_complete"]["earned"])
+    def test_playground(self):
+        from playground import simulate,CASES
+        for case in CASES:
+            result=simulate(case,True,True,3)
+            self.assertTrue(result["passed"])
+            self.assertEqual(result["external_actions"],0)
+        self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
+        self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
+        with self.assertRaises(ValueError): simulate("support",True,True,100)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
