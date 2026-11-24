@@ -1,0 +1,170 @@
+{
+  "ru": [
+    {
+      "day": 7,
+      "title": "Генерация изображений",
+      "theory": "Опишите объект, окружение, материал и композицию. Используйте разрешённые референсы. Зафиксируйте геометрию продукта, создайте три варианта кадрирования и исправьте артефакты.",
+      "assignment": "Создайте три изображения вымышленного продукта. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 8,
+      "title": "Композиция и свет",
+      "theory": "Управляйте фокусом, свободным пространством и углом камеры. Начните с мягкого света, меняйте направление и жёсткость, сравните тени и отражения.",
+      "assignment": "Сравните три схемы освещения. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 9,
+      "title": "Коммерческая фотография",
+      "theory": "Сохраняйте форму, цвет и читаемость упаковки. Подготовьте главный кадр, детали и масштаб. Сверьте этикетки с оригиналом.",
+      "assignment": "Создайте кампанию из трёх изображений. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 10,
+      "title": "Инструменты AI-видео",
+      "theory": "Сравните генерацию из текста и изображения, длительность, движение и лицензии. Выберите действие и начальный кадр, проверьте непрерывность.",
+      "assignment": "Создайте короткий кадр по раскадровке. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 11,
+      "title": "Камера и движение",
+      "theory": "Разделяйте движение камеры и объекта. Сравните статичный кадр, наезд и сопровождение. Проверьте горизонт и искажения.",
+      "assignment": "Создайте последовательность из трёх кадров. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 12,
+      "title": "Монтаж и звук",
+      "theory": "Соберите черновой монтаж, настройте темп и громкость, добавьте разрешённую музыку и субтитры. Проверьте на телефоне со звуком и без.",
+      "assignment": "Смонтируйте 30-секундную рекламу. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 13,
+      "title": "Дизайн персонажа",
+      "theory": "Определите силуэт, палитру, пропорции и одежду. Создайте виды с разных сторон и эмоции. Проверьте узнаваемость в трёх позах.",
+      "assignment": "Создайте лист оригинального персонажа. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 14,
+      "title": "Раскадровка",
+      "theory": "Разделите историю на события, задайте длительность и действие. Нарисуйте шесть кадров, проверьте направление движения и ясность сюжета.",
+      "assignment": "Создайте раскадровку из шести кадров. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    },
+    {
+      "day": 15,
+      "title": "Короткометражная анимация",
+      "theory": "Зафиксируйте референсы персонажей и сцен. Генерируйте кадры отдельно, соберите монтаж, проверьте темп, непрерывность, звук и титры.",
+      "assignment": "Создайте короткий мультфильм. Представьте бриф, результат и журнал исправлений. Критерии: качество, полнота, соответствие брифу и права использования."
+    }
+  ],
+  "uk": [
+    {
+      "day": 7,
+      "title": "Генерація зображень",
+      "theory": "Опишіть об’єкт, оточення, матеріал і композицію. Використовуйте дозволені референси. Зафіксуйте геометрію продукту, створіть три варіанти кадрування й виправте артефакти.",
+      "assignment": "Створіть три зображення вигаданого продукту. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 8,
+      "title": "Композиція та світло",
+      "theory": "Керуйте фокусом, вільним простором і кутом камери. Почніть із м’якого світла, змінюйте напрям і жорсткість, порівняйте тіні та відбиття.",
+      "assignment": "Порівняйте три схеми освітлення. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 9,
+      "title": "Комерційна фотографія",
+      "theory": "Зберігайте форму, колір і читабельність упаковки. Підготуйте головний кадр, деталі та масштаб. Звірте етикетки з оригіналом.",
+      "assignment": "Створіть кампанію з трьох зображень. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 10,
+      "title": "Інструменти ШІ-відео",
+      "theory": "Порівняйте генерацію з тексту й зображення, тривалість, рух і ліцензії. Оберіть дію та початковий кадр, перевірте неперервність.",
+      "assignment": "Створіть короткий кадр за розкадруванням. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 11,
+      "title": "Камера та рух",
+      "theory": "Розділяйте рух камери й об’єкта. Порівняйте статичний кадр, наїзд і супровід. Перевірте горизонт і спотворення.",
+      "assignment": "Створіть послідовність із трьох кадрів. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 12,
+      "title": "Монтаж і звук",
+      "theory": "Зберіть чорновий монтаж, налаштуйте темп і гучність, додайте дозволену музику та субтитри. Перевірте на телефоні зі звуком і без.",
+      "assignment": "Змонтуйте 30-секундну рекламу. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 13,
+      "title": "Дизайн персонажа",
+      "theory": "Визначте силует, палітру, пропорції й одяг. Створіть вигляди з різних боків та емоції. Перевірте впізнаваність у трьох позах.",
+      "assignment": "Створіть аркуш оригінального персонажа. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 14,
+      "title": "Розкадрування",
+      "theory": "Розділіть історію на події, задайте тривалість і дію. Намалюйте шість кадрів, перевірте напрям руху та ясність сюжету.",
+      "assignment": "Створіть розкадрування із шести кадрів. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    },
+    {
+      "day": 15,
+      "title": "Короткометражна анімація",
+      "theory": "Зафіксуйте референси персонажів і сцен. Генеруйте кадри окремо, зберіть монтаж, перевірте темп, неперервність, звук і титри.",
+      "assignment": "Створіть короткий мультфільм. Подайте бриф, результат і журнал виправлень. Критерії: якість, повнота, відповідність брифу та права використання."
+    }
+  ],
+  "pl": [
+    {
+      "day": 7,
+      "title": "Generowanie obrazów",
+      "theory": "Opisz obiekt, otoczenie, materiał i kompozycję. Używaj dozwolonych referencji. Zachowaj geometrię produktu, stwórz trzy kadrowania i popraw artefakty.",
+      "assignment": "Stwórz trzy obrazy fikcyjnego produktu. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 8,
+      "title": "Kompozycja i światło",
+      "theory": "Kontroluj punkt skupienia, wolną przestrzeń i kąt kamery. Zacznij od miękkiego światła, zmieniaj kierunek i twardość, porównaj cienie i odbicia.",
+      "assignment": "Porównaj trzy ustawienia oświetlenia. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 9,
+      "title": "Fotografia komercyjna",
+      "theory": "Zachowaj kształt, kolor i czytelność opakowania. Przygotuj ujęcie główne, detale i skalę. Porównaj etykiety z oryginałem.",
+      "assignment": "Stwórz kampanię z trzech obrazów. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 10,
+      "title": "Narzędzia AI wideo",
+      "theory": "Porównaj generowanie z tekstu i obrazu, czas, ruch oraz licencje. Wybierz akcję i klatkę początkową, sprawdź ciągłość.",
+      "assignment": "Stwórz krótkie ujęcie ze storyboardu. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 11,
+      "title": "Kamera i ruch",
+      "theory": "Oddziel ruch kamery od ruchu obiektu. Porównaj ujęcie statyczne, najazd i śledzenie. Sprawdź horyzont i zniekształcenia.",
+      "assignment": "Stwórz sekwencję trzech ujęć. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 12,
+      "title": "Montaż i dźwięk",
+      "theory": "Zmontuj wersję roboczą, ustaw tempo i głośność, dodaj licencjonowaną muzykę i napisy. Sprawdź na telefonie z dźwiękiem i bez.",
+      "assignment": "Zmontuj reklamę 30-sekundową. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 13,
+      "title": "Projekt postaci",
+      "theory": "Określ sylwetkę, paletę, proporcje i ubiór. Stwórz widoki z różnych stron i ekspresje. Sprawdź spójność w trzech pozach.",
+      "assignment": "Stwórz kartę oryginalnej postaci. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 14,
+      "title": "Storyboard",
+      "theory": "Podziel historię na wydarzenia, określ czas i akcję. Narysuj sześć kadrów, sprawdź kierunek ruchu i czytelność fabuły.",
+      "assignment": "Stwórz storyboard z sześciu ujęć. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    },
+    {
+      "day": 15,
+      "title": "Krótki film animowany",
+      "theory": "Ustal referencje postaci i scen. Generuj ujęcia osobno, zmontuj film, sprawdź tempo, ciągłość, dźwięk i napisy końcowe.",
+      "assignment": "Stwórz krótki film animowany. Prześlij brief, wynik i rejestr poprawek. Kryteria: jakość, kompletność, zgodność z briefem i prawa użytkowania."
+    }
+  ]
+}
