@@ -23,6 +23,11 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/admin/statistics" and method=="GET":
+        if os.getenv("ACADEMY_ADMIN_ENABLED")!="true":
+            raise PermissionError("Administration disabled")
+        from admin import statistics
+        return 200,statistics(token)
     if path=="/certificates/issue" and method=="POST":
         from certificates import issue_certificate
         return 200,issue_certificate(token)
