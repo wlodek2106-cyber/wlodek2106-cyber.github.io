@@ -77,6 +77,10 @@ if __name__=="__main__":
         migrate()
         import unittest
         from test_accounts_integration import AccountIntegration
+        from test_payment_policy import PaymentPolicyTests
+        payment_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PaymentPolicyTests))
+        if not payment_result.wasSuccessful() or payment_result.testsRun!=5:
+            raise RuntimeError('Payment policy check failed')
         result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(AccountIntegration))
         if not result.wasSuccessful() or result.testsRun!=1 or result.skipped:
             raise RuntimeError("Account integration check failed")
