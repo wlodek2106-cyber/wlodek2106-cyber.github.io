@@ -40,6 +40,9 @@ jobs:
       - name: Browser smoke test (mocked API, no payments)
         run: node academy/tests/browser_smoke.cjs
 
+      - name: Local media browser smoke test
+        run: node academy/tests/media_smoke.cjs
+
       - name: Encrypted backup and restore (synthetic data only)
         timeout-minutes: 5
         shell: bash

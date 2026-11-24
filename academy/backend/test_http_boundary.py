@@ -42,6 +42,12 @@ class HttpBoundary(unittest.TestCase):
                     for project in (b"AppFlowy",b"OpenProject",b"OpenWhispr",b"CapSoftware",b"VoiceStudio",b"Chatwoot",b"Open-Generative-AI",b"open-seo"):
                         self.assertIn(project,body)
                     self.assertIn(b"getDisplayMedia",body)
+                with req("/local-media") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"connect-src 'none'",r.read())
+                with req("/local-media.js") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"decodeAudioData",r.read())
                 for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
                     with req(path,body,headers) as r:
                         self.assertEqual(r.status,status)
