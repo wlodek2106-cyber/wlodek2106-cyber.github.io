@@ -49,6 +49,21 @@ class AccountIntegration(unittest.TestCase):
                     with self.assertRaises(ValueError): accounts.login(email,password)
                     fresh=accounts.login(email,password+"new")
                     self.assertEqual(accounts.authenticate(fresh),student)
+                    from mfa import code_at
+                    from time import time
+                    setup=accounts.mfa_begin(fresh,password+"new")
+                    counter=int(time())//30
+                    with patch("mfa.time.time",return_value=counter*30):
+                        enabled=accounts.mfa_confirm(fresh,password+"new",code_at(setup["secret"],counter))
+                        self.assertIsNone(accounts.authenticate(fresh))
+                        with self.assertRaises(PermissionError): accounts.login(email,password+"new")
+                        with self.assertRaises(PermissionError): accounts.login(email,password+"new",code_at(setup["secret"],counter))
+                        recovered=accounts.login(email,password+"new",enabled["recovery_codes"][0])
+                        self.assertEqual(accounts.mfa_status(recovered)["recovery_remaining"],7)
+                        with self.assertRaises(PermissionError): accounts.login(email,password+"new",enabled["recovery_codes"][0])
+                        self.assertFalse(accounts.mfa_disable(recovered,password+"new",enabled["recovery_codes"][1])["enabled"])
+                        self.assertIsNone(accounts.authenticate(recovered))
+                    fresh=accounts.login(email,password+"new")
                     accounts.logout(fresh)
                     self.assertIsNone(accounts.authenticate(fresh))
                 raise Rollback()

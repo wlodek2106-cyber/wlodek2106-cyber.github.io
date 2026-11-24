@@ -34,15 +34,27 @@ def dispatch(method,path,body,token):
             raise ValueError("First and last name required")
         return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"))}
     if path=="/login" and method=="POST":
-        return 200,{"token":login(body["email"],body["password"])}
+        return 200,{"token":login(body["email"],body["password"],body.get("code"))}
     if path=="/account/me" and method=="GET":
         from accounts import authenticate
         student=authenticate(token)
         if student is None: raise PermissionError("Sign in required")
         return 200,{"id":student}
+    if path=="/account/mfa" and method=="GET":
+        from accounts import mfa_status
+        return 200,mfa_status(token)
+    if path=="/account/mfa/begin" and method=="POST":
+        from accounts import mfa_begin
+        return 200,mfa_begin(token,body["password"])
+    if path=="/account/mfa/confirm" and method=="POST":
+        from accounts import mfa_confirm
+        return 200,mfa_confirm(token,body["password"],body["code"])
+    if path=="/account/mfa/disable" and method=="POST":
+        from accounts import mfa_disable
+        return 200,mfa_disable(token,body["password"],body["code"])
     if path=="/account/password" and method=="POST":
         from accounts import change_password
-        return 200,change_password(token,body["current_password"],body["new_password"])
+        return 200,change_password(token,body["current_password"],body["new_password"],body.get("code"))
     if path=="/logout" and method=="POST":
         if not token: raise PermissionError("Authentication required")
         logout(token)

@@ -125,3 +125,10 @@ CREATE TABLE IF NOT EXISTS influencer_audit (
  admin_id bigint NOT NULL REFERENCES students(id),
  created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS student_mfa (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ secret text, last_counter bigint NOT NULL DEFAULT -1,
+ recovery_digests text[] NOT NULL DEFAULT '{}',
+ pending_secret text, pending_until timestamptz
+);

@@ -140,6 +140,17 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(summarize(0,0,[])["gross_atomic"],"0")
         with self.assertRaises(ValueError): validate_period(True)
         with self.assertRaises(ValueError): validate_period(1000)
+    def test_totp_recovery(self):
+        from mfa import code_at,check,consume,recovery_digest
+        from unittest.mock import patch
+        secret="GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+        self.assertEqual(code_at(secret,1),"287082")
+        with patch("mfa.time.time",return_value=59):
+            self.assertEqual(check(secret,"287082"),1)
+            self.assertIsNone(check(secret,"287082",1))
+            recovery="a"*32
+            self.assertEqual(consume(secret,1,[recovery_digest(recovery)],recovery),(1,[]))
+            with self.assertRaises(PermissionError): consume(secret,1,[],recovery)
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
