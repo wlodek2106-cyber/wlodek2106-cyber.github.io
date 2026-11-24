@@ -26,7 +26,7 @@ function translate(){const l=$("lang").value,w=locales[l],old=$("role").value;do
 function card(title,description,source,command){const a=document.createElement("article"),h=document.createElement("h3"),p=document.createElement("p"),link=document.createElement("a");h.textContent=title;p.textContent=description;link.href=source;link.target="_blank";link.rel="noopener noreferrer";link.textContent="GitHub";a.append(h,p,link);if(command){const c=document.createElement("pre");c.textContent=command;a.append(c)}return a}
 catalog.forEach(([title,tag,url,desc])=>$("desktopModels").append(card(title,desc,url,"ollama run "+tag)));
 creative.forEach(([title,url,desc])=>$("creative").append(card(title,desc,url)));
-$("lang").onchange=translate;translate();
+$("lang").onchange=translate;const params=new URLSearchParams(location.search);if(Object.hasOwn(locales,params.get("lang")))$("lang").value=params.get("lang");translate();if(Object.hasOwn(roles,params.get("role")))$("role").value=params.get("role");
 const status=t=>$("status").textContent=t;
 function controls(){ $("discover").disabled=busy||!!lib;$("model").disabled=busy||!models.length;$("load").disabled=busy||!models.length;$("unload").disabled=busy||!engine;$("ask").disabled=busy||!engine||loadedId!==$("model").value;$("stop").disabled=!busy||!engine;}
 function selected(){return models.find(x=>x.model_id===$("model").value)}

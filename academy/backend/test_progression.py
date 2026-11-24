@@ -173,6 +173,18 @@ class ProgressTests(unittest.TestCase):
                 self.assertEqual(sum(r["max"] for r in d["rubric"]),100)
                 self.assertEqual(len(d["steps"]),4)
         with self.assertRaises(ValueError): brief(46)
+    def test_project_review(self):
+        from project_reviewer import review,FIELDS
+        data={k:"" for k in FIELDS}
+        self.assertEqual(review(1,data)["provided_count"],0)
+        data["goal"]="Goal"
+        data["rights"]=" "
+        for lang in ("en","ru","uk","pl"):
+            result=review(45,data,lang)
+            self.assertEqual(result["provided_count"],1)
+            self.assertFalse(result["official_grade"])
+            self.assertEqual(len(result["checks"]),6)
+        with self.assertRaises(ValueError): review(1,{"goal":"x"})
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

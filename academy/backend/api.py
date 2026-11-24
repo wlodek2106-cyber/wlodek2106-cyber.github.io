@@ -64,6 +64,9 @@ def dispatch(method,path,body,token):
         if not p.get("paid") or p.get("plan") not in ("pro","vip"):
             raise PermissionError("Pro or VIP required")
         return 200,{"items":json.loads(Path(__file__).with_name("pro_library.json").read_text()),"language":"en"}
+    if path=="/portfolio/review" and method=="POST":
+        from project_reviewer import student_review
+        return 200,student_review(token,body["project"],body["fields"],body.get("lang","en"))
     if path=="/practice/brief" and method=="POST":
         from practice_lab import student_brief
         return 200,student_brief(token,body["day"],body.get("lang","en"))
