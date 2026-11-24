@@ -1,0 +1,80 @@
+[
+  {
+    "title": "Product advertising",
+    "brief": "Create a three-variant campaign for a fictional skincare brand. Keep claims verifiable.",
+    "deliverable": "Deliver a brief, three scripts and a comparison matrix.",
+    "prompts": [
+      "Act as a creative director. Create a three-variant campaign for a fictional skincare brand. Keep claims verifiable. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Create a three-variant campaign for a fictional skincare brand. Keep claims verifiable. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver a brief, three scripts and a comparison matrix. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver a brief, three scripts and a comparison matrix. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  },
+  {
+    "title": "Brand film",
+    "brief": "Develop a 30-second film for a fictional technology brand.",
+    "deliverable": "Deliver storyboard, shot list and sound direction.",
+    "prompts": [
+      "Act as a creative director. Develop a 30-second film for a fictional technology brand. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Develop a 30-second film for a fictional technology brand. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver storyboard, shot list and sound direction. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver storyboard, shot list and sound direction. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  },
+  {
+    "title": "Social campaign",
+    "brief": "Plan seven posts for a fictional café.",
+    "deliverable": "Deliver calendar, hooks and measurement plan.",
+    "prompts": [
+      "Act as a creative director. Plan seven posts for a fictional café. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Plan seven posts for a fictional café. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver calendar, hooks and measurement plan. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver calendar, hooks and measurement plan. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  },
+  {
+    "title": "Agency workflow",
+    "brief": "Design a repeatable client intake and production process.",
+    "deliverable": "Deliver intake form, quality checklist and handoff.",
+    "prompts": [
+      "Act as a creative director. Design a repeatable client intake and production process. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Design a repeatable client intake and production process. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver intake form, quality checklist and handoff. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver intake form, quality checklist and handoff. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  },
+  {
+    "title": "Pricing",
+    "brief": "Estimate labor, tool costs, revisions and margin for a video project.",
+    "deliverable": "Deliver an itemized quote and scope.",
+    "prompts": [
+      "Act as a creative director. Estimate labor, tool costs, revisions and margin for a video project. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Estimate labor, tool costs, revisions and margin for a video project. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver an itemized quote and scope. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver an itemized quote and scope. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  },
+  {
+    "title": "Automation",
+    "brief": "Design a content workflow with human approval and duplicate prevention.",
+    "deliverable": "Deliver workflow diagram and failure recovery checklist.",
+    "prompts": [
+      "Act as a creative director. Design a content workflow with human approval and duplicate prevention. Ask for missing constraints before drafting.",
+      "Produce three distinct concepts for this brief: Design a content workflow with human approval and duplicate prevention. Explain the tradeoffs.",
+      "Create a production checklist for: Deliver workflow diagram and failure recovery checklist. Include rights and quality checks.",
+      "Review my draft against the brief. Identify unsupported claims and missing evidence.",
+      "Estimate production time and costs for this deliverable: Deliver workflow diagram and failure recovery checklist. State assumptions.",
+      "Create a client presentation for this project with scope, revisions and acceptance criteria."
+    ]
+  }
+]
