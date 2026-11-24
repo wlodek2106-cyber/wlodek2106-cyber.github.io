@@ -34,3 +34,8 @@ FROM enrollments e LEFT JOIN (
  SELECT enrollment_id,count(*) AS completed,max(passed_at) AS last_pass FROM lesson_progress GROUP BY enrollment_id
 ) p ON p.enrollment_id=e.id;
 -- Only authenticated server code may write progress after checking eligibility and grading against private answer keys.
+
+ALTER TABLE quiz_attempts DROP CONSTRAINT IF EXISTS quiz_attempts_lesson_check;
+ALTER TABLE quiz_attempts ADD CONSTRAINT quiz_attempts_lesson_check CHECK(lesson BETWEEN 1 AND 40);
+ALTER TABLE lesson_progress DROP CONSTRAINT IF EXISTS lesson_progress_lesson_check;
+ALTER TABLE lesson_progress ADD CONSTRAINT lesson_progress_lesson_check CHECK(lesson BETWEEN 1 AND 40);
