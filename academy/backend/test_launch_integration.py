@@ -241,8 +241,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(load(cur,"lesson",1,"pl")["content"],private)
                 self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],2)
                 self.assertIn("english_coverage",inventory(cur))
-                self.assertEqual(save(cur,owner_id,"exam",1,"en",bank)["revision"],1)
-                self.assertEqual(load(cur,"exam",1,"en")["content"],bank)
+                with self.assertRaises(ValueError): save(cur,owner_id,"exam",1,"en",bank)
+                private_bank=[{"id":"new"+str(i),"question":"Synthetic private test scenario "+str(i),"options":["A","B","C"],"correct":"A"} for i in range(10)]
+                self.assertEqual(save(cur,owner_id,"exam",1,"en",private_bank)["revision"],1)
+                self.assertEqual(load(cur,"exam",1,"en")["content"],private_bank)
+                self.assertGreaterEqual(inventory(cur)["coverage"]["en"]["exam"]["count"],1)
                 raise Rollback()
         except Rollback:
             pass

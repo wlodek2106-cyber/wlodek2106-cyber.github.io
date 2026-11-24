@@ -20,3 +20,5 @@ Dashboard response CSP hashes both inline scripts; external scripts only same or
 
 ## Release candidate 1.0
 Workspace links now open allow-listed student modules after sign-in; hidden modules remain inaccessible via these links. URL language preference is respected. CI adds a disposable PostgreSQL service, double migration, payment-policy and rollback-only account/checkout/launch integration tests; no production credentials or actual transactions. Existing browser smoke now checks authenticated deep links and denied unpaid learning links. RC is a test candidate, not commercial approval. Freeze feature changes until these checks are green, then verify actual device and operational gates above.
+
+Private curriculum readiness now includes per-language slot counts and a guard against normalized matches to known public exam banks. Original material and owner approval still required; strict mode has not been switched on by this change.

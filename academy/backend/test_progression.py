@@ -188,6 +188,20 @@ class ProgressTests(unittest.TestCase):
         lesson={"title":"Private","theory":"Theory","assignment":"Task","prompts":[]}
         self.assertEqual(validate("lesson",1,"ru",lesson),lesson)
         with self.assertRaises(ValueError): validate("lesson",1,"ru",{**lesson,"answer":"secret"})
+    def test_private_legacy_overlap(self):
+        from content_vault import normalize_question,legacy_overlap,require_original_exam,coverage
+        from lesson01 import LESSON
+        bank=[{"question":q[0]} for q in LESSON["questions"]]
+        self.assertEqual(legacy_overlap(bank),len(bank))
+        with self.assertRaises(ValueError): require_original_exam(bank)
+        self.assertEqual(normalize_question("  TEST—Case! "),normalize_question("test case"))
+        original=[{"question":"Original synthetic scenario "+str(i)} for i in range(10)]
+        require_original_exam(original)
+        with self.assertRaises(ValueError): require_original_exam([{"question":"Example?"},{"question":"example!"}])
+        r=coverage([{"kind":"exam","day":1,"lang":"en","legacy_overlap":1},{"kind":"lesson","day":2,"lang":"ru"}])
+        self.assertEqual(r["en"]["exam"]["count"],0)
+        self.assertEqual(r["ru"]["lesson"]["count"],1)
+        self.assertNotIn(2,r["ru"]["lesson"]["missing"])
     def test_practice_catalog(self):
         from practice_lab import brief
         for day in range(1,46):
