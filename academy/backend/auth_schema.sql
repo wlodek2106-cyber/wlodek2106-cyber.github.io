@@ -33,3 +33,20 @@ CREATE TABLE IF NOT EXISTS certificates (
  verification_code text UNIQUE NOT NULL,
  issued_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS payment_invoices (
+ id uuid PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id),
+ plan text NOT NULL CHECK(plan IN ('starter','pro','vip')),
+ asset text NOT NULL CHECK(asset IN ('USDC','SOL')),
+ amount_atomic bigint NOT NULL CHECK(amount_atomic>0),
+ reference text UNIQUE NOT NULL,
+ recipient text NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ expires_at timestamptz NOT NULL,
+ signature text UNIQUE,
+ paid_at timestamptz,
+ CHECK(expires_at>created_at),
+ CHECK((signature IS NULL)=(paid_at IS NULL))
+);
+CREATE INDEX IF NOT EXISTS payment_invoices_student_idx ON payment_invoices(student_id);
