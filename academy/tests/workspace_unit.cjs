@@ -1,8 +1,8 @@
 const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),vm=require("node:vm");
 const js=fs.readFileSync(path.join(__dirname,"../backend/ai-workspace.js"),"utf8");new vm.Script(js);
 const {catalog,selectTools,toolHref}=vm.runInNewContext(js.slice(0,js.indexOf("const $=id"))+"\n({catalog,selectTools,toolHref})");
-assert.equal(catalog.length,18);assert.equal(new Set(catalog.map(x=>x[0])).size,18);
-assert.equal(selectTools(catalog,"музыки","all",false,new Set(),1)[0][0],"music");assert.equal(selectTools(catalog,"","business",false,new Set(),0).length,6);
+assert.equal(catalog.length,19);assert.equal(new Set(catalog.map(x=>x[0])).size,19);
+assert.equal(selectTools(catalog,"музыки","all",false,new Set(),1)[0][0],"music");assert.equal(selectTools(catalog,"","business",false,new Set(),0).length,7);
 assert.equal(selectTools(catalog,"","all",true,new Set(["design"]),0)[0][0],"design");assert.equal(selectTools(catalog,"not-a-tool","all",false,new Set(),0).length,0);
 assert.ok(catalog.every(x=>/^\/[a-z-]+$/.test(x[3])&&x[5].length===4));
 assert.equal(toolHref("learning","/dashboard","ru"),"/dashboard?lang=ru&module=learning");

@@ -317,3 +317,31 @@ CREATE TABLE IF NOT EXISTS community_posts (
 );
 CREATE INDEX IF NOT EXISTS community_posts_student ON community_posts(student_id,created_at);
 CREATE INDEX IF NOT EXISTS community_posts_feed ON community_posts(parent_id,status,id);
+
+CREATE TABLE IF NOT EXISTS academy_jobs (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ client_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(length(title) BETWEEN 1 AND 120),
+ category text NOT NULL CHECK(category IN ('design','video','audio','web','automation','marketing','other')),
+ brief text NOT NULL CHECK(length(brief) BETWEEN 1 AND 3000),
+ budget_cents bigint NOT NULL CHECK(budget_cents BETWEEN 1 AND 100000000),
+ contact text NOT NULL CHECK(length(contact) BETWEEN 1 AND 200),
+ status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','open','rejected','assigned','delivered','completed','cancelled')),
+ selected_application bigint,
+ reviewed_by bigint REFERENCES students(id) ON DELETE SET NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS academy_jobs_status ON academy_jobs(status,id);
+CREATE INDEX IF NOT EXISTS academy_jobs_client ON academy_jobs(client_id,id);
+CREATE TABLE IF NOT EXISTS academy_job_applications (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ job_id bigint NOT NULL REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ alias text NOT NULL CHECK(length(alias) BETWEEN 1 AND 80),
+ proposal text NOT NULL CHECK(length(proposal) BETWEEN 1 AND 2000),
+ quote_cents bigint NOT NULL CHECK(quote_cents BETWEEN 1 AND 100000000),
+ contact text NOT NULL CHECK(length(contact) BETWEEN 1 AND 200),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ UNIQUE(job_id,student_id),UNIQUE(job_id,id)
+);
+CREATE INDEX IF NOT EXISTS academy_job_applications_student ON academy_job_applications(student_id,id);

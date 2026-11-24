@@ -76,6 +76,26 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
                 self.assertEqual(market_mine(cur,buyer_id)["item"]["status"],"pending")
                 self.assertTrue(market_withdraw(cur,buyer_id)["withdrawn"])
+                from job_board import create as job_create,page as job_page,moderate as job_moderate,apply as job_apply,applicants as job_applicants,applications as job_applications,transition as job_transition
+                job={"title":"Test project","category":"design","brief":"Test brief","budget":"150","contact":"client@example.invalid","consent":True}
+                jid=job_create(cur,partner_id,job)["id"]
+                self.assertFalse(any(x["id"]==jid for x in job_page(cur,buyer_id,"feed",{"after":jid-1})["items"]))
+                job_moderate(cur,owner_id,{"id":jid,"action":"open"})
+                self.assertNotIn("contact",job_page(cur,buyer_id,"feed",{"after":jid-1})["items"][0])
+                bid={"id":jid,"alias":"Test student","proposal":"Test proposal","quote":"140","contact":"worker@example.invalid","consent":True}
+                with self.assertRaises(PermissionError): job_apply(cur,owner_id,bid)
+                aid=job_apply(cur,buyer_id,bid)["id"]
+                with self.assertRaises(ValueError): job_apply(cur,buyer_id,bid)
+                with self.assertRaises(PermissionError): job_applicants(cur,buyer_id,{"id":jid})
+                self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["contact"])
+                self.assertIsNone(job_applications(cur,buyer_id,{})["items"][0]["contact"])
+                with self.assertRaises(PermissionError): job_transition(cur,buyer_id,{"id":jid,"action":"select","application":aid})
+                self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"select","application":aid})["status"],"assigned")
+                self.assertEqual(job_applicants(cur,partner_id,{"id":jid})["items"][0]["contact"],"worker@example.invalid")
+                self.assertEqual(job_applications(cur,buyer_id,{})["items"][0]["contact"],"client@example.invalid")
+                with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":jid,"action":"deliver"})
+                self.assertEqual(job_transition(cur,buyer_id,{"id":jid,"action":"deliver"})["status"],"delivered")
+                self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
                 from community import create as community_create,page as community_page,decide as community_decide,withdraw as community_withdraw
                 topic={"alias":"Test creator","title":"Test question","category":"question","body":"Test discussion","consent":True}
                 with self.assertRaises(ValueError): community_create(cur,buyer_id,{**topic,"consent":False})
