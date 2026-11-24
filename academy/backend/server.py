@@ -1,5 +1,19 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json, os
+import time, threading
+from collections import OrderedDict
+_limits=OrderedDict()
+_limit_lock=threading.Lock()
+def allow_auth(key):
+    now=time.monotonic()
+    with _limit_lock:
+        start,count=_limits.get(key,(now,0))
+        if now-start>=60: start,count=now,0
+        if count>=8: return False
+        _limits[key]=(start,count+1)
+        _limits.move_to_end(key)
+        while len(_limits)>10000: _limits.popitem(last=False)
+        return True
 from pathlib import Path
 from urllib.parse import urlsplit
 class Handler(BaseHTTPRequestHandler):
@@ -38,6 +52,10 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError()
             auth=self.headers.get("Authorization","")
             token=auth[7:] if auth.startswith("Bearer ") else None
+            if self.command=="POST" and path in ("/login","/register"):
+                email=str(body.get("email","")).strip().lower()[:254]
+                if not allow_auth((path,email)) or not allow_auth((path,"global")):
+                    return self.respond(429,{"error":"Too many attempts; retry later"})
             status,data=dispatch(self.command,path,body,token)
             return self.respond(status,data)
         except PermissionError:
