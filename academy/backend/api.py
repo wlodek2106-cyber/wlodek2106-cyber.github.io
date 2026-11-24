@@ -84,7 +84,9 @@ def dispatch(method,path,body,token):
         require_lesson(token,day)
         if day==1:
             from lesson01 import LESSON
-            bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(LESSON["questions"])]
+            localized=json.loads(Path(__file__).with_name("quiz01_translations.json").read_text()).get(body.get("lang","en"))
+            questions=LESSON["questions"] if not localized else [(v[0],v[1:],LESSON["questions"][i][2]) for i,v in enumerate(localized)]
+            bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(questions)]
         elif day==2:
             bank=json.loads(Path(__file__).with_name("quiz02.json").read_text())
         else:
