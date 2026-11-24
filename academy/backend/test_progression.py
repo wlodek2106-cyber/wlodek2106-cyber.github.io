@@ -200,6 +200,19 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_business_assistant(self):
+        from business_assistant import report
+        from datetime import date
+        today=date(2026,11,24)
+        base={"title":"Example","status":"in_progress","due":"2026-11-23","agreed_cents":10000,"received_cents":2000,"expense_cents":3000}
+        rows=[{**base,"id":1},{**base,"id":2,"status":"delivered"},{**base,"id":3,"status":"cancelled"},{**base,"id":4,"status":"lead","due":""}]
+        result=report(rows,today)
+        self.assertEqual(result["action_count"],3)
+        self.assertEqual(result["actions"][0]["flags"],["overdue"])
+        self.assertEqual(result["actions"][1]["flags"],["collect_payment"])
+        self.assertEqual(result["projected_margin_cents"],"14000")
+        self.assertEqual(result["projected_margin_percent"],"70.0")
+        self.assertIsNone(report([],today)["projected_margin_percent"])
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

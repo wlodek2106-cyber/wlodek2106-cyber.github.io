@@ -110,6 +110,9 @@ def dispatch(method,path,body,token):
     if path=="/referrals" and method=="GET":
         from referrals import overview
         return 200,overview(token)
+    if path=="/business/assistant" and method=="GET":
+        from business_assistant import assistant
+        return 200,assistant(token)
     if path=="/business/proposal/pdf" and method=="POST":
         from invoice_studio import generate
         return 200,generate(token,body)
