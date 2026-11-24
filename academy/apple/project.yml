@@ -53,3 +53,14 @@ targets:
       properties:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  AcademyWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources: [WatchAcademy.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zer0life.academy.watch
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_WKWatchOnly: YES
