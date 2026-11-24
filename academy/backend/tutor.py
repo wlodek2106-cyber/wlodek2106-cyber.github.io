@@ -14,11 +14,12 @@ def guidance(token,day,mode,lang="en"):
         theory=LESSON["sections"]
         assignment=theory[-1]
     else:
-        name="lessons02_06.json" if day<=6 else "lessons07_30.json"
+        name="vip_lessons.json" if day>30 else "lessons02_06.json" if day<=6 else "lessons07_30.json"
         lesson=next(x for x in json.loads(Path(__file__).with_name(name).read_text()) if x["day"]==day)
         theory=[lesson["theory"]]
         assignment=lesson["assignment"]
     lang=lang if lang in STEPS else "en"
+    if day>30: lang="en"
     if lang!="en":
         name="lesson01_translations.json" if day==1 else "lessons02_06_translations.json" if day<=6 else "lessons07_15_translations.json" if day<=15 else "lessons16_30_translations.json"
         localized=json.loads(Path(__file__).with_name(name).read_text())[lang]
