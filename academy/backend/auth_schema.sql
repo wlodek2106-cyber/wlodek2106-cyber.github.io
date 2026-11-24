@@ -27,3 +27,9 @@ CREATE TABLE IF NOT EXISTS project_submissions (
  score integer CHECK(score BETWEEN 0 AND 100),
  feedback text
 );
+
+CREATE TABLE IF NOT EXISTS certificates (
+ enrollment_id bigint PRIMARY KEY REFERENCES enrollments(id),
+ verification_code text UNIQUE NOT NULL,
+ issued_at timestamptz NOT NULL DEFAULT now()
+);
