@@ -25,6 +25,12 @@ def dispatch(method,path,body,token):
         if not token: raise PermissionError("Authentication required")
         logout(token)
         return 200,{"ok":True}
+    if path=="/portfolio" and method=="GET":
+        from portfolio import list_projects
+        return 200,list_projects(token)
+    if path=="/portfolio" and method=="POST":
+        from portfolio import save
+        return 201,save(token,body["day"],body["submission"])
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
     if path=="/checkout/discover" and method=="POST":
