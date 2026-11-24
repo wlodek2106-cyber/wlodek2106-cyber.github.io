@@ -17,7 +17,7 @@ struct AcademyProvider: TimelineProvider {
         let store = UserDefaults(suiteName: "group.com.zer0life.academy")
         let total = store?.integer(forKey: "totalLessons") ?? 0
         let completed = store?.integer(forKey: "completedLessons") ?? 0
-        guard [30,40].contains(total), (0...total).contains(completed) else {
+        guard [30,40,45].contains(total), (0...total).contains(completed) else {
             return AcademyEntry(date: Date(), completed: nil, total: nil)
         }
         return AcademyEntry(date: Date(), completed: completed, total: total)

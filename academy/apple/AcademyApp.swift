@@ -50,7 +50,7 @@ final class AcademySession: ObservableObject {
     }
     private func sync() async throws {
         let p = try JSONDecoder().decode(LearningProgress.self, from: await request("progress"))
-        if p.paid && [30,40].contains(p.lessons.count) {
+        if p.paid && [30,40,45].contains(p.lessons.count) {
             AcademyProgressStore.update(completed: p.lessons.filter { $0.completed }.count, total: p.lessons.count)
             status = "Widget progress synchronized."
         } else {

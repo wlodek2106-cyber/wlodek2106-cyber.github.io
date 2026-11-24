@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
     private suspend fun sync(): String {
         val p = request("progress")
         val lessons = p.getJSONArray("lessons")
-        if(!p.getBoolean("paid") || lessons.length() !in listOf(30,40)) {
+        if(!p.getBoolean("paid") || lessons.length() !in listOf(30,40,45)) {
             clearProgress()
             return "No active paid course"
         }

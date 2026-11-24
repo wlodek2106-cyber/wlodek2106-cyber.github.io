@@ -13,7 +13,7 @@ class AcademyWidget : GlanceAppWidget() {
         val store = context.getSharedPreferences("academy_progress", Context.MODE_PRIVATE)
         val total = store.getInt("total",0)
         val completed = store.getInt("completed",0)
-        val valid = total in listOf(30,40) && completed in 0..total
+        val valid = total in listOf(30,40,45) && completed in 0..total
         provideContent {
             Column(GlanceModifier.fillMaxSize().padding(16.dp).clickable(actionStartActivity(Intent(context, MainActivity::class.java)))) {
                 Text("ZER0LIFE")

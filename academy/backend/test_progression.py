@@ -16,6 +16,25 @@ class ProgressTests(unittest.TestCase):
         self.assertTrue(eligible(2,self.t,{1:self.t},self.t+timedelta(days=1)))
     def test_late_pass(self):
         self.assertFalse(eligible(2,self.t,{1:self.t+timedelta(days=3)},self.t+timedelta(days=3)))
+    def test_vip_agent_unlock(self):
+        passed={n:self.t+timedelta(days=n-1) for n in range(1,45)}
+        now=self.t+timedelta(days=44)
+        self.assertTrue(eligible(45,self.t,passed,now,"vip"))
+        self.assertFalse(eligible(45,self.t,passed,now,"pro"))
+        self.assertFalse(eligible(41,self.t,passed,now,"starter"))
+        self.assertFalse(eligible(46,self.t,passed,now,"vip"))
+        self.assertFalse(eligible(45,self.t,passed,now-timedelta(hours=1),"vip"))
+    def test_vip_exam_banks(self):
+        import json
+        from pathlib import Path
+        from assessment import prepare_attempt, grade_attempt
+        lessons=json.loads(Path(__file__).with_name("vip_lessons.json").read_text())
+        self.assertEqual([x["day"] for x in lessons],list(range(31,46)))
+        for lesson in lessons:
+            public,key=prepare_attempt(lesson["questions"])
+            self.assertEqual(len(public["questions"]),10)
+            self.assertTrue(grade_attempt(key,key)["passed"])
+            self.assertTrue(all("correct" not in q for q in public["questions"]))
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

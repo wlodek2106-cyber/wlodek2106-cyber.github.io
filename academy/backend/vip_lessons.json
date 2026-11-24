@@ -58,6 +58,56 @@
           "Logo animation"
         ],
         "correct": "Core user journey"
+      },
+      {
+        "id": "vip31_extra0",
+        "question": "How should a success metric be defined?",
+        "options": [
+          "With a measurable target",
+          "With a random font",
+          "With no baseline"
+        ],
+        "correct": "With a measurable target"
+      },
+      {
+        "id": "vip31_extra1",
+        "question": "What should a user journey describe?",
+        "options": [
+          "Steps to achieve a user goal",
+          "Database credentials",
+          "Only the logo"
+        ],
+        "correct": "Steps to achieve a user goal"
+      },
+      {
+        "id": "vip31_extra2",
+        "question": "What should a brief exclude?",
+        "options": [
+          "Unnecessary private information",
+          "User needs",
+          "Acceptance criteria"
+        ],
+        "correct": "Unnecessary private information"
+      },
+      {
+        "id": "vip31_extra3",
+        "question": "How should scope changes be managed?",
+        "options": [
+          "Document and approve tradeoffs",
+          "Silently add everything",
+          "Delete requirements"
+        ],
+        "correct": "Document and approve tradeoffs"
+      },
+      {
+        "id": "vip31_extra4",
+        "question": "What should a site prototype use initially?",
+        "options": [
+          "Sample content and test data",
+          "Real private customer records",
+          "Production secrets"
+        ],
+        "correct": "Sample content and test data"
       }
     ]
   },
@@ -120,6 +170,56 @@
           "Placeholder-only controls"
         ],
         "correct": "Meaningful accessible labels"
+      },
+      {
+        "id": "vip32_extra0",
+        "question": "How can responsive layout be tested?",
+        "options": [
+          "Resize and test multiple viewports",
+          "Use one screenshot",
+          "Disable scrolling"
+        ],
+        "correct": "Resize and test multiple viewports"
+      },
+      {
+        "id": "vip32_extra1",
+        "question": "What should an image provide when informative?",
+        "options": [
+          "Meaningful alternative text",
+          "A password",
+          "A random filename"
+        ],
+        "correct": "Meaningful alternative text"
+      },
+      {
+        "id": "vip32_extra2",
+        "question": "What is a useful touch target?",
+        "options": [
+          "A sufficiently large clickable area",
+          "One invisible pixel",
+          "A hover-only control"
+        ],
+        "correct": "A sufficiently large clickable area"
+      },
+      {
+        "id": "vip32_extra3",
+        "question": "How should form fields be labeled?",
+        "options": [
+          "With accessible labels",
+          "Only by color",
+          "With hidden names"
+        ],
+        "correct": "With accessible labels"
+      },
+      {
+        "id": "vip32_extra4",
+        "question": "How should contrast be checked?",
+        "options": [
+          "Measure text against its background",
+          "Assume all purple is readable",
+          "Hide low contrast text"
+        ],
+        "correct": "Measure text against its background"
       }
     ]
   },
@@ -182,6 +282,56 @@
           "Public logs"
         ],
         "correct": "With a suitable salted password hash"
+      },
+      {
+        "id": "vip33_extra0",
+        "question": "What should an API validate?",
+        "options": [
+          "Untrusted input on the server",
+          "Only browser colors",
+          "Nothing after login"
+        ],
+        "correct": "Untrusted input on the server"
+      },
+      {
+        "id": "vip33_extra1",
+        "question": "What prevents SQL injection?",
+        "options": [
+          "Parameterized queries",
+          "String concatenation",
+          "URL encoding alone"
+        ],
+        "correct": "Parameterized queries"
+      },
+      {
+        "id": "vip33_extra2",
+        "question": "What is least privilege?",
+        "options": [
+          "Grant only necessary access",
+          "Give everyone admin",
+          "Share root passwords"
+        ],
+        "correct": "Grant only necessary access"
+      },
+      {
+        "id": "vip33_extra3",
+        "question": "Why use database constraints?",
+        "options": [
+          "Enforce invariants even across requests",
+          "Replace all testing",
+          "Expose private fields"
+        ],
+        "correct": "Enforce invariants even across requests"
+      },
+      {
+        "id": "vip33_extra4",
+        "question": "How should sensitive logs be handled?",
+        "options": [
+          "Redact tokens and personal data",
+          "Log every password",
+          "Send logs publicly"
+        ],
+        "correct": "Redact tokens and personal data"
       }
     ]
   },
@@ -244,6 +394,56 @@
           "Expose private data"
         ],
         "correct": "Validate changes before production"
+      },
+      {
+        "id": "vip34_extra0",
+        "question": "What should a health check show?",
+        "options": [
+          "Service readiness without secrets",
+          "All environment variables",
+          "Customer passwords"
+        ],
+        "correct": "Service readiness without secrets"
+      },
+      {
+        "id": "vip34_extra1",
+        "question": "How can a release be traced?",
+        "options": [
+          "Record the commit and deployment ID",
+          "Rename random files",
+          "Delete history"
+        ],
+        "correct": "Record the commit and deployment ID"
+      },
+      {
+        "id": "vip34_extra2",
+        "question": "What should happen on failed smoke tests?",
+        "options": [
+          "Stop or roll back release",
+          "Ignore errors",
+          "Increase ads"
+        ],
+        "correct": "Stop or roll back release"
+      },
+      {
+        "id": "vip34_extra3",
+        "question": "Why separate test and production data?",
+        "options": [
+          "Prevent accidental impact on real users",
+          "Avoid all backups",
+          "Make debugging impossible"
+        ],
+        "correct": "Prevent accidental impact on real users"
+      },
+      {
+        "id": "vip34_extra4",
+        "question": "How should dependencies be managed?",
+        "options": [
+          "Pin compatible versions and review updates",
+          "Use unknown packages blindly",
+          "Remove version control"
+        ],
+        "correct": "Pin compatible versions and review updates"
       }
     ]
   },
@@ -306,6 +506,56 @@
           "Only branding"
         ],
         "correct": "Keyboard navigation and labels"
+      },
+      {
+        "id": "vip35_extra0",
+        "question": "What should a capstone demonstrate?",
+        "options": [
+          "End-to-end user journey",
+          "Only a logo",
+          "A list of ambitions"
+        ],
+        "correct": "End-to-end user journey"
+      },
+      {
+        "id": "vip35_extra1",
+        "question": "How should failure paths be tested?",
+        "options": [
+          "Try invalid inputs and network failures",
+          "Test only success",
+          "Remove validation"
+        ],
+        "correct": "Try invalid inputs and network failures"
+      },
+      {
+        "id": "vip35_extra2",
+        "question": "What should a handoff disclose?",
+        "options": [
+          "Known limitations and setup steps",
+          "False performance guarantees",
+          "Private keys"
+        ],
+        "correct": "Known limitations and setup steps"
+      },
+      {
+        "id": "vip35_extra3",
+        "question": "What checks a mobile web layout?",
+        "options": [
+          "Test narrow screens and interactions",
+          "Desktop screenshot only",
+          "A printed brochure"
+        ],
+        "correct": "Test narrow screens and interactions"
+      },
+      {
+        "id": "vip35_extra4",
+        "question": "What is an acceptance decision based on?",
+        "options": [
+          "Evidence against agreed criteria",
+          "Personal preference alone",
+          "Number of AI prompts"
+        ],
+        "correct": "Evidence against agreed criteria"
       }
     ]
   },
@@ -368,6 +618,56 @@
           "Never disclose them"
         ],
         "correct": "When needed for a clear feature"
+      },
+      {
+        "id": "vip36_extra0",
+        "question": "What should an app permission request explain?",
+        "options": [
+          "Why the feature needs it",
+          "The developer password",
+          "Nothing"
+        ],
+        "correct": "Why the feature needs it"
+      },
+      {
+        "id": "vip36_extra1",
+        "question": "What should a platform choice consider?",
+        "options": [
+          "Users, features, budget and maintenance",
+          "Only popularity",
+          "Only logo size"
+        ],
+        "correct": "Users, features, budget and maintenance"
+      },
+      {
+        "id": "vip36_extra2",
+        "question": "Why use a simulator?",
+        "options": [
+          "Exercise UI and flows before device tests",
+          "Replace every device test",
+          "Publish automatically"
+        ],
+        "correct": "Exercise UI and flows before device tests"
+      },
+      {
+        "id": "vip36_extra3",
+        "question": "How should navigation state be modeled?",
+        "options": [
+          "Explicit screens and transitions",
+          "Random links",
+          "One hardcoded error"
+        ],
+        "correct": "Explicit screens and transitions"
+      },
+      {
+        "id": "vip36_extra4",
+        "question": "What belongs in the minimum viable app?",
+        "options": [
+          "Core user task",
+          "Every proposed feature",
+          "Unnecessary permissions"
+        ],
+        "correct": "Core user task"
       }
     ]
   },
@@ -430,6 +730,56 @@
           "Deleting their account"
         ],
         "correct": "Clear actionable messages"
+      },
+      {
+        "id": "vip37_extra0",
+        "question": "What helps avoid accidental taps?",
+        "options": [
+          "Spacing and clear touch targets",
+          "Tiny buttons",
+          "Invisible controls"
+        ],
+        "correct": "Spacing and clear touch targets"
+      },
+      {
+        "id": "vip37_extra1",
+        "question": "How should disabled controls be explained?",
+        "options": [
+          "Show the reason or next action",
+          "Hide all context",
+          "Blame the user"
+        ],
+        "correct": "Show the reason or next action"
+      },
+      {
+        "id": "vip37_extra2",
+        "question": "How should error messages be written?",
+        "options": [
+          "Specific and actionable",
+          "Only a stack trace",
+          "Random numbers"
+        ],
+        "correct": "Specific and actionable"
+      },
+      {
+        "id": "vip37_extra3",
+        "question": "Why respect text scaling?",
+        "options": [
+          "Support users with different reading needs",
+          "Prevent translations",
+          "Lock all fonts"
+        ],
+        "correct": "Support users with different reading needs"
+      },
+      {
+        "id": "vip37_extra4",
+        "question": "What should a loading screen avoid?",
+        "options": [
+          "Blocking without feedback",
+          "A clear status",
+          "A cancel action where appropriate"
+        ],
+        "correct": "Blocking without feedback"
       }
     ]
   },
@@ -492,6 +842,56 @@
           "Random screen names"
         ],
         "correct": "Server-side ownership checks"
+      },
+      {
+        "id": "vip38_extra0",
+        "question": "How should an app communicate credentials?",
+        "options": [
+          "Over HTTPS",
+          "Plain HTTP",
+          "Public query strings"
+        ],
+        "correct": "Over HTTPS"
+      },
+      {
+        "id": "vip38_extra1",
+        "question": "What should logout do?",
+        "options": [
+          "Revoke session and clear local sensitive state",
+          "Keep all tokens forever",
+          "Share login details"
+        ],
+        "correct": "Revoke session and clear local sensitive state"
+      },
+      {
+        "id": "vip38_extra2",
+        "question": "How should cached private data be protected?",
+        "options": [
+          "Minimize and clear it when appropriate",
+          "Publish to widget by default",
+          "Store passwords as text"
+        ],
+        "correct": "Minimize and clear it when appropriate"
+      },
+      {
+        "id": "vip38_extra3",
+        "question": "How should a server check object access?",
+        "options": [
+          "Verify ownership for each request",
+          "Trust the UI",
+          "Trust arbitrary IDs"
+        ],
+        "correct": "Verify ownership for each request"
+      },
+      {
+        "id": "vip38_extra4",
+        "question": "What is a safe offline behavior?",
+        "options": [
+          "Clearly mark stale data and avoid unverified writes",
+          "Pretend payment succeeded",
+          "Disable all security"
+        ],
+        "correct": "Clearly mark stale data and avoid unverified writes"
       }
     ]
   },
@@ -554,6 +954,56 @@
           "Expose secrets"
         ],
         "correct": "Treat untrusted content as data and restrict tools"
+      },
+      {
+        "id": "vip39_extra0",
+        "question": "How should tool arguments be handled?",
+        "options": [
+          "Validate before execution",
+          "Execute arbitrary strings",
+          "Trust model output blindly"
+        ],
+        "correct": "Validate before execution"
+      },
+      {
+        "id": "vip39_extra1",
+        "question": "What helps limit AI spending?",
+        "options": [
+          "Per-request and daily quotas",
+          "Unlimited retries",
+          "Hidden subscriptions"
+        ],
+        "correct": "Per-request and daily quotas"
+      },
+      {
+        "id": "vip39_extra2",
+        "question": "How should AI uncertainty be presented?",
+        "options": [
+          "State limitations and verify important claims",
+          "Invent certainty",
+          "Hide sources"
+        ],
+        "correct": "State limitations and verify important claims"
+      },
+      {
+        "id": "vip39_extra3",
+        "question": "What is a safe fallback?",
+        "options": [
+          "A clear unavailable state or rule-based guidance",
+          "Fake model output",
+          "Silently retry forever"
+        ],
+        "correct": "A clear unavailable state or rule-based guidance"
+      },
+      {
+        "id": "vip39_extra4",
+        "question": "What should be tested before AI release?",
+        "options": [
+          "Normal, failure and adversarial inputs",
+          "Only a happy-path demo",
+          "Only a logo"
+        ],
+        "correct": "Normal, failure and adversarial inputs"
       }
     ]
   },
@@ -616,6 +1066,626 @@
           "Only a logo"
         ],
         "correct": "Working demo and test results"
+      },
+      {
+        "id": "vip40_extra0",
+        "question": "What should release signing establish?",
+        "options": [
+          "Artifact origin and integrity",
+          "Guaranteed bug-free software",
+          "Free store approval"
+        ],
+        "correct": "Artifact origin and integrity"
+      },
+      {
+        "id": "vip40_extra1",
+        "question": "What belongs in a device test report?",
+        "options": [
+          "Device, OS, steps and observed result",
+          "Only a marketing slogan",
+          "Private account password"
+        ],
+        "correct": "Device, OS, steps and observed result"
+      },
+      {
+        "id": "vip40_extra2",
+        "question": "What should a privacy review identify?",
+        "options": [
+          "Data collected, purpose and retention",
+          "Only app icon",
+          "Only price"
+        ],
+        "correct": "Data collected, purpose and retention"
+      },
+      {
+        "id": "vip40_extra3",
+        "question": "What must be checked before enabling payments?",
+        "options": [
+          "End-to-end settlement and duplicate prevention",
+          "Button color",
+          "Store rating"
+        ],
+        "correct": "End-to-end settlement and duplicate prevention"
+      },
+      {
+        "id": "vip40_extra4",
+        "question": "When is a build ready for distribution?",
+        "options": [
+          "After appropriate tests and signing",
+          "Immediately after code generation",
+          "Before compilation"
+        ],
+        "correct": "After appropriate tests and signing"
+      }
+    ]
+  },
+  {
+    "day": 41,
+    "title": "AI agent architecture",
+    "theory": "An agent combines a model, instructions, state and tools to achieve a bounded goal. Distinguish deterministic workflows from model-driven decisions. Define a task contract, inputs, outputs, allowed tools, stop conditions and a human escalation path. Start with a local mock model; use a provider only when a budget is approved.",
+    "assignment": "Design a customer-support agent with a task contract, state diagram and three test conversations. Implement a local rule-based mock and show that it stops or escalates out-of-scope requests.",
+    "prompts": [
+      "Design a bounded customer-support agent with explicit inputs, outputs, permitted tools and stop conditions.",
+      "Compare a deterministic workflow and an LLM agent for my use case, including cost and failure modes.",
+      "Generate a state-machine specification with a human escalation branch.",
+      "Review my agent design against least privilege and measurable acceptance criteria."
+    ],
+    "questions": [
+      {
+        "id": "vip41_0",
+        "question": "What distinguishes an agent from a simple prompt?",
+        "options": [
+          "A bounded decision loop with state or tools",
+          "A longer logo",
+          "Unlimited permissions"
+        ],
+        "correct": "A bounded decision loop with state or tools"
+      },
+      {
+        "id": "vip41_1",
+        "question": "What defines a task contract?",
+        "options": [
+          "Goal, inputs, outputs and constraints",
+          "Only model name",
+          "Only color scheme"
+        ],
+        "correct": "Goal, inputs, outputs and constraints"
+      },
+      {
+        "id": "vip41_2",
+        "question": "When should an agent escalate?",
+        "options": [
+          "When uncertain or outside its authority",
+          "Never",
+          "Whenever a user greets it"
+        ],
+        "correct": "When uncertain or outside its authority"
+      },
+      {
+        "id": "vip41_3",
+        "question": "What is a deterministic workflow?",
+        "options": [
+          "A predefined sequence of steps",
+          "A random tool call",
+          "An unrestricted model"
+        ],
+        "correct": "A predefined sequence of steps"
+      },
+      {
+        "id": "vip41_4",
+        "question": "What limits an agent loop?",
+        "options": [
+          "Step and time budgets",
+          "A bigger icon",
+          "Unbounded retries"
+        ],
+        "correct": "Step and time budgets"
+      },
+      {
+        "id": "vip41_5",
+        "question": "What should an agent do with unsupported tasks?",
+        "options": [
+          "Decline or escalate",
+          "Invent a result",
+          "Execute arbitrary commands"
+        ],
+        "correct": "Decline or escalate"
+      },
+      {
+        "id": "vip41_6",
+        "question": "Why use a mock model?",
+        "options": [
+          "Test control logic without provider costs",
+          "Guarantee production quality",
+          "Avoid testing"
+        ],
+        "correct": "Test control logic without provider costs"
+      },
+      {
+        "id": "vip41_7",
+        "question": "What belongs in an acceptance test?",
+        "options": [
+          "Observable expected behavior",
+          "A vague impression",
+          "Only model temperature"
+        ],
+        "correct": "Observable expected behavior"
+      },
+      {
+        "id": "vip41_8",
+        "question": "What is least privilege?",
+        "options": [
+          "Only necessary permissions",
+          "Administrator access for all tools",
+          "Shared credentials"
+        ],
+        "correct": "Only necessary permissions"
+      },
+      {
+        "id": "vip41_9",
+        "question": "What is a useful agent state?",
+        "options": [
+          "Task status and validated context",
+          "All user secrets",
+          "Unrelated files"
+        ],
+        "correct": "Task status and validated context"
+      }
+    ]
+  },
+  {
+    "day": 42,
+    "title": "Tools, APIs and structured outputs",
+    "theory": "Implement tools as typed functions, not arbitrary command strings. Define JSON input schemas, validate arguments server-side, enforce authorization and handle timeouts. Build a read-only lookup and a simulated write operation behind an approval gate. Keep API keys outside source control. Treat tool responses as untrusted data.",
+    "assignment": "Build a local agent with two tools: lookup in a sample catalog and prepare a draft action. Validate required fields, reject unexpected values, require explicit approval before simulated writes and log outcomes without secrets.",
+    "prompts": [
+      "Write JSON schemas for a read-only lookup and a draft action with strict validation.",
+      "Generate a Python tool registry using an allowlist and mock data, without external API calls.",
+      "Create test cases for invalid arguments, timeouts and unauthorized requests.",
+      "Review my tool invocation design for prompt injection and accidental side effects."
+    ],
+    "questions": [
+      {
+        "id": "vip42_0",
+        "question": "Where should tool arguments be validated?",
+        "options": [
+          "At the trusted execution boundary",
+          "Only in the prompt",
+          "Never"
+        ],
+        "correct": "At the trusted execution boundary"
+      },
+      {
+        "id": "vip42_1",
+        "question": "Why use an allowlist?",
+        "options": [
+          "Restrict which tools can run",
+          "Allow every command",
+          "Hide documentation"
+        ],
+        "correct": "Restrict which tools can run"
+      },
+      {
+        "id": "vip42_2",
+        "question": "What should a write tool require when consequential?",
+        "options": [
+          "Explicit authorization and approval",
+          "A random model decision",
+          "No checks"
+        ],
+        "correct": "Explicit authorization and approval"
+      },
+      {
+        "id": "vip42_3",
+        "question": "Where do API secrets belong?",
+        "options": [
+          "Server-side secret storage",
+          "Public JavaScript",
+          "Git commits"
+        ],
+        "correct": "Server-side secret storage"
+      },
+      {
+        "id": "vip42_4",
+        "question": "What is structured output?",
+        "options": [
+          "Data matching an expected schema",
+          "Any prose",
+          "A screenshot"
+        ],
+        "correct": "Data matching an expected schema"
+      },
+      {
+        "id": "vip42_5",
+        "question": "How should tool timeouts be handled?",
+        "options": [
+          "Return a controlled failure",
+          "Retry forever",
+          "Pretend success"
+        ],
+        "correct": "Return a controlled failure"
+      },
+      {
+        "id": "vip42_6",
+        "question": "How should tool responses be treated?",
+        "options": [
+          "As untrusted data",
+          "As system instructions",
+          "As credentials"
+        ],
+        "correct": "As untrusted data"
+      },
+      {
+        "id": "vip42_7",
+        "question": "What prevents cross-user tool access?",
+        "options": [
+          "Server-side identity and authorization",
+          "A hidden button",
+          "A prompt alone"
+        ],
+        "correct": "Server-side identity and authorization"
+      },
+      {
+        "id": "vip42_8",
+        "question": "What should a log avoid?",
+        "options": [
+          "Passwords and tokens",
+          "Outcome codes",
+          "Timing metrics"
+        ],
+        "correct": "Passwords and tokens"
+      },
+      {
+        "id": "vip42_9",
+        "question": "What is a safe initial tool?",
+        "options": [
+          "Read-only mock lookup",
+          "Unrestricted shell",
+          "Production money transfer"
+        ],
+        "correct": "Read-only mock lookup"
+      }
+    ]
+  },
+  {
+    "day": 43,
+    "title": "Agent memory, retrieval and knowledge",
+    "theory": "Separate conversation context from durable memory. Retrieval-augmented generation finds relevant trusted documents, supplies excerpts and asks the model to cite evidence. Use a local collection of sample documents, chunk text, rank matches and return source IDs. Isolate users, set retention rules and ignore instructions embedded in retrieved text.",
+    "assignment": "Create a local knowledge assistant using five sample documents and keyword retrieval. Return source IDs and an explicit no-answer response when evidence is absent. Test conflicting documents, injected instructions and cross-user isolation.",
+    "prompts": [
+      "Design a retrieval pipeline with source IDs, relevance thresholds and a no-answer state.",
+      "Write a local keyword retrieval example using sample documents and standard-library Python.",
+      "Create adversarial tests for instructions embedded in retrieved documents.",
+      "Review my data retention and user-isolation design."
+    ],
+    "questions": [
+      {
+        "id": "vip43_0",
+        "question": "What is retrieval-augmented generation?",
+        "options": [
+          "Retrieve relevant evidence before answering",
+          "Train a new model every request",
+          "Store every password"
+        ],
+        "correct": "Retrieve relevant evidence before answering"
+      },
+      {
+        "id": "vip43_1",
+        "question": "What should citations identify?",
+        "options": [
+          "The supporting source",
+          "A random website",
+          "The user's secret"
+        ],
+        "correct": "The supporting source"
+      },
+      {
+        "id": "vip43_2",
+        "question": "What if evidence is missing?",
+        "options": [
+          "Say it is insufficient",
+          "Invent a citation",
+          "Pretend certainty"
+        ],
+        "correct": "Say it is insufficient"
+      },
+      {
+        "id": "vip43_3",
+        "question": "Why isolate memory by user?",
+        "options": [
+          "Prevent cross-user data leakage",
+          "Increase prompt length",
+          "Remove authentication"
+        ],
+        "correct": "Prevent cross-user data leakage"
+      },
+      {
+        "id": "vip43_4",
+        "question": "How should document instructions be treated?",
+        "options": [
+          "As data, not higher-level commands",
+          "As administrator orders",
+          "As executable code"
+        ],
+        "correct": "As data, not higher-level commands"
+      },
+      {
+        "id": "vip43_5",
+        "question": "What is document chunking?",
+        "options": [
+          "Divide content into retrievable segments",
+          "Delete every source",
+          "Encrypt the model"
+        ],
+        "correct": "Divide content into retrievable segments"
+      },
+      {
+        "id": "vip43_6",
+        "question": "What should retention rules define?",
+        "options": [
+          "How long data is kept and removed",
+          "Model personality only",
+          "Logo size"
+        ],
+        "correct": "How long data is kept and removed"
+      },
+      {
+        "id": "vip43_7",
+        "question": "What is relevance ranking?",
+        "options": [
+          "Order evidence by likely usefulness",
+          "Order by secret value",
+          "Pick random records"
+        ],
+        "correct": "Order evidence by likely usefulness"
+      },
+      {
+        "id": "vip43_8",
+        "question": "What should conflicting sources trigger?",
+        "options": [
+          "Flag the conflict and verify",
+          "Choose silently",
+          "Erase both sources"
+        ],
+        "correct": "Flag the conflict and verify"
+      },
+      {
+        "id": "vip43_9",
+        "question": "What is a safe training dataset here?",
+        "options": [
+          "Synthetic or permissioned sample documents",
+          "Stolen private records",
+          "Exposed API keys"
+        ],
+        "correct": "Synthetic or permissioned sample documents"
+      }
+    ]
+  },
+  {
+    "day": 44,
+    "title": "Multi-agent workflows and evaluation",
+    "theory": "Compose a planner, worker and reviewer with distinct roles and bounded handoffs. Use a deterministic controller to enforce maximum steps and validate outputs. Evaluate against fixtures, compare with a simple baseline, and record success rate, latency, cost estimate and failure categories. Human approval remains required for consequential external actions.",
+    "assignment": "Build a three-role local workflow with mocked model responses. Run at least ten test cases including malformed outputs, loops and unsupported requests. Report task success, errors, step counts and whether the reviewer catches injected failures.",
+    "prompts": [
+      "Design a planner-worker-reviewer architecture with typed handoffs and a hard stop.",
+      "Generate ten evaluation fixtures with expected outputs and failure cases.",
+      "Compare a single-agent baseline with a multi-agent workflow using measurable metrics.",
+      "Review orchestration logs and suggest three improvements without inventing results."
+    ],
+    "questions": [
+      {
+        "id": "vip44_0",
+        "question": "What controls multi-agent handoffs?",
+        "options": [
+          "A bounded orchestrator",
+          "Unrestricted agents",
+          "A shared password"
+        ],
+        "correct": "A bounded orchestrator"
+      },
+      {
+        "id": "vip44_1",
+        "question": "What is a baseline?",
+        "options": [
+          "A simpler approach for comparison",
+          "An arbitrary success claim",
+          "A secret model"
+        ],
+        "correct": "A simpler approach for comparison"
+      },
+      {
+        "id": "vip44_2",
+        "question": "What should a reviewer validate?",
+        "options": [
+          "Output against explicit criteria",
+          "Only agent confidence",
+          "Only formatting"
+        ],
+        "correct": "Output against explicit criteria"
+      },
+      {
+        "id": "vip44_3",
+        "question": "Why cap steps?",
+        "options": [
+          "Prevent runaway loops and cost",
+          "Guarantee perfect answers",
+          "Remove all failures"
+        ],
+        "correct": "Prevent runaway loops and cost"
+      },
+      {
+        "id": "vip44_4",
+        "question": "What measures task success?",
+        "options": [
+          "Expected outcomes on test fixtures",
+          "Number of agents",
+          "Number of emojis"
+        ],
+        "correct": "Expected outcomes on test fixtures"
+      },
+      {
+        "id": "vip44_5",
+        "question": "What is a failure category?",
+        "options": [
+          "A consistent classification of errors",
+          "An API secret",
+          "A random grade"
+        ],
+        "correct": "A consistent classification of errors"
+      },
+      {
+        "id": "vip44_6",
+        "question": "What should a handoff include?",
+        "options": [
+          "Validated inputs and expected output",
+          "All private user data",
+          "Unbounded instructions"
+        ],
+        "correct": "Validated inputs and expected output"
+      },
+      {
+        "id": "vip44_7",
+        "question": "How should a malformed output be handled?",
+        "options": [
+          "Reject or repair within a bounded policy",
+          "Execute blindly",
+          "Ignore validation"
+        ],
+        "correct": "Reject or repair within a bounded policy"
+      },
+      {
+        "id": "vip44_8",
+        "question": "When is multi-agent useful?",
+        "options": [
+          "When measured benefits justify complexity",
+          "Always",
+          "Only for marketing"
+        ],
+        "correct": "When measured benefits justify complexity"
+      },
+      {
+        "id": "vip44_9",
+        "question": "Who approves consequential external actions?",
+        "options": [
+          "An authorized human or explicit approved policy",
+          "An unrelated agent",
+          "Nobody"
+        ],
+        "correct": "An authorized human or explicit approved policy"
+      }
+    ]
+  },
+  {
+    "day": 45,
+    "title": "AI agent capstone and deployment",
+    "theory": "Package the agent as a local service or optional hosted API with authentication, input limits, tool permissions, error handling and observability. Use environment variables for provider configuration, mock mode by default, and explicit budgets before paid requests. Test prompt injection, authorization, outages and rollback. Publish only a sanitized repository and a demo using test data.",
+    "assignment": "Deliver a working local AI agent with at least two validated tools, evidence retrieval, bounded execution and a human approval gate. Submit source code, README, test results, cost estimate, architecture diagram and a demo. Include at least ten acceptance cases and a rollback plan. Do not use real customer data or paid APIs without authorization.",
+    "prompts": [
+      "Create a deployment checklist for my agent with mock mode, authentication, rate limits and rollback.",
+      "Generate a README for a local agent including setup, permissions, budget and known limitations.",
+      "Create a security acceptance test matrix for prompt injection, data isolation, tool authorization and outages.",
+      "Evaluate my final agent against the rubric: correctness, safety, evidence, tests and documentation."
+    ],
+    "questions": [
+      {
+        "id": "vip45_0",
+        "question": "What should be the default for a free local demo?",
+        "options": [
+          "Mock mode with test data",
+          "Paid production API",
+          "Real customer credentials"
+        ],
+        "correct": "Mock mode with test data"
+      },
+      {
+        "id": "vip45_1",
+        "question": "What should an API enforce?",
+        "options": [
+          "Authentication, authorization and input limits",
+          "Only a nice UI",
+          "No restrictions"
+        ],
+        "correct": "Authentication, authorization and input limits"
+      },
+      {
+        "id": "vip45_2",
+        "question": "Why define a rollback plan?",
+        "options": [
+          "Restore a known working version",
+          "Delete all history",
+          "Avoid testing"
+        ],
+        "correct": "Restore a known working version"
+      },
+      {
+        "id": "vip45_3",
+        "question": "What should a deployment secret never enter?",
+        "options": [
+          "A public repository",
+          "Secure environment storage",
+          "An approved secret manager"
+        ],
+        "correct": "A public repository"
+      },
+      {
+        "id": "vip45_4",
+        "question": "What should an agent do during provider failure?",
+        "options": [
+          "Return a controlled failure or mock fallback",
+          "Invent a paid result",
+          "Retry indefinitely"
+        ],
+        "correct": "Return a controlled failure or mock fallback"
+      },
+      {
+        "id": "vip45_5",
+        "question": "What should a demo show?",
+        "options": [
+          "A verified task with documented limitations",
+          "Guaranteed revenue",
+          "Unverified screenshots"
+        ],
+        "correct": "A verified task with documented limitations"
+      },
+      {
+        "id": "vip45_6",
+        "question": "What is a useful cost estimate?",
+        "options": [
+          "Expected usage and provider pricing assumptions",
+          "Guaranteed zero forever",
+          "Only token count without context"
+        ],
+        "correct": "Expected usage and provider pricing assumptions"
+      },
+      {
+        "id": "vip45_7",
+        "question": "What should a security test cover?",
+        "options": [
+          "Injection, unauthorized tools and data leakage",
+          "Only font color",
+          "Only a greeting"
+        ],
+        "correct": "Injection, unauthorized tools and data leakage"
+      },
+      {
+        "id": "vip45_8",
+        "question": "What proves readiness?",
+        "options": [
+          "Test evidence against acceptance criteria",
+          "A successful build alone",
+          "A long prompt"
+        ],
+        "correct": "Test evidence against acceptance criteria"
+      },
+      {
+        "id": "vip45_9",
+        "question": "What must remain under user control?",
+        "options": [
+          "Consequential actions and spending approvals",
+          "Every unrelated tool response",
+          "Public documentation"
+        ],
+        "correct": "Consequential actions and spending approvals"
       }
     ]
   }

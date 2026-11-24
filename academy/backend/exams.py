@@ -7,7 +7,7 @@ from assessment import prepare_attempt, grade_attempt
 
 def enrollment(cur, token, day):
     student=authenticate(token)
-    if student is None or type(day) is not int or not 1<=day<=40:
+    if student is None or type(day) is not int or not 1<=day<=45:
         raise PermissionError("Access denied")
     cur.execute("SELECT id,paid_at,plan FROM enrollments WHERE student_id=%s FOR UPDATE",(student,))
     row=cur.fetchone()
@@ -41,8 +41,8 @@ def submit_exam(token,day,attempt_id,answers):
         if result["passed"]:
             cur.execute("INSERT INTO lesson_progress(enrollment_id,lesson,score) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",(eid,day,result["score"]))
             cur.execute("SELECT passed_at+interval '1 day' FROM lesson_progress WHERE enrollment_id=%s AND lesson=%s",(eid,day))
-            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<40 and (day!=30 or cur.execute("SELECT plan FROM enrollments WHERE id=%s",(eid,)).fetchone()[0]=="vip") else None
-            if day in (30,40):
+            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<45 and (day!=30 or cur.execute("SELECT plan FROM enrollments WHERE id=%s",(eid,)).fetchone()[0]=="vip") else None
+            if day in (30,45):
                 from certificates import issue_completed
                 result["certificate"]=issue_completed(cur,eid)
         return result

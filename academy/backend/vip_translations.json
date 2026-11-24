@@ -59,6 +59,36 @@
       "title": "Финальный App-проект",
       "theory": "Тестируйте на устройствах, документируйте разрешения, приватность и требования публикации. Определите измеримые критерии, запросите у AI план, проверьте код, протестируйте и задокументируйте правки. Используйте тестовую среду и не публикуйте секреты.",
       "assignment": "Представьте прототип приложения и чек-лист релиза. Приложите бриф, ссылку на прототип, результаты тестов, журнал правок и ограничения."
+    },
+    {
+      "day": 41,
+      "title": "Архитектура AI-агента",
+      "theory": "Агент объединяет модель, инструкции, состояние и инструменты. Определите цель, входы, выходы, разрешённые действия, предел шагов и передачу человеку. Начните с локальной имитации модели.",
+      "assignment": "Спроектируйте агента поддержки, реализуйте локальный mock, приложите диаграмму состояния и три тестовых диалога."
+    },
+    {
+      "day": 42,
+      "title": "Инструменты, API и структурированные ответы",
+      "theory": "Опишите инструменты типизированными функциями и JSON-схемами. Проверяйте аргументы и права на сервере, ограничьте время выполнения, храните ключи вне кода. Запись требует подтверждения.",
+      "assignment": "Реализуйте поиск по тестовому каталогу и подготовку черновика действия. Проверьте неверные параметры, тайм-ауты и подтверждение записи."
+    },
+    {
+      "day": 43,
+      "title": "Память агента и RAG",
+      "theory": "Разделяйте контекст диалога и долговременную память. Извлекайте релевантные фрагменты документов, указывайте источники, изолируйте пользователей. Инструкции в документах считайте данными.",
+      "assignment": "Создайте локального помощника по пяти тестовым документам; проверяйте отсутствие доказательств, конфликты и внедрённые инструкции."
+    },
+    {
+      "day": 44,
+      "title": "Мультиагентные системы и оценка",
+      "theory": "Разделите роли планировщика, исполнителя и проверяющего. Ограничьте шаги, проверяйте передачи данных, сравнивайте с простым базовым решением. Измеряйте качество, задержку и затраты.",
+      "assignment": "Создайте трёхролевой локальный процесс. Проведите десять тестов, включая неверный вывод и циклы; приложите метрики и ошибки."
+    },
+    {
+      "day": 45,
+      "title": "Финальный AI-агент и развёртывание",
+      "theory": "Подготовьте локальный сервис с авторизацией, лимитами, проверкой инструментов и журналами без секретов. По умолчанию используйте mock-режим; платные запросы требуют бюджета. Проверьте атаки, сбои и откат.",
+      "assignment": "Представьте агента с двумя инструментами, поиском знаний, лимитами и подтверждением действий. Приложите код, README, десять тестов, схему, оценку затрат и план отката."
     }
   ],
   "uk": [
@@ -121,6 +151,36 @@
       "title": "Фінальний App-проєкт",
       "theory": "Тестуйте на пристроях, документуйте дозволи, приватність і вимоги публікації. Визначте вимірювані критерії, попросіть ШІ скласти план, перевірте код, протестуйте й задокументуйте правки. Використовуйте тестове середовище та не публікуйте секрети.",
       "assignment": "Представте прототип застосунку й чекліст релізу. Додайте бриф, посилання на прототип, результати тестів, журнал правок та обмеження."
+    },
+    {
+      "day": 41,
+      "title": "Архітектура ШІ-агента",
+      "theory": "Агент поєднує модель, інструкції, стан та інструменти. Визначте мету, вхідні й вихідні дані, дозволені дії, ліміт кроків та ескалацію людині. Почніть з локальної імітації.",
+      "assignment": "Спроєктуйте агента підтримки, створіть локальний mock, додайте діаграму станів і три тестові діалоги."
+    },
+    {
+      "day": 42,
+      "title": "Інструменти, API та структуровані відповіді",
+      "theory": "Описуйте інструменти типізованими функціями та JSON-схемами. Перевіряйте аргументи й права на сервері, обмежуйте час, зберігайте ключі поза кодом. Запис потребує підтвердження.",
+      "assignment": "Реалізуйте пошук у тестовому каталозі й чернетку дії. Перевірте неправильні параметри, тайм-аути та підтвердження запису."
+    },
+    {
+      "day": 43,
+      "title": "Пам’ять агента і RAG",
+      "theory": "Розділяйте контекст діалогу та тривалу пам’ять. Шукайте релевантні фрагменти, зазначайте джерела, ізолюйте користувачів. Інструкції в документах є даними.",
+      "assignment": "Створіть локального помічника за п’ятьма тестовими документами, перевірте брак доказів, конфлікти та шкідливі інструкції."
+    },
+    {
+      "day": 44,
+      "title": "Мультиагентні системи й оцінювання",
+      "theory": "Розподіліть ролі планувальника, виконавця та перевіряльника. Обмежте кроки, перевіряйте передачу даних, порівняйте з базовим рішенням. Вимірюйте якість, час і витрати.",
+      "assignment": "Створіть локальний процес із трьома ролями, проведіть десять тестів, включно з циклами й некоректними відповідями."
+    },
+    {
+      "day": 45,
+      "title": "Фінальний ШІ-агент і розгортання",
+      "theory": "Підготуйте локальний сервіс з авторизацією, лімітами, перевіркою інструментів і журналами без секретів. Використовуйте mock за замовчуванням; платні запити потребують бюджету. Перевірте атаки, збої й відкат.",
+      "assignment": "Представте агента з двома інструментами, пошуком знань, лімітами та підтвердженням дій. Додайте код, README, десять тестів, схему, оцінку витрат і план відкату."
     }
   ],
   "pl": [
@@ -183,6 +243,36 @@
       "title": "Projekt końcowy aplikacji",
       "theory": "Testuj na urządzeniach, dokumentuj uprawnienia, prywatność i wymagania publikacji. Określ mierzalne kryteria, poproś AI o plan, sprawdź kod, przetestuj i udokumentuj poprawki. Używaj środowiska testowego i nie publikuj sekretów.",
       "assignment": "Przedstaw prototyp aplikacji i listę kontrolną wydania. Dołącz brief, link do prototypu, wyniki testów, rejestr poprawek i ograniczenia."
+    },
+    {
+      "day": 41,
+      "title": "Architektura agenta AI",
+      "theory": "Agent łączy model, instrukcje, stan i narzędzia. Określ cel, wejścia, wyjścia, dozwolone działania, limit kroków i eskalację do człowieka. Zacznij od lokalnej symulacji modelu.",
+      "assignment": "Zaprojektuj agenta wsparcia, zaimplementuj lokalny mock, dodaj diagram stanów i trzy rozmowy testowe."
+    },
+    {
+      "day": 42,
+      "title": "Narzędzia, API i odpowiedzi strukturalne",
+      "theory": "Opisuj narzędzia typowanymi funkcjami i schematami JSON. Sprawdzaj argumenty i uprawnienia na serwerze, ogranicz czas, przechowuj klucze poza kodem. Zapis wymaga zatwierdzenia.",
+      "assignment": "Zbuduj wyszukiwanie w katalogu testowym i szkic działania. Sprawdź błędne argumenty, przekroczenie czasu i zatwierdzenie zapisu."
+    },
+    {
+      "day": 43,
+      "title": "Pamięć agenta i RAG",
+      "theory": "Oddziel kontekst rozmowy od trwałej pamięci. Wyszukuj odpowiednie fragmenty, podawaj źródła i izoluj użytkowników. Instrukcje w dokumentach traktuj jako dane.",
+      "assignment": "Stwórz lokalnego asystenta pięciu dokumentów testowych. Sprawdź brak dowodów, sprzeczne źródła i wstrzyknięte instrukcje."
+    },
+    {
+      "day": 44,
+      "title": "Systemy wieloagentowe i ewaluacja",
+      "theory": "Rozdziel role planisty, wykonawcy i recenzenta. Ogranicz kroki, waliduj przekazania i porównaj z prostą metodą bazową. Mierz jakość, opóźnienie i koszty.",
+      "assignment": "Zbuduj lokalny proces z trzema rolami. Wykonaj dziesięć testów, w tym błędne odpowiedzi i pętle, oraz opisz wyniki."
+    },
+    {
+      "day": 45,
+      "title": "Projekt końcowy agenta AI i wdrożenie",
+      "theory": "Przygotuj lokalną usługę z autoryzacją, limitami, walidacją narzędzi i logami bez sekretów. Domyślnie używaj mocka; płatne wywołania wymagają budżetu. Sprawdź ataki, awarie i wycofanie wdrożenia.",
+      "assignment": "Dostarcz agenta z dwoma narzędziami, wyszukiwaniem wiedzy, limitami i zatwierdzaniem działań. Dodaj kod, README, dziesięć testów, diagram, szacunek kosztów i plan wycofania."
     }
   ]
 }
