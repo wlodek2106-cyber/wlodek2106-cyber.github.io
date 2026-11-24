@@ -13,7 +13,8 @@ ROLES = {
 def configuration(role):
     if role not in ROLES:
         raise ValueError("Unknown tutor role")
-    if os.getenv("ACADEMY_AI_ENABLED") != "true":
+    # Academy zero-cost policy: remote paid-model adapters are retained for future use only.
+    if os.getenv("ACADEMY_ALLOW_BILLED_API") != "true" or os.getenv("ACADEMY_AI_ENABLED") != "true":
         return None
     suffix=role.upper()
     provider=os.getenv("ACADEMY_AI_PROVIDER_"+suffix,"openai")
