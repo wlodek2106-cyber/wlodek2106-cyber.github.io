@@ -1,0 +1,2942 @@
+[
+  {
+    "day": 3,
+    "questions": [
+      {
+        "id": "d3-1",
+        "question": "Which practice is central to workspace?",
+        "options": [
+          "organize assets and track versions",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "organize assets and track versions"
+      },
+      {
+        "id": "d3-2",
+        "question": "For a workspace project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d3-3",
+        "question": "For a workspace project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d3-4",
+        "question": "For a workspace project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d3-5",
+        "question": "For a workspace project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d3-6",
+        "question": "For a workspace project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d3-7",
+        "question": "For a workspace project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d3-8",
+        "question": "For a workspace project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d3-9",
+        "question": "For a workspace project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d3-10",
+        "question": "For a workspace project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 4,
+    "questions": [
+      {
+        "id": "d4-1",
+        "question": "Which practice is central to prompt structure?",
+        "options": [
+          "specify goal and constraints",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "specify goal and constraints"
+      },
+      {
+        "id": "d4-2",
+        "question": "For a prompt structure project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d4-3",
+        "question": "For a prompt structure project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d4-4",
+        "question": "For a prompt structure project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d4-5",
+        "question": "For a prompt structure project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d4-6",
+        "question": "For a prompt structure project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d4-7",
+        "question": "For a prompt structure project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d4-8",
+        "question": "For a prompt structure project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d4-9",
+        "question": "For a prompt structure project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d4-10",
+        "question": "For a prompt structure project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 5,
+    "questions": [
+      {
+        "id": "d5-1",
+        "question": "Which practice is central to advanced prompting?",
+        "options": [
+          "critique and revise outputs",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "critique and revise outputs"
+      },
+      {
+        "id": "d5-2",
+        "question": "For a advanced prompting project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d5-3",
+        "question": "For a advanced prompting project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d5-4",
+        "question": "For a advanced prompting project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d5-5",
+        "question": "For a advanced prompting project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d5-6",
+        "question": "For a advanced prompting project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d5-7",
+        "question": "For a advanced prompting project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d5-8",
+        "question": "For a advanced prompting project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d5-9",
+        "question": "For a advanced prompting project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d5-10",
+        "question": "For a advanced prompting project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 6,
+    "questions": [
+      {
+        "id": "d6-1",
+        "question": "Which practice is central to prompt templates?",
+        "options": [
+          "separate variables from fixed instructions",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "separate variables from fixed instructions"
+      },
+      {
+        "id": "d6-2",
+        "question": "For a prompt templates project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d6-3",
+        "question": "For a prompt templates project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d6-4",
+        "question": "For a prompt templates project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d6-5",
+        "question": "For a prompt templates project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d6-6",
+        "question": "For a prompt templates project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d6-7",
+        "question": "For a prompt templates project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d6-8",
+        "question": "For a prompt templates project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d6-9",
+        "question": "For a prompt templates project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d6-10",
+        "question": "For a prompt templates project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 7,
+    "questions": [
+      {
+        "id": "d7-1",
+        "question": "Which practice is central to image generation?",
+        "options": [
+          "describe subject and composition",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "describe subject and composition"
+      },
+      {
+        "id": "d7-2",
+        "question": "For a image generation project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d7-3",
+        "question": "For a image generation project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d7-4",
+        "question": "For a image generation project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d7-5",
+        "question": "For a image generation project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d7-6",
+        "question": "For a image generation project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d7-7",
+        "question": "For a image generation project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d7-8",
+        "question": "For a image generation project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d7-9",
+        "question": "For a image generation project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d7-10",
+        "question": "For a image generation project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 8,
+    "questions": [
+      {
+        "id": "d8-1",
+        "question": "Which practice is central to lighting?",
+        "options": [
+          "control light direction and contrast",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "control light direction and contrast"
+      },
+      {
+        "id": "d8-2",
+        "question": "For a lighting project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d8-3",
+        "question": "For a lighting project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d8-4",
+        "question": "For a lighting project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d8-5",
+        "question": "For a lighting project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d8-6",
+        "question": "For a lighting project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d8-7",
+        "question": "For a lighting project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d8-8",
+        "question": "For a lighting project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d8-9",
+        "question": "For a lighting project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d8-10",
+        "question": "For a lighting project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 9,
+    "questions": [
+      {
+        "id": "d9-1",
+        "question": "Which practice is central to commercial photography?",
+        "options": [
+          "preserve product fidelity",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "preserve product fidelity"
+      },
+      {
+        "id": "d9-2",
+        "question": "For a commercial photography project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d9-3",
+        "question": "For a commercial photography project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d9-4",
+        "question": "For a commercial photography project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d9-5",
+        "question": "For a commercial photography project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d9-6",
+        "question": "For a commercial photography project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d9-7",
+        "question": "For a commercial photography project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d9-8",
+        "question": "For a commercial photography project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d9-9",
+        "question": "For a commercial photography project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d9-10",
+        "question": "For a commercial photography project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 10,
+    "questions": [
+      {
+        "id": "d10-1",
+        "question": "Which practice is central to video generation?",
+        "options": [
+          "test motion consistency",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "test motion consistency"
+      },
+      {
+        "id": "d10-2",
+        "question": "For a video generation project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d10-3",
+        "question": "For a video generation project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d10-4",
+        "question": "For a video generation project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d10-5",
+        "question": "For a video generation project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d10-6",
+        "question": "For a video generation project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d10-7",
+        "question": "For a video generation project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d10-8",
+        "question": "For a video generation project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d10-9",
+        "question": "For a video generation project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d10-10",
+        "question": "For a video generation project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 11,
+    "questions": [
+      {
+        "id": "d11-1",
+        "question": "Which practice is central to camera motion?",
+        "options": [
+          "specify camera and subject motion separately",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "specify camera and subject motion separately"
+      },
+      {
+        "id": "d11-2",
+        "question": "For a camera motion project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d11-3",
+        "question": "For a camera motion project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d11-4",
+        "question": "For a camera motion project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d11-5",
+        "question": "For a camera motion project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d11-6",
+        "question": "For a camera motion project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d11-7",
+        "question": "For a camera motion project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d11-8",
+        "question": "For a camera motion project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d11-9",
+        "question": "For a camera motion project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d11-10",
+        "question": "For a camera motion project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 12,
+    "questions": [
+      {
+        "id": "d12-1",
+        "question": "Which practice is central to editing?",
+        "options": [
+          "review pacing and audio rights",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "review pacing and audio rights"
+      },
+      {
+        "id": "d12-2",
+        "question": "For a editing project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d12-3",
+        "question": "For a editing project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d12-4",
+        "question": "For a editing project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d12-5",
+        "question": "For a editing project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d12-6",
+        "question": "For a editing project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d12-7",
+        "question": "For a editing project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d12-8",
+        "question": "For a editing project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d12-9",
+        "question": "For a editing project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d12-10",
+        "question": "For a editing project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 13,
+    "questions": [
+      {
+        "id": "d13-1",
+        "question": "Which practice is central to character design?",
+        "options": [
+          "maintain a character reference sheet",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "maintain a character reference sheet"
+      },
+      {
+        "id": "d13-2",
+        "question": "For a character design project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d13-3",
+        "question": "For a character design project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d13-4",
+        "question": "For a character design project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d13-5",
+        "question": "For a character design project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d13-6",
+        "question": "For a character design project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d13-7",
+        "question": "For a character design project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d13-8",
+        "question": "For a character design project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d13-9",
+        "question": "For a character design project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d13-10",
+        "question": "For a character design project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 14,
+    "questions": [
+      {
+        "id": "d14-1",
+        "question": "Which practice is central to storyboarding?",
+        "options": [
+          "map narrative beats into shots",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "map narrative beats into shots"
+      },
+      {
+        "id": "d14-2",
+        "question": "For a storyboarding project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d14-3",
+        "question": "For a storyboarding project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d14-4",
+        "question": "For a storyboarding project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d14-5",
+        "question": "For a storyboarding project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d14-6",
+        "question": "For a storyboarding project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d14-7",
+        "question": "For a storyboarding project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d14-8",
+        "question": "For a storyboarding project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d14-9",
+        "question": "For a storyboarding project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d14-10",
+        "question": "For a storyboarding project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 15,
+    "questions": [
+      {
+        "id": "d15-1",
+        "question": "Which practice is central to animation?",
+        "options": [
+          "preserve continuity across shots",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "preserve continuity across shots"
+      },
+      {
+        "id": "d15-2",
+        "question": "For a animation project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d15-3",
+        "question": "For a animation project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d15-4",
+        "question": "For a animation project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d15-5",
+        "question": "For a animation project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d15-6",
+        "question": "For a animation project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d15-7",
+        "question": "For a animation project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d15-8",
+        "question": "For a animation project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d15-9",
+        "question": "For a animation project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d15-10",
+        "question": "For a animation project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 16,
+    "questions": [
+      {
+        "id": "d16-1",
+        "question": "Which practice is central to virtual influencers?",
+        "options": [
+          "disclose synthetic identity",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "disclose synthetic identity"
+      },
+      {
+        "id": "d16-2",
+        "question": "For a virtual influencers project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d16-3",
+        "question": "For a virtual influencers project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d16-4",
+        "question": "For a virtual influencers project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d16-5",
+        "question": "For a virtual influencers project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d16-6",
+        "question": "For a virtual influencers project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d16-7",
+        "question": "For a virtual influencers project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d16-8",
+        "question": "For a virtual influencers project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d16-9",
+        "question": "For a virtual influencers project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d16-10",
+        "question": "For a virtual influencers project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 17,
+    "questions": [
+      {
+        "id": "d17-1",
+        "question": "Which practice is central to voice?",
+        "options": [
+          "use authorized voices",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "use authorized voices"
+      },
+      {
+        "id": "d17-2",
+        "question": "For a voice project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d17-3",
+        "question": "For a voice project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d17-4",
+        "question": "For a voice project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d17-5",
+        "question": "For a voice project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d17-6",
+        "question": "For a voice project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d17-7",
+        "question": "For a voice project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d17-8",
+        "question": "For a voice project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d17-9",
+        "question": "For a voice project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d17-10",
+        "question": "For a voice project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 18,
+    "questions": [
+      {
+        "id": "d18-1",
+        "question": "Which practice is central to social content?",
+        "options": [
+          "define audience and content pillars",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "define audience and content pillars"
+      },
+      {
+        "id": "d18-2",
+        "question": "For a social content project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d18-3",
+        "question": "For a social content project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d18-4",
+        "question": "For a social content project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d18-5",
+        "question": "For a social content project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d18-6",
+        "question": "For a social content project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d18-7",
+        "question": "For a social content project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d18-8",
+        "question": "For a social content project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d18-9",
+        "question": "For a social content project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d18-10",
+        "question": "For a social content project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 19,
+    "questions": [
+      {
+        "id": "d19-1",
+        "question": "Which practice is central to advertising concepts?",
+        "options": [
+          "derive concepts from the client brief",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "derive concepts from the client brief"
+      },
+      {
+        "id": "d19-2",
+        "question": "For a advertising concepts project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d19-3",
+        "question": "For a advertising concepts project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d19-4",
+        "question": "For a advertising concepts project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d19-5",
+        "question": "For a advertising concepts project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d19-6",
+        "question": "For a advertising concepts project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d19-7",
+        "question": "For a advertising concepts project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d19-8",
+        "question": "For a advertising concepts project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d19-9",
+        "question": "For a advertising concepts project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d19-10",
+        "question": "For a advertising concepts project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 20,
+    "questions": [
+      {
+        "id": "d20-1",
+        "question": "Which practice is central to product ads?",
+        "options": [
+          "verify product claims",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "verify product claims"
+      },
+      {
+        "id": "d20-2",
+        "question": "For a product ads project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d20-3",
+        "question": "For a product ads project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d20-4",
+        "question": "For a product ads project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d20-5",
+        "question": "For a product ads project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d20-6",
+        "question": "For a product ads project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d20-7",
+        "question": "For a product ads project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d20-8",
+        "question": "For a product ads project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d20-9",
+        "question": "For a product ads project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d20-10",
+        "question": "For a product ads project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 21,
+    "questions": [
+      {
+        "id": "d21-1",
+        "question": "Which practice is central to brand films?",
+        "options": [
+          "develop a coherent narrative",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "develop a coherent narrative"
+      },
+      {
+        "id": "d21-2",
+        "question": "For a brand films project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d21-3",
+        "question": "For a brand films project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d21-4",
+        "question": "For a brand films project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d21-5",
+        "question": "For a brand films project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d21-6",
+        "question": "For a brand films project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d21-7",
+        "question": "For a brand films project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d21-8",
+        "question": "For a brand films project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d21-9",
+        "question": "For a brand films project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d21-10",
+        "question": "For a brand films project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 22,
+    "questions": [
+      {
+        "id": "d22-1",
+        "question": "Which practice is central to local AI?",
+        "options": [
+          "check hardware and model licenses",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "check hardware and model licenses"
+      },
+      {
+        "id": "d22-2",
+        "question": "For a local AI project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d22-3",
+        "question": "For a local AI project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d22-4",
+        "question": "For a local AI project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d22-5",
+        "question": "For a local AI project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d22-6",
+        "question": "For a local AI project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d22-7",
+        "question": "For a local AI project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d22-8",
+        "question": "For a local AI project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d22-9",
+        "question": "For a local AI project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d22-10",
+        "question": "For a local AI project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 23,
+    "questions": [
+      {
+        "id": "d23-1",
+        "question": "Which practice is central to automation?",
+        "options": [
+          "require approval before publishing",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "require approval before publishing"
+      },
+      {
+        "id": "d23-2",
+        "question": "For a automation project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d23-3",
+        "question": "For a automation project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d23-4",
+        "question": "For a automation project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d23-5",
+        "question": "For a automation project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d23-6",
+        "question": "For a automation project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d23-7",
+        "question": "For a automation project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d23-8",
+        "question": "For a automation project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d23-9",
+        "question": "For a automation project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d23-10",
+        "question": "For a automation project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 24,
+    "questions": [
+      {
+        "id": "d24-1",
+        "question": "Which practice is central to agents?",
+        "options": [
+          "limit tool permissions",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "limit tool permissions"
+      },
+      {
+        "id": "d24-2",
+        "question": "For a agents project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d24-3",
+        "question": "For a agents project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d24-4",
+        "question": "For a agents project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d24-5",
+        "question": "For a agents project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d24-6",
+        "question": "For a agents project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d24-7",
+        "question": "For a agents project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d24-8",
+        "question": "For a agents project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d24-9",
+        "question": "For a agents project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d24-10",
+        "question": "For a agents project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 25,
+    "questions": [
+      {
+        "id": "d25-1",
+        "question": "Which practice is central to portfolio?",
+        "options": [
+          "document process and deliverables",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "document process and deliverables"
+      },
+      {
+        "id": "d25-2",
+        "question": "For a portfolio project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d25-3",
+        "question": "For a portfolio project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d25-4",
+        "question": "For a portfolio project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d25-5",
+        "question": "For a portfolio project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d25-6",
+        "question": "For a portfolio project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d25-7",
+        "question": "For a portfolio project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d25-8",
+        "question": "For a portfolio project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d25-9",
+        "question": "For a portfolio project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d25-10",
+        "question": "For a portfolio project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 26,
+    "questions": [
+      {
+        "id": "d26-1",
+        "question": "Which practice is central to pricing?",
+        "options": [
+          "estimate costs and revisions",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "estimate costs and revisions"
+      },
+      {
+        "id": "d26-2",
+        "question": "For a pricing project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d26-3",
+        "question": "For a pricing project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d26-4",
+        "question": "For a pricing project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d26-5",
+        "question": "For a pricing project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d26-6",
+        "question": "For a pricing project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d26-7",
+        "question": "For a pricing project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d26-8",
+        "question": "For a pricing project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d26-9",
+        "question": "For a pricing project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d26-10",
+        "question": "For a pricing project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 27,
+    "questions": [
+      {
+        "id": "d27-1",
+        "question": "Which practice is central to sales?",
+        "options": [
+          "agree on scope and payment terms",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "agree on scope and payment terms"
+      },
+      {
+        "id": "d27-2",
+        "question": "For a sales project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d27-3",
+        "question": "For a sales project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d27-4",
+        "question": "For a sales project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d27-5",
+        "question": "For a sales project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d27-6",
+        "question": "For a sales project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d27-7",
+        "question": "For a sales project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d27-8",
+        "question": "For a sales project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d27-9",
+        "question": "For a sales project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d27-10",
+        "question": "For a sales project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 28,
+    "questions": [
+      {
+        "id": "d28-1",
+        "question": "Which practice is central to agency?",
+        "options": [
+          "define quality gates",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "define quality gates"
+      },
+      {
+        "id": "d28-2",
+        "question": "For a agency project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d28-3",
+        "question": "For a agency project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d28-4",
+        "question": "For a agency project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d28-5",
+        "question": "For a agency project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d28-6",
+        "question": "For a agency project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d28-7",
+        "question": "For a agency project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d28-8",
+        "question": "For a agency project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d28-9",
+        "question": "For a agency project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d28-10",
+        "question": "For a agency project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 29,
+    "questions": [
+      {
+        "id": "d29-1",
+        "question": "Which practice is central to marketing?",
+        "options": [
+          "measure contribution margin",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "measure contribution margin"
+      },
+      {
+        "id": "d29-2",
+        "question": "For a marketing project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d29-3",
+        "question": "For a marketing project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d29-4",
+        "question": "For a marketing project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d29-5",
+        "question": "For a marketing project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d29-6",
+        "question": "For a marketing project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d29-7",
+        "question": "For a marketing project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d29-8",
+        "question": "For a marketing project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d29-9",
+        "question": "For a marketing project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d29-10",
+        "question": "For a marketing project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  },
+  {
+    "day": 30,
+    "questions": [
+      {
+        "id": "d30-1",
+        "question": "Which practice is central to final project?",
+        "options": [
+          "present a verified complete campaign",
+          "Skip planning and verification",
+          "Guarantee commercial success"
+        ],
+        "correct": "present a verified complete campaign"
+      },
+      {
+        "id": "d30-2",
+        "question": "For a final project project, which action supports planning?",
+        "options": [
+          "Define the goal before production",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Define the goal before production"
+      },
+      {
+        "id": "d30-3",
+        "question": "For a final project project, which action supports accuracy?",
+        "options": [
+          "Verify claims before publication",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Verify claims before publication"
+      },
+      {
+        "id": "d30-4",
+        "question": "For a final project project, which action supports licensing?",
+        "options": [
+          "Check usage rights",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Check usage rights"
+      },
+      {
+        "id": "d30-5",
+        "question": "For a final project project, which action supports privacy?",
+        "options": [
+          "Protect confidential data",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Protect confidential data"
+      },
+      {
+        "id": "d30-6",
+        "question": "For a final project project, which action supports alignment?",
+        "options": [
+          "Evaluate against the brief",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Evaluate against the brief"
+      },
+      {
+        "id": "d30-7",
+        "question": "For a final project project, which action supports traceability?",
+        "options": [
+          "Record revisions",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Record revisions"
+      },
+      {
+        "id": "d30-8",
+        "question": "For a final project project, which action supports comparison?",
+        "options": [
+          "Test alternatives",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Test alternatives"
+      },
+      {
+        "id": "d30-9",
+        "question": "For a final project project, which action supports quality?",
+        "options": [
+          "Review output quality",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Review output quality"
+      },
+      {
+        "id": "d30-10",
+        "question": "For a final project project, which action supports handover?",
+        "options": [
+          "Document final deliverables",
+          "Ignore this requirement",
+          "Assume the AI handles it automatically"
+        ],
+        "correct": "Document final deliverables"
+      }
+    ]
+  }
+]
