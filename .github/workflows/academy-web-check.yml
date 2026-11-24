@@ -40,6 +40,9 @@ jobs:
       - name: Browser smoke test (mocked API, no payments)
         run: node academy/tests/browser_smoke.cjs
 
+      - name: Local agent team unit tests
+        run: node academy/tests/agent_team.cjs
+
       - name: Marketing export unit tests
         run: node academy/tests/marketing_export.cjs
 
