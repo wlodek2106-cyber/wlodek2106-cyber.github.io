@@ -13,6 +13,9 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
+    if path=="/admin/acquisition" and method=="GET":
+        from acquisition import admin_report
+        return 200,admin_report(token)
     if path in tuple("/jobs/"+x for x in ("feed","mine","admin","create","moderate","apply","applicants","applications","transition","recommended")) and method=="POST":
         from job_board import dispatch as job_dispatch
         return 200,job_dispatch(token,path.rsplit("/",1)[1],body)
@@ -41,7 +44,7 @@ def dispatch(method,path,body,token):
             return 403,{"error":"Registration closed"}
         if not all(isinstance(body.get(k),str) and body[k].strip() for k in ("first_name","last_name")):
             raise ValueError("First and last name required")
-        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"))}
+        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"),body.get("hire_source"))}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"],body.get("code"))}
     if path=="/account/me" and method=="GET":

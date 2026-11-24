@@ -20,7 +20,7 @@ class LaunchIntegration(unittest.TestCase):
                     stack.enter_context(patch.object(module,"transaction",shared))
                 stack.enter_context(patch.dict(os.environ,{"ACADEMY_ADMIN_ENABLED":"true","ACADEMY_PAYMENTS_ENABLED":"true","ACADEMY_CHECKOUT_READY":"true"}))
                 owner_id=accounts.register("owner-"+suffix+"@example.invalid",password,"Test","Owner")
-                partner_id=accounts.register("partner-"+suffix+"@example.invalid",password,"Test","Partner")
+                partner_id=accounts.register("partner-"+suffix+"@example.invalid",password,"Test","Partner",hire_source="telegram")
                 owner=accounts.login("owner-"+suffix+"@example.invalid",password)
                 partner=accounts.login("partner-"+suffix+"@example.invalid",password)
                 stack.enter_context(patch.dict(os.environ,{"ACADEMY_PARTNER_ADMIN_IDS":str(owner_id)}))
@@ -100,6 +100,11 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":jid,"action":"deliver"})
                 self.assertEqual(job_transition(cur,buyer_id,{"id":jid,"action":"deliver"})["status"],"delivered")
                 self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
+                from acquisition import report as acquisition_report
+                source=next(r for r in acquisition_report(cur)["items"] if r["source"]=="telegram")
+                self.assertGreaterEqual(source["registrations"],1)
+                self.assertGreaterEqual(source["completed"],1)
+                self.assertGreaterEqual(source["applications"],1)
                 from community import create as community_create,page as community_page,decide as community_decide,withdraw as community_withdraw
                 topic={"alias":"Test creator","title":"Test question","category":"question","body":"Test discussion","consent":True}
                 with self.assertRaises(ValueError): community_create(cur,buyer_id,{**topic,"consent":False})

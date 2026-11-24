@@ -345,3 +345,5 @@ CREATE TABLE IF NOT EXISTS academy_job_applications (
  UNIQUE(job_id,student_id),UNIQUE(job_id,id)
 );
 CREATE INDEX IF NOT EXISTS academy_job_applications_student ON academy_job_applications(student_id,id);
+
+ALTER TABLE students ADD COLUMN IF NOT EXISTS hire_source text CHECK(hire_source IN ('direct','telegram','instagram','youtube','linkedin','facebook','tiktok','x','partner','other'));

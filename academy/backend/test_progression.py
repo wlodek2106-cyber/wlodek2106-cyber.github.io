@@ -96,6 +96,17 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_acquisition(self):
+        from acquisition import normalize,summarize
+        self.assertEqual(normalize("telegram"),"telegram")
+        self.assertIsNone(normalize("https://example.invalid"))
+        self.assertIsNone(normalize(["telegram"]))
+        r=summarize([("telegram",4)], [("telegram",2,1,0,0,0,0,2,0,0)], [("telegram",3)])
+        row=next(x for x in r["items"] if x["source"]=="telegram")
+        self.assertEqual(row["client_conversion_percent"],25.0)
+        self.assertEqual(row["completed"],2)
+        self.assertEqual(row["applications"],3)
+        self.assertIsNone(next(x for x in r["items"] if x["source"]=="other")["client_conversion_percent"])
     def test_job_matching(self):
         from job_matching import rank
         jobs=[{"id":1,"category":"design"},{"id":2,"category":"video"},{"id":3,"category":"web"},{"id":4,"category":"design"}]
