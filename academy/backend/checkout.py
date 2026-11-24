@@ -33,3 +33,15 @@ def create_invoice(token,plan):
         cur.execute("INSERT INTO payment_invoices(id,student_id,plan,asset,amount_atomic,reference,recipient,expires_at) VALUES (%s,%s,%s,'USDC',%s,%s,%s,now()+interval '15 minutes') RETURNING expires_at",(invoice,student,plan,q["amount_atomic"],ref,q["recipient"]))
         expiry=cur.fetchone()[0].isoformat()
         return {"id":invoice,"expires_at":expiry,"url":payment_url(plan,ref),"amount_atomic":q["amount_atomic"]}
+
+def active_invoice(token):
+    student=authenticate(token)
+    if student is None:
+        raise PermissionError("Authentication required")
+    with transaction() as cur:
+        cur.execute("SELECT id,plan,reference,amount_atomic,expires_at FROM payment_invoices WHERE student_id=%s AND paid_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1",(student,))
+        row=cur.fetchone()
+    if not row:
+        return {"invoice":None}
+    invoice,plan,ref,amount,expiry=row
+    return {"invoice":{"id":str(invoice),"url":payment_url(plan,ref),"amount_atomic":amount,"expires_at":expiry.isoformat()}}
