@@ -110,10 +110,10 @@ def dispatch(method,path,body,token):
         filename="lessons02_06.json" if day<=6 else "lessons07_30.json"
         lessons=json.loads(Path(__file__).with_name(filename).read_text())
         lesson=next(item for item in lessons if item["day"]==day)
-        if day<=6 and lang in ("ru","uk","pl"):
-            translations=json.loads(Path(__file__).with_name("lessons02_06_translations.json").read_text())
+        if day<=15 and lang in ("ru","uk","pl"):
+            translations=json.loads(Path(__file__).with_name("lessons02_06_translations.json" if day<=6 else "lessons07_15_translations.json").read_text())
             lesson.update(next(item for item in translations[lang] if item["day"]==day))
-            return 200,{**lesson,"content_language":lang}
+            return 200,{**lesson,"content_language":lang,"prompts_language":lang if day<=6 else "en"}
         return 200,{**lesson,"content_language":"en"}
     return 404,{"error":"Not found"}
 # HTTP adapter must validate request bodies, enforce rate limits and handle errors.
