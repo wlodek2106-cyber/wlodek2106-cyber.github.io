@@ -43,8 +43,8 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if path in ("/","/dashboard","/downloads","/reviews","/free-ai") and self.command=="GET":
-            body=Path(__file__).with_name("free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
+        if path in ("/","/dashboard","/downloads","/reviews","/free-ai","/legal") and self.command=="GET":
+            body=Path(__file__).with_name("legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
             self.send_header("Cache-Control","no-store")
@@ -85,7 +85,7 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             return self.respond(503,{"error":"Service unavailable"})
     def do_HEAD(self):
-        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/dashboard","/downloads","/reviews","/free-ai") else 404)
+        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/dashboard","/downloads","/reviews","/free-ai","/legal") else 404)
         self.end_headers()
     do_GET=handle_api
     do_POST=handle_api

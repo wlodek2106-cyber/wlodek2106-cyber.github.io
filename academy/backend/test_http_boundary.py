@@ -27,6 +27,12 @@ class HttpBoundary(unittest.TestCase):
                 with req("/dashboard") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"academySidebar",r.read())
+                with req("/legal") as r:
+                    self.assertEqual(r.status,200)
+                    content=r.read()
+                    for lang in (b'lang="en"',b'lang="ru"',b'lang="uk"',b'lang="pl"'):
+                        self.assertIn(lang,content)
+                    self.assertIn(b"PRE-LAUNCH DRAFT",content)
                 for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
                     with req(path,body,headers) as r:
                         self.assertEqual(r.status,status)
