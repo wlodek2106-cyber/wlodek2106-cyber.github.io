@@ -23,6 +23,9 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/checkout/discover" and method=="POST":
+        from payment_discovery import discover
+        return 200,discover(token,body["invoice"])
     if path=="/checkout/confirm" and method=="POST":
         from settlement import settle
         return 200,settle(token,body["invoice"],body["signature"])
