@@ -67,3 +67,12 @@ CREATE TABLE IF NOT EXISTS tutor_history (
  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS tutor_history_student_idx ON tutor_history(student_id,id DESC);
+
+ALTER TABLE assessment_sessions DROP CONSTRAINT IF EXISTS assessment_sessions_lesson_check;
+ALTER TABLE assessment_sessions ADD CONSTRAINT assessment_sessions_lesson_check CHECK(lesson BETWEEN 1 AND 40);
+
+ALTER TABLE project_submissions DROP CONSTRAINT IF EXISTS project_submissions_lesson_check;
+ALTER TABLE project_submissions ADD CONSTRAINT project_submissions_lesson_check CHECK(lesson BETWEEN 1 AND 40);
+
+ALTER TABLE tutor_history DROP CONSTRAINT IF EXISTS tutor_history_lesson_check;
+ALTER TABLE tutor_history ADD CONSTRAINT tutor_history_lesson_check CHECK(lesson BETWEEN 1 AND 40);
