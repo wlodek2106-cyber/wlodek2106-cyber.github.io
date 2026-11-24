@@ -15,10 +15,10 @@ d(){ docker --host "unix://$socket" "$@"; }
 cid="$(d run -d --network none -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17)"
 trap 'd rm -fv "$cid" >/dev/null 2>&1 || true' EXIT
 for i in $(seq 1 60); do
- if d exec "$cid" pg_isready -U postgres >/dev/null 2>&1; then break; fi
+ if d exec "$cid" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then break; fi
  sleep 1
 done
-d exec "$cid" pg_isready -U postgres >/dev/null
+d exec "$cid" pg_isready -h 127.0.0.1 -U postgres >/dev/null
 d exec "$cid" createdb -U postgres academy_restore
 gpg --decrypt "$archive" | d exec -i "$cid" pg_restore --exit-on-error --no-owner --no-privileges -U postgres -d academy_restore
 # Print aggregate counts only; never user data or credentials.
