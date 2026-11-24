@@ -8,7 +8,9 @@ from pathlib import Path
 
 def dispatch(method,path,body,token):
     if path=="/ready":
-        return 200,{"database":ready(),"payments":False}
+        database_ok=ready()
+        payments=database_ok and os.getenv("ACADEMY_CHECKOUT_READY")=="true" and os.getenv("ACADEMY_PAYMENTS_ENABLED")=="true"
+        return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
     if path=="/register" and method=="POST":
