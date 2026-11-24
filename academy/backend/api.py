@@ -23,6 +23,15 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/certificates/issue" and method=="POST":
+        from certificates import issue_certificate
+        return 200,issue_certificate(token)
+    if path=="/certificates/verify" and method=="POST":
+        from certificates import verify_certificate
+        code=body["code"]
+        if not isinstance(code,str) or len(code)>128:
+            raise ValueError("Invalid code")
+        return 200,verify_certificate(code)
     if path=="/exams/start" and method=="POST":
         from exams import start_exam
         day=body["day"]
