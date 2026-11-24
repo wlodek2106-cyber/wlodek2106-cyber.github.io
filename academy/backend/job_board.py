@@ -148,6 +148,9 @@ def dispatch(token,action,b):
     with transaction() as cur:
         if action in ("feed","mine","admin"): return page(cur,sid,action,b)
         if action=="recommended": return recommend(cur,sid)
+        if action=="analytics":
+            from freelancer_analytics import report
+            return report(cur,sid,b.get("days",30))
         if action=="create": return create(cur,sid,b)
         if action=="moderate": return moderate(cur,sid,b)
         if action=="apply": return apply(cur,sid,b)

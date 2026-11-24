@@ -96,6 +96,19 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_freelancer_analytics(self):
+        from freelancer_analytics import summarize
+        from datetime import date,timedelta
+        today=date(2026,11,24)
+        r=summarize([(today,"design","completed",True,14000),(today,"video","open",False,20000),(today-timedelta(days=20),"web","assigned",True,30000)],7,today)
+        self.assertEqual(r["cohort"]["applications"],2)
+        self.assertEqual(r["cohort"]["selection_percent"],50.0)
+        self.assertEqual(r["cohort"]["completed_cents"],14000)
+        self.assertEqual(r["all_time"]["selected_cents"],44000)
+        self.assertEqual(r["daily"][-1]["applications"],2)
+        self.assertFalse(r["payment_verified"])
+        self.assertIsNone(summarize([],7,today)["cohort"]["selection_percent"])
+        with self.assertRaises(ValueError): summarize([],8,today)
     def test_acquisition(self):
         from acquisition import normalize,summarize
         self.assertEqual(normalize("telegram"),"telegram")

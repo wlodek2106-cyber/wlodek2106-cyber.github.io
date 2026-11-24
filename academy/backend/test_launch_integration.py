@@ -125,6 +125,13 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["reputation"])
                 review_decide(cur,owner_id,{"id":jid,"action":"approved"})
                 self.assertEqual(rep_stats(cur,buyer_id)["rating"],4.0)
+                from freelancer_analytics import report as freelancer_report
+                analytics=freelancer_report(cur,buyer_id,7)
+                self.assertEqual(analytics["all_time"]["applications"],1)
+                self.assertEqual(analytics["all_time"]["completed"],1)
+                self.assertEqual(analytics["all_time"]["completed_cents"],14000)
+                self.assertFalse(analytics["payment_verified"])
+                with self.assertRaises(PermissionError): freelancer_report(cur,partner_id,7)
                 self.assertEqual(review_own(cur,buyer_id,{})["items"][0]["comment"],"Synthetic feedback")
                 self.assertEqual(review_own(cur,partner_id,{})["items"],[])
                 from notifications import listing as notices,mark as notice_read,count as notice_count
