@@ -28,3 +28,28 @@ targets:
       properties:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  AcademyMac:
+    type: application
+    platform: macOS
+    sources: [AcademyApp.swift, ProgressStore.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zer0life.academy.mac
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: AcademyMac.entitlements
+    dependencies:
+      - target: AcademyMacWidget
+  AcademyMacWidget:
+    type: app-extension
+    platform: macOS
+    sources: [AcademyWidget.swift, WidgetMain.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zer0life.academy.mac.widget
+        CODE_SIGN_ENTITLEMENTS: AcademyMac.entitlements
+    info:
+      path: MacWidgetInfo.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
