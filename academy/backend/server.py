@@ -88,4 +88,7 @@ if __name__=="__main__":
         checkout_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(CheckoutIntegration))
         if not checkout_result.wasSuccessful() or checkout_result.testsRun!=1 or checkout_result.skipped:
             raise RuntimeError("Checkout integration check failed")
+    from certificate_mail import configured,run
+    if configured():
+        threading.Thread(target=run,daemon=True,name="certificate-email").start()
     ThreadingHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()
