@@ -46,6 +46,9 @@ jobs:
       - name: Voice studio browser smoke test
         run: node academy/tests/voice_smoke.cjs
 
+      - name: Design studio browser smoke test
+        run: node academy/tests/design_smoke.cjs
+
       - name: Encrypted backup and restore (synthetic data only)
         timeout-minutes: 5
         shell: bash
