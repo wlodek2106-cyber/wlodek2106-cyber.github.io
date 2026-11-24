@@ -4,9 +4,9 @@ from datetime import datetime, timedelta, timezone
 LESSONS = 30
 PASS_PERCENT = 80
 
-def eligible(lesson, paid_at, passed_at, now=None):
+def eligible(lesson, paid_at, passed_at, now=None,plan=None):
     now = now or datetime.now(timezone.utc)
-    if not paid_at or not isinstance(lesson, int) or not 1 <= lesson <= LESSONS:
+    if not paid_at or not isinstance(lesson, int) or not 1 <= lesson <= (40 if plan=='vip' else LESSONS):
         return False
     if now < paid_at + timedelta(days=lesson-1):
         return False
