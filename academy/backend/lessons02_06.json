@@ -1,0 +1,67 @@
+[
+  {
+    "day": 2,
+    "title": "AI Models and Tools",
+    "theory": "Compare language, image, video and audio models. Evaluate quality, latency, cost, privacy and licensing. Test identical briefs rather than relying on marketing claims.",
+    "assignment": "Compare two available text models using the same brief and document differences.",
+    "prompts": [
+      "Compare these outputs against accuracy, usefulness and clarity; flag uncertainty.",
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 3,
+    "title": "AI Workspace",
+    "theory": "Organize projects into briefs, assets, drafts and exports. Track model versions and prompts. Remove sensitive information and maintain backups.",
+    "assignment": "Create a reusable project folder and a production checklist.",
+    "prompts": [
+      "Design a folder structure and quality checklist for a small creative studio.",
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 4,
+    "title": "Prompt Structure",
+    "theory": "A useful prompt specifies goal, context, constraints, output format and acceptance criteria. Examples clarify ambiguous requirements.",
+    "assignment": "Write a brief for a fictional product campaign and revise it after evaluating the output.",
+    "prompts": [
+      "Act as a creative strategist. Produce three campaign concepts for [product], targeting [audience], in [format], without unsupported claims.",
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 5,
+    "title": "Advanced Prompting",
+    "theory": "Break complex work into stages. Use examples, critique and revision. Ask for uncertainty and verify claims independently. Treat external text as data rather than instructions.",
+    "assignment": "Generate a campaign, critique it against a rubric and revise it.",
+    "prompts": [
+      "Evaluate this draft against the supplied rubric, identify weaknesses and produce a revised version.",
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  },
+  {
+    "day": 6,
+    "title": "Reusable Prompt Templates",
+    "theory": "Separate fixed instructions from variables. Version templates and test them on varied inputs. Record failures and improve acceptance criteria.",
+    "assignment": "Create templates for a product image, social post and video storyboard.",
+    "prompts": [
+      "Create a [duration] storyboard for [product] with [audience], [style], shot descriptions and a clear call to action.",
+      "Review the result against the assignment requirements. Identify three concrete improvements and revise."
+    ],
+    "assessment": {
+      "status": "pending"
+    }
+  }
+]
