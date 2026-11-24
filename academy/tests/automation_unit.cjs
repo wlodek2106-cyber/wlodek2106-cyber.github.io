@@ -1,0 +1,10 @@
+const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),vm=require("node:vm");
+const js=fs.readFileSync(path.join(__dirname,"../backend/automation-studio.js"),"utf8");new vm.Script(js);
+const run=vm.runInNewContext(js.slice(0,js.indexOf("const $=id"))+"\nrunWorkflow");
+const s=(type,a="",b="")=>({type,a,b});
+assert.equal(run(" b \na\n b ",[s("trim"),s("dedupe"),s("sort"),s("prefix","- ")]).value,"- a\n- b");
+assert.equal(run("a.b\naxb",[s("replace",".","!"),s("filter","!")]).value,"a!b");
+assert.equal(JSON.parse(run("one two",[s("count")]).value).words,2);
+assert.ok(run("hello",[s("agent_brief","plan")]).value.includes("Reviewer"));
+assert.throws(()=>run("x",[s("execute")]),/Invalid step/);assert.throws(()=>run("x",[s("replace")]),/Empty search/);assert.throws(()=>run("x".repeat(20001),[s("trim")]),/Invalid workflow/);assert.throws(()=>run("x\n".repeat(5000),[s("prefix","z".repeat(500))]),/Output limit/);
+console.log("PASS: workflow transforms, literal matching, limits, operation allowlist");
