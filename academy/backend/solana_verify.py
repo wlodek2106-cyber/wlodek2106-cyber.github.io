@@ -41,7 +41,22 @@ def verify_usdc(signature,expected,reference,created_at,expires_at):
         if addresses[ix["programIdIndex"]]!="TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA":
             continue
         accounts=[addresses[i] for i in ix["accounts"]]
-        if reference in accounts and any(d in accounts for d in destinations):
+        alphabet="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+        encoded=ix.get("data","")
+        n=0
+        for c in encoded:
+            n=n*58+alphabet.index(c)
+        data=b"\x00"*(len(encoded)-len(encoded.lstrip("1")))+n.to_bytes((n.bit_length()+7)//8,"big")
+        # SPL Transfer (3) or TransferChecked (12), exact amount and destination.
+        if len(data)==9 and data[0]==3:
+            destination_index=1
+            minimum_accounts=3
+        elif len(data)==10 and data[0]==12 and data[9]==6 and len(accounts)>=4 and accounts[1]==USDC_MINT:
+            destination_index=2
+            minimum_accounts=4
+        else:
+            continue
+        if len(accounts)>minimum_accounts and reference in accounts[minimum_accounts:] and accounts[destination_index] in destinations and int.from_bytes(data[1:9],"little")==expected:
             matched=True
     if not matched:
         return False
