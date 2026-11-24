@@ -86,14 +86,17 @@ def get(kind,day,lang):
     from database import transaction
     with transaction() as cur: return load(cur,kind,day,lang)
 
-def save(cur,owner,kind,day,lang,data):
+def save(cur,owner,kind,day,lang,data,create_only=False):
+    if type(create_only) is not bool: raise ValueError('Invalid import mode')
     from psycopg.types.json import Jsonb
     validate(kind,day,lang,data)
     if kind=="exam": require_original_exam(data)
-    cur.execute("""INSERT INTO private_curriculum(kind,lesson,language,content,updated_by) VALUES (%s,%s,%s,%s,%s)
-        ON CONFLICT(kind,lesson,language) DO UPDATE SET content=EXCLUDED.content,updated_by=EXCLUDED.updated_by,updated_at=now(),revision=private_curriculum.revision+1
-        RETURNING revision""",(kind,day,lang,Jsonb(data),owner))
-    revision=cur.fetchone()[0]
+    insert="INSERT INTO private_curriculum(kind,lesson,language,content,updated_by) VALUES (%s,%s,%s,%s,%s)"
+    conflict=" ON CONFLICT(kind,lesson,language) DO NOTHING" if create_only else " ON CONFLICT(kind,lesson,language) DO UPDATE SET content=EXCLUDED.content,updated_by=EXCLUDED.updated_by,updated_at=now(),revision=private_curriculum.revision+1"
+    cur.execute(insert+conflict+" RETURNING revision",(kind,day,lang,Jsonb(data),owner))
+    row=cur.fetchone()
+    if row is None: return {"saved":False,"skipped":True}
+    revision=row[0]
     cur.execute("INSERT INTO private_curriculum_audit(kind,lesson,language,revision,updated_by) VALUES (%s,%s,%s,%s,%s)",(kind,day,lang,revision,owner))
     return {"saved":True,"revision":revision}
 
@@ -115,4 +118,4 @@ def admin_save(token,body):
     from partners import owner
     from database import transaction
     sid=owner(token)
-    with transaction() as cur: return save(cur,sid,body["kind"],body["day"],body["lang"],body["content"])
+    with transaction() as cur: return save(cur,sid,body["kind"],body["day"],body["lang"],body["content"],body.get("create_only",False))
