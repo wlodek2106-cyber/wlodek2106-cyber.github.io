@@ -104,6 +104,8 @@ def dispatch(method,path,body,token):
             localized=json.loads(Path(__file__).with_name("quiz01_translations.json").read_text()).get(body.get("lang","en"))
             questions=LESSON["questions"] if not localized else [(v[0],v[1:],LESSON["questions"][i][2]) for i,v in enumerate(localized)]
             bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(questions)]
+        elif day>30:
+            bank=next(x["questions"] for x in json.loads(Path(__file__).with_name("vip_lessons.json").read_text()) if x["day"]==day)
         elif day==2:
             bank=json.loads(Path(__file__).with_name("quiz02.json").read_text())
         else:
@@ -124,6 +126,9 @@ def dispatch(method,path,body,token):
             lesson.update(localized.get(lang,{}))
             lesson["content_language"]=lang if lang in localized else "en"
             return 200,lesson
+        if day>30:
+            lesson=next(x for x in json.loads(Path(__file__).with_name("vip_lessons.json").read_text()) if x["day"]==day)
+            return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":"en"}
         filename="lessons02_06.json" if day<=6 else "lessons07_30.json"
         lessons=json.loads(Path(__file__).with_name(filename).read_text())
         lesson=next(item for item in lessons if item["day"]==day)
