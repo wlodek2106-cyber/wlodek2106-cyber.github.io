@@ -98,6 +98,23 @@ class ProgressTests(unittest.TestCase):
         self.assertTrue(base58_valid("1"*32,32))
         self.assertFalse(base58_valid("0"*32,32))
         with self.assertRaises(ValueError): commission(-1)
+    def test_payout_verification(self):
+        from payout_verify import matches,TOKEN_PROGRAM
+        from payment_policy import TREASURY,USDC_MINT
+        from copy import deepcopy
+        wallet="recipient";sig="signature";amount=59700000
+        keys=[{"pubkey":TREASURY,"signer":True},{"pubkey":"source","signer":False},{"pubkey":"destination","signer":False}]
+        def bal(i,owner,n):
+            return {"accountIndex":i,"owner":owner,"mint":USDC_MINT,"uiTokenAmount":{"decimals":6,"amount":str(n)}}
+        tx={"blockTime":int(self.t.timestamp()),"meta":{"err":None,"preTokenBalances":[bal(1,TREASURY,amount),bal(2,wallet,0)],"postTokenBalances":[bal(1,TREASURY,0),bal(2,wallet,amount)]},"transaction":{"signatures":[sig],"message":{"accountKeys":keys,"instructions":[{"programId":TOKEN_PROGRAM,"parsed":{"type":"transferChecked","info":{"source":"source","destination":"destination","authority":TREASURY,"mint":USDC_MINT,"tokenAmount":{"amount":str(amount),"decimals":6}}}}]}}}
+        self.assertTrue(matches(tx,sig,wallet,amount,self.t))
+        self.assertFalse(matches(tx,sig,wallet,amount+1,self.t))
+        self.assertFalse(matches(tx,sig,"other",amount,self.t))
+        self.assertFalse(matches(tx,sig,wallet,amount,self.t+timedelta(seconds=1)))
+        altered=deepcopy(tx);altered["transaction"]["message"]["accountKeys"][0]["signer"]=False
+        self.assertFalse(matches(altered,sig,wallet,amount,self.t))
+        altered=deepcopy(tx);altered["meta"]["err"]={"failed":True}
+        self.assertFalse(matches(altered,sig,wallet,amount,self.t))
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))

@@ -116,3 +116,12 @@ CREATE TABLE IF NOT EXISTS influencer_payouts (
  reviewed_by bigint REFERENCES students(id), reviewed_at timestamptz,
  payout_signature text UNIQUE, paid_at timestamptz, paid_by bigint REFERENCES students(id)
 );
+
+CREATE TABLE IF NOT EXISTS influencer_audit (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ kind text NOT NULL CHECK(kind IN ('application','payout')),
+ target_id bigint NOT NULL,
+ action text NOT NULL CHECK(action IN ('approve','reject','mark_paid')),
+ admin_id bigint NOT NULL REFERENCES students(id),
+ created_at timestamptz NOT NULL DEFAULT now()
+);

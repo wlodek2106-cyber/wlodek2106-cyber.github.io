@@ -27,7 +27,8 @@ def owner(token):
     return sid
 def apply(token,profile,wallet,consent):
     sid=user(token)
-    if not isinstance(profile,str) or len(profile)>500 or consent is not True or not base58_valid(wallet,32):
+    from payment_policy import TREASURY
+    if not isinstance(profile,str) or len(profile)>500 or consent is not True or not base58_valid(wallet,32) or wallet==TREASURY:
         raise ValueError("Valid profile, Solana wallet and consent required")
     url=urlsplit(profile.strip())
     if url.scheme!="https" or not url.hostname or url.username or url.password: raise ValueError("HTTPS social profile required")
@@ -71,12 +72,22 @@ def queue(token):
         cur.execute("SELECT student_id,profile_url,wallet,status FROM influencer_partners ORDER BY created_at DESC LIMIT 200")
         apps=[{"id":i,"profile":u,"wallet":w,"status":s} for i,u,w,s in cur.fetchall()]
         cur.execute("""SELECT p.id,p.invoice_id,p.partner_id,p.amount_atomic,p.wallet,p.status,p.payout_signature,i.signature
-        FROM influencer_payouts p JOIN payment_invoices i ON i.id=p.invoice_id ORDER BY p.created_at DESC LIMIT 200""")
+        FROM influencer_payouts p JOIN payment_invoices i ON i.id=p.invoice_id ORDER BY CASE WHEN p.status IN (\'pending\',\'approved\') THEN 0 ELSE 1 END,p.created_at DESC LIMIT 200""")
         payouts=[{"id":i,"invoice":str(inv),"partner":sid,"amount_atomic":n,"wallet":w,"status":s,"payout_signature":sig,"sale_signature":sale} for i,inv,sid,n,w,s,sig,sale in cur.fetchall()]
-    return {"applications":apps,"payouts":payouts}
+        cur.execute("SELECT kind,target_id,action,admin_id,created_at FROM influencer_audit ORDER BY id DESC LIMIT 100")
+        audit=[{"kind":k,"target_id":i,"action":a,"admin_id":u,"date":t.isoformat()} for k,i,a,u,t in cur.fetchall()]
+    return {"applications":apps,"payouts":payouts,"audit":audit}
 def decide(token,kind,identifier,action,signature=None):
     admin=owner(token)
     if type(identifier) is not int or identifier<1: raise ValueError("Invalid identifier")
+    if kind=="payout" and action=="mark_paid":
+        if not base58_valid(signature,64): raise ValueError("Solana transaction signature required")
+        with transaction() as cur:
+            cur.execute("SELECT wallet,amount_atomic,reviewed_at FROM influencer_payouts WHERE id=%s AND status=\'approved\'",(identifier,))
+            payout=cur.fetchone()
+        if not payout: raise ValueError("Approved payout required")
+        from payout_verify import verify
+        if not verify(signature,*payout): raise ValueError("Finalized USDC payout not verified")
     with transaction() as cur:
         if kind=="application" and action in ("approve","reject"):
             cur.execute("""UPDATE influencer_partners SET status=%s,reviewed_by=%s,approved_at=CASE WHEN %s='approve' THEN now() ELSE NULL END
@@ -89,4 +100,5 @@ def decide(token,kind,identifier,action,signature=None):
             WHERE id=%s AND status='approved' AND NOT EXISTS(SELECT 1 FROM payment_invoices WHERE signature=%s)""",(signature,admin,identifier,signature))
         else: raise ValueError("Invalid action")
         if cur.rowcount!=1: raise ValueError("Invalid state transition")
+        cur.execute("INSERT INTO influencer_audit(kind,target_id,action,admin_id) VALUES (%s,%s,%s,%s)",(kind,identifier,action,admin))
     return {"updated":True}
