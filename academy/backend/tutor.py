@@ -2,7 +2,12 @@ from learning import require_lesson
 from pathlib import Path
 import json
 
-def guidance(token,day,mode):
+STEPS={
+"en":[["Explain the main idea in your own words.","Give an original example.","Identify a limitation and explain how to verify the result."],["Write a brief with measurable criteria.","Produce a first draft.","Check quality, factual claims and usage rights.","Revise and document your changes."]],
+"ru":[["Объясните главную идею своими словами.","Приведите собственный пример.","Назовите ограничение и способ проверки результата."],["Напишите бриф с измеримыми критериями.","Создайте первый черновик.","Проверьте качество, факты и права использования.","Доработайте результат и запишите изменения."]],
+"uk":[["Поясніть головну ідею своїми словами.","Наведіть власний приклад.","Назвіть обмеження та спосіб перевірки результату."],["Напишіть бриф із вимірюваними критеріями.","Створіть першу чернетку.","Перевірте якість, факти та права використання.","Доопрацюйте результат і запишіть зміни."]],
+"pl":[["Wyjaśnij główną ideę własnymi słowami.","Podaj własny przykład.","Wskaż ograniczenie i sposób weryfikacji wyniku."],["Napisz brief z mierzalnymi kryteriami.","Przygotuj pierwszy szkic.","Sprawdź jakość, fakty i prawa użytkowania.","Popraw wynik i zapisz zmiany."]]}
+def guidance(token,day,mode,lang="en"):
     require_lesson(token,day)
     if day==1:
         from lesson01 import LESSON
@@ -13,8 +18,19 @@ def guidance(token,day,mode):
         lesson=next(x for x in json.loads(Path(__file__).with_name(name).read_text()) if x["day"]==day)
         theory=[lesson["theory"]]
         assignment=lesson["assignment"]
+    lang=lang if lang in STEPS else "en"
+    if lang!="en":
+        name="lesson01_translations.json" if day==1 else "lessons02_06_translations.json" if day<=6 else "lessons07_15_translations.json" if day<=15 else "lessons16_30_translations.json"
+        localized=json.loads(Path(__file__).with_name(name).read_text())[lang]
+        if day==1:
+            theory=localized["sections"]
+            assignment=theory[-1]
+        else:
+            lesson=next(x for x in localized if x["day"]==day)
+            theory=[lesson["theory"]]
+            assignment=lesson["assignment"]
     if mode=="review":
-        return {"mode":"guided_review","material":theory,"steps":["Explain the main idea in your own words.","Give an original example.","Identify a limitation and explain how to verify the result."]}
+        return {"mode":"guided_review","material":theory,"steps":STEPS[lang][0],"language":lang,"engine":"guided_rules"}
     if mode=="practice":
-        return {"mode":"guided_practice","assignment":assignment,"steps":["Write a brief with measurable criteria.","Produce a first draft.","Check quality, factual claims and usage rights.","Revise and document your changes."]}
+        return {"mode":"guided_practice","assignment":assignment,"steps":STEPS[lang][1],"language":lang,"engine":"guided_rules"}
     raise ValueError("Unknown guidance mode")
