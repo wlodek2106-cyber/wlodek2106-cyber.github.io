@@ -1,0 +1,102 @@
+[
+  {
+    "id": "d2-0",
+    "question": "Which practice is appropriate for model selection?",
+    "options": [
+      "Match the model to the output type",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Match the model to the output type"
+  },
+  {
+    "id": "d2-1",
+    "question": "Which practice is appropriate for fair comparison?",
+    "options": [
+      "Use identical briefs",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Use identical briefs"
+  },
+  {
+    "id": "d2-2",
+    "question": "Which practice is appropriate for accuracy?",
+    "options": [
+      "Verify factual claims independently",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Verify factual claims independently"
+  },
+  {
+    "id": "d2-3",
+    "question": "Which practice is appropriate for latency?",
+    "options": [
+      "Measure response time",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Measure response time"
+  },
+  {
+    "id": "d2-4",
+    "question": "Which practice is appropriate for cost?",
+    "options": [
+      "Compare total usage costs",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Compare total usage costs"
+  },
+  {
+    "id": "d2-5",
+    "question": "Which practice is appropriate for privacy?",
+    "options": [
+      "Avoid unauthorized sensitive uploads",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Avoid unauthorized sensitive uploads"
+  },
+  {
+    "id": "d2-6",
+    "question": "Which practice is appropriate for licensing?",
+    "options": [
+      "Check commercial usage terms",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Check commercial usage terms"
+  },
+  {
+    "id": "d2-7",
+    "question": "Which practice is appropriate for video models?",
+    "options": [
+      "Evaluate motion consistency",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Evaluate motion consistency"
+  },
+  {
+    "id": "d2-8",
+    "question": "Which practice is appropriate for image models?",
+    "options": [
+      "Evaluate visual fidelity",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Evaluate visual fidelity"
+  },
+  {
+    "id": "d2-9",
+    "question": "Which practice is appropriate for evaluation?",
+    "options": [
+      "Record results against a rubric",
+      "Ignore the project requirements",
+      "Assume every model performs identically"
+    ],
+    "correct": "Record results against a rubric"
+  }
+]
