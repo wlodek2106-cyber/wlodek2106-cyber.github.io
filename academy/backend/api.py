@@ -13,6 +13,20 @@ def dispatch(method,path,body,token):
         return 200,{"database":database_ok,"payments":payments,"assets":["USDC"] if payments else [],"settlement_live_tested":False}
     if not ready():
         return 503,{"error":"Database unavailable"}
+    if path=="/reviews/public" and method=="GET":
+        from reviews import public_reviews
+        return 200,public_reviews()
+    if path=="/reviews/publish" and method=="POST":
+        from reviews import publish
+        return 200,publish(token,body["rating"],body["review"],body.get("consent"))
+    if path=="/reviews/remove" and method=="POST":
+        from reviews import remove
+        return 200,remove(token)
+    if path=="/tutor/models" and method=="GET":
+        from accounts import authenticate
+        from ai_models import status
+        if authenticate(token) is None: raise PermissionError("Sign in required")
+        return 200,{"roles":status()}
     if path=="/register" and method=="POST":
         if os.getenv("ACADEMY_REGISTRATION_ENABLED")!="true":
             return 403,{"error":"Registration closed"}
@@ -77,7 +91,7 @@ def dispatch(method,path,body,token):
     if path=="/tutor/ask" and method=="POST":
         from tutor import ask,save_answer
         lang=body.get("lang","en")
-        result=ask(token,body["day"],body["mode"],lang,body["question"])
+        result=ask(token,body["day"],body["mode"],lang,body["question"],body.get("role"),body.get("consent"))
         return 200,save_answer(token,body["day"],body["mode"],lang,body["question"],result)
     if path=="/tutor/history" and method=="GET":
         from tutor import history

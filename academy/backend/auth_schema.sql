@@ -76,3 +76,12 @@ ALTER TABLE project_submissions ADD CONSTRAINT project_submissions_lesson_check 
 
 ALTER TABLE tutor_history DROP CONSTRAINT IF EXISTS tutor_history_lesson_check;
 ALTER TABLE tutor_history ADD CONSTRAINT tutor_history_lesson_check CHECK(lesson BETWEEN 1 AND 45);
+
+CREATE TABLE IF NOT EXISTS student_reviews (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ rating integer NOT NULL CHECK(rating BETWEEN 1 AND 5),
+ body text NOT NULL CHECK(length(body) BETWEEN 10 AND 1200),
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ hidden_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS student_reviews_date_idx ON student_reviews(updated_at DESC);

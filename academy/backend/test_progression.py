@@ -43,6 +43,15 @@ class ProgressTests(unittest.TestCase):
         for lab in labs:
             namespace={"__name__":"__main__"}
             exec(compile(lab["code"],lab["filename"],"exec"),namespace)
+    def test_model_adapters(self):
+        from ai_models import request_spec,parse_answer
+        for provider in ("openai","anthropic","gemini"):
+            url,headers,body=request_spec(provider,"test-model","fake-key","instruction","question")
+            self.assertTrue(url.startswith("https://"))
+            self.assertNotIn("fake-key",url)
+        self.assertEqual(parse_answer("openai",{"choices":[{"message":{"content":"test"}}]}),"test")
+        self.assertEqual(parse_answer("anthropic",{"content":[{"type":"text","text":"test"}]}),"test")
+        self.assertEqual(parse_answer("gemini",{"candidates":[{"content":{"parts":[{"text":"test"}]}}]}),"test")
     def test_quiz(self):
         key={str(i):"a" for i in range(10)}
         self.assertTrue(quiz_passed({**key,"0":"b","1":"b"},key))
