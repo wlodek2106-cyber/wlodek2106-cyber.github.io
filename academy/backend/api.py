@@ -57,6 +57,9 @@ def dispatch(method,path,body,token):
             return 503,{"error":"Checkout not available"}
         from checkout import create_invoice
         return 201,create_invoice(token,body["plan"])
+    if path=="/tutor/ask" and method=="POST":
+        from tutor import ask
+        return 200,ask(token,body["day"],body["mode"],body.get("lang","en"),body["question"])
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
