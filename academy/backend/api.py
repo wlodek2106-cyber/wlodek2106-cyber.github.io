@@ -29,6 +29,11 @@ def dispatch(method,path,body,token):
     if path=="/checkout/confirm" and method=="POST":
         from settlement import settle
         return 200,settle(token,body["invoice"],body["signature"])
+    if path=="/checkout/active" and method=="GET":
+        if os.getenv("ACADEMY_CHECKOUT_READY")!="true" or os.getenv("ACADEMY_PAYMENTS_ENABLED")!="true":
+            return 200,{"invoice":None}
+        from checkout import active_invoice
+        return 200,active_invoice(token)
     if path=="/checkout/create" and method=="POST":
         if os.getenv("ACADEMY_CHECKOUT_READY")!="true":
             return 503,{"error":"Checkout not available"}
