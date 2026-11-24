@@ -33,6 +33,15 @@ class HttpBoundary(unittest.TestCase):
                     for lang in (b'lang="en"',b'lang="ru"',b'lang="uk"',b'lang="pl"'):
                         self.assertIn(lang,content)
                     self.assertIn(b"PRE-LAUNCH DRAFT",content)
+                with req("/creator-suite") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"creator-suite.js",r.read())
+                with req("/creator-suite.js") as r:
+                    self.assertEqual(r.status,200)
+                    body=r.read()
+                    for project in (b"AppFlowy",b"OpenProject",b"OpenWhispr",b"CapSoftware",b"VoiceStudio",b"Chatwoot",b"Open-Generative-AI",b"open-seo"):
+                        self.assertIn(project,body)
+                    self.assertIn(b"getDisplayMedia",body)
                 for path,body,headers,status in [("/private",None,{},403),("/private",None,{"Authorization":"Bearer test-only"},200),("/private",b"[]",{},400),("/private",b"{" ,{},400),("/private",b"x"*16385,{},400),("/unknown",None,{},404)]:
                     with req(path,body,headers) as r:
                         self.assertEqual(r.status,status)
