@@ -1,0 +1,278 @@
+{
+  "ru": [
+    {
+      "day": 16,
+      "title": "Виртуальный инфлюенсер",
+      "theory": "Создайте вымышленную личность, определите аудиторию, визуальный стиль и три примера публикаций. Обозначьте использование ИИ и проверьте отсутствие нежелательного сходства.",
+      "assignment": "Создайте профиль виртуального инфлюенсера. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 17,
+      "title": "Голос и синхронизация губ",
+      "theory": "Напишите оригинальный текст, определите длительность, используйте голос с разрешения владельца. Проверьте произношение и синхронизацию.",
+      "assignment": "Создайте короткий разговорный ролик. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 18,
+      "title": "Социальные сети",
+      "theory": "Определите три направления контента и потребности аудитории. Составьте календарь семи публикаций с разными вступлениями и измеримыми критериями вовлечения.",
+      "assignment": "Запланируйте пять публикаций. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 19,
+      "title": "Рекламные концепции",
+      "theory": "Определите проблему аудитории и доказуемую пользу продукта. Разработайте три концепции, проверьте утверждения и призывы к действию.",
+      "assignment": "Представьте три разные концепции. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 20,
+      "title": "Реклама продукта",
+      "theory": "Создайте вступление, демонстрацию и призыв к действию. Подготовьте три варианта с одним изменяемым параметром. Проверьте точность продукта и метрику теста.",
+      "assignment": "Создайте три варианта рекламы. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 21,
+      "title": "Брендовый фильм",
+      "theory": "Определите послание и эмоциональное развитие. Составьте список кадров с повторяющимся визуальным мотивом, соберите черновой монтаж и проверьте стиль.",
+      "assignment": "Подготовьте раскадровку и черновой фильм. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 22,
+      "title": "Локальная AI Studio",
+      "theory": "Проверьте оборудование, лицензии и источники установки. Сохраните параметры воспроизводимого процесса, повторите запуск и задокументируйте ошибки.",
+      "assignment": "Спроектируйте локальный или облачный процесс генерации. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 23,
+      "title": "Автоматизация контента",
+      "theory": "Разделите ввод, генерацию, проверку и публикацию. Добавьте утверждение человеком и защиту от дублей. Смоделируйте отказ API и восстановление.",
+      "assignment": "Спроектируйте процесс с ручным утверждением. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 24,
+      "title": "AI-агенты",
+      "theory": "Определите задачу, инструменты и разрешения агента. Задайте структуру входов и выходов, проверку данных и подтверждение внешних действий. Протестируйте ошибочные входы.",
+      "assignment": "Спроектируйте творческого помощника с ограниченными полномочиями. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 25,
+      "title": "Портфолио",
+      "theory": "Выберите проекты, демонстрирующие разные навыки. Опишите бриф, процесс и реальные результаты. Проверьте права и контакты.",
+      "assignment": "Соберите портфолио из трёх проектов. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 26,
+      "title": "Цены и клиенты",
+      "theory": "Рассчитайте труд, прямые расходы, правки и маржу. Определите границы работ, права использования и критерии приёмки.",
+      "assignment": "Подготовьте коммерческое предложение с ценой. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 27,
+      "title": "Продажа AI-услуг",
+      "theory": "Выберите сегмент клиентов и подходящее предложение. Напишите персонализированное обращение, отслеживайте ответы и улучшайте предложение без спама.",
+      "assignment": "Напишите предложение вымышленному клиенту. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 28,
+      "title": "AI-агентство",
+      "theory": "Опишите приём заказов, производство и контроль качества. Распределите роли, оцените недельную загрузку, создайте правила передачи задач и эскалации.",
+      "assignment": "Составьте одностраничный операционный план. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 29,
+      "title": "Маркетинг и масштабирование",
+      "theory": "Сформулируйте измеримую гипотезу, лимит бюджета и условия остановки. Сравните варианты, конверсию, удержание и маржинальность. Отделите факты от предположений.",
+      "assignment": "Составьте план небольшого эксперимента. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    },
+    {
+      "day": 30,
+      "title": "Дипломный проект",
+      "theory": "Выберите вымышленный или разрешённый клиентский бриф. Создайте визуальные материалы, видео и стратегию кампании. Задокументируйте права, оцените и доработайте результат.",
+      "assignment": "Представьте полную кампанию и кейс для портфолио. Представьте бриф, результат и журнал исправлений. Критерии: полнота, техническое качество, соответствие брифу и документированные права."
+    }
+  ],
+  "uk": [
+    {
+      "day": 16,
+      "title": "Віртуальний інфлюенсер",
+      "theory": "Створіть вигадану особистість, визначте аудиторію, візуальний стиль і три приклади дописів. Позначте використання ШІ та перевірте відсутність небажаної схожості.",
+      "assignment": "Створіть профіль віртуального інфлюенсера. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 17,
+      "title": "Голос і синхронізація губ",
+      "theory": "Напишіть оригінальний текст, визначте тривалість, використовуйте голос із дозволу власника. Перевірте вимову та синхронізацію.",
+      "assignment": "Створіть короткий розмовний ролик. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 18,
+      "title": "Соціальні мережі",
+      "theory": "Визначте три напрями контенту та потреби аудиторії. Складіть календар семи дописів із різними вступами та вимірюваними критеріями залучення.",
+      "assignment": "Заплануйте п’ять дописів. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 19,
+      "title": "Рекламні концепції",
+      "theory": "Визначте проблему аудиторії та доказову користь продукту. Розробіть три концепції, перевірте твердження й заклики до дії.",
+      "assignment": "Представте три різні концепції. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 20,
+      "title": "Реклама продукту",
+      "theory": "Створіть вступ, демонстрацію та заклик до дії. Підготуйте три варіанти з одним змінним параметром. Перевірте точність продукту й метрику тесту.",
+      "assignment": "Створіть три варіанти реклами. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 21,
+      "title": "Брендовий фільм",
+      "theory": "Визначте повідомлення й емоційний розвиток. Складіть список кадрів із повторюваним візуальним мотивом, зберіть чорновий монтаж і перевірте стиль.",
+      "assignment": "Підготуйте розкадрування й чорновий фільм. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 22,
+      "title": "Локальна AI Studio",
+      "theory": "Перевірте обладнання, ліцензії та джерела встановлення. Збережіть параметри відтворюваного процесу, повторіть запуск і задокументуйте помилки.",
+      "assignment": "Спроєктуйте локальний або хмарний процес генерації. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 23,
+      "title": "Автоматизація контенту",
+      "theory": "Розділіть введення, генерацію, перевірку та публікацію. Додайте затвердження людиною й захист від дублів. Змоделюйте відмову API та відновлення.",
+      "assignment": "Спроєктуйте процес із ручним затвердженням. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 24,
+      "title": "ШІ-агенти",
+      "theory": "Визначте завдання, інструменти та дозволи агента. Задайте структуру входів і виходів, перевірку даних і підтвердження зовнішніх дій. Протестуйте помилкові входи.",
+      "assignment": "Спроєктуйте творчого помічника з обмеженими повноваженнями. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 25,
+      "title": "Портфоліо",
+      "theory": "Оберіть проєкти, що демонструють різні навички. Опишіть бриф, процес і реальні результати. Перевірте права та контакти.",
+      "assignment": "Зберіть портфоліо з трьох проєктів. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 26,
+      "title": "Ціни та клієнти",
+      "theory": "Розрахуйте працю, прямі витрати, правки й маржу. Визначте межі робіт, права використання та критерії приймання.",
+      "assignment": "Підготуйте комерційну пропозицію з ціною. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 27,
+      "title": "Продаж ШІ-послуг",
+      "theory": "Оберіть сегмент клієнтів і відповідну пропозицію. Напишіть персоналізоване звернення, відстежуйте відповіді та покращуйте пропозицію без спаму.",
+      "assignment": "Напишіть пропозицію вигаданому клієнту. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 28,
+      "title": "ШІ-агентство",
+      "theory": "Опишіть приймання замовлень, виробництво та контроль якості. Розподіліть ролі, оцініть тижневе навантаження, створіть правила передачі завдань та ескалації.",
+      "assignment": "Складіть односторінковий операційний план. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 29,
+      "title": "Маркетинг і масштабування",
+      "theory": "Сформулюйте вимірювану гіпотезу, ліміт бюджету й умови зупинки. Порівняйте варіанти, конверсію, утримання та маржинальність. Відокремте факти від припущень.",
+      "assignment": "Складіть план невеликого експерименту. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    },
+    {
+      "day": 30,
+      "title": "Дипломний проєкт",
+      "theory": "Оберіть вигаданий або дозволений клієнтський бриф. Створіть візуальні матеріали, відео та стратегію кампанії. Задокументуйте права, оцініть і доопрацюйте результат.",
+      "assignment": "Представте повну кампанію та кейс для портфоліо. Подайте бриф, результат і журнал виправлень. Критерії: повнота, технічна якість, відповідність брифу та задокументовані права."
+    }
+  ],
+  "pl": [
+    {
+      "day": 16,
+      "title": "Wirtualny influencer",
+      "theory": "Stwórz fikcyjną osobowość, określ odbiorców, styl wizualny i trzy przykładowe posty. Oznacz użycie AI i sprawdź niezamierzone podobieństwa.",
+      "assignment": "Stwórz profil wirtualnego influencera. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 17,
+      "title": "Głos i synchronizacja ust",
+      "theory": "Napisz oryginalny tekst, określ czas, użyj głosu za zgodą właściciela. Sprawdź wymowę i synchronizację.",
+      "assignment": "Stwórz krótki klip z wypowiedzią. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 18,
+      "title": "Media społecznościowe",
+      "theory": "Określ trzy filary treści i potrzeby odbiorców. Przygotuj kalendarz siedmiu postów z różnymi otwarciami i mierzalnymi kryteriami zaangażowania.",
+      "assignment": "Zaplanuj pięć postów. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 19,
+      "title": "Koncepcje reklamowe",
+      "theory": "Określ problem odbiorców i udokumentowaną korzyść produktu. Opracuj trzy koncepcje, sprawdź twierdzenia i wezwania do działania.",
+      "assignment": "Przedstaw trzy różne koncepcje. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 20,
+      "title": "Reklama produktu",
+      "theory": "Stwórz otwarcie, demonstrację i wezwanie do działania. Przygotuj trzy warianty z jedną zmienną. Sprawdź zgodność produktu i metrykę testu.",
+      "assignment": "Stwórz trzy warianty reklamy. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 21,
+      "title": "Film marki",
+      "theory": "Określ przekaz i rozwój emocjonalny. Przygotuj listę ujęć z powtarzającym się motywem, zmontuj wersję roboczą i sprawdź spójność marki.",
+      "assignment": "Przygotuj storyboard i montaż roboczy. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 22,
+      "title": "Lokalne studio AI",
+      "theory": "Sprawdź sprzęt, licencje i źródła instalacji. Zapisz parametry powtarzalnego procesu, wykonaj drugi przebieg i udokumentuj błędy.",
+      "assignment": "Zaprojektuj lokalny lub chmurowy proces generowania. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 23,
+      "title": "Automatyzacja treści",
+      "theory": "Oddziel dane wejściowe, generowanie, kontrolę i publikację. Dodaj akceptację człowieka i wykrywanie duplikatów. Zasymuluj awarię API i odzyskanie działania.",
+      "assignment": "Zaprojektuj proces z ręczną akceptacją. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 24,
+      "title": "Agenci AI",
+      "theory": "Określ zadanie, narzędzia i uprawnienia agenta. Zdefiniuj strukturę wejść i wyjść, walidację oraz akceptację działań zewnętrznych. Przetestuj błędne dane.",
+      "assignment": "Zaprojektuj asystenta kreatywnego o ograniczonych uprawnieniach. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 25,
+      "title": "Portfolio",
+      "theory": "Wybierz projekty pokazujące różne umiejętności. Opisz brief, proces i rzeczywiste wyniki. Sprawdź prawa i dane kontaktowe.",
+      "assignment": "Zbuduj portfolio trzech projektów. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 26,
+      "title": "Ceny i klienci",
+      "theory": "Oszacuj pracę, koszty bezpośrednie, poprawki i marżę. Określ zakres, prawa użytkowania i kryteria akceptacji.",
+      "assignment": "Przygotuj ofertę z wyceną. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 27,
+      "title": "Sprzedaż usług AI",
+      "theory": "Wybierz segment klientów i odpowiednią ofertę. Napisz spersonalizowaną wiadomość, śledź odpowiedzi i poprawiaj ofertę bez spamu.",
+      "assignment": "Napisz ofertę dla fikcyjnego klienta. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 28,
+      "title": "Agencja AI",
+      "theory": "Opisz przyjmowanie zleceń, produkcję i kontrolę jakości. Przydziel role, oszacuj tygodniową wydajność, ustal przekazywanie zadań i eskalację.",
+      "assignment": "Stwórz jednostronicowy plan operacyjny. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 29,
+      "title": "Marketing i skalowanie",
+      "theory": "Sformułuj mierzalną hipotezę, limit budżetu i warunki zatrzymania. Porównaj warianty, konwersję, retencję i marżę. Oddziel fakty od założeń.",
+      "assignment": "Stwórz plan małego eksperymentu. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    },
+    {
+      "day": 30,
+      "title": "Projekt końcowy",
+      "theory": "Wybierz fikcyjny lub autoryzowany brief klienta. Dostarcz materiały wizualne, wideo i strategię kampanii. Udokumentuj prawa, oceń i popraw wynik.",
+      "assignment": "Przedstaw kompletną kampanię i studium przypadku do portfolio. Prześlij brief, wynik i rejestr poprawek. Kryteria: kompletność, jakość techniczna, zgodność z briefem i udokumentowane prawa."
+    }
+  ]
+}
