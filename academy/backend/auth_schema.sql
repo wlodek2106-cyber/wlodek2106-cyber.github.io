@@ -191,3 +191,17 @@ CREATE TABLE IF NOT EXISTS student_tasks (
  done boolean NOT NULL DEFAULT false
 );
 CREATE INDEX IF NOT EXISTS student_tasks_student_day ON student_tasks(student_id,day);
+
+CREATE TABLE IF NOT EXISTS payment_support (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ invoice_id uuid NOT NULL REFERENCES payment_invoices(id),
+ signature text NOT NULL,
+ status text NOT NULL DEFAULT 'open' CHECK(status IN ('open','closed')),
+ note text NOT NULL DEFAULT '',
+ verification text NOT NULL DEFAULT 'unchecked' CHECK(verification IN ('unchecked','matched','not_matched')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ checked_at timestamptz, checked_by bigint REFERENCES students(id),
+ closed_at timestamptz, closed_by bigint REFERENCES students(id),
+ UNIQUE(invoice_id,signature)
+);
+CREATE INDEX IF NOT EXISTS payment_support_invoice ON payment_support(invoice_id);

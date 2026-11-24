@@ -145,6 +145,21 @@ def dispatch(method,path,body,token):
         return 200,student_plan(token)
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
+    if path=="/checkout/support" and method=="POST":
+        from payment_support import submit
+        return 201,submit(token,body["invoice"],body["signature"])
+    if path=="/checkout/support/list" and method=="POST":
+        from payment_support import student_items
+        return 200,student_items(token,body.get("after",0))
+    if path=="/admin/payment-support" and method=="POST":
+        from payment_support import admin_items
+        return 200,admin_items(token,body.get("after",0))
+    if path=="/admin/payment-support/check" and method=="POST":
+        from payment_support import check
+        return 200,check(token,body["ticket"])
+    if path=="/admin/payment-support/resolve" and method=="POST":
+        from payment_support import resolve
+        return 200,resolve(token,body["ticket"],body["note"])
     if path=="/checkout/history" and method=="POST":
         from checkout import history
         return 200,history(token,body.get("offset",0))

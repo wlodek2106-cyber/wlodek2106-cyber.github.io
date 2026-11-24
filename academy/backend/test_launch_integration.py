@@ -41,6 +41,13 @@ class LaunchIntegration(unittest.TestCase):
                 with patch.object(settlement,"verify_usdc",return_value=False):
                     with self.assertRaises(ValueError): settlement.settle(buyer,invoice["id"],"test-"+suffix)
                 self.assertFalse(learning.student_progress(buyer)["paid"])
+                from payment_support import submit_record,items,resolve_record
+                ticket=submit_record(cur,buyer_id,invoice["id"],"1"*64)
+                self.assertEqual(submit_record(cur,buyer_id,invoice["id"],"1"*64),ticket)
+                self.assertEqual(items(cur,partner_id)["items"],[])
+                with self.assertRaises(PermissionError): submit_record(cur,partner_id,invoice["id"],"1"*64)
+                self.assertTrue(resolve_record(cur,owner_id,ticket["id"],"Test review only")["closed"])
+                self.assertEqual(items(cur,buyer_id)["items"][0]["status"],"closed")
                 with patch.object(settlement,"verify_usdc",return_value=True):
                     self.assertTrue(settlement.settle(buyer,invoice["id"],"test-"+suffix)["paid"])
                     self.assertTrue(settlement.settle(buyer,invoice["id"],"test-"+suffix)["paid"])
