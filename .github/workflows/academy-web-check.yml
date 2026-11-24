@@ -6,6 +6,7 @@ on:
     paths:
       - 'academy/backend/**'
       - 'academy/tests/**'
+      - 'academy/ops/**'
       - '.github/workflows/academy-web-check.yml'
 permissions:
   contents: read
@@ -23,6 +24,7 @@ jobs:
           python-version: '3.12'
       - name: Python compilation and unit tests
         run: |
+          bash -n academy/ops/backup.sh academy/ops/verify_restore.sh
           python -m compileall -q academy/backend
           cd academy/backend
           python -m unittest -v test_progression test_http_boundary

@@ -242,6 +242,9 @@ def dispatch(method,path,body,token):
     if path=="/admin/network" and method=="POST":
         from network_admin import network
         return 200,network(token,body)
+    if path=="/admin/security" and method=="GET":
+        from security_center import report
+        return 200,report(token)
     if path=="/admin/statistics" and method=="GET":
         if os.getenv("ACADEMY_ADMIN_ENABLED")!="true":
             raise PermissionError("Administration disabled")

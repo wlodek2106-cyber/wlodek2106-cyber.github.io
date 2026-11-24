@@ -88,6 +88,10 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
                 self.assertIn("after_all_commissions_atomic",founder.report(cur,7)["alltime"])
                 self.assertIn("students",admin.statistics(owner))
+                from security_center import inspect as security_inspect,report as security_report
+                self.assertIn("database_checks_pass",security_inspect(cur))
+                self.assertEqual(security_inspect(cur)["backup_status"],"not_verified")
+                with self.assertRaises(PermissionError): security_report(partner)
                 from student_business import save_client,save_order,overview as business_overview,delete as business_delete
                 cid=save_client(cur,buyer_id,{"name":"Test client"})["id"]
                 order={"client_id":cid,"title":"Test order","status":"in_progress","agreed":"100.00","received":"40.00","expense":"10.00"}
