@@ -134,6 +134,15 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(workflow_list(cur,partner_id)["items"],[])
                 with self.assertRaises(PermissionError): workflow_remove(cur,partner_id,flow["id"])
                 with self.assertRaises(ValueError): workflow_save(cur,buyer_id,{"title":"Invalid","kind":"video","brief":"Test","completed":["unknown"]})
+                from storyboard import save_project,save_scene,get as storyboard_get,remove as storyboard_remove
+                film=save_project(cur,buyer_id,{"title":"Test film","story":"A short film","style":"3D","characters":"Original character","format":"16:9"})["id"]
+                scene={"project":film,"title":"First","position":1,"seconds":15,"action":"Walk"}
+                first=save_scene(cur,buyer_id,scene)["id"]
+                save_scene(cur,buyer_id,{**scene,"title":"Second","position":2,"seconds":10})
+                self.assertEqual(storyboard_get(cur,buyer_id,film)["total_seconds"],25)
+                self.assertEqual(storyboard_get(cur,buyer_id,film)["scenes"][1]["start"],15)
+                with self.assertRaises(PermissionError): storyboard_get(cur,partner_id,film)
+                with self.assertRaises(ValueError): save_scene(cur,buyer_id,{**scene,"seconds":0})
                 from privacy_center import export_data,create_record,list_records,close_record
                 req= create_record(cur,buyer_id,"erasure","Test request")
                 self.assertTrue(create_record(cur,buyer_id,"erasure","Duplicate")["existing"])
@@ -144,6 +153,10 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(exported["knowledge_notes"][0]["title"],"Test note")
                 self.assertEqual(exported["student_prompts"][0]["title"],"Test prompt")
                 self.assertEqual(exported["creative_workflows"][0]["title"],"Test flow")
+                self.assertEqual(exported["storyboard_projects"][0]["title"],"Test film")
+                self.assertEqual(len(exported["storyboard_scenes"]),2)
+                self.assertTrue(storyboard_remove(cur,buyer_id,{"project":film,"scene":first})["deleted"])
+                self.assertTrue(storyboard_remove(cur,buyer_id,{"project":film})["deleted"])
                 self.assertTrue(workflow_remove(cur,buyer_id,flow["id"])["deleted"])
                 self.assertTrue(prompt_remove(cur,buyer_id,prompt["id"])["deleted"])
                 self.assertTrue(note_remove(cur,buyer_id,note["id"])["deleted"])

@@ -251,3 +251,20 @@ CREATE TABLE IF NOT EXISTS creative_workflows (
  updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS creative_workflows_student ON creative_workflows(student_id,id);
+
+CREATE TABLE IF NOT EXISTS storyboard_projects (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ title text NOT NULL, story text NOT NULL, style text NOT NULL, characters text NOT NULL,
+ format text NOT NULL CHECK(format IN ('16:9','9:16','1:1','4:3')),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS storyboard_projects_student ON storyboard_projects(student_id,id);
+CREATE TABLE IF NOT EXISTS storyboard_scenes (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ project_id bigint NOT NULL REFERENCES storyboard_projects(id) ON DELETE CASCADE,
+ position integer NOT NULL CHECK(position BETWEEN 1 AND 999),
+ seconds integer NOT NULL CHECK(seconds BETWEEN 1 AND 120),
+ title text NOT NULL, action text NOT NULL, camera text NOT NULL, audio text NOT NULL, continuity text NOT NULL
+);
+CREATE INDEX IF NOT EXISTS storyboard_scenes_project ON storyboard_scenes(project_id,position,id);
