@@ -37,16 +37,20 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
     "/lessons/1/en":{title:"Test lesson",content_language:"en",theory:"Test theory",assignment:"Test assignment",prompts:[]},
     "/lessons/1/ru":{title:"Тестовый урок",content_language:"ru",theory:"Теория",assignment:"Задание",prompts:[]},
     "/admin/statistics":{students:3,plans:{starter:1},settled_payments:[]},
+    "/community/feed":{items:[],next_after:null},
     "/logout":{ok:true}
   };
   if(!(p in responses)){unexpected.push(p);return route.fulfill({status:404,json:{error:"Unexpected mock route"}})}
   return route.fulfill({json:responses[p]});
  });
- await page.goto("http://academy.test/dashboard");
+ await page.goto("http://academy.test/dashboard"+(role==="paid"?"?lang=ru&module=community":role==="unpaid"?"?lang=pl&module=learning":""));
+ if(role!=="owner")assert.equal(await page.locator("#lang").inputValue(),role==="paid"?"ru":"pl");
  await page.locator("#registerTab").click();await page.locator("#register").waitFor({state:"visible"});await page.locator("#loginTab").click();
  await page.locator("#login [name=email]").fill("test@example.invalid");await page.locator("#login [name=password]").fill("Test-password-only");
  await page.locator("#login button").click();
  await page.locator("#panel").waitFor({state:"visible"});
+ if(role==="paid")await page.locator("#extra").getByRole("heading",{name:"Сообщество",exact:true}).waitFor();
+ if(role==="unpaid")assert.equal(await page.locator("#workspaceOverview").isVisible(),true);
  assert.equal(await page.locator("#checkout").isVisible(),role==="unpaid");
  assert.equal(await page.locator("#ownerNav").getAttribute("hidden")!==null,role!=="owner");
  assert.equal(await page.locator("#businessButton").getAttribute("hidden")!==null,! (role!=="unpaid"));

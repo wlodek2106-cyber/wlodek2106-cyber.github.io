@@ -98,3 +98,37 @@ jobs:
           archive="$(find "$tmp/backup" -name '*.dump.gpg' -type f)"
           test -n "$archive"
           bash academy/ops/verify_restore.sh "$archive"
+
+  database-integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: academy_ci
+          POSTGRES_PASSWORD: synthetic-ci-only
+          POSTGRES_DB: academy_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U academy_ci -d academy_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      ACADEMY_DATABASE_URL: postgresql://academy_ci:synthetic-ci-only@127.0.0.1:5432/academy_ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependencies
+        run: python -m pip install -r academy/backend/requirements.txt
+      - name: Migrate disposable database twice and run integration tests
+        working-directory: academy/backend
+        run: |
+          python migrate.py
+          python migrate.py
+          python -m unittest -v test_payment_policy test_accounts_integration test_checkout_integration test_launch_integration
+          python -c "from database import transaction; exec('with transaction() as cur:\n cur.execute(\"SELECT count(*) FROM students\")\n assert cur.fetchone()[0] == 0')"

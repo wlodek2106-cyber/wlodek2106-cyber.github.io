@@ -17,3 +17,6 @@ Public dashboard has registration and checkout enabled for testing, not verified
 
 ## Security and performance update
 Dashboard response CSP hashes both inline scripts; external scripts only same origin, no inline event handlers or eval permitted. Inline CSS remains necessary for the current UI. Request handling has 16 concurrent slots, 15-second socket inactivity timeout, POST framing checks, bearer length limit and sanitized request logging. Static asset ETag revalidation avoids redundant downloads. Browser smoke exercises CSP at 320/390/1280 px; production Safari, physical devices and load tests still required. Synthetic backup test is not a production restore. No penetration test, no paid security service and no commercial readiness claim.
+
+## Release candidate 1.0
+Workspace links now open allow-listed student modules after sign-in; hidden modules remain inaccessible via these links. URL language preference is respected. CI adds a disposable PostgreSQL service, double migration, payment-policy and rollback-only account/checkout/launch integration tests; no production credentials or actual transactions. Existing browser smoke now checks authenticated deep links and denied unpaid learning links. RC is a test candidate, not commercial approval. Freeze feature changes until these checks are green, then verify actual device and operational gates above.

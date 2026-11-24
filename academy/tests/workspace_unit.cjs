@@ -1,8 +1,11 @@
 const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),vm=require("node:vm");
 const js=fs.readFileSync(path.join(__dirname,"../backend/ai-workspace.js"),"utf8");new vm.Script(js);
-const {catalog,selectTools}=vm.runInNewContext(js.slice(0,js.indexOf("const $=id"))+"\n({catalog,selectTools})");
+const {catalog,selectTools,toolHref}=vm.runInNewContext(js.slice(0,js.indexOf("const $=id"))+"\n({catalog,selectTools,toolHref})");
 assert.equal(catalog.length,17);assert.equal(new Set(catalog.map(x=>x[0])).size,17);
 assert.equal(selectTools(catalog,"музыки","all",false,new Set(),1)[0][0],"music");assert.equal(selectTools(catalog,"","business",false,new Set(),0).length,5);
 assert.equal(selectTools(catalog,"","all",true,new Set(["design"]),0)[0][0],"design");assert.equal(selectTools(catalog,"not-a-tool","all",false,new Set(),0).length,0);
 assert.ok(catalog.every(x=>/^\/[a-z-]+$/.test(x[3])&&x[5].length===4));
+assert.equal(toolHref("learning","/dashboard","ru"),"/dashboard?lang=ru&module=learning");
+assert.equal(toolHref("agents","/free-ai","en"),"/free-ai?lang=en#teamHeading");
+assert.equal(toolHref("marketplace","/marketplace","pl"),"/marketplace?lang=pl");
 console.log("PASS: workspace catalog, category, localized search and favorites");
