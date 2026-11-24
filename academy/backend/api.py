@@ -190,6 +190,9 @@ def dispatch(method,path,body,token):
     if path=="/career/profile/delete" and method=="POST":
         from career_profile import delete_profile
         return 200,delete_profile(token)
+    if path=="/career/accelerator" and method=="GET":
+        from career import accelerator
+        return 200,accelerator(token)
     if path=="/career/overview" and method=="GET":
         from career import overview
         return 200,overview(token)

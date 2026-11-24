@@ -14,6 +14,7 @@ const catalog=[
 ["knowledge","intelligence","📚","/dashboard","Knowledge Center",["Private notes, folders and course search in the student dashboard.","Личные конспекты, папки и поиск по курсу в кабинете ученика.","Приватні нотатки, папки й пошук у курсі в кабінеті учня.","Prywatne notatki, foldery i wyszukiwanie kursu w panelu ucznia."]],
 ["community","resources","💬","/dashboard","Community Hub",["Student discussions and collaboration in the dashboard.","Обсуждения и совместные проекты в кабинете ученика.","Обговорення й спільні проєкти у кабінеті учня.","Dyskusje i współpraca w panelu ucznia."]],
 ["marketplace","business","🛍️","/marketplace","Student Marketplace",["Public moderated student service listings.","Публичная витрина услуг учеников с модерацией.","Публічна вітрина послуг учнів із модерацією.","Publiczny katalog usług uczniów z moderacją."]],
+["career","business","🚀","/dashboard","Career Accelerator",["Career readiness checklist, CV and client preparation.","Карьерная готовность, резюме и подготовка к поиску клиентов.","Кар’єрна готовність, резюме й підготовка до пошуку клієнтів.","Gotowość zawodowa, CV i przygotowanie do pozyskania klientów."]],
 ["marketing","business","📅","/dashboard","Marketing Studio",["Private content calendar inside the student dashboard. Sign in first.","Личный контент-план в кабинете ученика. Сначала войди.","Приватний контент-план у кабінеті учня. Спочатку увійди.","Prywatny kalendarz w panelu ucznia. Najpierw się zaloguj."]],
 ["suite","resources","🧰","/creator-suite","Open Source Creator Suite",["Local tools and upstream installation guides.","Локальные инструменты и инструкции установки.","Локальні інструменти та інструкції встановлення.","Lokalne narzędzia i instrukcje instalacji."]],
 ["downloads","resources","📱","/downloads","Apps & Downloads",["Device-specific download and setup information.","Загрузки и инструкции для устройств.","Завантаження та інструкції для пристроїв.","Pobieranie i instrukcje dla urządzeń."]]];
@@ -28,7 +29,7 @@ function selectTools(items,query,category,onlyFavorites,favorites,index){
 }
 function toolHref(id,path,lang){
  const query="?lang="+encodeURIComponent(lang);
- if(path==="/dashboard"&&["projects","marketing","knowledge","learning","community"].includes(id))return path+query+"&module="+id;
+ if(path==="/dashboard"&&["projects","marketing","knowledge","learning","community","career"].includes(id))return path+query+"&module="+id;
  return path+query+(id==="agents"?"#teamHeading":"");
 }
 const $=id=>document.getElementById(id),storageKey="zer0life.workspace.favorites.v1",cats=["all","intelligence","creative","business","resources"];

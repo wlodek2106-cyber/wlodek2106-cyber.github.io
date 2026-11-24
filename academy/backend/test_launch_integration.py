@@ -235,6 +235,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
                 self.assertEqual(load_profile(cur,buyer_id),profile)
                 self.assertEqual(load_profile(cur,partner_id),EMPTY)
+                from career import accelerator_data
+                mine=accelerator_data(cur,buyer_id,30,30)
+                self.assertGreaterEqual(mine["projects"],1)
+                self.assertEqual(mine["listing_status"],"withdrawn")
+                self.assertEqual(accelerator_data(cur,partner_id,0,30)["projects"],0)
                 from content_vault import save,load,inventory
                 private={"title":"Private test","theory":"New material","assignment":"Test task","prompts":[]}
                 self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],1)

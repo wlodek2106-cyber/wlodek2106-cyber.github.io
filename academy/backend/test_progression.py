@@ -96,6 +96,16 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_career_accelerator(self):
+        from career import roadmap,PROFILE_FIELDS
+        empty=roadmap({},0,"none",0,0,0,30)
+        self.assertEqual(empty["completed_stages"],0)
+        self.assertEqual(empty["next"],"profile")
+        p={k:"example" for k in PROFILE_FIELDS}
+        r=roadmap(p,5,"pending",1,0,10,30)
+        self.assertEqual(r["next"],"listing")
+        self.assertEqual(r["completed_stages"],3)
+        self.assertEqual(roadmap(p,5,"approved",1,1,30,30)["completed_stages"],5)
     def test_career_quote(self):
         from career import quote
         self.assertEqual(quote("5","20","10","10")["total"],"121.00")

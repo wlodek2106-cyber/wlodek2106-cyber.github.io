@@ -1,0 +1,2 @@
+# Career Accelerator
+Paid student only. Five observable readiness checklist goals: six filled profile fields, three submitted portfolio projects, approved marketplace listing, recorded client and recorded delivered order. Counts are not an independent qualification or evidence of earnings. Four languages, next suggested goal, links to existing tools, 14-session manual sprint and text export. No auto messaging, job matching, external scraping or paid AI. No new records or schema. Tests added.
