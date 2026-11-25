@@ -18,6 +18,12 @@ def eligible(lesson, paid_at, passed_at, now=None,plan=None):
         return False
     return True
 
+def lesson_available(lesson, paid_at, passed_at, now=None, plan=None, preview=False):
+    """Authenticated learners only. Day one is free; all other days retain paid policy."""
+    if type(lesson) is not int or not 1 <= lesson <= (45 if preview or plan in ("vip","elite") else LESSONS):
+        return False
+    return preview or lesson == 1 or eligible(lesson,paid_at,passed_at,now,plan)
+
 def quiz_passed(answers, correct):
     if not correct or set(answers) != set(correct):
         return False
