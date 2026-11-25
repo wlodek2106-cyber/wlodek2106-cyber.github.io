@@ -52,6 +52,9 @@ def ask(token,day,mode,lang,question,role=None,consent=False):
     role=role or ("project" if mode=="practice" else "teacher")
     if role not in ROLES:
         raise ValueError("Unknown role")
+    from learning import student_progress
+    if not student_progress(token).get("access"):
+        return {"available":False,"engine":"guided_rules","reason":"trial_local_only","guidance":context}
     config=configuration(role)
     if not config or consent is not True:
         return {"available":False,"engine":"guided_rules","reason":"consent_required" if config else "model_not_configured","guidance":context}
