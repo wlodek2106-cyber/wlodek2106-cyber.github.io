@@ -78,7 +78,8 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(market_withdraw(cur,buyer_id)["withdrawn"])
                 from job_board import create as job_create,page as job_page,moderate as job_moderate,apply as job_apply,applicants as job_applicants,applications as job_applications,transition as job_transition
                 job={"title":"Test project","category":"design","brief":"Test brief","budget":"150","contact":"client@example.invalid","consent":True}
-                jid=job_create(cur,partner_id,job)["id"]
+                with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"false"}):
+                    jid=job_create(cur,partner_id,job)["id"]
                 self.assertFalse(any(x["id"]==jid for x in job_page(cur,buyer_id,"feed",{"after":jid-1})["items"]))
                 job_moderate(cur,owner_id,{"id":jid,"action":"open"})
                 self.assertNotIn("contact",job_page(cur,buyer_id,"feed",{"after":jid-1})["items"][0])
@@ -114,6 +115,11 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(handoff(cur,buyer_id,{"id":jid,"action":"deliver","body":"Test revised result"})["status"],"delivered")
                 from reputation import submit as review_submit,stats as rep_stats,decide as review_decide,own as review_own
                 with self.assertRaises(PermissionError): review_submit(cur,partner_id,{"id":jid,"rating":5,"consent":True})
+                from marketplace_payments import preview as payment_preview,treasury_report
+                p=payment_preview(cur,buyer_id,{"id":jid})
+                self.assertEqual((p["mode"],p["fee_atomic"],p["freelancer_atomic"]),("external",7000000,133000000))
+                with self.assertRaises(PermissionError): payment_preview(cur,owner_id,{"id":jid})
+                self.assertIn("fee_atomic",treasury_report(cur))
                 self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
                 with self.assertRaises(PermissionError): message(cur,buyer_id,{"id":jid,"body":"Closed"})
                 self.assertEqual(len(room(cur,partner_id,{"id":jid})["items"]),4)

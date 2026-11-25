@@ -390,3 +390,18 @@ CREATE INDEX IF NOT EXISTS academy_notifications_unread ON academy_notifications
 
 ALTER TABLE business_orders ADD COLUMN IF NOT EXISTS source_job_id bigint REFERENCES academy_jobs(id) ON DELETE SET NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS business_orders_source_job ON business_orders(student_id,source_job_id) WHERE source_job_id IS NOT NULL;
+
+ALTER TABLE academy_jobs ADD COLUMN IF NOT EXISTS payment_mode text NOT NULL DEFAULT 'external' CHECK(payment_mode IN ('external','split'));
+CREATE TABLE IF NOT EXISTS academy_job_payment_wallets (
+ job_id bigint PRIMARY KEY REFERENCES academy_jobs(id) ON DELETE CASCADE,
+ recipient text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS academy_job_payments (
+ job_id bigint PRIMARY KEY REFERENCES academy_jobs(id),
+ client_id bigint NOT NULL REFERENCES students(id),
+ freelancer_id bigint NOT NULL REFERENCES students(id),
+ payer text NOT NULL, recipient text NOT NULL, treasury text NOT NULL,
+ reference text NOT NULL UNIQUE, quote_cents bigint NOT NULL CHECK(quote_cents BETWEEN 1 AND 100000000),
+ created_at timestamptz NOT NULL DEFAULT now(), signature text UNIQUE, paid_at timestamptz,
+ CHECK((signature IS NULL)=(paid_at IS NULL)),CHECK(client_id<>freelancer_id),CHECK(payer<>recipient AND payer<>treasury AND recipient<>treasury)
+);

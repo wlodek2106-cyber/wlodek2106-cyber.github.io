@@ -96,6 +96,29 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_marketplace_split(self):
+        from marketplace_split import split,key,matches,decode58,TOKEN,ALPHABET
+        from payment_policy import TREASURY,USDC_MINT
+        self.assertEqual(split(100000),{"gross_atomic":1000000000,"fee_atomic":50000000,"freelancer_atomic":950000000})
+        self.assertEqual(split(1)["fee_atomic"],500)
+        for bad in (0,-1,True,100000001):
+            with self.assertRaises(ValueError): split(bad)
+        self.assertEqual(key(TREASURY),TREASURY)
+        with self.assertRaises(ValueError): key("abc")
+        def enc(b):
+            n=int.from_bytes(b,"big");out=""
+            while n:
+                n,i=divmod(n,58);out=ALPHABET[i]+out
+            return "1"*(len(b)-len(b.lstrip(bytes([0]))))+out
+        payer,recipient,ref,src,d1,d2=[enc(bytes([n])*32) for n in range(1,7)]
+        sig=enc(bytes([9])*64)
+        keys=[payer,src,d1,d2,USDC_MINT,ref,TOKEN]
+        def ix(dst,amt):return {"programIdIndex":6,"accounts":[1,4,dst,0,5],"data":enc(bytes([12])+amt.to_bytes(8,"little")+bytes([6]))}
+        def bal(i,owner,n):return {"accountIndex":i,"owner":owner,"mint":USDC_MINT,"uiTokenAmount":{"amount":str(n),"decimals":6}}
+        tx={"blockTime":int(self.t.timestamp()),"transaction":{"signatures":[sig],"message":{"accountKeys":keys,"header":{"numRequiredSignatures":1,"numReadonlySignedAccounts":0,"numReadonlyUnsignedAccounts":3},"instructions":[ix(2,950000),ix(3,50000)]}},"meta":{"err":None,"preTokenBalances":[bal(1,payer,1000000),bal(2,recipient,0),bal(3,TREASURY,0)],"postTokenBalances":[bal(1,payer,0),bal(2,recipient,950000),bal(3,TREASURY,50000)]}}
+        self.assertTrue(matches(tx,sig,payer,recipient,ref,100,self.t))
+        tx["transaction"]["message"]["instructions"][1]=ix(3,49999)
+        self.assertFalse(matches(tx,sig,payer,recipient,ref,100,self.t))
     def test_private_preflight(self):
         from content_vault import preflight
         valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}

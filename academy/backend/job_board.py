@@ -22,7 +22,8 @@ def create(cur,sid,b):
     if not cur.fetchone(): raise PermissionError()
     cur.execute("SELECT count(*) FROM academy_jobs WHERE client_id=%s",(sid,))
     if cur.fetchone()[0]>=30: raise ValueError("Job limit reached")
-    cur.execute("INSERT INTO academy_jobs(client_id,title,category,brief,budget_cents,contact) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id",(sid,*vals))
+    from marketplace_payments import enabled
+    cur.execute("INSERT INTO academy_jobs(client_id,title,category,brief,budget_cents,contact,payment_mode) VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id",(sid,*vals,"split" if enabled() else "external"))
     return {"id":cur.fetchone()[0],"status":"pending"}
 
 FIELDS=("id","title","category","brief","budget_cents","status")
@@ -116,7 +117,12 @@ def transition(cur,sid,b):
         cur.execute("SELECT 1 FROM academy_job_applications WHERE id=%s AND job_id=%s AND student_id=%s",(selected,jid,sid))
         if not cur.fetchone(): raise PermissionError()
         next_status="delivered"
-    elif action=="complete" and client==sid and status=="delivered": next_status="completed"
+    elif action=="complete" and client==sid and status=="delivered":
+        cur.execute("SELECT payment_mode FROM academy_jobs WHERE id=%s",(jid,))
+        if cur.fetchone()[0]=="split":
+            cur.execute("SELECT 1 FROM academy_job_payments WHERE job_id=%s AND paid_at IS NOT NULL",(jid,))
+            if not cur.fetchone(): raise PermissionError("Verified split payment required")
+        next_status="completed"
     elif action=="cancel" and client==sid and status in ("pending","open"): next_status="cancelled"
     else: raise PermissionError("Transition unavailable")
     cur.execute("UPDATE academy_jobs SET status=%s,updated_at=now() WHERE id=%s",(next_status,jid))

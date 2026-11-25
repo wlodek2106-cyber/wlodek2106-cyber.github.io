@@ -16,6 +16,9 @@ def dispatch(method,path,body,token):
     if path in ("/notifications/count","/notifications/list","/notifications/read") and method=="POST":
         from notifications import dispatch as notification_dispatch
         return 200,notification_dispatch(token,path.rsplit("/",1)[1],body)
+    if path in ("/marketplace-pay/preview","/marketplace-pay/wallet","/marketplace-pay/create","/marketplace-pay/settle","/marketplace-pay/treasury") and method=="POST":
+        from marketplace_payments import dispatch as pay_dispatch
+        return 200,pay_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/admin/acquisition" and method=="GET":
         from acquisition import admin_report
         return 200,admin_report(token)
