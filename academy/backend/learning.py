@@ -14,7 +14,7 @@ def ensure_preview_enrollment(cur, student):
     if not owner_preview(student):
         raise PermissionError("Owner preview required")
     # No paid_at, payment_signature, invoice or financial event is created.
-    cur.execute("INSERT INTO enrollments(student_id,plan) VALUES (%s,'vip') ON CONFLICT(student_id) DO NOTHING",(student,))
+    cur.execute("INSERT INTO enrollments(student_id,plan) VALUES (%s,'elite') ON CONFLICT(student_id) DO NOTHING",(student,))
 
 def student_progress(token):
     student=authenticate(token)
@@ -26,15 +26,15 @@ def student_progress(token):
         enrollment=cur.fetchone()
         if not enrollment:
             return {"paid":False,"access":preview,"owner_preview":preview,
-                    **({"plan":"vip"} if preview else {}),
+                    **({"plan":"elite"} if preview else {}),
                     "lessons":[{"day":n,"unlocked":preview,"completed":False} for n in range(1,46 if preview else 31)]}
         eid,plan,paid=enrollment
         cur.execute("SELECT lesson,passed_at FROM lesson_progress WHERE enrollment_id=%s",(eid,))
         passed=dict(cur.fetchall())
         now=datetime.now(timezone.utc)
         return {"paid":paid is not None,"access":preview or paid is not None,"owner_preview":preview,
-                "plan":"vip" if preview else plan,
-                "lessons":[{"day":n,"unlocked":preview or eligible(n,paid,passed,now,plan),"completed":n in passed} for n in range(1,46 if preview or plan=='vip' else 31)]}
+                "plan":"elite" if preview else plan,
+                "lessons":[{"day":n,"unlocked":preview or eligible(n,paid,passed,now,plan),"completed":n in passed} for n in range(1,46 if preview or plan in ('vip','elite') else 31)]}
 
 def require_lesson(token,day):
     if type(day) is not int or not 1<=day<=45:
