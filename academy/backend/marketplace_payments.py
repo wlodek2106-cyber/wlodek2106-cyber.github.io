@@ -3,6 +3,7 @@ import os,json,re
 from urllib.request import Request,urlopen
 from payment_policy import TREASURY,USDC_MINT
 from marketplace_split import split,key,signature,matches
+from marketplace_reconcile import scan
 from student_business import ident
 from database import transaction
 from accounts import authenticate
@@ -24,7 +25,7 @@ def preview(cur,sid,b):
     wallet=cur.fetchone()
     cur.execute("SELECT payer,recipient,reference,created_at,signature,paid_at,issued_at FROM academy_job_payments WHERE job_id=%s",(jid,))
     row=cur.fetchone()
-    return {"role":"client" if sid==client else "freelancer","status":status,"mode":mode,"enabled":enabled(),"network":"solana-mainnet","mint":USDC_MINT,"treasury":TREASURY,**split(cents),"recipient":wallet[0] if wallet else None,"invoice":{"payer":row[0],"recipient":row[1],"reference":row[2],"created_at":row[3].isoformat(),"signature":row[4],"paid_at":row[5].isoformat() if row[5] else None,"issued":row[6] is not None} if row else None}
+    return {"role":"client" if sid==client else "freelancer","status":status,"mode":mode,"enabled":enabled(),"network":"solana-mainnet","mint":USDC_MINT,"treasury":TREASURY,**split(cents),"recipient":wallet[0] if wallet else None,"invoice":{"payer":row[0],"recipient":row[1],"reference":row[2] if sid==client else None,"created_at":row[3].isoformat(),"signature":row[4],"paid_at":row[5].isoformat() if row[5] else None,"issued":row[6] is not None} if row else None}
 
 def wallet(cur,sid,b):
     if not enabled(): raise PermissionError("Marketplace payments closed")
@@ -108,22 +109,45 @@ def verify_chain(sig,payer,recipient,reference,cents,created):
         tx=json.load(response).get("result")
     return matches(tx,sig,payer,recipient,reference,cents,created)
 
+def reconcile_rpc(method,params):
+    rpc=os.getenv("ACADEMY_SOLANA_RPC","https://api.mainnet-beta.solana.com")
+    payload={"jsonrpc":"2.0","id":1,"method":method,"params":params}
+    with urlopen(Request(rpc,data=json.dumps(payload).encode(),headers={"Content-Type":"application/json"}),timeout=2) as response:
+        result=json.load(response)
+    if "error" in result or "result" not in result: raise RuntimeError("RPC unavailable")
+    return result["result"]
+
+def reconcile(token,b,admin=False):
+    if admin:
+        from partners import owner
+        owner(token)
+    else:
+        sid=authenticate(token)
+        if sid is None: raise PermissionError()
+    jid=ident(b["id"])
+    with transaction() as cur:
+        if not admin: job_info(cur,sid,jid)
+        cur.execute("SELECT payer,recipient,reference,quote_cents,issued_at,signature,treasury FROM academy_job_payments WHERE job_id=%s",(jid,))
+        row=cur.fetchone()
+    if not row or not row[4] or row[6]!=TREASURY: raise ValueError("No issued request")
+    # Remains available for existing issued requests even when new payments are closed.
+    return scan(reconcile_rpc,*row[:6])
+
 def settle(token,b):
-    if not enabled(): raise PermissionError("Marketplace payments closed")
     sid=authenticate(token)
     if sid is None: raise PermissionError()
     jid=ident(b["id"]);sig=signature(b["signature"])
     with transaction() as cur:
         client,worker,status,cents,mode=job_info(cur,sid,jid)
         if sid!=client or mode!="split": raise PermissionError()
-        cur.execute("SELECT payer,recipient,reference,quote_cents,created_at,signature,treasury FROM academy_job_payments WHERE job_id=%s",(jid,))
+        cur.execute("SELECT payer,recipient,reference,quote_cents,issued_at,signature,treasury FROM academy_job_payments WHERE job_id=%s",(jid,))
         row=cur.fetchone()
     if not row: raise ValueError("No invoice")
     payer,recipient,reference,cents,created,previous,treasury=row
     if previous:
         if previous==sig:return {"paid":True}
         raise ValueError("Already paid; do not pay again")
-    if treasury!=TREASURY or status!="delivered" or not verify_chain(sig,payer,recipient,reference,cents,created): raise ValueError("Payment not verified")
+    if created is None or treasury!=TREASURY or status!="delivered" or not verify_chain(sig,payer,recipient,reference,cents,created): raise ValueError("Payment not verified")
     with transaction() as cur:
         client,worker,status,_,mode=job_info(cur,sid,jid,True)
         cur.execute("SELECT signature FROM academy_job_payments WHERE job_id=%s FOR UPDATE",(jid,))
@@ -146,11 +170,15 @@ def treasury_report(cur):
     n,g,f,day,month,year=cur.fetchone()
     cur.execute("SELECT job_id,quote_cents,signature,paid_at FROM academy_job_payments WHERE paid_at IS NOT NULL ORDER BY paid_at DESC LIMIT 100")
     items=[{"job_id":j,**split(c),"signature":s,"paid_at":t.isoformat()} for j,c,s,t in cur.fetchall()]
-    return {"enabled":enabled(),"wallet":TREASURY,"network":"solana-mainnet","paid_count":n,"gross_atomic":str(g),"fee_atomic":str(f),"day_atomic":str(day),"month_atomic":str(month),"year_atomic":str(year),"items":items}
+    cur.execute("SELECT job_id,quote_cents,issued_at,created_at FROM academy_job_payments WHERE paid_at IS NULL ORDER BY created_at DESC LIMIT 100")
+    pending=[{"job_id":j,**split(c),"issued_at":i.isoformat() if i else None,"created_at":t.isoformat()} for j,c,i,t in cur.fetchall()]
+    return {"pending":pending,"enabled":enabled(),"wallet":TREASURY,"network":"solana-mainnet","paid_count":n,"gross_atomic":str(g),"fee_atomic":str(f),"day_atomic":str(day),"month_atomic":str(month),"year_atomic":str(year),"items":items}
 
 def dispatch(token,action,b):
     if action=="settle": return settle(token,b)
     if action=="qr": return qr(token,b)
+    if action=="reconcile": return reconcile(token,b)
+    if action=="admin-reconcile": return reconcile(token,b,True)
     if action=="treasury":
         from partners import owner
         owner(token)

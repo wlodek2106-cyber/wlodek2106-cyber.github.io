@@ -19,7 +19,7 @@ def dispatch(method,path,body,token):
     if path.startswith("/marketplace-pay/request/") and method in ("GET","POST"):
         from marketplace_payments import request_transaction
         return 200,request_transaction(path.rsplit("/",1)[1],method,body)
-    if path in ("/marketplace-pay/qr","/marketplace-pay/preview","/marketplace-pay/wallet","/marketplace-pay/create","/marketplace-pay/settle","/marketplace-pay/treasury") and method=="POST":
+    if path in ("/marketplace-pay/qr","/marketplace-pay/preview","/marketplace-pay/wallet","/marketplace-pay/create","/marketplace-pay/settle","/marketplace-pay/treasury","/marketplace-pay/reconcile","/marketplace-pay/admin-reconcile") and method=="POST":
         from marketplace_payments import dispatch as pay_dispatch
         return 200,pay_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/admin/acquisition" and method=="GET":

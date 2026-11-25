@@ -137,12 +137,36 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(raw[69:101],decode58(payer))
         ix=raw[65+4+7*32+32:]
         self.assertEqual(ix[0],2)
-        self.assertEqual(int.from_bytes(ix[10:18],"little"),950000000)
-        self.assertEqual(int.from_bytes(ix[28:36],"little"),50000000)
+        self.assertEqual(int.from_bytes(ix[9:17],"little"),950000000)
+        self.assertEqual(int.from_bytes(ix[27:35],"little"),50000000)
         self.assertTrue(pay_url(ref).endswith(ref))
         with self.assertRaises(ValueError): unsigned(payer,src,d1,d1,ref,100000)
         with patch("marketplace_tx.rpc",return_value={"value":[]}):
             with self.assertRaises(ValueError): token_accounts(payer)
+    def test_marketplace_reference_reconciliation(self):
+        from marketplace_reconcile import scan
+        from unittest.mock import patch
+        from marketplace_split import ALPHABET
+        def enc(b):
+            n=int.from_bytes(b,"big");out=""
+            while n:
+                n,i=divmod(n,58);out=ALPHABET[i]+out
+            return out
+        ref=enc(bytes([7])*32)
+        signatures=[enc(bytes([i])*64) for i in (8,9)]
+        def rpc(method,params):
+            if method=="getSignaturesForAddress":
+                return [{"signature":s,"confirmationStatus":"finalized","err":None} for s in signatures]
+            return {"synthetic":True}
+        with patch("marketplace_reconcile.matches",return_value=True):
+            result=scan(rpc,"payer","recipient",ref,100,self.t)
+            self.assertTrue(result["duplicate_detected"])
+            self.assertFalse(result["safe_to_retry"])
+            self.assertEqual(result["matches"],signatures)
+        with patch("marketplace_reconcile.matches",return_value=False):
+            self.assertEqual(scan(rpc,"payer","recipient",ref,100,self.t)["status"],"not_found")
+        result=scan(lambda m,p:[],"payer","recipient",ref,100,self.t)
+        self.assertFalse(result["safe_to_retry"])
     def test_private_preflight(self):
         from content_vault import preflight
         valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}
