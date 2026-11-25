@@ -38,6 +38,10 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
     "/lessons/1/ru":{title:"Тестовый урок",content_language:"ru",theory:"Теория",assignment:"Задание",prompts:[]},
     "/admin/statistics":{students:3,plans:{starter:1},settled_payments:[]},
     "/community/feed":{items:[],next_after:null},
+    "/notifications/count":{unread:1},
+    "/notifications/list":{items:[{id:1,job_id:1,title:"Synthetic project",kind:"message",target:"room",created_at:"2026-11-24T00:00:00Z",read:false}],next_before:null,unread:1},
+    "/notifications/read":{unread:0},
+    "/jobs/recommended":{items:[]},
     "/logout":{ok:true}
   };
   if(!(p in responses)){unexpected.push(p);return route.fulfill({status:404,json:{error:"Unexpected mock route"}})}
@@ -61,6 +65,10 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
   assert.equal(await page.locator("#businessButtonLabel").count(),1);
  }
  if(role==="paid"){
+  await page.locator("#mobileNavToggle").click();
+  await page.locator("#notificationsButton").click();
+  await page.locator("#extra").getByRole("heading",{name:"Notification Center",exact:true}).waitFor();
+  await page.locator("#extra").getByText("Synthetic project",{exact:true}).waitFor();
   await page.locator("#mobileNavToggle").click();
   await page.locator("#businessButton").click();
   await page.locator("#extra").getByRole("heading",{name:"Student Business Center",exact:true}).waitFor();
