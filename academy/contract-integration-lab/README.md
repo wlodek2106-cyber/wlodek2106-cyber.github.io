@@ -15,3 +15,6 @@ PYTHONPATH=../backend python payment_gateway.py --cents 100000 --output checkout
 ```
 
 The HTML has no JavaScript or network access, and the payment button is disabled. No live wallet testing, program deployment, or commercial payment authorization is implied.
+
+## Consolidated payment flow
+The fixture flow connects the checkout calculation, wallet signature check, exact legacy RPC message comparison, finalized snapshot matcher and in-memory treasury. It uses a deterministic synthetic signer and zero blockhash; it cannot settle a real order. Production gates, live-wallet compatibility, deployment identity, independent review and legal/support requirements remain open.

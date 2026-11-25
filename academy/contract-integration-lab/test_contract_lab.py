@@ -400,5 +400,103 @@ class TreasuryLabTests(unittest.TestCase):
         for limit in (0,101,True):
             with self.assertRaises(ValueError): self.report(limit=limit)
 
+
+class FullPaymentFlowTests(unittest.TestCase):
+    def setUp(self):
+        import base64
+        from dataclasses import replace
+        from solders.keypair import Keypair
+        from marketplace_contract_preview import receipt_data
+        from treasury_lab import TreasuryLab
+        self.ledger=TreasuryLab()
+        self.addCleanup(self.ledger.close)
+        self.f=MarketplaceBoundaryTests()
+        self.f.setUp()
+        f=self.f
+        self.signer=Keypair.from_seed(bytes([93])*32)
+        payer=str(self.signer.pubkey())
+        f.invoice=replace(f.invoice,payer=payer)
+        message=f.tx["transaction"]["message"]
+        oldkeys=list(message["accountKeys"])
+        oldkeys[0]=payer
+        oldkeys[1]=receipt_address(f.program,payer,f.invoice.reference)[0]
+        self.source,self.dest,self.fee=oldkeys[2:5]
+        preview=unsigned_preview(f.program,payer,f.invoice.recipient,f.invoice.reference,
+                                 f.invoice.quote_cents,self.source,self.dest,self.fee)
+        unsigned=Transaction.from_bytes(preview)
+        sig=self.signer.sign_message(bytes(unsigned.message))
+        self.signed=bytes(Transaction.populate(unsigned.message,[sig]))
+        newkeys=[str(k) for k in unsigned.message.account_keys]
+        remap={i:newkeys.index(k) for i,k in enumerate(oldkeys)}
+        def remap_ix(ix):
+            ix["programIdIndex"]=remap[ix["programIdIndex"]]
+            ix["accounts"]=[remap[i] for i in ix["accounts"]]
+        for ix in message["instructions"]:
+            remap_ix(ix)
+        for group in f.tx["meta"]["innerInstructions"]:
+            for ix in group["instructions"]:
+                remap_ix(ix)
+        for which in ("preTokenBalances","postTokenBalances"):
+            for b in f.tx["meta"][which]:
+                if b["accountIndex"]==2:
+                    b["owner"]=payer
+                b["accountIndex"]=remap[b["accountIndex"]]
+        message["accountKeys"]=newkeys
+        message["recentBlockhash"]=str(unsigned.message.recent_blockhash)
+        f.tx["transaction"]["signatures"]=[str(sig)]
+        f.sig=str(sig)
+        f.receipt["value"]["data"][0]=base64.b64encode(receipt_data(
+            payer,f.invoice.reference,f.invoice.recipient,f.invoice.quote_cents)).decode()
+
+    def run_flow(self, signed=None):
+        from full_payment_flow import run_fixture
+        f=self.f
+        return run_fixture(self.ledger,f.invoice,f.program,self.source,self.dest,self.fee,
+                           self.signed if signed is None else signed,f.status,f.tx,f.receipt)
+
+    def count(self):
+        from datetime import datetime, timezone
+        return self.ledger.report(datetime.fromtimestamp(101,timezone.utc))["totals"]["lifetime"]["count"]
+
+    def test_full_flow_records_one_fee(self):
+        result=self.run_flow()
+        self.assertEqual(result["state"],"recorded")
+        self.assertEqual((result["gross_atomic"],result["freelancer_atomic"],result["fee_atomic"]),
+                         ("100000000","95000000","5000000"))
+        self.assertFalse(result["settlement_authorized"])
+        self.assertEqual(self.count(),1)
+
+    def test_full_flow_replay(self):
+        self.run_flow()
+        self.assertEqual(self.run_flow()["state"],"already_recorded")
+        self.assertEqual(self.count(),1)
+
+    def test_full_flow_bad_signature(self):
+        with self.assertRaises(ValueError): self.run_flow(b"invalid")
+        self.assertEqual(self.count(),0)
+
+    def test_full_flow_different_blockhash(self):
+        self.f.tx["transaction"]["message"]["recentBlockhash"]=synthetic(94)
+        with self.assertRaises(ValueError): self.run_flow()
+        self.assertEqual(self.count(),0)
+
+    def test_full_flow_different_signature(self):
+        self.f.tx["transaction"]["signatures"]=[str(Signature.from_bytes(bytes([95])*64))]
+        with self.assertRaises(ValueError): self.run_flow()
+        self.assertEqual(self.count(),0)
+
+    def test_full_flow_changed_fee(self):
+        for b in self.f.tx["meta"]["postTokenBalances"]:
+            from payment_policy import TREASURY
+            if b["owner"]==TREASURY:
+                b["uiTokenAmount"]["amount"]="1"
+        with self.assertRaises(ValueError): self.run_flow()
+        self.assertEqual(self.count(),0)
+
+    def test_full_flow_not_finalized(self):
+        self.f.status["value"][0]["confirmationStatus"]="confirmed"
+        with self.assertRaises(ValueError): self.run_flow()
+        self.assertEqual(self.count(),0)
+
 if __name__=="__main__":
     unittest.main()
