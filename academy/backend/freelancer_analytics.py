@@ -1,6 +1,6 @@
 """Private freelancer analytics. Application cohorts with current outcomes; no verified income."""
 from datetime import datetime,timezone,timedelta
-from marketplace import CATEGORIES
+CATEGORIES=("design","video","audio","web","automation","marketing","other")
 
 def period(days):
     if type(days) is not int or days not in (7,30,90): raise ValueError("Invalid reporting period")
