@@ -6,3 +6,12 @@ No network access by the code, no signing, real payment or deployment. The SDK i
 
 ## Cross-language vectors
 Fixed YAML syntax for the binary-only SDK install command. The lab workflow compares five deterministic synthetic payer/program/reference tuples using the actual Rust contract's `receipt_address` function and Python Solders SDK. Both the PDA and bump must agree byte-for-byte before the comparison passes. The separate Rust runner imports the real prototype with no-entrypoint and does not redeploy it or trigger the SBF workflow. No production dependency, keypair, real wallet or transaction is introduced. The SDK is pinned to a published release (https://pypi.org/project/solders/0.29.0/), not independently audited. All payment gates remain closed.
+
+## Payment gateway preview
+The offline checkout uses integer atomic units and a QR with a deliberately non-payable lab payload. It contains no wallet address or Solana Pay URI. Render the sample locally using the isolated lab environment:
+
+```sh
+PYTHONPATH=../backend python payment_gateway.py --cents 100000 --output checkout-preview.html
+```
+
+The HTML has no JavaScript or network access, and the payment button is disabled. No live wallet testing, program deployment, or commercial payment authorization is implied.

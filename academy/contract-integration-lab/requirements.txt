@@ -1,1 +1,2 @@
 solders==0.29.0
+qrcode==8.2

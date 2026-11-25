@@ -278,5 +278,57 @@ class WalletCompatibilityTests(unittest.TestCase):
         self.assertFalse(self.verdict(bytes(1233)))
         self.assertFalse(self.verdict(b"invalid"))
 
+
+class PaymentGatewayTests(unittest.TestCase):
+    def test_gateway_exact_split(self):
+        from payment_gateway import checkout_preview
+        p=checkout_preview(100000)
+        self.assertEqual((p["gross"],p["freelancer"],p["fee"]),("1000","950","50"))
+        self.assertEqual(p["gross_atomic"],p["freelancer_atomic"]+p["fee_atomic"])
+        self.assertFalse(p["payment_enabled"])
+
+    def test_gateway_one_cent(self):
+        from payment_gateway import checkout_preview
+        p=checkout_preview(1)
+        self.assertEqual((p["gross"],p["freelancer"],p["fee"]),("0.01","0.0095","0.0005"))
+
+    def test_gateway_maximum(self):
+        from payment_gateway import checkout_preview
+        p=checkout_preview(100000000)
+        self.assertEqual((p["gross"],p["freelancer"],p["fee"]),("1000000","950000","50000"))
+
+    def test_gateway_invalid_prices(self):
+        from payment_gateway import checkout_preview
+        for v in (0,-1,True,100000001,"100",1.5,None):
+            with self.subTest(v=v),self.assertRaises(ValueError):
+                checkout_preview(v)
+
+    def test_gateway_qr_is_nonpayable(self):
+        from payment_gateway import make_qr,checkout_preview
+        from payment_policy import TREASURY,USDC_MINT
+        expected="ZER0LIFE-LAB-NOT-PAYABLE:v1:1000000000:950000000:50000000"
+        qr=make_qr(100000)
+        self.assertEqual(b"".join(x.data for x in qr.data_list).decode(),expected)
+        self.assertEqual(checkout_preview(100000)["qr_payload"],expected)
+        self.assertNotIn(TREASURY,expected)
+        self.assertNotIn(USDC_MINT,expected)
+        self.assertNotIn("solana:",expected.lower())
+        self.assertTrue(qr.get_matrix())
+
+    def test_gateway_html_contains_embedded_svg_and_disabled_button(self):
+        import re,base64,xml.etree.ElementTree as ET
+        from payment_gateway import render_checkout
+        html=render_checkout(100000)
+        self.assertIn("950 USDC",html)
+        self.assertIn("50 USDC",html)
+        self.assertIn("NO REAL PAYMENTS",html)
+        self.assertIn('<button type="button" disabled>',html)
+        self.assertNotIn("<script",html)
+        self.assertNotIn("solana:",html)
+        self.assertNotIn('href=',html)
+        encoded=re.search(r'data:image/svg\+xml;base64,([^"]+)',html).group(1)
+        root=ET.fromstring(base64.b64decode(encoded,validate=True))
+        self.assertTrue(root.tag.endswith("svg"))
+
 if __name__=="__main__":
     unittest.main()
