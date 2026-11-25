@@ -119,6 +119,30 @@ class ProgressTests(unittest.TestCase):
         self.assertTrue(matches(tx,sig,payer,recipient,ref,100,self.t))
         tx["transaction"]["message"]["instructions"][1]=ix(3,49999)
         self.assertFalse(matches(tx,sig,payer,recipient,ref,100,self.t))
+    def test_marketplace_unsigned_transaction(self):
+        from marketplace_tx import unsigned,pay_url,token_accounts
+        from marketplace_split import ALPHABET,decode58
+        from payment_policy import USDC_MINT
+        import base64
+        from unittest.mock import patch
+        def enc(b):
+            n=int.from_bytes(b,"big");out=""
+            while n:
+                n,i=divmod(n,58);out=ALPHABET[i]+out
+            return out
+        payer,src,d1,d2,ref=[enc(bytes([i])*32) for i in range(1,6)]
+        raw=base64.b64decode(unsigned(payer,src,d1,d2,ref,100000))
+        self.assertEqual(raw[:65],bytes([1])+bytes(64))
+        self.assertEqual(raw[65:69],bytes([1,0,3,7]))
+        self.assertEqual(raw[69:101],decode58(payer))
+        ix=raw[65+4+7*32+32:]
+        self.assertEqual(ix[0],2)
+        self.assertEqual(int.from_bytes(ix[10:18],"little"),950000000)
+        self.assertEqual(int.from_bytes(ix[28:36],"little"),50000000)
+        self.assertTrue(pay_url(ref).endswith(ref))
+        with self.assertRaises(ValueError): unsigned(payer,src,d1,d1,ref,100000)
+        with patch("marketplace_tx.rpc",return_value={"value":[]}):
+            with self.assertRaises(ValueError): token_accounts(payer)
     def test_private_preflight(self):
         from content_vault import preflight
         valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}

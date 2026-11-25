@@ -130,6 +130,9 @@ class Handler(BaseHTTPRequestHandler):
                 from hashlib import sha256
                 if not token or not allow_auth((path,sha256(token.encode()).hexdigest())) or not allow_auth((path,"global")):
                     return self.respond(429,{"error":"Too many attempts; retry later"})
+            if path.startswith("/marketplace-pay/request/") or path=="/marketplace-pay/settle":
+                if not allow_auth(("marketplace-payment", "global")):
+                    return self.respond(429,{"error":"Too many requests; retry later"})
             status,data=dispatch(self.command,path,body,token)
             return self.respond(status,data)
         except PermissionError:

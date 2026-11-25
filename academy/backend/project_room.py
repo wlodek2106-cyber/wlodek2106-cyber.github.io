@@ -54,7 +54,10 @@ def handoff(cur,sid,b):
     jid=ident(b["id"]);role,status,_=access(cur,sid,jid)
     action=b["action"]
     if action=="deliver" and role=="freelancer" and status=="assigned": target="delivered"
-    elif action=="revise" and role=="client" and status=="delivered": target="assigned"
+    elif action=="revise" and role=="client" and status=="delivered":
+        cur.execute("SELECT 1 FROM academy_job_payments WHERE job_id=%s",(jid,))
+        if cur.fetchone(): raise PermissionError("Payment request locked; contact support before revision")
+        target="assigned"
     else: raise PermissionError("Transition unavailable")
     body=clean(b["body"],1600,True)
     append(cur,jid,role,action,body)

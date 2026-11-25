@@ -405,3 +405,5 @@ CREATE TABLE IF NOT EXISTS academy_job_payments (
  created_at timestamptz NOT NULL DEFAULT now(), signature text UNIQUE, paid_at timestamptz,
  CHECK((signature IS NULL)=(paid_at IS NULL)),CHECK(client_id<>freelancer_id),CHECK(payer<>recipient AND payer<>treasury AND recipient<>treasury)
 );
+
+ALTER TABLE academy_job_payments ADD COLUMN IF NOT EXISTS issued_at timestamptz;
