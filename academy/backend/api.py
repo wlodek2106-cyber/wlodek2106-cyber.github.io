@@ -3,7 +3,11 @@ from accounts import register,login,logout
 from learning import student_progress,require_lesson
 from database import ready
 from lesson01 import public_lesson
-from vip_creator_labs import supplement as vip_creator_supplement
+from vip_creator_labs import supplement as _vip_supplement
+from creator_2027 import TRACKS, enrich
+
+def vip_creator_supplement(lesson,day,lang):
+    return enrich(_vip_supplement(lesson,day,lang),day,lang)
 import json
 from pathlib import Path
 
@@ -252,6 +256,11 @@ def dispatch(method,path,body,token):
     if path=="/adaptive/plan" and method=="GET":
         from adaptive import student_plan
         return 200,student_plan(token)
+    if path=="/creator-2027" and method=="GET":
+        progress=student_progress(token)
+        if not progress.get("access") or progress.get("plan")!="vip":
+            raise PermissionError("VIP access required")
+        return 200,{"tracks":[{"id":t["id"],"title":t["title"],"day":t["day"],"unlocked":progress["lessons"][t["day"]-1]["unlocked"]} for t in TRACKS]}
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
     if path=="/checkout/support" and method=="POST":
