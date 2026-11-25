@@ -47,7 +47,7 @@ def activity(cur,start,now,days):
         LEFT JOIN referrals r ON r.student_id=s.id""")
     registered,paid,referred,paid_referred=cur.fetchone()
     cur.execute("""SELECT count(*) FILTER(WHERE n>0),count(*) FILTER(WHERE n>=target)
-        FROM (SELECT e.id,count(p.lesson) n,CASE WHEN e.plan='vip' THEN 45 ELSE 30 END target
+        FROM (SELECT e.id,count(p.lesson) n,CASE WHEN e.plan IN ('vip','elite') THEN 45 ELSE 30 END target
         FROM enrollments e LEFT JOIN lesson_progress p ON p.enrollment_id=e.id
         WHERE e.paid_at IS NOT NULL GROUP BY e.id,e.plan) q""")
     started,finished=cur.fetchone()
