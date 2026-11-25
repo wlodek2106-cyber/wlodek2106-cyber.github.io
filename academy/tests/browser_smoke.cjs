@@ -14,7 +14,7 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
  const page=await context.newPage();
  const errors=[], unexpected=[];
  page.on("pageerror",e=>errors.push(e.message));
- let signedIn=false;
+ let signedIn=false,registerCalls=0;
  const calls=[];
  await context.route("**/*",async route=>{
   const url=new URL(route.request().url());
@@ -23,6 +23,7 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
   if(p==="/dashboard")return route.fulfill({contentType:"text/html",headers:{"Content-Security-Policy":csp},body:html});
   if(p==="/academy-icon.svg"||p==="/manifest.webmanifest"||p==="/favicon.ico")return route.fulfill({status:204});
   calls.push(p);
+  if(p==="/register"){registerCalls++;const b=route.request().postDataJSON();assert.equal(b.first_name,"Test");assert.equal(b.last_name,"Student");assert.equal(b.email,"test@example.invalid");if(registerCalls===1){await new Promise(r=>setTimeout(r,100));return route.fulfill({status:400,json:{error:"Registration unavailable",code:"registration_unavailable"}})}return route.fulfill({status:201,json:{id:123}})}
   if(p==="/login"){signedIn=true;return route.fulfill({json:{token:"test-only-token"}})}
   if(!signedIn)return route.fulfill({status:403,json:{error:"Access denied"}});
   const paid=role!=="unpaid",owner=role==="owner";
@@ -49,7 +50,20 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
  });
  await page.goto("http://academy.test/dashboard"+(role==="paid"?"?lang=ru&module=community":role==="unpaid"?"?lang=pl&module=learning":""));
  if(role!=="owner")assert.equal(await page.locator("#lang").inputValue(),role==="paid"?"ru":"pl");
- await page.locator("#registerTab").click();await page.locator("#register").waitFor({state:"visible"});await page.locator("#loginTab").click();
+ await page.locator("#registerTab").click();await page.locator("#register").waitFor({state:"visible"});
+ if(role==="paid"){
+  await page.locator("#registerSubmit").click();
+  await page.getByText("Введите имя.",{exact:true}).waitFor();
+  assert.equal(registerCalls,0);
+  for(const [key,val] of [["first_name"," Test "],["last_name","Student"],["email","test@example.invalid"],["password","Test-password-only"]])await page.locator("#register [name="+key+"]").fill(val);
+  await page.locator("#registerSubmit").click();
+  await page.getByText("Не удалось зарегистрироваться.",{exact:false}).waitFor();
+  assert.equal(await page.locator("#registerSubmit").isEnabled(),true);
+  await page.locator("#registerSubmit").click();
+  await page.getByText("Аккаунт создан.",{exact:false}).waitFor();
+  assert.equal(await page.locator("#login [name=email]").inputValue(),"test@example.invalid");
+  assert.equal(registerCalls,2);
+ }else await page.locator("#loginTab").click();
  await page.locator("#login [name=email]").fill("test@example.invalid");await page.locator("#login [name=password]").fill("Test-password-only");
  await page.locator("#login button").click();
  await page.locator("#panel").waitFor({state:"visible"});
