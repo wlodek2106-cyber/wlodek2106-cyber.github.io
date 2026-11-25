@@ -209,5 +209,74 @@ class MarketplaceBoundaryTests(unittest.TestCase):
         result,_=self.scan([],recorded=self.sig)
         self.assertEqual(result["state"],"recorded_unverified")
 
+
+class WalletCompatibilityTests(unittest.TestCase):
+    def setUp(self):
+        from datetime import datetime, timezone
+        from solders.keypair import Keypair
+        from marketplace_boundary import IssuedInvoice
+        self.signer=Keypair.from_seed(bytes([77])*32)
+        self.program,self.recipient,self.ref,self.source,self.dest,self.treasury=[synthetic(i) for i in range(61,67)]
+        self.invoice=IssuedInvoice(str(self.signer.pubkey()),self.recipient,self.ref,10000,datetime.fromtimestamp(100,timezone.utc))
+
+    def preview(self, invoice=None, dest=None, treasury=None, program=None):
+        i=invoice or self.invoice
+        return unsigned_preview(program or self.program,i.payer,i.recipient,i.reference,i.quote_cents,
+                                self.source,dest or self.dest,treasury or self.treasury)
+
+    def sign(self, raw, signer=None):
+        from solders.keypair import Keypair
+        tx=Transaction.from_bytes(raw)
+        signer=signer or self.signer
+        sig=signer.sign_message(bytes(tx.message))
+        return bytes(Transaction.populate(tx.message,[sig]))
+
+    def verdict(self, raw):
+        from wallet_compatibility import verify_wallet_fixture
+        return verify_wallet_fixture(self.invoice,self.program,self.source,self.dest,self.treasury,raw)
+
+    def test_wallet_valid_signature(self):
+        self.assertTrue(self.verdict(self.sign(self.preview())))
+
+    def test_wallet_unsigned_rejected(self):
+        self.assertFalse(self.verdict(self.preview()))
+
+    def test_wallet_wrong_signer(self):
+        from solders.keypair import Keypair
+        self.assertFalse(self.verdict(self.sign(self.preview(),Keypair.from_seed(bytes([78])*32))))
+
+    def test_wallet_changed_amount(self):
+        from dataclasses import replace
+        self.assertFalse(self.verdict(self.sign(self.preview(replace(self.invoice,quote_cents=10001)))))
+
+    def test_wallet_changed_recipient(self):
+        from dataclasses import replace
+        self.assertFalse(self.verdict(self.sign(self.preview(replace(self.invoice,recipient=synthetic(81))))))
+
+    def test_wallet_changed_reference(self):
+        from dataclasses import replace
+        self.assertFalse(self.verdict(self.sign(self.preview(replace(self.invoice,reference=synthetic(82))))))
+
+    def test_wallet_changed_destination(self):
+        self.assertFalse(self.verdict(self.sign(self.preview(dest=synthetic(83)))))
+
+    def test_wallet_changed_treasury_account(self):
+        self.assertFalse(self.verdict(self.sign(self.preview(treasury=synthetic(84)))))
+
+    def test_wallet_changed_program(self):
+        self.assertFalse(self.verdict(self.sign(self.preview(program=synthetic(85)))))
+
+    def test_wallet_corrupted_signature(self):
+        raw=bytearray(self.sign(self.preview()))
+        raw[5]^=1
+        self.assertFalse(self.verdict(bytes(raw)))
+
+    def test_wallet_trailing_bytes(self):
+        self.assertFalse(self.verdict(self.sign(self.preview())+bytes([0])))
+
+    def test_wallet_oversized_or_invalid(self):
+        self.assertFalse(self.verdict(bytes(1233)))
+        self.assertFalse(self.verdict(b"invalid"))
+
 if __name__=="__main__":
     unittest.main()
