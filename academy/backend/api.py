@@ -79,6 +79,9 @@ def dispatch(method,path,body,token):
     if path=="/admin/directory" and method=="POST":
         from admin import directory
         return 200,directory(token,body)
+    if path=="/admin/directory/detail" and method=="POST":
+        from admin import directory_detail
+        return 200,directory_detail(token,body)
     if path in ("/marketing/list","/marketing/campaign","/marketing/post","/marketing/delete") and method=="POST":
         from marketing_studio import dispatch as marketing_dispatch
         return 200,marketing_dispatch(token,path.rsplit("/",1)[1],body)

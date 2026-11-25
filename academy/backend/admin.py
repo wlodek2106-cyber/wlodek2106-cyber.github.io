@@ -90,3 +90,57 @@ def directory(token,body):
     with transaction() as cur:
         cur.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
         return directory_query(cur,body)
+
+def directory_detail_query(cur,body):
+    from uuid import UUID
+    from partners import commission
+    from marketplace_split import split
+    sid=body.get("id"); kind=body.get("kind"); after=body.get("after")
+    if type(sid) is not int or not 1<=sid<=9223372036854775807 or kind not in ("sales","jobs"):
+        raise ValueError("Invalid detail request")
+    if kind=="sales":
+        if after is not None and not isinstance(after,str): raise ValueError("Invalid cursor")
+        cursor=str(UUID(after)) if after is not None else "00000000-0000-0000-0000-000000000000"
+        cur.execute("""SELECT i.id,b.username,i.plan,i.amount_atomic,i.paid_at,i.signature,
+          p.id,p.amount_atomic,p.status,p.payout_signature,p.paid_at
+          FROM influencer_partners a JOIN referrals r ON r.referrer_id=a.student_id
+          JOIN students b ON b.id=r.student_id
+          JOIN payment_invoices i ON i.student_id=b.id AND i.asset='USDC' AND i.paid_at IS NOT NULL
+          JOIN enrollments e ON e.student_id=b.id AND e.payment_signature=i.signature AND e.paid_at IS NOT NULL
+          LEFT JOIN influencer_payouts p ON p.invoice_id=i.id
+          WHERE a.student_id=%s AND a.status='approved' AND r.created_at>=a.approved_at
+          AND i.paid_at>=a.approved_at AND i.id>%s::uuid ORDER BY i.id LIMIT 51""",(sid,cursor))
+        rows=cur.fetchall(); items=[]
+        for inv,buyer,plan,amount,date,sale_sig,pid,payout_amount,status,payout_sig,paid_date in rows[:50]:
+            items.append({"invoice":str(inv),"buyer":buyer,"plan":plan,"amount_atomic":str(amount),
+                "date":date.isoformat(),"sale_signature":sale_sig,"request_id":pid,
+                "commission_atomic":str(payout_amount if payout_amount is not None else commission(amount)),
+                "status":status or "available","payout_signature":payout_sig,
+                "paid_at":paid_date.isoformat() if paid_date else None})
+        return {"items":items,"next_after":items[-1]["invoice"] if len(rows)>50 else None}
+    if after is None: after=0
+    if type(after) is not int or not 0<=after<=9223372036854775807: raise ValueError("Invalid cursor")
+    cur.execute("""SELECT j.id,j.title,c.username,j.status,j.payment_mode,a.quote_cents,
+        j.selected_application=a.id,p.quote_cents,p.paid_at,p.signature
+        FROM academy_job_applications a JOIN academy_jobs j ON j.id=a.job_id
+        JOIN students c ON c.id=j.client_id
+        LEFT JOIN academy_job_payments p ON p.job_id=j.id AND p.freelancer_id=a.student_id
+        WHERE a.student_id=%s AND j.id>%s ORDER BY j.id LIMIT 51""",(sid,after))
+    rows=cur.fetchall(); items=[]
+    for jid,title,client,status,mode,quote,selected,payment_quote,paid_at,signature in rows[:50]:
+        chosen=selected is True
+        verified=chosen and paid_at is not None and payment_quote is not None
+        due=chosen and mode=="split" and status=="delivered" and not verified
+        items.append({"id":jid,"title":title,"client":client,"status":status,"mode":mode,
+            "selected":chosen,"quote_cents":str(quote),
+            "verified_atomic":str(split(payment_quote)["freelancer_atomic"]) if verified else None,
+            "unsettled_atomic":str(split(quote)["freelancer_atomic"]) if due else None,
+            "signature":signature if verified else None,
+            "paid_at":paid_at.isoformat() if verified else None})
+    return {"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
+
+def directory_detail(token,body):
+    from partners import owner
+    owner(token)
+    with transaction() as cur:
+        return directory_detail_query(cur,body)

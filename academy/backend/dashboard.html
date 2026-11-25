@@ -333,6 +333,30 @@ uk:["Користувачі й виплати","Ім’я або логін","У
 pl:["Użytkownicy i wypłaty","Imię lub login","Wszyscy","Opłacili kurs","Freelancerzy","Influencerzy","Rezerwa wypłat","Szukaj","Więcej","Brak rekordów","Pakiet","Polecający","Prowizja od zakupu","Sprzedaż partnera","Dostępne / oczekujące / zatwierdzone / odrzucone (rezerwa) / wypłacone","Łączna rezerwa","Usługa","Zgłoszenia / przydzielone / zakończone","Uzgodnione zewnętrznie USD (niepotwierdzone)","Potwierdzona wypłata freelancerowi USDC","Nieopłacony split USDC (zobowiązanie klienta)","Weryfikacja i ręczne wypłaty","Tylko odczyt: potwierdzone zakupy. Kwoty zewnętrzne nie są wypłatami. Odrzucone prowizje pozostają w rezerwie.","Właściciel","Kurs opłacony"]};
 function accountBadge(el,badge,lang){const w=directoryWords[lang]||directoryWords.en;el.hidden=badge!=="owner"&&badge!=="paid";el.textContent=el.hidden?"":badge==="owner"?"✓ "+w[23]:"✓ "+w[24];el.style.color=badge==="owner"?"#f4c96a":"#65b8ff"}
 function decimalUnits(v,n){const s=String(v);if(!/^\d+$/.test(s))return "—";const p=s.padStart(n+1,"0"),f=p.slice(-n).replace(/0+$/,"");return p.slice(0,-n)+(f?"."+f:"")}
+
+const detailWords={
+en:["Purchase history","Freelance applications","Close","More","No records","Buyer","Package / payment","Commission","Sale transaction","Payout transaction","Paid at","Client","Job / status","Agreed quote (USD)","Selected","Not selected","Payment mode","Verified USDC","Unsettled USDC (client obligation)","External: no payment verification","Refresh"],
+ru:["История покупок","Заказы и отклики","Закрыть","Ещё","Нет записей","Покупатель","Пакет / оплата","Комиссия","Транзакция покупки","Транзакция выплаты","Выплачено","Заказчик","Заказ / статус","Предложенная цена (USD)","Выбран","Не выбран","Способ оплаты","Подтверждено USDC","Не оплачено USDC (обязательство клиента)","Внешняя оплата: не проверяется","Обновить"],
+uk:["Історія покупок","Замовлення й відгуки","Закрити","Ще","Немає записів","Покупець","Пакет / оплата","Комісія","Транзакція покупки","Транзакція виплати","Виплачено","Замовник","Замовлення / статус","Запропонована ціна (USD)","Обрано","Не обрано","Спосіб оплати","Підтверджено USDC","Не оплачено USDC (обов’язок клієнта)","Зовнішня оплата: не перевіряється","Оновити"],
+pl:["Historia zakupów","Zlecenia i zgłoszenia","Zamknij","Więcej","Brak rekordów","Kupujący","Pakiet / płatność","Prowizja","Transakcja zakupu","Transakcja wypłaty","Wypłacono","Klient","Zlecenie / status","Proponowana cena (USD)","Wybrano","Nie wybrano","Tryb płatności","Potwierdzono USDC","Nieopłacone USDC (obowiązek klienta)","Płatność zewnętrzna: nieweryfikowana","Odśwież"]};
+function directoryDetail(card,id,kind,lang,session){
+ const w=detailWords[lang],label=w[kind==="sales"?0:1];
+ const add=(p,t,v="")=>{const e=document.createElement(t);e.textContent=v;p.append(e);return e};
+ const toggle=add(card,"button",label);toggle.type="button";toggle.setAttribute("aria-expanded","false");const host=add(card,"section");host.hidden=true;
+ const refresh=add(host,"button",w[20]);refresh.type="button";const list=add(host,"div"),notice=add(host,"p"),more=add(host,"button",w[3]);more.type="button";more.hidden=true;
+ let after=null,seq=0;
+ const alive=n=>host.isConnected&&!host.hidden&&session===token&&n===seq&&!$("directoryAdmin").hidden;
+ const money=v=>decimalUnits(v,6)+" USDC";
+ function row(x){const item=add(list,"div");item.style.cssText="padding:10px 0;border-top:1px solid #49435f;overflow-wrap:anywhere";
+ if(kind==="sales"){add(item,"strong",w[5]+": @"+(x.buyer||"—"));add(item,"p",w[6]+": "+x.plan.toUpperCase()+" · "+money(x.amount_atomic)+" · "+x.date.slice(0,10));add(item,"p",w[7]+": "+money(x.commission_atomic)+" · "+x.status);add(item,"small",w[8]+": "+x.sale_signature);if(x.payout_signature)add(item,"p",w[9]+": "+x.payout_signature);if(x.paid_at)add(item,"p",w[10]+": "+x.paid_at.slice(0,10));}
+ else{add(item,"strong",w[12]+": "+x.title+" · "+x.status);add(item,"p",w[11]+": @"+(x.client||"—")+" · "+w[x.selected?14:15]);add(item,"p",w[13]+": "+decimalUnits(x.quote_cents,2));add(item,"p",w[16]+": "+x.mode);if(x.mode==="external")add(item,"small",w[19]);if(x.verified_atomic!==null)add(item,"p",w[17]+": "+money(x.verified_atomic));if(x.unsettled_atomic!==null)add(item,"p",w[18]+": "+money(x.unsettled_atomic));if(x.signature)add(item,"small",w[9]+": "+x.signature);}
+ }
+ async function load(reset){const n=++seq;if(reset){after=null;list.replaceChildren();more.hidden=true}refresh.disabled=more.disabled=true;notice.textContent="";
+ try{const data=await api("/admin/directory/detail",{id,kind,after});if(!alive(n))return;data.items.forEach(row);after=data.next_after;more.hidden=after===null;if(!list.children.length)notice.textContent=w[4]}
+ catch(e){if(alive(n))notice.textContent=e.message}finally{if(n===seq)refresh.disabled=more.disabled=false}}
+ toggle.onclick=()=>{host.hidden=!host.hidden;toggle.setAttribute("aria-expanded",String(!host.hidden));toggle.textContent=host.hidden?label:w[2];if(host.hidden){seq++;refresh.disabled=more.disabled=false}else load(true)};
+ refresh.onclick=()=>load(true);more.onclick=()=>{if(after!==null)load(false)};
+}
 function directoryPanel(){showModule("directoryAdmin");const a=$("extra"),lang=$("lang").value,w=directoryWords[lang],session=token;
 const add=(p,t,v="")=>{const e=document.createElement(t);e.textContent=v;p.append(e);return e};
 const root=add(a,"section");add(root,"h2",w[0]);add(root,"p",w[22]);const search=add(root,"input");search.type="search";search.placeholder=w[1];search.maxLength=120;search.setAttribute("aria-label",w[1]);
@@ -346,8 +370,8 @@ for(const x of data.items){const card=add(list,"article");card.style.cssText="pa
 add(card,"p",w[10]+": "+(x.plan?x.plan.toUpperCase()+" · "+money(x.purchase_atomic)+" · "+x.purchase_at.slice(0,10):"—"));
 if(x.referrer)add(card,"p",w[11]+": @"+x.referrer);
 if(x.sale_commission_atomic!==null)add(card,"p",w[12]+": "+money(x.sale_commission_atomic)+" · "+x.sale_commission_status);
-if(x.partner_status){add(card,"p","Influencer · "+x.partner_status+" · "+w[13]+": "+x.partner_sales);add(card,"small",w[14]);add(card,"p",["available","pending","approved","rejected","paid"].map(k=>money(x.commission[k])).join(" / "));add(card,"strong",w[15]+": "+money(x.reserve_atomic))}
-if(x.listing_status||x.applications){add(card,"p",w[16]+": "+(x.listing_status||"—"));add(card,"p",w[17]+": "+[x.applications,x.assigned,x.completed].join(" / "));add(card,"p",w[18]+": "+decimalUnits(x.external_quote_cents,2)+" USD");add(card,"p",w[19]+": "+money(x.verified_atomic));add(card,"p",w[20]+": "+money(x.unsettled_atomic))}
+if(x.partner_status){add(card,"p","Influencer · "+x.partner_status+" · "+w[13]+": "+x.partner_sales);add(card,"small",w[14]);add(card,"p",["available","pending","approved","rejected","paid"].map(k=>money(x.commission[k])).join(" / "));add(card,"strong",w[15]+": "+money(x.reserve_atomic));directoryDetail(card,x.id,"sales",lang,session)}
+if(x.listing_status||x.applications){add(card,"p",w[16]+": "+(x.listing_status||"—"));add(card,"p",w[17]+": "+[x.applications,x.assigned,x.completed].join(" / "));add(card,"p",w[18]+": "+decimalUnits(x.external_quote_cents,2)+" USD");add(card,"p",w[19]+": "+money(x.verified_atomic));add(card,"p",w[20]+": "+money(x.unsettled_atomic));directoryDetail(card,x.id,"jobs",lang,session)}
 }
 if(!list.children.length)status.textContent=w[9];after=data.next_after;more.hidden=after===null;
 }catch(e){if(root.isConnected&&session===token&&n===seq)status.textContent=e.message}finally{if(n===seq)go.disabled=more.disabled=false}}

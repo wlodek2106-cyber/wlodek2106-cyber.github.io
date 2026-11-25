@@ -210,6 +210,18 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(certificates.issue_certificate(buyer)["code"],certificate["code"])
                 self.assertTrue(certificates.verify_certificate(certificate["code"])["valid"])
                 self.assertTrue(certificates.certificate_pdf(certificate).startswith(b"%PDF"))
+                for denied in (None,partner,buyer):
+                    with self.assertRaises(PermissionError): admin.directory_detail(denied,{"id":partner_id,"kind":"sales"})
+                before=admin.directory_detail(owner,{"id":partner_id,"kind":"sales"})["items"]
+                self.assertEqual(len(before),1)
+                self.assertEqual(before[0]["commission_atomic"],"59700000")
+                self.assertEqual(before[0]["status"],"available")
+                self.assertEqual(admin.directory_detail(owner,{"id":partner_id,"kind":"sales","after":before[0]["invoice"]})["items"],[])
+                jobs=admin.directory_detail(owner,{"id":buyer_id,"kind":"jobs"})["items"]
+                external=next(x for x in jobs if x["id"]==jid)
+                self.assertEqual(external["mode"],"external")
+                self.assertIsNone(external["verified_atomic"])
+                self.assertIsNone(external["unsettled_atomic"])
                 req=partners.request(partner,invoice["id"])
                 with self.assertRaises(ValueError): partners.request(partner,invoice["id"])
                 with self.assertRaises(PermissionError): partners.request(buyer,invoice["id"])
@@ -221,6 +233,9 @@ class LaunchIntegration(unittest.TestCase):
                     with self.assertRaises(ValueError): partners.decide(owner,"payout",req["id"],"mark_paid","1"*63+"2")
                 cur.execute("SELECT status,amount_atomic FROM influencer_payouts WHERE id=%s",(req["id"],))
                 self.assertEqual(cur.fetchone(),("paid",59700000))
+                after_payment=admin.directory_detail(owner,{"id":partner_id,"kind":"sales"})["items"][0]
+                self.assertEqual(after_payment["status"],"paid")
+                self.assertEqual(after_payment["payout_signature"],"1"*63+"2")
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
                 with patch("database.transaction",shared):
                     for denied in (None,partner,buyer):
