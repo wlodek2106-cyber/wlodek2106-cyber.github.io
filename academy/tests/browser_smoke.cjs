@@ -30,6 +30,7 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
   const responses={
     "/progress":{paid,plan:paid?"starter":null,lessons:Array.from({length:30},(_,i)=>({day:i+1,completed:false,unlocked:paid&&i===0}))},
     "/account/me":{id:123},
+    "/account/mfa":{enabled:false,recovery_remaining:0},
     "/admin/network-access":{allowed:owner},
     "/checkout/prices":{discount_percent:0,prices:{starter:199000000,pro:499000000,vip:999000000}},
     "/checkout/active":{invoice:null},
@@ -77,6 +78,15 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
   await page.waitForFunction(l=>document.documentElement.lang===l,lang);
   assert.equal(await page.locator("#homeNavText").count(),1);
   assert.equal(await page.locator("#businessButtonLabel").count(),1);
+  assert.equal(await page.locator("#mfaButtonLabel").textContent(),"2FA");
+  assert.equal(await page.locator("#securityButtonLabel").textContent(),{en:"Account security",ru:"Безопасность",uk:"Безпека",pl:"Bezpieczeństwo"}[lang]);
+  assert.equal(await page.locator("#logoutLabel").textContent(),{en:"Sign out",ru:"Выйти",uk:"Вийти",pl:"Wyloguj"}[lang]);
+ }
+ if(role==="unpaid"){
+  await page.locator("#securityButton").click();
+  await page.getByRole("button",{name:"Manage 2FA",exact:true}).click();
+  await page.getByRole("heading",{name:"Two-factor authentication",exact:true}).waitFor();
+  await page.getByRole("button",{name:"Enable 2FA",exact:true}).waitFor();
  }
  if(role==="paid"){
   await page.locator("#mobileNavToggle").click();
