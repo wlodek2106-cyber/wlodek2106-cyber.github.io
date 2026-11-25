@@ -14,6 +14,27 @@ def allow_auth(key):
         _limits.move_to_end(key)
         while len(_limits)>10000: _limits.popitem(last=False)
         return True
+def auth_retry_after(path,email):
+    """Separate account limits from a bounded service-wide budget.
+    Check both counters atomically without consuming attempts when blocked.
+    """
+    now=time.monotonic()
+    digest=hashlib.sha256(email.encode()).hexdigest()
+    buckets=[(("auth-account",path,digest),8),(("auth-service",path),60)]
+    with _limit_lock:
+        pending=[]
+        retry=0
+        for key,limit in buckets:
+            start,count=_limits.get(key,(now,0))
+            if now-start>=60: start,count=now,0
+            if count>=limit: retry=max(retry,max(1,int(60-(now-start))+1))
+            pending.append((key,start,count))
+        if retry: return retry
+        for key,start,count in pending:
+            _limits[key]=(start,count+1)
+            _limits.move_to_end(key)
+        while len(_limits)>10000: _limits.popitem(last=False)
+    return 0
 from pathlib import Path
 from urllib.parse import urlsplit
 def dashboard_csp(body):
@@ -63,6 +84,8 @@ class Handler(BaseHTTPRequestHandler):
         body=json.dumps(data).encode()
         self.send_response(status)
         self.send_header("Content-Type","application/json")
+        if status==429 and type(data.get("retry_after")) is int:
+            self.send_header("Retry-After",str(data["retry_after"]))
         self.send_header("Cache-Control","no-store")
         self.send_header("Content-Length",str(len(body)))
         self.end_headers()
@@ -126,8 +149,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(403,{"error":"Access denied"})
             if self.command=="POST" and path in ("/login","/register"):
                 email=str(body.get("email","")).strip().lower()[:254]
-                if not allow_auth((path,email)) or not allow_auth((path,"global")):
-                    return self.respond(429,{"error":"Too many attempts; retry later"})
+                retry=auth_retry_after(path,email)
+                if retry:
+                    return self.respond(429,{"error":"Too many attempts; retry later","code":"rate_limit","retry_after":retry})
             if self.command=="POST" and path in ("/account/password","/account/mfa/begin","/account/mfa/confirm","/account/mfa/disable","/privacy/export","/privacy/request"):
                 from hashlib import sha256
                 if not token or not allow_auth((path,sha256(token.encode()).hexdigest())) or not allow_auth((path,"global")):

@@ -3,8 +3,19 @@ import unittest,threading,os,sys,types,json
 from unittest.mock import patch
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
-from server import Handler,BoundedHTTPServer,dashboard_csp
+from server import Handler,BoundedHTTPServer,dashboard_csp,auth_retry_after
 class HttpBoundary(unittest.TestCase):
+    def test_auth_limits(self):
+        from collections import OrderedDict
+        with patch('server._limits',OrderedDict()),patch('server.time.monotonic',return_value=100):
+            for _ in range(8): self.assertEqual(auth_retry_after('/login','a@example.invalid'),0)
+            self.assertGreater(auth_retry_after('/login','a@example.invalid'),0)
+            for n in range(52): self.assertEqual(auth_retry_after('/login',f'{n}@example.invalid'),0)
+            self.assertGreater(auth_retry_after('/login','new@example.invalid'),0)
+            self.assertEqual(auth_retry_after('/register','a@example.invalid'),0)
+            with patch('server.time.monotonic',return_value=161):
+                self.assertEqual(auth_retry_after('/login','a@example.invalid'),0)
+
     def test_http_boundary(self):
         def fake_dispatch(method,path,body,token):
             if path=="/private":
