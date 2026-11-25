@@ -72,6 +72,9 @@ const csp="default-src 'none'; script-src 'self' "+hashes.join(" ")+"; style-src
   await page.locator("#mobileNavToggle").click();
   await page.locator("#businessButton").click();
   await page.locator("#extra").getByRole("heading",{name:"Student Business Center",exact:true}).waitFor();
+  await page.locator("#businessWorkflow").getByRole("button",{name:"Find jobs",exact:true}).waitFor();
+  await page.locator("#businessPipeline").getByRole("heading",{name:"Order pipeline",exact:true}).waitFor();
+  assert.equal(await page.locator("#businessPipeline h4").count(),4);
   assert.equal(await page.locator("#workspaceOverview").isVisible(),false);
   await page.locator("#mobileNavToggle").click();
   await page.locator("#homeNav").click();

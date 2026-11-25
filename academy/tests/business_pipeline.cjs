@@ -1,0 +1,11 @@
+const assert=require("node:assert/strict"),fs=require("node:fs"),vm=require("node:vm"),path=require("node:path");
+const html=fs.readFileSync(path.join(__dirname,"../backend/dashboard.html"),"utf8");
+const start=html.indexOf("function businessPipeline("),end=html.indexOf("async function businessCenter(",start);
+assert.ok(start>=0&&end>start);
+const ctx={};vm.createContext(ctx);vm.runInContext(html.slice(start,end),ctx);
+const r=ctx.businessPipeline([{status:"lead",agreed_cents:10000,received_cents:0,expense_cents:50},{status:"delivered",agreed_cents:"10000",received_cents:"9500",expense_cents:"25"},{status:"cancelled",agreed_cents:5000,received_cents:100,expense_cents:200}]);
+assert.equal(r.lead.count,1);assert.equal(r.lead.outstanding,10000n);assert.equal(r.delivered.outstanding,500n);assert.equal(r.cancelled.outstanding,0n);assert.equal(r.cancelled.received,100n);assert.equal(r.in_progress.count,0);
+assert.equal(ctx.businessMoney(-101n),"-$1.01");
+assert.equal(ctx.businessMoney(900719925474099300n),"$9007199254740993.00");
+for(const o of [{status:"fake",agreed_cents:0,received_cents:0,expense_cents:0},{status:"lead",agreed_cents:1,received_cents:2,expense_cents:0},{status:"lead",agreed_cents:1.5,received_cents:0,expense_cents:0}])assert.throws(()=>ctx.businessPipeline([o]));
+console.log("PASS: manual business pipeline and exact cents");
