@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS enrollments (
  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
  student_id bigint NOT NULL REFERENCES students(id),
- plan text NOT NULL CHECK(plan IN ('starter','pro','vip')),
+ plan text NOT NULL CHECK(plan IN ('starter','pro','vip','elite')),
  paid_at timestamptz,
  payment_signature text UNIQUE,
  UNIQUE(student_id)
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS lesson_progress (
 );
 CREATE OR REPLACE VIEW academy_next_unlock AS
 SELECT e.id AS enrollment_id, COALESCE(p.completed,0) AS completed,
- CASE WHEN e.paid_at IS NULL OR COALESCE(p.completed,0)>=CASE WHEN e.plan='vip' THEN 45 ELSE 30 END THEN NULL
+ CASE WHEN e.paid_at IS NULL OR COALESCE(p.completed,0)>=CASE WHEN e.plan IN ('vip','elite') THEN 45 ELSE 30 END THEN NULL
  ELSE GREATEST(e.paid_at + COALESCE(p.completed,0)*interval '1 day', COALESCE(p.last_pass + interval '1 day',e.paid_at)) END AS unlock_at
 FROM enrollments e LEFT JOIN (
  SELECT enrollment_id,count(*) AS completed,max(passed_at) AS last_pass FROM lesson_progress GROUP BY enrollment_id
@@ -39,3 +39,6 @@ ALTER TABLE quiz_attempts DROP CONSTRAINT IF EXISTS quiz_attempts_lesson_check;
 ALTER TABLE quiz_attempts ADD CONSTRAINT quiz_attempts_lesson_check CHECK(lesson BETWEEN 1 AND 45);
 ALTER TABLE lesson_progress DROP CONSTRAINT IF EXISTS lesson_progress_lesson_check;
 ALTER TABLE lesson_progress ADD CONSTRAINT lesson_progress_lesson_check CHECK(lesson BETWEEN 1 AND 45);
+
+ALTER TABLE enrollments DROP CONSTRAINT IF EXISTS enrollments_plan_check;
+ALTER TABLE enrollments ADD CONSTRAINT enrollments_plan_check CHECK(plan IN ('starter','pro','vip','elite'));
