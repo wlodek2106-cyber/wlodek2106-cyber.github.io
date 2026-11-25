@@ -42,4 +42,8 @@ def report(token):
     owner(token)
     with transaction() as cur:
         cur.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
-        return inspect(cur)
+        from content_vault import inventory
+        from launch_readiness import summarize
+        result=inspect(cur)
+        result["launch"]=summarize(result,inventory(cur))
+        return result

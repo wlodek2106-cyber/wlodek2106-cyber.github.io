@@ -5,6 +5,22 @@ from progression import eligible, quiz_passed
 class ProgressTests(unittest.TestCase):
     def setUp(self):
         self.t = datetime(2026,11,24,tzinfo=timezone.utc)
+    def test_launch_readiness_is_not_approval(self):
+        from launch_readiness import summarize
+        from unittest.mock import patch
+        d={"database_checks_pass":True,"counts":{"open_payment_tickets":2,"open_privacy_requests":1,"split_pending_issued":3}}
+        inventory={"coverage":{lang:{kind:{"count":45} for kind in ("lesson","exam")} for lang in ("en","ru","uk","pl")},"strict":{"lesson":True,"exam":True},"strict_ready":{"lesson":True,"exam":True}}
+        with patch.dict("os.environ",{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}):
+            result=summarize(d,inventory)
+        self.assertEqual(result["curriculum"]["slots"],360)
+        self.assertTrue(result["curriculum"]["all_languages_covered"])
+        self.assertFalse(result["commercial_approved"])
+        self.assertFalse(result["marketplace_payments"]["enabled"])
+        self.assertEqual(result["unsettled_issued"],3)
+        inventory["coverage"]["ru"]["exam"]["count"]=44
+        result=summarize(d,inventory)
+        self.assertEqual(result["curriculum"]["slots"],359)
+        self.assertFalse(result["curriculum"]["all_languages_covered"])
     def test_unpaid(self):
         self.assertFalse(eligible(1,None,{},self.t))
     def test_first(self):

@@ -31,3 +31,6 @@ Production checkout is fail-closed even when its enable environment flag is true
 
 ## Laboratory evidence and independent review handoff
 Compiled SBF execution, checksum validation, SDK compatibility and backend integration passed at the respective source revisions documented in [RELEASE_EVIDENCE.md](RELEASE_EVIDENCE.md). This is a technical candidate only. Review requests S01–S09 and owner acceptance remain open; all production payment blockers are unchanged. Preserve expiring public artifacts before retention ends. Do not enable real payments or claim an independent audit.
+
+## Owner launch snapshot
+The existing owner-only Security & Backup Center now shows a read-only launch snapshot from the same repeatable-read transaction: private slot coverage per language and kind (360 target), actual strict flags, existing English/legacy guard readiness, unresolved payment/privacy counts, unsettled requests and hard marketplace payment blockers. Full slot counts are not content approval. No manual gate is marked complete and commercial_approved is always false. No PII, content payload, payment activation or new production dependency. New unit test checks that even full content coverage and an enabled environment flag cannot establish approval or bypass the payment guard. Physical owner access and production values are not verified by this code change.
