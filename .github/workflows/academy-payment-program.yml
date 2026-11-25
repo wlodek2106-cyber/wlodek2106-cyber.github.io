@@ -36,3 +36,50 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run isolated native Solana bank runtime tests
         run: cargo test --features runtime-tests --test runtime -- --nocapture
+
+  lab-sbf-build:
+    # Only after both native test jobs pass. Not a mainnet deployment artifact.
+    needs: [host-tests, local-runtime-tests]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: academy/solana-payment-program
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned SBF build utility
+        run: cargo install cargo-build-sbf --version 4.2.0 --locked
+      - name: Generate and record a dependency lock for this experiment
+        run: cargo generate-lockfile
+      - name: Compile laboratory SBF and record binary metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/zer0life-sbf-private"
+          report="$RUNNER_TEMP/zer0life-sbf-report"
+          mkdir -p "$out" "$report"
+          cargo build-sbf --version | tee "$report/toolchain.txt"
+          cargo build-sbf --tools-version v1.56 --sbf-out-dir "$out" -- --locked
+          binary="$out/zer0life_payment_prototype.so"
+          test -s "$binary"
+          readelf -h "$binary" > "$report/elf-header.txt"
+          sha256sum "$binary" | sed 's@  .*@  zer0life_payment_prototype.so@' > "$report/SHA256SUMS"
+          cp "$binary" "$report/zer0life_payment_prototype.so"
+          cp Cargo.lock "$report/Cargo.lock"
+          printf '%s\n' "$GITHUB_SHA" > "$report/source-commit.txt"
+          printf '%s\n' 'LAB ONLY: no deployment, no mainnet compatibility claim, no audited reproducibility.' > "$report/NOT-FOR-DEPLOYMENT.txt"
+          # The build tool may generate a local program keypair. Never upload it.
+      - name: Upload only public lab binary and metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: zer0life-payment-lab-sbf
+          path: |
+            ${{ runner.temp }}/zer0life-sbf-report/zer0life_payment_prototype.so
+            ${{ runner.temp }}/zer0life-sbf-report/Cargo.lock
+            ${{ runner.temp }}/zer0life-sbf-report/toolchain.txt
+            ${{ runner.temp }}/zer0life-sbf-report/elf-header.txt
+            ${{ runner.temp }}/zer0life-sbf-report/SHA256SUMS
+            ${{ runner.temp }}/zer0life-sbf-report/source-commit.txt
+            ${{ runner.temp }}/zer0life-sbf-report/NOT-FOR-DEPLOYMENT.txt
+          if-no-files-found: error
+          retention-days: 7
