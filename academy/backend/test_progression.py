@@ -178,6 +178,15 @@ class ProgressTests(unittest.TestCase):
             self.assertEqual(scan(rpc,"payer","recipient",ref,100,self.t)["status"],"not_found")
         result=scan(lambda m,p:[],"payer","recipient",ref,100,self.t)
         self.assertFalse(result["safe_to_retry"])
+    def test_marketplace_release_guard(self):
+        from marketplace_release import readiness,enabled
+        from unittest.mock import patch
+        with patch.dict("os.environ",{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}):
+            self.assertTrue(readiness()["requested"])
+            self.assertFalse(enabled())
+            self.assertIn("onchain_duplicate_prevention",readiness()["blockers"])
+        with patch.dict("os.environ",{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"false"}):
+            self.assertFalse(enabled())
     def test_private_preflight(self):
         from content_vault import preflight
         valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}

@@ -3,6 +3,10 @@ from datetime import datetime,timezone
 from database import transaction
 from partners import owner
 CHECKS={
+"split_completed_without_payment":"""SELECT count(*) FROM academy_jobs j WHERE j.payment_mode='split' AND j.status='completed' AND NOT EXISTS (SELECT 1 FROM academy_job_payments p WHERE p.job_id=j.id AND p.paid_at IS NOT NULL)""",
+"split_payment_party_mismatch":"""SELECT count(*) FROM academy_job_payments p JOIN academy_jobs j ON j.id=p.job_id LEFT JOIN academy_job_applications a ON a.job_id=j.id AND a.id=j.selected_application WHERE p.client_id<>j.client_id OR a.id IS NULL OR p.freelancer_id<>a.student_id OR p.quote_cents<>a.quote_cents OR j.payment_mode<>'split'""",
+"split_paid_without_issuance":"SELECT count(*) FROM academy_job_payments WHERE paid_at IS NOT NULL AND issued_at IS NULL",
+"split_signature_reused":"SELECT count(*) FROM academy_job_payments p JOIN payment_invoices i ON i.signature=p.signature WHERE p.signature IS NOT NULL",
 "paid_enrollment_without_matching_invoice":"""SELECT count(*) FROM enrollments e WHERE e.paid_at IS NOT NULL AND NOT EXISTS
 (SELECT 1 FROM payment_invoices i WHERE i.student_id=e.student_id AND i.signature=e.payment_signature AND i.plan=e.plan AND i.paid_at IS NOT NULL)""",
 "paid_invoice_without_matching_enrollment":"""SELECT count(*) FROM payment_invoices i WHERE i.paid_at IS NOT NULL AND NOT EXISTS
@@ -16,6 +20,8 @@ CHECKS={
 "approved_service_without_paid_student":"SELECT count(*) FROM marketplace_services m WHERE m.status='approved' AND NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id=m.student_id AND e.paid_at IS NOT NULL)"
 }
 COUNTS={
+"split_pending_issued":"SELECT count(*) FROM academy_job_payments WHERE issued_at IS NOT NULL AND paid_at IS NULL",
+"split_verified":"SELECT count(*) FROM academy_job_payments WHERE paid_at IS NOT NULL",
 "students":"SELECT count(*) FROM students",
 "active_sessions":"SELECT count(*) FROM student_sessions WHERE revoked_at IS NULL AND expires_at>now()",
 "mfa_enabled":"SELECT count(*) FROM student_mfa WHERE secret IS NOT NULL",

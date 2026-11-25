@@ -378,7 +378,7 @@ class LaunchIntegration(unittest.TestCase):
                 cur.execute("CREATE TEMP TABLE academy_job_payments (LIKE academy.academy_job_payments INCLUDING ALL) ON COMMIT DROP")
                 cur.execute("CREATE TEMP TABLE academy_job_payment_wallets (LIKE academy.academy_job_payment_wallets INCLUDING ALL) ON COMMIT DROP")
                 baseline=mp.treasury_report(cur)
-                with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}),patch.object(mp,"transaction",shared):
+                with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}),patch.object(mp,"transaction",shared),patch.object(mp,"enabled",side_effect=lambda:os.getenv("ACADEMY_MARKETPLACE_PAYMENTS_ENABLED")=="true"):
                     split_job=job_create(cur,partner_id,{**job,"title":"Synthetic split checkout"})["id"]
                     job_moderate(cur,owner_id,{"id":split_job,"action":"open"})
                     split_aid=job_apply(cur,buyer_id,{**bid,"id":split_job,"quote":"1000"})["id"]

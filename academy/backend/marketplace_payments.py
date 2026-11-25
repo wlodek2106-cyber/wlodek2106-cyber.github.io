@@ -8,8 +8,7 @@ from student_business import ident
 from database import transaction
 from accounts import authenticate
 
-def enabled():
-    return os.getenv("ACADEMY_MARKETPLACE_PAYMENTS_ENABLED")=="true"
+from marketplace_release import enabled,readiness
 
 def job_info(cur,sid,jid,lock=False):
     cur.execute("""SELECT j.client_id,a.student_id,j.status,a.quote_cents,j.payment_mode
@@ -180,13 +179,25 @@ def treasury_report(cur):
     items=[{"job_id":j,**split(c),"signature":s,"paid_at":t.isoformat()} for j,c,s,t in cur.fetchall()]
     cur.execute("SELECT job_id,quote_cents,issued_at,created_at FROM academy_job_payments WHERE paid_at IS NULL ORDER BY created_at DESC LIMIT 100")
     pending=[{"job_id":j,**split(c),"issued_at":i.isoformat() if i else None,"created_at":t.isoformat()} for j,c,i,t in cur.fetchall()]
-    return {"pending":pending,"enabled":enabled(),"wallet":TREASURY,"network":"solana-mainnet","paid_count":n,"gross_atomic":str(g),"fee_atomic":str(f),"day_atomic":str(day),"month_atomic":str(month),"year_atomic":str(year),"items":items}
+    return {"release":readiness(),"pending":pending,"enabled":enabled(),"wallet":TREASURY,"network":"solana-mainnet","paid_count":n,"gross_atomic":str(g),"fee_atomic":str(f),"day_atomic":str(day),"month_atomic":str(month),"year_atomic":str(year),"items":items}
 
 def dispatch(token,action,b):
     if action=="settle": return settle(token,b)
     if action=="qr": return qr(token,b)
     if action=="reconcile": return reconcile(token,b)
     if action=="admin-reconcile": return reconcile(token,b,True)
+    if action=="treasury-preflight":
+        from partners import owner
+        owner(token)
+        from marketplace_tx import token_accounts
+        try:
+            token_accounts(TREASURY)
+            account_status="initialized"
+        except ValueError:
+            account_status="not_found"
+        except Exception:
+            account_status="rpc_unavailable"
+        return {"wallet":TREASURY,"usdc_account":account_status,"rpc_network_independently_verified":False,"release":readiness()}
     if action=="treasury":
         from partners import owner
         owner(token)
