@@ -1,6 +1,6 @@
 from database import transaction
 from accounts import authenticate
-from progression import eligible
+from progression import lesson_available
 from datetime import datetime, timezone
 import os
 
@@ -16,6 +16,12 @@ def ensure_preview_enrollment(cur, student):
     # No paid_at, payment_signature, invoice or financial event is created.
     cur.execute("INSERT INTO enrollments(student_id,plan) VALUES (%s,'elite') ON CONFLICT(student_id) DO NOTHING",(student,))
 
+def ensure_trial_enrollment(cur, student):
+    # Use the same lock as checkout/settlement. Never change an existing paid enrollment.
+    cur.execute("SELECT id FROM students WHERE id=%s FOR UPDATE",(student,))
+    if not cur.fetchone(): raise PermissionError("Authentication required")
+    cur.execute("INSERT INTO enrollments(student_id,plan) VALUES (%s,'starter') ON CONFLICT(student_id) DO NOTHING",(student,))
+
 def student_progress(token):
     student=authenticate(token)
     if student is None:
@@ -25,16 +31,16 @@ def student_progress(token):
         cur.execute("SELECT id,plan,paid_at FROM enrollments WHERE student_id=%s",(student,))
         enrollment=cur.fetchone()
         if not enrollment:
-            return {"paid":False,"access":preview,"owner_preview":preview,
+            return {"paid":False,"access":preview,"owner_preview":preview,"trial":not preview,
                     **({"plan":"elite"} if preview else {}),
-                    "lessons":[{"day":n,"unlocked":preview,"completed":False} for n in range(1,46 if preview else 31)]}
+                    "lessons":[{"day":n,"unlocked":lesson_available(n,None,{},preview=preview),"completed":False} for n in range(1,46 if preview else 31)]}
         eid,plan,paid=enrollment
         cur.execute("SELECT lesson,passed_at FROM lesson_progress WHERE enrollment_id=%s",(eid,))
         passed=dict(cur.fetchall())
         now=datetime.now(timezone.utc)
-        return {"paid":paid is not None,"access":preview or paid is not None,"owner_preview":preview,
+        return {"paid":paid is not None,"access":preview or paid is not None,"owner_preview":preview,"trial":not preview and paid is None,
                 "plan":"elite" if preview else plan,
-                "lessons":[{"day":n,"unlocked":preview or eligible(n,paid,passed,now,plan),"completed":n in passed} for n in range(1,46 if preview or plan in ('vip','elite') else 31)]}
+                "lessons":[{"day":n,"unlocked":lesson_available(n,paid,passed,now,plan,preview),"completed":n in passed} for n in range(1,46 if preview or plan in ('vip','elite') else 31)]}
 
 def require_lesson(token,day):
     if type(day) is not int or not 1<=day<=45:
