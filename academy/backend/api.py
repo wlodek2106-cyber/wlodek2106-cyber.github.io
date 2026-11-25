@@ -61,10 +61,16 @@ def dispatch(method,path,body,token):
         return 200,{"roles":status()}
     if path=="/register" and method=="POST":
         if os.getenv("ACADEMY_REGISTRATION_ENABLED")!="true":
-            return 403,{"error":"Registration closed"}
-        if not all(isinstance(body.get(k),str) and body[k].strip() for k in ("first_name","last_name")):
-            raise ValueError("First and last name required")
-        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"),body.get("hire_source"),body.get("campaign_source"))}
+            return 403,{"error":"Registration closed","code":"registration_closed"}
+        from registration_validation import validate
+        values,error=validate(body)
+        if error:
+            return 400,{"error":"Registration details invalid","code":error}
+        try:
+            return 201,{"id":register(values["email"],values["password"],values["first_name"],values["last_name"],body.get("referral"),body.get("hire_source"),body.get("campaign_source"))}
+        except ValueError:
+            # Do not reveal whether an address is registered or expose internal exceptions.
+            return 400,{"error":"Registration unavailable; try signing in if you already have an account.","code":"registration_unavailable"}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"],body.get("code"))}
     if path=="/account/me" and method=="GET":

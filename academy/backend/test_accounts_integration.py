@@ -18,7 +18,14 @@ class AccountIntegration(unittest.TestCase):
                 def shared():
                     yield cur
                 with patch.object(accounts,"transaction",shared):
-                    student=accounts.register(email,password)
+                    from registration_validation import validate
+                    valid={"email":email,"password":password,"first_name":"  Test  ","last_name":"Student"}
+                    for key,value in (("first_name"," "),("last_name",None),("email","invalid"),("password","short"),("referral","bad")):
+                        self.assertEqual(validate(dict(valid,**{key:value}))[1],key)
+                    values,error=validate(valid)
+                    self.assertIsNone(error)
+                    self.assertEqual(values["first_name"],"Test")
+                    student=accounts.register(**values)
                     from referrals import attribute,normalize
                     code=uuid.uuid4().hex[:24]
                     cur.execute("INSERT INTO referral_codes(student_id,code) VALUES (%s,%s)",(student,code))
