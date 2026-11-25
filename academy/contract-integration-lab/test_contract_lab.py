@@ -127,5 +127,87 @@ class MarketplaceBoundaryTests(unittest.TestCase):
         self.tx["blockTime"]=99
         self.assertFalse(self.verdict())
 
+
+    def scan(self, rows=None, recorded=None, missing=False, outage=False):
+        from copy import deepcopy
+        from marketplace_contract_reconcile import reconcile_fixture
+        pda,_=receipt_address(self.program,self.invoice.payer,self.invoice.reference)
+        if rows is None:
+            rows=[{"signature":self.sig,"slot":150,"confirmationStatus":"finalized","err":None}]
+        calls=[]
+        def rpc(method,params):
+            calls.append((method,params))
+            if method=="getSignaturesForAddress":
+                self.assertEqual(params[0],pda)
+                self.assertEqual(params[1]["limit"],5)
+                return rows
+            if method=="getAccountInfo":
+                self.assertEqual(params[0],pda)
+                return {"context":{"slot":160},"value":None} if missing else self.receipt
+            if method=="getSignatureStatuses":
+                self.assertTrue(params[1]["searchTransactionHistory"])
+                return self.status
+            if method=="getTransaction":
+                if outage:
+                    raise TimeoutError()
+                tx=deepcopy(self.tx)
+                tx["transaction"]["signatures"]=[params[0]]
+                return tx
+            raise AssertionError(method)
+        result=reconcile_fixture(rpc,self.invoice,self.program,recorded)
+        self.assertFalse(result["safe_to_retry"])
+        self.assertFalse(result["settlement_authorized"])
+        return result,calls
+
+    def test_reconcile_candidate_at_canonical_pda(self):
+        result,calls=self.scan()
+        self.assertEqual(result["state"],"candidate")
+        self.assertEqual(result["matches"],[self.sig])
+        self.assertEqual(len(calls),4)
+
+    def test_reconcile_repeated_history_row(self):
+        row={"signature":self.sig,"slot":150,"confirmationStatus":"finalized","err":None}
+        result,_=self.scan([row,row])
+        self.assertEqual(result["checked"],1)
+        self.assertFalse(result["conflict"])
+
+    def test_reconcile_conflicting_signatures(self):
+        second=str(Signature.from_bytes(bytes([33])*64))
+        rows=[{"signature":s,"slot":150,"confirmationStatus":"finalized","err":None} for s in (self.sig,second)]
+        result,_=self.scan(rows)
+        self.assertEqual(result["state"],"conflict")
+        self.assertTrue(result["conflict"])
+
+    def test_reconcile_conflict_with_recorded_signature(self):
+        second=str(Signature.from_bytes(bytes([33])*64))
+        result,_=self.scan(recorded=second)
+        self.assertEqual(result["state"],"conflict")
+
+    def test_reconcile_recorded_signature(self):
+        result,_=self.scan(recorded=self.sig)
+        self.assertEqual(result["state"],"recorded")
+
+    def test_reconcile_missing_receipt(self):
+        result,_=self.scan(missing=True)
+        self.assertEqual(result["state"],"incomplete")
+
+    def test_reconcile_rpc_outage(self):
+        result,_=self.scan(outage=True)
+        self.assertEqual(result["state"],"incomplete")
+
+    def test_reconcile_empty_history(self):
+        result,_=self.scan([])
+        self.assertEqual(result["state"],"not_found")
+
+    def test_reconcile_truncated_history(self):
+        row={"signature":self.sig,"slot":150,"confirmationStatus":"finalized","err":None}
+        result,_=self.scan([row]*5)
+        self.assertTrue(result["incomplete"])
+        self.assertEqual(result["state"],"incomplete")
+
+    def test_reconcile_recorded_not_found(self):
+        result,_=self.scan([],recorded=self.sig)
+        self.assertEqual(result["state"],"recorded_unverified")
+
 if __name__=="__main__":
     unittest.main()
