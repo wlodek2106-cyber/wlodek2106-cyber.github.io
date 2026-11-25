@@ -1,6 +1,6 @@
 from accounts import authenticate
 from database import transaction
-from learning import require_lesson, owner_preview, ensure_preview_enrollment
+from learning import require_lesson, owner_preview, ensure_preview_enrollment, ensure_trial_enrollment
 
 def save(token,day,submission):
     require_lesson(token,day)
@@ -11,7 +11,9 @@ def save(token,day,submission):
     with transaction() as cur:
         if owner_preview(student):
             ensure_preview_enrollment(cur,student)
-        cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND (paid_at IS NOT NULL OR %s) FOR UPDATE",(student,owner_preview(student)))
+        elif day==1:
+            ensure_trial_enrollment(cur,student)
+        cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND (paid_at IS NOT NULL OR %s) FOR UPDATE",(student,owner_preview(student) or day==1))
         row=cur.fetchone()
         if not row: raise PermissionError("Enrollment required")
         eid=row[0]
