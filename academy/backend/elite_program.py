@@ -1,7 +1,7 @@
 """ELITE production residency: five 3-day projects, separate from legacy exams."""
-from learning import student_progress
-from accounts import authenticate
-from database import transaction
+def student_progress(token):
+    from learning import student_progress as load
+    return load(token)
 
 PROJECTS=[
 ("humans","AI Digital Humans",{
@@ -39,6 +39,8 @@ def unlocked(p):
     return bool(p.get("owner_preview") or (len(p["lessons"])==45 and all(x["completed"] for x in p["lessons"])))
 def catalog(token,lang):
     p=access(token)
+    from accounts import authenticate
+    from database import transaction
     sid=authenticate(token)
     with transaction() as cur:
         cur.execute("SELECT project,evidence,updated_at FROM elite_projects WHERE student_id=%s",(sid,))
@@ -50,6 +52,8 @@ def save(token,project,evidence):
     if not unlocked(p):raise PermissionError("Complete the 45 core lessons first")
     if not isinstance(project,str) or project not in {x[0] for x in PROJECTS} or not isinstance(evidence,str) or not 30<=len(evidence.strip())<=4000:
         raise ValueError("Provide 30–4000 characters of project evidence")
+    from accounts import authenticate
+    from database import transaction
     sid=authenticate(token)
     with transaction() as cur:
         cur.execute("INSERT INTO elite_projects(student_id,project,evidence) VALUES (%s,%s,%s) ON CONFLICT(student_id,project) DO UPDATE SET evidence=EXCLUDED.evidence,updated_at=now()",(sid,project,evidence.strip()))
