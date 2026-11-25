@@ -3,7 +3,7 @@ import os
 
 TREASURY="57S7TryAMhxRq5sMSyZxTkyCmzT8tPFKfXjzZwvmv5db"
 USDC_MINT="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-PRICES={"starter":199,"pro":499,"vip":999}
+PRICES={"starter":199,"pro":499,"vip":999,"elite":1999}
 
 def course_amount(plan,discount=False):
     if plan not in PRICES or type(discount) is not bool:
