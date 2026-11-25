@@ -49,3 +49,6 @@ No secrets or real customer data in public repository.
 
 ## Freeze
 This dossier is documentation only. Do not rerun expensive SBF jobs solely for documentation, mark unresolved blockers complete, or claim an independent audit was performed. Next code changes should be justified by reviewed findings, then tested again at their exact revision. 
+
+## Consolidated laboratory evidence (2026-11-25)
+The isolated integration workflow for V11 completed successfully at b6d9e4a5297f108870b100d73256bcd2bc6e5c26: https://github.com/wlodek2106-cyber/wlodek2106-cyber.github.io/actions/runs/45523387487. It includes 56 synthetic Python tests and Rust/Python PDA comparison. The public preview is a local calculator only; no treasury data or authorization is exposed. Production guards remain unchanged. This entry does not assert live deployment of V12 or independent audit.

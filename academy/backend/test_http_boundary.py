@@ -109,6 +109,15 @@ class HttpBoundary(unittest.TestCase):
                 with req("/marketplace") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"marketplace.js",r.read())
+                with req("/marketplace-preview") as r:
+                    self.assertEqual(r.status,200)
+                    content=r.read()
+                    self.assertIn(b"connect-src 'none'",content)
+                    self.assertIn(b'id="pay" disabled',content)
+                    self.assertIn(b"marketplace-preview.js",content)
+                with req("/marketplace-preview.js") as r:
+                    self.assertEqual(r.status,200)
+                    self.assertIn(b"function quotePreview",r.read())
                 with req("/marketplace.js") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"/marketplace/public",r.read())
