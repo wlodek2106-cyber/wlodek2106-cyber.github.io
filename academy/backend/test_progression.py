@@ -3,6 +3,21 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_vip_creator_labs_only_supplement_selected_vip_days(self):
+        from vip_creator_labs import supplement, MODULES
+        lesson={'title':'Original','theory':'Theory','assignment':'Task'}
+        self.assertEqual(set(MODULES),{35,40,45})
+        for day in (1,10,30,31,34,36,41,44):
+            self.assertEqual(supplement(lesson,day,'ru'),lesson)
+        for day in MODULES:
+            for lang in ('en','ru','uk','pl'):
+                result=supplement(lesson,day,lang)
+                self.assertEqual(result['sections'][:2],['Theory','Task'])
+                self.assertEqual(result['sections'][2:],MODULES[day][lang])
+                self.assertNotIn('sections',lesson)
+        private={'sections':['Original private material']}
+        self.assertEqual(supplement(private,35,'ru')['sections'][0],private['sections'][0])
+
     def setUp(self):
         self.t = datetime(2026,11,24,tzinfo=timezone.utc)
     def test_launch_readiness_is_not_approval(self):
