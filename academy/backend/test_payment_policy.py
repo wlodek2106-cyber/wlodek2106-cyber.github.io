@@ -10,7 +10,7 @@ class PaymentPolicyTests(unittest.TestCase):
 
     def test_prices(self):
         with patch.dict("os.environ", {"ACADEMY_PAYMENTS_ENABLED":"true"}):
-            for plan,price in (("starter",199),("pro",499),("vip",999)):
+            for plan,price in (("starter",199),("pro",499),("vip",999),("elite",1999)):
                 q=quote(plan,"USDC")
                 self.assertEqual(q["amount_atomic"],price*1000000)
                 self.assertEqual(q["recipient"],TREASURY)
@@ -20,7 +20,7 @@ class PaymentPolicyTests(unittest.TestCase):
         from solana_pay import payment_url
         from urllib.parse import parse_qs,urlsplit
         with patch.dict("os.environ", {"ACADEMY_PAYMENTS_ENABLED":"true"}):
-            for plan,atomic,amount in (("starter",189050000,"189.05"),("pro",474050000,"474.05"),("vip",949050000,"949.05")):
+            for plan,atomic,amount in (("starter",189050000,"189.05"),("pro",474050000,"474.05"),("vip",949050000,"949.05"),("elite",1899050000,"1899.05")):
                 self.assertEqual(quote(plan,"USDC",True)["amount_atomic"],atomic)
                 url=payment_url(plan,"1"*32,atomic)
                 self.assertEqual(parse_qs(urlsplit(url).query)["amount"],[amount])
