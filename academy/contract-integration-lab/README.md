@@ -1,0 +1,5 @@
+# Contract integration lab — offline only
+
+This experimental SDK adapter is not imported by the production server. The separate CI job uses Solders 0.29.0 (pinned direct dependency, not an audited lock). It derives the receipt address using the same seed bytes as Rust, builds an unsigned zero-blockhash legacy message with eight ordered ABI accounts, and supplies the derived PDA to the existing offline receipt matcher. Synthetic fixtures check address separation, off-curve derivation, correct account order, instruction data, absence of signatures and invalid input rejection.
+
+No network access by the code, no signing, real payment or deployment. The SDK is installed in CI only, never in the Render requirements. There is no approved deployed program ID. The derived address is bound to program, payer and invoice reference. Before production: cross-language fixed vectors, audited dependency lock and program identity, actual SBF runtime pass, independent security review, wallet compatibility, finalized RPC evidence, support and legal review. All existing release blockers remain.
