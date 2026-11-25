@@ -330,5 +330,75 @@ class PaymentGatewayTests(unittest.TestCase):
         root=ET.fromstring(base64.b64decode(encoded,validate=True))
         self.assertTrue(root.tag.endswith("svg"))
 
+
+class TreasuryLabTests(unittest.TestCase):
+    def setUp(self):
+        from treasury_lab import TreasuryLab
+        self.ledger=TreasuryLab()
+        self.addCleanup(self.ledger.close)
+        self.fixture=MarketplaceBoundaryTests()
+        self.fixture.setUp()
+
+    def record(self):
+        f=self.fixture
+        return self.ledger.record_fixture(f.invoice,f.program,f.sig,f.status,f.tx,f.receipt)
+
+    def report(self, timestamp=101, limit=100):
+        from datetime import datetime, timezone
+        return self.ledger.report(datetime.fromtimestamp(timestamp,timezone.utc),limit)
+
+    def test_treasury_verified_fixture(self):
+        self.assertEqual(self.record(),"recorded")
+        r=self.report()
+        self.assertTrue(r["simulation"])
+        self.assertFalse(r["settlement_authorized"])
+        self.assertFalse(r["payment_enabled"])
+        self.assertEqual(r["totals"]["day"],{"count":1,"gross_atomic":"100000000",
+                         "freelancer_atomic":"95000000","fee_atomic":"5000000"})
+
+    def test_treasury_exact_replay(self):
+        self.record()
+        self.assertEqual(self.record(),"already_recorded")
+        self.assertEqual(self.report()["totals"]["lifetime"]["count"],1)
+
+    def test_treasury_conflicting_signature(self):
+        self.record()
+        f=self.fixture
+        f.sig=str(Signature.from_bytes(bytes([92])*64))
+        f.tx["transaction"]["signatures"]=[f.sig]
+        with self.assertRaises(ValueError): self.record()
+        self.assertEqual(self.report()["totals"]["lifetime"]["count"],1)
+
+    def test_treasury_reject_unverified(self):
+        self.fixture.status["value"][0]["confirmationStatus"]="confirmed"
+        with self.assertRaises(ValueError): self.record()
+        self.assertEqual(self.report()["totals"]["lifetime"]["count"],0)
+
+    def test_treasury_utc_day_boundary(self):
+        self.record()
+        self.assertEqual(self.report(86400)["totals"]["day"]["count"],0)
+        self.assertEqual(self.report(86400)["totals"]["month"]["count"],1)
+
+    def test_treasury_utc_month_boundary(self):
+        self.record()
+        self.assertEqual(self.report(31*86400)["totals"]["month"]["count"],0)
+        self.assertEqual(self.report(31*86400)["totals"]["year"]["count"],1)
+
+    def test_treasury_utc_year_boundary(self):
+        self.record()
+        self.assertEqual(self.report(365*86400)["totals"]["year"]["count"],0)
+        self.assertEqual(self.report(365*86400)["totals"]["lifetime"]["count"],1)
+
+    def test_treasury_excludes_future_transactions(self):
+        self.record()
+        self.assertEqual(self.report(100)["history"],[])
+        self.assertEqual(self.report(100)["totals"]["lifetime"]["count"],0)
+
+    def test_treasury_invalid_limit_and_timezone(self):
+        from datetime import datetime
+        with self.assertRaises(ValueError): self.ledger.report(datetime(2026,1,1))
+        for limit in (0,101,True):
+            with self.assertRaises(ValueError): self.report(limit=limit)
+
 if __name__=="__main__":
     unittest.main()
