@@ -3,6 +3,42 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_creator_2027_tracks(self):
+        from creator_2027 import TRACKS, enrich
+        self.assertEqual({t["id"] for t in TRACKS},{"humans","film","agents","teacher","career"})
+        self.assertEqual({t["day"] for t in TRACKS},{32,35,41,43,45})
+        for t in TRACKS:
+            for lang in ("en","ru","uk","pl"):
+                data=enrich({"title":"Original"},t["day"],lang)
+                self.assertEqual(data["title"],"Original")
+                row=data["creator_tracks"][0]
+                self.assertEqual(row["id"],t["id"])
+                self.assertNotIn("lessons",row)
+                self.assertEqual(row["lesson"],t["lessons"][lang])
+                self.assertTrue(all(url.startswith("https://github.com/") for _,url in row["repos"]))
+        self.assertEqual(enrich({"title":"Core"},30,"ru"),{"title":"Core"})
+    def test_creator_2027_local_engine_contracts(self):
+        from pathlib import Path
+        from importlib.util import spec_from_file_location, module_from_spec
+        from unittest.mock import patch
+        spec=spec_from_file_location("local_engine",Path(__file__).with_name("local-ai-engine.py"))
+        engine=module_from_spec(spec);spec.loader.exec_module(engine)
+        self.assertTrue(all(url.startswith("http://127.0.0.1:") for url in engine.ENDPOINTS.values()))
+        with patch.object(engine,"request",return_value={"models":[{"name":"local:latest","size":123},{"name":"remote-cloud","size":123},{"name":"remote","size":123,"remote_host":"example.org"}]}):
+            self.assertEqual(engine.local_models(),["local:latest"])
+        with patch.object(engine,"local_models",return_value=["local:latest"]),patch.object(engine,"chat",side_effect=["plan","draft","review"]) as chat:
+            result=engine.run_task("local:latest","Agent Factory","Example")
+            self.assertEqual(chat.call_count,3)
+            self.assertIn("Reviewer",result)
+            with self.assertRaises(ValueError):
+                engine.run_task("cloud","Teacher","Example")
+        import tempfile,json
+        with tempfile.TemporaryDirectory() as tmp:
+            file=Path(tmp)/"workflow.json"
+            file.write_text(json.dumps({"1":{"class_type":"Example","inputs":{}}}))
+            self.assertEqual(len(engine.load_workflow(file)),1)
+            file.write_text(json.dumps({"nodes":[]}))
+            with self.assertRaises(ValueError):engine.load_workflow(file)
     def test_vip_creator_labs_only_supplement_selected_vip_days(self):
         from vip_creator_labs import supplement, MODULES
         lesson={'title':'Original','theory':'Theory','assignment':'Task'}
