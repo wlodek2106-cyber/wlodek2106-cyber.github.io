@@ -3,6 +3,24 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_elite_program(self):
+        from elite_program import PROJECTS, unlocked, access
+        from unittest.mock import patch
+        from payment_policy import PRICES,course_amount
+        self.assertEqual(PRICES["elite"],1999)
+        self.assertEqual(course_amount("elite",True),1899050000)
+        self.assertEqual(len(PROJECTS),5)
+        for _,_,langs,_ in PROJECTS:
+            self.assertEqual(set(langs),{"en","ru","uk","pl"})
+            self.assertTrue(all(len(steps)==3 for steps in langs.values()))
+        self.assertFalse(unlocked({"lessons":[{"completed":True}]*44}))
+        self.assertTrue(unlocked({"lessons":[{"completed":True}]*45}))
+        self.assertTrue(unlocked({"owner_preview":True}))
+        with patch("elite_program.student_progress",return_value={"access":True,"plan":"vip"}):
+            with self.assertRaises(PermissionError):access("token")
+        passed={i:self.t+timedelta(days=i-1) for i in range(1,45)}
+        self.assertTrue(eligible(45,self.t,passed,self.t+timedelta(days=44),"elite"))
+        self.assertFalse(eligible(46,self.t,passed,self.t+timedelta(days=45),"elite"))
     def test_creator_2027_tracks(self):
         from creator_2027 import TRACKS, enrich
         self.assertEqual({t["id"] for t in TRACKS},{"humans","film","agents","teacher","career"})
@@ -380,8 +398,8 @@ class ProgressTests(unittest.TestCase):
             kit=materials(code,lang)
             self.assertEqual(len(kit["materials"]),4)
             self.assertTrue(all("?ref="+code in x["text"] for x in kit["materials"]))
-        self.assertEqual(projection({"starter":1,"pro":1,"vip":1})["commission_atomic"],509100000)
-        with self.assertRaises(ValueError): projection({"starter":-1,"pro":0,"vip":0})
+        self.assertEqual(projection({"starter":1,"pro":1,"vip":1,"elite":0})["commission_atomic"],509100000)
+        with self.assertRaises(ValueError): projection({"starter":-1,"pro":0,"vip":0,"elite":0})
         with self.assertRaises(ValueError): materials("invalid","en")
     def test_founder_accounting(self):
         from founder import summarize,validate_period
