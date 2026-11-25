@@ -9,7 +9,18 @@ crate-type = ["cdylib", "lib"]
 
 [features]
 no-entrypoint = []
+runtime-tests = ["dep:solana-program-test", "dep:solana-sdk", "dep:tokio"]
 
 [dependencies]
 solana-program = "=2.1.14"
 spl-token = { version = "=7.0.0", features = ["no-entrypoint"] }
+
+# Optional host runtime test dependencies; not part of production SBF builds.
+solana-program-test = { version = "=2.1.14", optional = true }
+solana-sdk = { version = "=2.1.14", optional = true }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"], optional = true }
+
+[[test]]
+name = "runtime"
+path = "tests/runtime.rs"
+required-features = ["runtime-tests"]
