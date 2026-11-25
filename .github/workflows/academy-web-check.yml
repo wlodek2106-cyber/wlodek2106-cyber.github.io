@@ -43,6 +43,9 @@ jobs:
       - name: Marketplace preview arithmetic
         run: node academy/tests/marketplace_preview_unit.cjs
 
+      - name: Marketplace preview browser isolation
+        run: node academy/tests/marketplace_preview_browser.cjs
+
       - name: Workspace unit tests
         run: node academy/tests/workspace_unit.cjs
 

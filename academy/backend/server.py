@@ -94,6 +94,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type","text/html; charset=utf-8")
             if path in ("/","/dashboard"):
                 self.send_header("Content-Security-Policy",dashboard_csp(body))
+            elif path=="/marketplace-preview":
+                self.send_header("Content-Security-Policy","default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")
             self.send_header("Cache-Control","no-store")
             self.send_header("Content-Length",str(len(body)))
             self.end_headers()

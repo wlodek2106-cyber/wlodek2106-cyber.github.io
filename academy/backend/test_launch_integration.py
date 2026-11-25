@@ -120,6 +120,25 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual((p["mode"],p["fee_atomic"],p["freelancer_atomic"]),("external",7000000,133000000))
                 with self.assertRaises(PermissionError): payment_preview(cur,owner_id,{"id":jid})
                 self.assertIn("fee_atomic",treasury_report(cur))
+                # Real dispatch authorization, with the disposable transaction shared.
+                import api, marketplace_payments
+                from marketplace_release import readiness
+                with patch.object(api,"ready",return_value=True),patch.object(marketplace_payments,"transaction",shared),patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}):
+                    self.assertTrue(readiness()["requested"])
+                    self.assertFalse(readiness()["enabled"])
+                    for route,method in (("/marketplace-pay/request/test","GET"),("/marketplace-pay/request/test","POST"),("/marketplace-pay/qr","POST"),("/marketplace-pay/wallet","POST"),("/marketplace-pay/create","POST")):
+                        for token in (None,buyer,owner):
+                            with self.assertRaises(PermissionError):
+                                api.dispatch(method,route,{},token)
+                    for token in (None,buyer,partner):
+                        with self.assertRaises(PermissionError):
+                            api.dispatch("POST","/marketplace-pay/treasury",{},token)
+                        with self.assertRaises(PermissionError):
+                            api.dispatch("POST","/marketplace-pay/treasury-preflight",{},token)
+                    code,report=api.dispatch("POST","/marketplace-pay/treasury",{},owner)
+                    self.assertEqual(code,200)
+                    self.assertFalse(report["enabled"])
+                    self.assertFalse(report["release"]["live_payment_tested"])
                 self.assertEqual(job_transition(cur,partner_id,{"id":jid,"action":"complete"})["status"],"completed")
                 with self.assertRaises(PermissionError): message(cur,buyer_id,{"id":jid,"body":"Closed"})
                 self.assertEqual(len(room(cur,partner_id,{"id":jid})["items"]),4)
