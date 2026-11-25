@@ -60,7 +60,7 @@ class MarketplaceBoundaryTests(unittest.TestCase):
             while n:
                 n,r = divmod(n,58)
                 out = ALPHABET[r] + out
-            return "1" * (len(raw)-len(raw.lstrip(b"\\x00"))) + out
+            return "1" * (len(raw)-len(raw.lstrip(bytes([0])))) + out
         def transfer(to, amount):
             return {"programIdIndex":6,"accounts":[2,5,to,0],
                     "data":enc(bytes([12])+amount.to_bytes(8,"little")+bytes([6]))}
