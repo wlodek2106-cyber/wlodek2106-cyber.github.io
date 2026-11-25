@@ -11,3 +11,6 @@ New private exam uploads reject normalized exact matches against the bundled pub
 
 ## Private bulk import
 Owner dashboard accepts a local JSON bundle `{version:1,items:[{kind,day,lang,content},...]}` (up to 360 slots, 4 MB, 16 KiB per serialized request). After confirmation, sequential authenticated requests create missing slots only; database ON CONFLICT DO NOTHING prevents overwrites even during concurrent uploads. Stop after current request or resume by importing the same file. Existing manual save can still update individual slots. Import is not an atomic transaction; inspect inventory after partial failures. Keep the file offline and never publish it to Git. Review contents before importing, and do not enable strict mode until verified. No paid API.
+
+## Preflight and startup isolation
+The owner can validate a selected bundle without saving any slots. Each entry goes to the authenticated `/admin/content/validate` endpoint, checking exact schema, encoding, limits and legacy exam matches, without content-table writes. Optional preflight is not a pedagogical review, atomic import or strict-mode activation. Startup integration now uses temporary private-curriculum and audit tables for synthetic tests instead of real owner slots; rollback removes them. Existing owner materials are never overwritten by these tests.

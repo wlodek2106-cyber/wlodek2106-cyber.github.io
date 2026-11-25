@@ -14,7 +14,10 @@ def validate_slot(kind,day,lang):
 def validate(kind,day,lang,data):
     validate_slot(kind,day,lang)
     def string(v,limit):
-        return isinstance(v,str) and 1<=len(v.strip())<=limit
+        if not isinstance(v,str) or not 1<=len(v.strip())<=limit or "\x00" in v: return False
+        try: v.encode("utf-8")
+        except UnicodeEncodeError: return False
+        return True
     if kind=="lesson":
         if not isinstance(data,dict) or set(data)!={"title","theory","assignment","prompts"}: raise ValueError("Invalid lesson structure")
         if not all(string(data[k],limit) for k,limit in (("title",200),("theory",8000),("assignment",3000))): raise ValueError("Invalid lesson text")
@@ -107,6 +110,20 @@ def inventory(cur):
     return {"items":items,"english_coverage":{k:sum(x["kind"]==k and x["lang"]=="en" for x in items) for k in KINDS},
             "coverage":by_language,"strict_ready":{k:by_language["en"][k]["count"]==45 and not any(x["kind"]==k and x["legacy_overlap"] for x in items) for k in KINDS},
             "strict":{"exam":os.getenv("ACADEMY_PRIVATE_EXAMS_REQUIRED")=="true","lesson":os.getenv("ACADEMY_PRIVATE_LESSONS_REQUIRED")=="true"}}
+
+def preflight(kind,day,lang,data):
+    """Validate a prospective slot without accessing or writing its database record."""
+    try:
+        validate(kind,day,lang,data)
+        if kind=="exam": require_original_exam(data)
+    except (ValueError,KeyError,TypeError,AttributeError) as exc:
+        return {"valid":False,"reason":str(exc) if isinstance(exc,ValueError) else "Invalid content structure"}
+    return {"valid":True}
+
+def admin_validate(token,body):
+    from partners import owner
+    owner(token)
+    return preflight(body.get("kind"),body.get("day"),body.get("lang"),body.get("content"))
 
 def admin_inventory(token):
     from partners import owner

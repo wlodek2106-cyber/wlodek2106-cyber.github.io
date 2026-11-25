@@ -96,6 +96,13 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(simulate("write",True,False,3)["result"],"unsafe_policy")
         self.assertEqual(simulate("lookup",True,True,1)["result"],"step_limit")
         with self.assertRaises(ValueError): simulate("support",True,True,100)
+    def test_private_preflight(self):
+        from content_vault import preflight
+        valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}
+        self.assertTrue(preflight("lesson",1,"en",valid)["valid"])
+        self.assertFalse(preflight("lesson",46,"en",valid)["valid"])
+        self.assertFalse(preflight("lesson",1,"en",{**valid,"title":"bad\x00text"})["valid"])
+        self.assertFalse(preflight("exam",1,"en",[])["valid"])
     def test_freelancer_analytics(self):
         from freelancer_analytics import summarize
         from datetime import date,timedelta

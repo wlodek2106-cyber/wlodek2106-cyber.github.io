@@ -281,6 +281,9 @@ def dispatch(method,path,body,token):
     if path=="/tutor" and method=="POST":
         from tutor import guidance
         return 200,guidance(token,body["day"],body["mode"],body.get("lang","en"))
+    if path=="/admin/content/validate" and method=="POST":
+        from content_vault import admin_validate
+        return 200,admin_validate(token,body)
     if path=="/admin/content" and method=="GET":
         from content_vault import admin_inventory
         return 200,admin_inventory(token)

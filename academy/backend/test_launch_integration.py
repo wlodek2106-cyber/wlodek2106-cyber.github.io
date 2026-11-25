@@ -328,8 +328,19 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertGreaterEqual(mine["projects"],1)
                 self.assertEqual(mine["listing_status"],"withdrawn")
                 self.assertEqual(accelerator_data(cur,partner_id,0,30)["projects"],0)
-                from content_vault import save,load,inventory
+                from content_vault import save,load,inventory,preflight
+                # Startup tests must never modify the real owner curriculum, even transiently.
+                # PostgreSQL temp copies include constraints and identity definitions, but not foreign keys.
+                cur.execute("CREATE TEMP TABLE private_curriculum (LIKE academy.private_curriculum INCLUDING ALL) ON COMMIT DROP")
+                cur.execute("CREATE TEMP TABLE private_curriculum_audit (LIKE academy.private_curriculum_audit INCLUDING ALL) ON COMMIT DROP")
+                cur.execute("SET LOCAL search_path TO pg_temp, academy, pg_catalog")
+                cur.execute("SELECT count(*) FROM private_curriculum")
+                self.assertEqual(cur.fetchone()[0],0)
                 private={"title":"Private test","theory":"New material","assignment":"Test task","prompts":[]}
+                self.assertTrue(preflight("lesson",1,"en",private)["valid"])
+                self.assertFalse(preflight("lesson",1,"en",{**private,"theory":"bad\x00text"})["valid"])
+                cur.execute("SELECT count(*) FROM private_curriculum")
+                self.assertEqual(cur.fetchone()[0],0)
                 self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],1)
                 self.assertEqual(load(cur,"lesson",1,"pl")["content"],private)
                 self.assertEqual(save(cur,owner_id,"lesson",1,"en",private)["revision"],2)
@@ -337,6 +348,7 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(load(cur,"lesson",1,"en")["content"],private)
                 self.assertEqual(save(cur,owner_id,"lesson",2,"en",private,True)["revision"],1)
                 self.assertIn("english_coverage",inventory(cur))
+                self.assertFalse(preflight("exam",1,"en",bank)["valid"])
                 with self.assertRaises(ValueError): save(cur,owner_id,"exam",1,"en",bank)
                 private_bank=[{"id":"new"+str(i),"question":"Synthetic private test scenario "+str(i),"options":["A","B","C"],"correct":"A"} for i in range(10)]
                 self.assertEqual(save(cur,owner_id,"exam",1,"en",private_bank)["revision"],1)
