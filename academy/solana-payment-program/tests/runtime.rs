@@ -43,7 +43,21 @@ impl Fixture {
         let source=Pubkey::new_unique();let dest=Pubkey::new_unique();let treasury=Pubkey::new_unique();
         let wrong_dest=Pubkey::new_unique();let overflow_treasury=Pubkey::new_unique();let wrong_mint=Pubkey::new_unique();
         let prefunded_ref=Pubkey::new_unique();
-        let mut pt=ProgramTest::new("zer0life_payment_prototype",program,processor!(process_instruction));
+        let mut pt=ProgramTest::default();
+        if std::env::var("ZER0LIFE_TEST_SBF").as_deref()==Ok("1") {
+            // No native fallback: missing or incompatible SBF must fail the test.
+            let dir=std::env::var("BPF_OUT_DIR").expect("BPF_OUT_DIR required for SBF test");
+            assert!(std::path::Path::new(&dir).join("zer0life_payment_prototype.so").is_file());
+            pt.prefer_bpf(true);
+            pt.add_program("zer0life_payment_prototype",program,None);
+            println!("ZER0LIFE execution mode: compiled SBF");
+        } else {
+            pt.prefer_bpf(false);
+            pt.add_program("zer0life_payment_prototype",program,processor!(process_instruction));
+            println!("ZER0LIFE execution mode: native");
+        }
+        // SPL token stays native in this isolated fixture.
+        pt.prefer_bpf(false);
         pt.add_program("spl_token",spl_token::id(),processor!(spl_token::processor::Processor::process));
         pt.add_account(payer.pubkey(),system_account(1_000_000_000));
         pt.add_account(mint_key(),mint_account());

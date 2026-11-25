@@ -83,3 +83,41 @@ jobs:
             ${{ runner.temp }}/zer0life-sbf-report/NOT-FOR-DEPLOYMENT.txt
           if-no-files-found: error
           retention-days: 7
+
+  lab-sbf-execution:
+    needs: [lab-sbf-build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: academy/solana-payment-program
+    env:
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_BUILD_JOBS: '2'
+      ZER0LIFE_TEST_SBF: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download this run's public laboratory binary
+        uses: actions/download-artifact@v4
+        with:
+          name: zer0life-payment-lab-sbf
+          path: ${{ runner.temp }}/zer0life-sbf-execution
+      - name: Validate artifact and execute compiled SBF in isolated bank
+        shell: bash
+        run: |
+          set -euo pipefail
+          lab="$RUNNER_TEMP/zer0life-sbf-execution"
+          test "$(cat "$lab/source-commit.txt")" = "$GITHUB_SHA"
+          (cd "$lab" && sha256sum --strict -c SHA256SUMS)
+          cp "$lab/Cargo.lock" Cargo.lock
+          BPF_OUT_DIR="$lab" cargo test --locked --features runtime-tests --test runtime -- --nocapture 2>&1 | tee "$RUNNER_TEMP/sbf-execution.txt"
+          grep -Fq 'ZER0LIFE execution mode: compiled SBF' "$RUNNER_TEMP/sbf-execution.txt"
+      - name: Preserve test result without private keys
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zer0life-payment-lab-execution-log
+          path: ${{ runner.temp }}/sbf-execution.txt
+          if-no-files-found: warn
+          retention-days: 7
