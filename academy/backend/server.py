@@ -149,6 +149,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(403,{"error":"Access denied"})
             if self.command=="POST" and path in ("/login","/register"):
                 email=str(body.get("email","")).strip().lower()[:254]
+                if path=="/login": email=email.removeprefix("@")
                 retry=auth_retry_after(path,email)
                 if retry:
                     return self.respond(429,{"error":"Too many attempts; retry later","code":"rate_limit","retry_after":retry})

@@ -45,6 +45,13 @@ def listing(cur,public=True,after=0):
     cur.execute("SELECT "+PROJECTION+" FROM marketplace_services WHERE "+clause+"id>%s ORDER BY id LIMIT 51",(after,))
     rows=cur.fetchall()
     items=[dict(zip(FIELDS,r)) for r in rows[:50]]
+    if public and items:
+        cur.execute("""SELECT m.id,EXISTS(SELECT 1 FROM enrollments e JOIN payment_invoices i
+            ON i.student_id=e.student_id AND i.signature=e.payment_signature AND i.paid_at IS NOT NULL AND i.asset='USDC'
+            WHERE e.student_id=m.student_id AND e.paid_at IS NOT NULL)
+            FROM marketplace_services m WHERE m.id=ANY(%s)""",([x["id"] for x in items],))
+        paid=dict(cur.fetchall())
+        for item in items: item["paid_badge"]=bool(paid.get(item["id"]))
     return {"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
 def decide(cur,admin,b):
     action=b["action"]

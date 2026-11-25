@@ -34,7 +34,7 @@ def login(email,password,code=None):
         if "@" in identifier and not identifier.startswith("@"):
             cur.execute("SELECT id,password_hash FROM students WHERE email=%s FOR UPDATE",(identifier,))
         else:
-            cur.execute("SELECT id,password_hash FROM students WHERE username=%s FOR UPDATE",(identifier.lstrip("@"),))
+            cur.execute("SELECT id,password_hash FROM students WHERE username=%s FOR UPDATE",(identifier.removeprefix("@"),))
         row=cur.fetchone()
         if not row or not verify_password(password,row[1]):
             raise ValueError("Invalid credentials")
