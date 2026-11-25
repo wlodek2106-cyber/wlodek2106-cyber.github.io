@@ -6,7 +6,7 @@ from datetime import datetime,timezone
 KINDS=("access","correction","erasure","restriction","objection","portability")
 # Explicit projections: never export credentials, session tokens, answer keys, other students' records or internal administrator data.
 DATASETS={
-"account":"SELECT id,email,first_name,last_name,created_at,hire_source FROM students WHERE id=%s",
+"account":"SELECT id,email,first_name,last_name,created_at,hire_source,campaign_source FROM students WHERE id=%s",
 "sessions":"SELECT created_at,expires_at,revoked_at FROM student_sessions WHERE student_id=%s ORDER BY created_at DESC",
 "security":"SELECT secret IS NOT NULL AS mfa_enabled,cardinality(recovery_digests) AS recovery_remaining FROM student_mfa WHERE student_id=%s",
 "enrollment":"SELECT plan,paid_at,payment_signature FROM enrollments WHERE student_id=%s",

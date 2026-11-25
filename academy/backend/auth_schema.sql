@@ -407,3 +407,6 @@ CREATE TABLE IF NOT EXISTS academy_job_payments (
 );
 
 ALTER TABLE academy_job_payments ADD COLUMN IF NOT EXISTS issued_at timestamptz;
+
+-- Separate course campaign attribution from client hiring intent; no backfill guesses.
+ALTER TABLE students ADD COLUMN IF NOT EXISTS campaign_source text CHECK(campaign_source IN ('direct','telegram','instagram','youtube','linkedin','facebook','tiktok','x','partner','other'));

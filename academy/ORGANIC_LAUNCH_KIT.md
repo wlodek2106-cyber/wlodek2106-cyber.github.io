@@ -30,3 +30,14 @@ https://wlodek2106-cyber.github.io/academy/ru.html
 
 ## Measurement and acceptance
 Manually record platform-provided impressions, link clicks and aggregate registered-account counts from the owner dashboard. General campaign source tracking is not implemented; the existing hiring source field tracks job-posting intent only. Do not attribute registrations to a social network without evidence. Do not expose names, emails or referral codes in public reporting. No posting, scheduling, ads, payment settings or real transfers were performed by this change.
+
+## V16 campaign registration links
+Use direct account links to preserve a fixed source label; the four static landing pages do not forward campaign query parameters. This label is self-reported and does not measure clicks. New registrations only; historical source remains unknown. Owner Founder Control Center reports registrations, paid enrollments, recorded USDC and conversion per registration cohort for 7/30/90 days. The existing hiring attribution is unchanged.
+- telegram: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=telegram
+- instagram: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=instagram
+- youtube: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=youtube
+- tiktok: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=tiktok
+- x: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=x
+- facebook: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=facebook
+- linkedin: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=linkedin
+- partner: https://zer0life-academy.onrender.com/dashboard?register=1&lang=en&campaign=partner

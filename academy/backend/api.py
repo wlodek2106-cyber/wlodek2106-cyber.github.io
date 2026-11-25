@@ -64,7 +64,7 @@ def dispatch(method,path,body,token):
             return 403,{"error":"Registration closed"}
         if not all(isinstance(body.get(k),str) and body[k].strip() for k in ("first_name","last_name")):
             raise ValueError("First and last name required")
-        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"),body.get("hire_source"))}
+        return 201,{"id":register(body["email"],body["password"],body["first_name"],body["last_name"],body.get("referral"),body.get("hire_source"),body.get("campaign_source"))}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"],body.get("code"))}
     if path=="/account/me" and method=="GET":

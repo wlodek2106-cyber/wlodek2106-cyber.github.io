@@ -107,7 +107,8 @@ def report(cur,days,now=None):
     cur.execute("""SELECT p.id,p.amount_atomic,p.paid_at,p.payout_signature,p.partner_id
         FROM influencer_payouts p WHERE p.status='paid' ORDER BY p.paid_at DESC,p.id DESC LIMIT 50""")
     recent=[{"id":i,"amount_atomic":str(n),"date":d.isoformat(),"signature":s,"partner_id":u} for i,n,d,s,u in cur.fetchall()]
-    return {"alltime":alltime,"period":{"days":days,"start":start.isoformat(),"end":now.isoformat(),"gross_atomic":str(sum(int(p["gross_atomic"]) for p in plans.values())),"sales_count":sum(p["count"] for p in plans.values()),"payout_atomic":str(paid),"payout_count":paid_count,"plans":plans,"series":series},"partners":partners,"recent_payouts":recent,"activity":activity(cur,start,now,days),"currency":"USDC","scope":"recorded_sales_only","timezone":"UTC"}
+    from campaign_growth import report as campaign_report
+    return {"campaign_growth":campaign_report(cur,start,now),"alltime":alltime,"period":{"days":days,"start":start.isoformat(),"end":now.isoformat(),"gross_atomic":str(sum(int(p["gross_atomic"]) for p in plans.values())),"sales_count":sum(p["count"] for p in plans.values()),"payout_atomic":str(paid),"payout_count":paid_count,"plans":plans,"series":series},"partners":partners,"recent_payouts":recent,"activity":activity(cur,start,now,days),"currency":"USDC","scope":"recorded_sales_only","timezone":"UTC"}
 
 def founder_report(token,days):
     from partners import owner
