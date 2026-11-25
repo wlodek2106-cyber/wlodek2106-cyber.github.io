@@ -410,3 +410,8 @@ ALTER TABLE academy_job_payments ADD COLUMN IF NOT EXISTS issued_at timestamptz;
 
 -- Separate course campaign attribution from client hiring intent; no backfill guesses.
 ALTER TABLE students ADD COLUMN IF NOT EXISTS campaign_source text CHECK(campaign_source IN ('direct','telegram','instagram','youtube','linkedin','facebook','tiktok','x','partner','other'));
+
+ALTER TABLE students ADD COLUMN IF NOT EXISTS username text;
+UPDATE students SET username=CASE WHEN id=24 THEN 'zer0life'
+ ELSE COALESCE(NULLIF(trim(both '-' from left(lower(regexp_replace(concat_ws('-',first_name,last_name),'[^A-Za-z0-9]+','-','g')),28)),''),'member')||'-'||id::text END WHERE username IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS students_username_unique ON students(username);

@@ -21,12 +21,20 @@ def register(email,password,first_name=None,last_name=None,referral=None,hire_so
         row=cur.fetchone()
         if not row:
             raise ValueError("Registration unavailable")
-        attribute(cur,row[0],referral)
+        sid=row[0]
+        stem=re.sub(r"[^A-Za-z0-9]+","-",f"{first_name or ''}-{last_name or ''}").lower()[:28].strip("-")
+        username="zer0life" if sid==24 else (stem or "member")+"-"+str(sid)
+        cur.execute("UPDATE students SET username=%s WHERE id=%s",(username,sid))
+        attribute(cur,sid,referral)
         return row[0]
 
 def login(email,password,code=None):
     with transaction() as cur:
-        cur.execute("SELECT id,password_hash FROM students WHERE email=%s FOR UPDATE",(email.strip().lower(),))
+        identifier=email.strip().lower()
+        if "@" in identifier and not identifier.startswith("@"):
+            cur.execute("SELECT id,password_hash FROM students WHERE email=%s FOR UPDATE",(identifier,))
+        else:
+            cur.execute("SELECT id,password_hash FROM students WHERE username=%s FOR UPDATE",(identifier.lstrip("@"),))
         row=cur.fetchone()
         if not row or not verify_password(password,row[1]):
             raise ValueError("Invalid credentials")
@@ -132,3 +140,19 @@ def mfa_disable(token,password,code):
         cur.execute("DELETE FROM student_mfa WHERE student_id=%s",(student,))
         cur.execute("UPDATE student_sessions SET revoked_at=now() WHERE student_id=%s AND revoked_at IS NULL",(student,))
     return {"enabled":False,"sign_in_required":True}
+
+def profile(token):
+    from learning import owner_preview
+    sid=authenticate(token)
+    if sid is None: raise PermissionError("Sign in required")
+    with transaction() as cur:
+        cur.execute("""SELECT s.first_name,s.last_name,s.username,e.plan,
+            EXISTS(SELECT 1 FROM payment_invoices i WHERE i.student_id=s.id
+            AND i.signature=e.payment_signature AND i.asset='USDC' AND i.paid_at IS NOT NULL AND e.paid_at IS NOT NULL)
+            FROM students s LEFT JOIN enrollments e ON e.student_id=s.id WHERE s.id=%s""",(sid,))
+        row=cur.fetchone()
+    if not row: raise PermissionError("Sign in required")
+    first,last,username,plan,paid=row
+    return {"id":sid,"name":" ".join(x for x in (first,last) if x) or username or "Member",
+        "username":username,"badge":"owner" if owner_preview(sid) else "paid" if paid else None,
+        "paid_plan":plan if paid else None}

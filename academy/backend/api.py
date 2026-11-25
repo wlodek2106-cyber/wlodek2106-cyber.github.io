@@ -74,10 +74,11 @@ def dispatch(method,path,body,token):
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"],body.get("code"))}
     if path=="/account/me" and method=="GET":
-        from accounts import authenticate
-        student=authenticate(token)
-        if student is None: raise PermissionError("Sign in required")
-        return 200,{"id":student}
+        from accounts import profile
+        return 200,profile(token)
+    if path=="/admin/directory" and method=="POST":
+        from admin import directory
+        return 200,directory(token,body)
     if path in ("/marketing/list","/marketing/campaign","/marketing/post","/marketing/delete") and method=="POST":
         from marketing_studio import dispatch as marketing_dispatch
         return 200,marketing_dispatch(token,path.rsplit("/",1)[1],body)

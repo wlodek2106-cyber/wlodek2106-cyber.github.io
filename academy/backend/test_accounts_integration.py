@@ -47,6 +47,16 @@ class AccountIntegration(unittest.TestCase):
                         accounts.login(email,"wrong-password")
                     token=accounts.login(email,password)
                     self.assertEqual(accounts.authenticate(token),student)
+                    info=accounts.profile(token)
+                    self.assertEqual(info["name"],"Test Student")
+                    self.assertIsNone(info["badge"])
+                    handle_token=accounts.login("@"+info["username"],password)
+                    self.assertEqual(accounts.authenticate(handle_token),student)
+                    accounts.logout(handle_token)
+                    from admin import directory_query
+                    rows=directory_query(cur,{"search":info["username"]})["items"]
+                    self.assertEqual([x["id"] for x in rows],[student])
+                    self.assertIsNone(rows[0]["purchase_atomic"])
                     other=accounts.login(email,password)
                     with self.assertRaises(PermissionError): accounts.change_password(token,"incorrect-password",password+"new")
                     self.assertEqual(accounts.authenticate(token),student)
