@@ -3,6 +3,16 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_free_first_lesson(self):
+        from progression import lesson_available
+        for plan in (None,"starter","pro","vip","elite"):
+            self.assertTrue(lesson_available(1,None,{},self.t,plan))
+            for day in (2,30,31,45):
+                self.assertFalse(lesson_available(day,None,{1:self.t},self.t+timedelta(days=100),plan))
+        self.assertFalse(lesson_available(True,None,{},self.t))
+        self.assertFalse(lesson_available(46,None,{},self.t,"elite"))
+        self.assertTrue(lesson_available(2,self.t,{1:self.t},self.t+timedelta(days=1),"starter"))
+        self.assertFalse(lesson_available(2,self.t,{1:self.t-timedelta(days=4)},self.t,"starter"))
     def test_elite_program(self):
         from elite_program import PROJECTS, unlocked, access
         from unittest.mock import patch
