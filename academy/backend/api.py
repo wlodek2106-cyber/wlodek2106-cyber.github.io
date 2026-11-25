@@ -168,7 +168,7 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/pro/library" and method=="GET":
         p=student_progress(token)
-        if not p.get("access") or p.get("plan") not in ("pro","vip"):
+        if not p.get("access") or p.get("plan") not in ("pro","vip","elite"):
             raise PermissionError("Pro or VIP required")
         return 200,{"items":json.loads(Path(__file__).with_name("pro_library.json").read_text()),"language":"en"}
     if path=="/portfolio/review" and method=="POST":
@@ -256,9 +256,18 @@ def dispatch(method,path,body,token):
     if path=="/adaptive/plan" and method=="GET":
         from adaptive import student_plan
         return 200,student_plan(token)
+    if path=="/elite/projects" and method=="GET":
+        from elite_program import catalog
+        return 200,catalog(token,"en")
+    if path=="/elite/projects" and method=="POST":
+        from elite_program import catalog
+        return 200,catalog(token,body.get("lang","en"))
+    if path=="/elite/projects/save" and method=="POST":
+        from elite_program import save
+        return 200,save(token,body.get("project"),body.get("evidence"))
     if path=="/creator-2027" and method=="GET":
         progress=student_progress(token)
-        if not progress.get("access") or progress.get("plan")!="vip":
+        if not progress.get("access") or progress.get("plan") not in ("vip","elite"):
             raise PermissionError("VIP access required")
         return 200,{"tracks":[{"id":t["id"],"title":t["title"],"day":t["day"],"unlocked":progress["lessons"][t["day"]-1]["unlocked"]} for t in TRACKS]}
     if path=="/progress" and method=="GET":
