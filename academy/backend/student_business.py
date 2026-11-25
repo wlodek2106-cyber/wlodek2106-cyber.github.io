@@ -67,12 +67,35 @@ def save_order(cur,sid,b):
     row=cur.fetchone()
     if not row: raise PermissionError("Order unavailable")
     return {"id":row[0]}
+def import_job(cur,sid,b):
+    """Copy a selected marketplace order once; leave manual amounts untouched."""
+    jid=ident(b["job_id"])
+    cur.execute("SELECT id FROM students WHERE id=%s FOR UPDATE",(sid,))
+    if not cur.fetchone(): raise PermissionError()
+    cur.execute("""SELECT j.title,j.status,a.quote_cents FROM academy_jobs j
+        JOIN academy_job_applications a ON a.job_id=j.id AND a.id=j.selected_application
+        JOIN enrollments e ON e.student_id=a.student_id AND e.paid_at IS NOT NULL
+        WHERE j.id=%s AND a.student_id=%s AND j.status IN ('assigned','delivered','completed')""",(jid,sid))
+    row=cur.fetchone()
+    if not row: raise PermissionError("Selected job required")
+    title,status,quote=row
+    cur.execute("SELECT id FROM business_orders WHERE student_id=%s AND source_job_id=%s",(sid,jid))
+    existing=cur.fetchone()
+    if existing: return {"id":existing[0],"created":False}
+    if b.get("client_id") is None:
+        client=save_client(cur,sid,{"name":clean(b["client_name"],120,True)})["id"]
+    else:
+        client=ident(b["client_id"])
+    result=save_order(cur,sid,{"client_id":client,"title":title,"status":"delivered" if status in ("delivered","completed") else "in_progress","agreed":f"{quote//100}.{quote%100:02d}","received":"0","expense":"0","notes":""})
+    cur.execute("UPDATE business_orders SET source_job_id=%s WHERE id=%s AND student_id=%s",(jid,result["id"],sid))
+    return {"id":result["id"],"created":True}
+
 def overview(cur,sid):
     cur.execute("SELECT id,name,contact,notes FROM business_clients WHERE student_id=%s ORDER BY id DESC",(sid,))
     clients=[dict(zip(("id","name","contact","notes"),r)) for r in cur.fetchall()]
-    cur.execute("""SELECT id,client_id,title,status,due,agreed_cents,received_cents,expense_cents,notes FROM business_orders WHERE student_id=%s ORDER BY id DESC""",(sid,))
+    cur.execute("""SELECT id,client_id,title,status,due,agreed_cents,received_cents,expense_cents,notes,source_job_id FROM business_orders WHERE student_id=%s ORDER BY id DESC""",(sid,))
     rows=cur.fetchall()
-    orders=[{"id":i,"client_id":c,"title":t,"status":s,"due":d.isoformat() if d else "","agreed_cents":a,"received_cents":r,"expense_cents":e,"notes":n} for i,c,t,s,d,a,r,e,n in rows]
+    orders=[{"id":i,"client_id":c,"title":t,"status":s,"due":d.isoformat() if d else "","agreed_cents":a,"received_cents":r,"expense_cents":e,"notes":n,"source_job_id":j} for i,c,t,s,d,a,r,e,n,j in rows]
     return {"clients":clients,"orders":orders,"totals":totals((r[3],r[5],r[6],r[7]) for r in rows),"currency":"USD","manual":True}
 def delete(cur,sid,kind,id):
     id=ident(id)
@@ -93,5 +116,6 @@ def dispatch(token,action,b):
         if action=="overview": return overview(cur,sid)
         if action=="client": return save_client(cur,sid,b)
         if action=="order": return save_order(cur,sid,b)
+        if action=="import-job": return import_job(cur,sid,b)
         if action=="delete": return delete(cur,sid,b["kind"],b["id"])
         raise ValueError("Invalid action")

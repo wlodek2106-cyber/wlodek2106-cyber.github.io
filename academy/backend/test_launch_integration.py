@@ -227,6 +227,17 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
                 self.assertTrue(business_delete(cur,buyer_id,"order",oid)["deleted"])
                 self.assertTrue(business_delete(cur,buyer_id,"client",cid)["deleted"])
+                from student_business import import_job
+                with self.assertRaises(PermissionError): import_job(cur,partner_id,{"job_id":jid,"client_name":"No access"})
+                imported=import_job(cur,buyer_id,{"job_id":jid,"client_name":"Marketplace test client"})
+                self.assertTrue(imported["created"])
+                result=business_overview(cur,buyer_id)
+                item=result["orders"][0]
+                self.assertEqual((item["source_job_id"],item["agreed_cents"],item["received_cents"],item["expense_cents"],item["status"]),(jid,14000,0,0,"delivered"))
+                save_order(cur,buyer_id,{"id":item["id"],"client_id":item["client_id"],"title":item["title"],"status":"delivered","agreed":"140","received":"50","expense":"20"})
+                self.assertEqual(import_job(cur,buyer_id,{"job_id":jid,"client_name":"Not duplicated"}),{"id":item["id"],"created":False})
+                self.assertEqual(business_overview(cur,buyer_id)["totals"]["cash_margin_cents"],"3000")
+                self.assertEqual(len(business_overview(cur,buyer_id)["clients"]),1)
                 from knowledge import save as note_save,list_notes,remove as note_remove,public_text
                 note=note_save(cur,buyer_id,{"title":"Test note","content":"Local AI notes","tag":"AI"})
                 self.assertEqual(list_notes(cur,buyer_id,"local")["items"][0]["id"],note["id"])

@@ -387,3 +387,6 @@ CREATE TABLE IF NOT EXISTS academy_notifications (
 );
 CREATE INDEX IF NOT EXISTS academy_notifications_student ON academy_notifications(student_id,id DESC);
 CREATE INDEX IF NOT EXISTS academy_notifications_unread ON academy_notifications(student_id,created_at) WHERE read_at IS NULL;
+
+ALTER TABLE business_orders ADD COLUMN IF NOT EXISTS source_job_id bigint REFERENCES academy_jobs(id) ON DELETE SET NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS business_orders_source_job ON business_orders(student_id,source_job_id) WHERE source_job_id IS NOT NULL;

@@ -187,7 +187,7 @@ def dispatch(method,path,body,token):
     if path=="/business" and method=="GET":
         from student_business import dispatch as business
         return 200,business(token,"overview",{})
-    if path in ("/business/client","/business/order","/business/delete") and method=="POST":
+    if path in ("/business/client","/business/order","/business/delete","/business/import-job") and method=="POST":
         from student_business import dispatch as business
         return 200,business(token,path.rsplit("/",1)[1],body)
     if path=="/career/profile" and method=="GET":
