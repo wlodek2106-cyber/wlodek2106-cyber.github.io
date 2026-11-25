@@ -67,6 +67,9 @@ jobs:
       - name: Marketing export unit tests
         run: node academy/tests/marketing_export.cjs
 
+      - name: Marketing draft unit tests
+        run: node academy/tests/marketing_draft.cjs
+
       - name: Local media browser smoke test
         run: node academy/tests/media_smoke.cjs
 
