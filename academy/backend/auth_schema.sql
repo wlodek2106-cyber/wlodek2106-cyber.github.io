@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS certificates (
 CREATE TABLE IF NOT EXISTS payment_invoices (
  id uuid PRIMARY KEY,
  student_id bigint NOT NULL REFERENCES students(id),
- plan text NOT NULL CHECK(plan IN ('starter','pro','vip')),
+ plan text NOT NULL CHECK(plan IN ('starter','pro','vip','elite')),
  asset text NOT NULL CHECK(asset IN ('USDC','SOL')),
  amount_atomic bigint NOT NULL CHECK(amount_atomic>0),
  reference text UNIQUE NOT NULL,
@@ -437,3 +437,7 @@ CREATE TABLE IF NOT EXISTS passkey_challenges (
     OR (purpose='login' AND student_id IS NULL AND session_digest IS NULL))
 );
 CREATE INDEX IF NOT EXISTS passkey_challenges_expiry_idx ON passkey_challenges(expires_at);
+
+ALTER TABLE payment_invoices DROP CONSTRAINT IF EXISTS payment_invoices_plan_check;
+ALTER TABLE payment_invoices ADD CONSTRAINT payment_invoices_plan_check CHECK(plan IN ('starter','pro','vip','elite'));
+CREATE TABLE IF NOT EXISTS elite_projects (student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE, project text NOT NULL CHECK(project IN ('humans','film','agents','teacher','business')), evidence text NOT NULL CHECK(char_length(evidence) BETWEEN 30 AND 4000), updated_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(student_id,project));
