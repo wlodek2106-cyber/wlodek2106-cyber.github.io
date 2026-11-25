@@ -149,7 +149,7 @@ def dispatch(method,path,body,token):
         return 200,{"ok":True}
     if path=="/pro/library" and method=="GET":
         p=student_progress(token)
-        if not p.get("paid") or p.get("plan") not in ("pro","vip"):
+        if not p.get("access") or p.get("plan") not in ("pro","vip"):
             raise PermissionError("Pro or VIP required")
         return 200,{"items":json.loads(Path(__file__).with_name("pro_library.json").read_text()),"language":"en"}
     if path=="/portfolio/review" and method=="POST":

@@ -21,7 +21,7 @@ def overview(token):
     from learning import student_progress
     from portfolio import list_projects
     p=student_progress(token)
-    if not p["paid"]: raise PermissionError("Paid enrollment required")
+    if not p["access"]: raise PermissionError("Paid enrollment required")
     projects=list_projects(token)["items"]
     return {"plan":p["plan"],"completed":sum(x["completed"] for x in p["lessons"]),"total":len(p["lessons"]),
             "projects":[{"id":x["id"],"lesson":x["lesson"],"submission":x["submission"],"score":x["score"]} for x in projects],
@@ -29,7 +29,7 @@ def overview(token):
 
 def estimate(token,body):
     from learning import student_progress
-    if not student_progress(token)["paid"]: raise PermissionError("Paid enrollment required")
+    if not student_progress(token)["access"]: raise PermissionError("Paid enrollment required")
     return quote(body["hours"],body["rate"],body["expenses"],body["buffer"])
 
 PROFILE_FIELDS=("name","headline","summary","skills","tools","languages")
@@ -50,7 +50,7 @@ def accelerator_data(cur,sid,completed,total):
     from career_profile import load
     profile=load(cur,sid)
     cur.execute("""SELECT count(*) FROM project_submissions p JOIN enrollments e ON e.id=p.enrollment_id
-        WHERE e.student_id=%s AND e.paid_at IS NOT NULL""",(sid,))
+        WHERE e.student_id=%s AND (e.paid_at IS NOT NULL OR %s)""",(sid, __import__("learning").owner_preview(sid)))
     projects=cur.fetchone()[0]
     cur.execute("SELECT status FROM marketplace_services WHERE student_id=%s",(sid,))
     row=cur.fetchone()

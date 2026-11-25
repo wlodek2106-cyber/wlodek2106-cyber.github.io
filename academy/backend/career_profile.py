@@ -11,7 +11,7 @@ def identity(token):
     from accounts import authenticate
     from learning import student_progress
     sid=authenticate(token)
-    if sid is None or not student_progress(token)["paid"]:
+    if sid is None or not student_progress(token)["access"]:
         raise PermissionError("Paid enrollment required")
     return sid
 def load(cur,sid):

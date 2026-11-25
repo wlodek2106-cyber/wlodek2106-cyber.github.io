@@ -55,11 +55,11 @@ def student_plan(token,minutes=None):
     student=authenticate(token)
     if student is None: raise PermissionError("Sign in required")
     p=student_progress(token)
-    if not p["paid"]: raise PermissionError("Paid enrollment required")
+    if not p["access"]: raise PermissionError("Paid enrollment required")
     with transaction() as cur:
         cur.execute("""SELECT a.lesson,a.score FROM quiz_attempts a
         JOIN enrollments e ON e.id=a.enrollment_id
-        WHERE e.student_id=%s AND e.paid_at IS NOT NULL
-        ORDER BY a.attempted_at DESC,a.id DESC LIMIT 500""",(student,))
+        WHERE e.student_id=%s AND (e.paid_at IS NOT NULL OR %s)
+        ORDER BY a.attempted_at DESC,a.id DESC LIMIT 500""",(student,p.get("owner_preview",False)))
         attempts=cur.fetchall()
     return recommend(p["lessons"],attempts) if minutes is None else weekly_plan(p["lessons"],attempts,minutes)

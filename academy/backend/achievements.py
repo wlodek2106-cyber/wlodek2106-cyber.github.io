@@ -19,12 +19,12 @@ def student_achievements(token):
     student=authenticate(token)
     if student is None: raise PermissionError("Sign in required")
     p=student_progress(token)
-    if not p["paid"]: raise PermissionError("Paid enrollment required")
+    if not p["access"]: raise PermissionError("Paid enrollment required")
     with transaction() as cur:
         cur.execute("""SELECT p.score FROM lesson_progress p JOIN enrollments e ON e.id=p.enrollment_id
-            WHERE e.student_id=%s AND e.paid_at IS NOT NULL""",(student,))
+            WHERE e.student_id=%s AND (e.paid_at IS NOT NULL OR %s)""",(student,p.get("owner_preview",False)))
         scores=[r[0] for r in cur.fetchall()]
         cur.execute("""SELECT count(*) FROM project_submissions p JOIN enrollments e ON e.id=p.enrollment_id
-            WHERE e.student_id=%s AND e.paid_at IS NOT NULL""",(student,))
+            WHERE e.student_id=%s AND (e.paid_at IS NOT NULL OR %s)""",(student,p.get("owner_preview",False)))
         count=cur.fetchone()[0]
     return calculate(p["lessons"],scores,count)

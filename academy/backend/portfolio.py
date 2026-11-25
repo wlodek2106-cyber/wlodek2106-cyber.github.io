@@ -1,6 +1,6 @@
 from accounts import authenticate
 from database import transaction
-from learning import require_lesson
+from learning import require_lesson, owner_preview, ensure_preview_enrollment
 
 def save(token,day,submission):
     require_lesson(token,day)
@@ -9,7 +9,9 @@ def save(token,day,submission):
     if not isinstance(submission,str) or not 1<=len(submission.strip())<=8000:
         raise ValueError("Submission must contain 1–8000 characters")
     with transaction() as cur:
-        cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND paid_at IS NOT NULL FOR UPDATE",(student,))
+        if owner_preview(student):
+            ensure_preview_enrollment(cur,student)
+        cur.execute("SELECT id FROM enrollments WHERE student_id=%s AND (paid_at IS NOT NULL OR %s) FOR UPDATE",(student,owner_preview(student)))
         row=cur.fetchone()
         if not row: raise PermissionError("Enrollment required")
         eid=row[0]
