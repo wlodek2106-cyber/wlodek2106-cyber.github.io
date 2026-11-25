@@ -187,6 +187,37 @@ class ProgressTests(unittest.TestCase):
             self.assertIn("onchain_duplicate_prevention",readiness()["blockers"])
         with patch.dict("os.environ",{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"false"}):
             self.assertFalse(enabled())
+    def test_marketplace_contract_receipt_fixture(self):
+        from marketplace_contract_preview import instruction_data,receipt_data,receipt_matches,candidate_matches,SYSTEM
+        from marketplace_split import ALPHABET,TOKEN
+        from payment_policy import TREASURY,USDC_MINT
+        import base64,copy
+        def enc(b):
+            n=int.from_bytes(b,"big");out=""
+            while n:
+                n,i=divmod(n,58);out=ALPHABET[i]+out
+            return "1"*(len(b)-len(b.lstrip(bytes([0]))))+out
+        payer,recipient,ref,program,pda,src,dst,fee=[enc(bytes([i])*32) for i in range(11,19)]
+        sig=enc(bytes([19])*64);cents=100000
+        account={"owner":program,"executable":False,"lamports":10000000,"data":[base64.b64encode(receipt_data(payer,ref,recipient,cents)).decode(),"base64"]}
+        self.assertTrue(receipt_matches(account,program,payer,ref,recipient,cents))
+        self.assertFalse(receipt_matches(account,program,payer,ref,recipient,cents+1))
+        keys=[payer,pda,src,dst,fee,USDC_MINT,TOKEN,SYSTEM,program]
+        def bal(j,owner,n):return {"accountIndex":j,"owner":owner,"mint":USDC_MINT,"uiTokenAmount":{"decimals":6,"amount":str(n)}}
+        def transfer(j,n):return {"programIdIndex":6,"accounts":[2,5,j,0],"data":enc(bytes([12])+n.to_bytes(8,"little")+bytes([6]))}
+        tx={"blockTime":int(self.t.timestamp()),"transaction":{"signatures":[sig],"message":{"accountKeys":keys,"header":{"numRequiredSignatures":1,"numReadonlySignedAccounts":0,"numReadonlyUnsignedAccounts":4},"instructions":[{"programIdIndex":8,"accounts":[0,1,2,3,4,5,6,7],"data":enc(instruction_data(ref,recipient,cents))}]}},"meta":{"err":None,"innerInstructions":[{"index":0,"instructions":[transfer(3,950000000),transfer(4,50000000)]}],"preTokenBalances":[bal(2,payer,1000000000),bal(3,recipient,0),bal(4,TREASURY,0)],"postTokenBalances":[bal(2,payer,0),bal(3,recipient,950000000),bal(4,TREASURY,50000000)]}}
+        def valid(t=tx,a=account):return candidate_matches(t,a,program,pda,sig,payer,recipient,ref,cents,self.t)
+        self.assertTrue(valid())
+        for change in ("wrong_fee","wrong_program","wrong_pda","no_cpi","bad_signer","failed"):
+            t=copy.deepcopy(tx)
+            if change=="wrong_fee":t["meta"]["innerInstructions"][0]["instructions"][1]=transfer(4,49999999)
+            elif change=="wrong_program":t["transaction"]["message"]["instructions"][0]["programIdIndex"]=6
+            elif change=="wrong_pda":t["transaction"]["message"]["accountKeys"][1]=ref
+            elif change=="no_cpi":t["meta"]["innerInstructions"]=[]
+            elif change=="bad_signer":t["transaction"]["message"]["header"]["numRequiredSignatures"]=2
+            else:t["meta"]["err"]={"failed":True}
+            self.assertFalse(valid(t),change)
+        self.assertFalse(valid(a={**account,"owner":SYSTEM}))
     def test_private_preflight(self):
         from content_vault import preflight
         valid={"title":"Original lesson","theory":"Independent example","assignment":"Test task","prompts":[]}
