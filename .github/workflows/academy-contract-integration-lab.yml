@@ -11,16 +11,29 @@ permissions:
 jobs:
   offline-abi:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Install isolated lab SDK
-        run: python -m pip install --only-binary=:all: -r academy/contract-integration-lab/requirements.txt
+        run: |
+          python -m pip install --only-binary=:all: -r academy/contract-integration-lab/requirements.txt
       - name: Test PDA and unsigned transaction ABI
         working-directory: academy/contract-integration-lab
         env:
           PYTHONPATH: ../backend
         run: python -m unittest -v test_contract_lab
+
+      - name: Compare Rust program PDA with Python SDK
+        working-directory: academy/contract-integration-lab
+        env:
+          PYTHONPATH: ../backend
+          CARGO_PROFILE_DEV_DEBUG: '0'
+        run: |
+          set -euo pipefail
+          cargo run --quiet --manifest-path rust-vector/Cargo.toml > "$RUNNER_TEMP/rust-pda.txt"
+          python vectors.py > "$RUNNER_TEMP/python-pda.txt"
+          diff -u "$RUNNER_TEMP/rust-pda.txt" "$RUNNER_TEMP/python-pda.txt"
+          cat "$RUNNER_TEMP/python-pda.txt"
