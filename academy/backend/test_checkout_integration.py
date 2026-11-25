@@ -16,15 +16,24 @@ class CheckoutIntegration(unittest.TestCase):
                 @contextmanager
                 def shared():
                     yield cur
-                with patch.object(accounts,"transaction",shared), patch.object(checkout,"transaction",shared), patch.dict(os.environ,{"ACADEMY_PAYMENTS_ENABLED":"true"}):
+                with patch.object(accounts,"transaction",shared), patch.object(checkout,"transaction",shared), patch.dict(os.environ,{"ACADEMY_PAYMENTS_ENABLED":"true","ACADEMY_CHECKOUT_READY":"true"}):
                     email=f"checkout-{uuid.uuid4().hex}@example.invalid"
                     password="Test-only-"+uuid.uuid4().hex
                     student=accounts.register(email,password)
                     token=accounts.login(email,password)
+                    with patch.dict(os.environ,{"ACADEMY_CHECKOUT_READY":"false"}):
+                        with self.assertRaises(PermissionError):
+                            checkout.create_invoice(token,"starter")
+                        self.assertIsNone(checkout.active_invoice(token)["invoice"])
                     invoice=checkout.create_invoice(token,"starter")
                     self.assertEqual(invoice["amount_atomic"],199000000)
                     self.assertTrue(invoice["url"].startswith("solana:"))
                     self.assertEqual(checkout.active_invoice(token)["invoice"],invoice)
+                    # Existing invoices remain recoverable even when new issuance is closed.
+                    with patch.dict(os.environ,{"ACADEMY_CHECKOUT_READY":"false"}):
+                        self.assertEqual(checkout.active_invoice(token)["invoice"],invoice)
+                        with self.assertRaises(PermissionError):
+                            checkout.create_invoice(token,"pro")
                     with self.assertRaises(ValueError):
                         checkout.create_invoice(token,"vip")
                     cur.execute("DELETE FROM payment_invoices WHERE student_id=%s",(student,))

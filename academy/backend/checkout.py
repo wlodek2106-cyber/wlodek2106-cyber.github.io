@@ -1,4 +1,5 @@
 import secrets
+import os
 import uuid
 from accounts import authenticate
 from database import transaction
@@ -20,6 +21,8 @@ def create_invoice(token,plan):
     student=authenticate(token)
     if student is None:
         raise PermissionError("Authentication required")
+    if os.getenv("ACADEMY_CHECKOUT_READY")!="true":
+        raise PermissionError("Checkout not ready")
     quote(plan,"USDC")
     ref=reference_key()
     invoice=str(uuid.uuid4())

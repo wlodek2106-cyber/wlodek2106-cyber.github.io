@@ -37,6 +37,7 @@ class LaunchIntegration(unittest.TestCase):
                 buyer=accounts.login("buyer-"+suffix+"@example.invalid",password)
                 self.assertFalse(learning.student_progress(buyer)["paid"])
                 with self.assertRaises(PermissionError): reviews.publish(buyer,5,"Test review only",True)
+                self.assertEqual(checkout.prices(partner)["discount_percent"],0)
                 invoice=checkout.create_invoice(buyer,"starter")
                 with patch.object(settlement,"verify_usdc",return_value=False):
                     with self.assertRaises(ValueError): settlement.settle(buyer,invoice["id"],"test-"+suffix)
@@ -52,6 +53,9 @@ class LaunchIntegration(unittest.TestCase):
                     self.assertTrue(settlement.settle(buyer,invoice["id"],"test-"+suffix)["paid"])
                     self.assertTrue(settlement.settle(buyer,invoice["id"],"test-"+suffix)["paid"])
                 self.assertTrue(learning.student_progress(buyer)["paid"])
+                self.assertEqual(checkout.prices(partner)["discount_percent"],5)
+                self.assertEqual(checkout.prices(partner)["prices"]["starter"],189050000)
+                self.assertEqual(checkout.prices(buyer)["discount_percent"],0)
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["unlocked"])
                 with self.assertRaises(PermissionError): learning.require_lesson(buyer,2)
                 bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(LESSON["questions"])]
@@ -216,6 +220,15 @@ class LaunchIntegration(unittest.TestCase):
                 cur.execute("SELECT status,amount_atomic FROM influencer_payouts WHERE id=%s",(req["id"],))
                 self.assertEqual(cur.fetchone(),("paid",59700000))
                 self.assertEqual(network_admin.query(cur,parent=partner_id)["items"][0]["id"],buyer_id)
+                with patch("database.transaction",shared):
+                    for denied in (None,partner,buyer):
+                        with self.assertRaises(PermissionError):
+                            network_admin.network(denied,{"parent":partner_id})
+                    tree=network_admin.network(owner,{"parent":partner_id})
+                    self.assertEqual(tree["items"][0]["id"],buyer_id)
+                    self.assertEqual(tree["items"][0]["parent_id"],partner_id)
+                    self.assertTrue(tree["items"][0]["paid"])
+                    self.assertEqual(tree["items"][0]["usdc_atomic"],"199000000")
                 report=founder.report(cur,7)
                 self.assertIn("after_all_commissions_atomic",report["alltime"])
                 self.assertEqual(len(report["activity"]["series"]),7)
