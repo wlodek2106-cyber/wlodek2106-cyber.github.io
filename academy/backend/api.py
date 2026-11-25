@@ -3,6 +3,7 @@ from accounts import register,login,logout
 from learning import student_progress,require_lesson
 from database import ready
 from lesson01 import public_lesson
+from vip_creator_labs import supplement as vip_creator_supplement
 import json
 from pathlib import Path
 
@@ -392,7 +393,7 @@ def dispatch(method,path,body,token):
         from content_vault import get
         private=get("lesson",day,lang)
         if private:
-            return 200,{"day":day,**private["content"],"content_language":private["language"],"prompts_language":private["language"]}
+            return 200,vip_creator_supplement({"day":day,**private["content"],"content_language":private["language"],"prompts_language":private["language"]},day,lang)
         if day==1:
             lesson=public_lesson()
             localized=json.loads(Path(__file__).with_name("lesson01_translations.json").read_text())
@@ -404,7 +405,7 @@ def dispatch(method,path,body,token):
             localized=json.loads(Path(__file__).with_name("vip_translations.json").read_text())
             if lang in localized:
                 lesson.update(next(x for x in localized[lang] if x["day"]==day))
-            return 200,{**{k:v for k,v in lesson.items() if k!="questions"},"content_language":lang if lang in localized else "en","prompts_language":"en"}
+            return 200,vip_creator_supplement({**{k:v for k,v in lesson.items() if k!="questions"},"content_language":lang if lang in localized else "en","prompts_language":"en"},day,lang)
         filename="lessons02_06.json" if day<=6 else "lessons07_30.json"
         lessons=json.loads(Path(__file__).with_name(filename).read_text())
         lesson=next(item for item in lessons if item["day"]==day)
