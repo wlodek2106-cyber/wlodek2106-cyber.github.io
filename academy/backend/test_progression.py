@@ -137,8 +137,19 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(raw[69:101],decode58(payer))
         ix=raw[65+4+7*32+32:]
         self.assertEqual(ix[0],2)
-        self.assertEqual(int.from_bytes(ix[9:17],"little"),950000000)
-        self.assertEqual(int.from_bytes(ix[27:35],"little"),50000000)
+        pos=1
+        amounts=[]
+        for destination in (2,3):
+            program,n=ix[pos:pos+2];pos+=2
+            self.assertEqual(program,6)
+            self.assertEqual(n,5)
+            self.assertEqual(list(ix[pos:pos+n]),[1,4,destination,0,5]);pos+=n
+            size=ix[pos];pos+=1
+            data=ix[pos:pos+size];pos+=size
+            self.assertEqual((size,data[0],data[-1]),(10,12,6))
+            amounts.append(int.from_bytes(data[1:9],"little"))
+        self.assertEqual(pos,len(ix))
+        self.assertEqual(amounts,[950000000,50000000])
         self.assertTrue(pay_url(ref).endswith(ref))
         with self.assertRaises(ValueError): unsigned(payer,src,d1,d1,ref,100000)
         with patch("marketplace_tx.rpc",return_value={"value":[]}):

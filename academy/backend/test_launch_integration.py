@@ -360,6 +360,94 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(save(cur,owner_id,"exam",1,"en",private_bank)["revision"],1)
                 self.assertEqual(load(cur,"exam",1,"en")["content"],private_bank)
                 self.assertGreaterEqual(inventory(cur)["coverage"]["en"]["exam"]["count"],1)
+                # Isolated split checkout lifecycle, after all earlier marketplace assertions.
+                # No network calls, signing, real funds or changes retained in production.
+                import marketplace_payments as mp
+                from marketplace_split import ALPHABET,decode58,TOKEN
+                from marketplace_tx import unsigned
+                from payment_policy import TREASURY,USDC_MINT
+                import base64
+                def enc(raw):
+                    n=int.from_bytes(raw,"big");out=""
+                    while n:
+                        n,i=divmod(n,58);out=ALPHABET[i]+out
+                    return "1"*(len(raw)-len(raw.lstrip(bytes([0]))))+out
+                payer,recipient,src,d1,d2=[enc(bytes([i])*32) for i in range(11,16)]
+                sig=enc(bytes([21])*64)
+                other_sig=enc(bytes([22])*64)
+                cur.execute("CREATE TEMP TABLE academy_job_payments (LIKE academy.academy_job_payments INCLUDING ALL) ON COMMIT DROP")
+                cur.execute("CREATE TEMP TABLE academy_job_payment_wallets (LIKE academy.academy_job_payment_wallets INCLUDING ALL) ON COMMIT DROP")
+                baseline=mp.treasury_report(cur)
+                with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"true"}),patch.object(mp,"transaction",shared):
+                    split_job=job_create(cur,partner_id,{**job,"title":"Synthetic split checkout"})["id"]
+                    job_moderate(cur,owner_id,{"id":split_job,"action":"open"})
+                    split_aid=job_apply(cur,buyer_id,{**bid,"id":split_job,"quote":"1000"})["id"]
+                    job_transition(cur,partner_id,{"id":split_job,"action":"select","application":split_aid})
+                    with self.assertRaises(PermissionError): mp.wallet(cur,partner_id,{"id":split_job,"wallet":recipient,"confirm":True})
+                    mp.wallet(cur,buyer_id,{"id":split_job,"wallet":recipient,"confirm":True})
+                    args={"id":split_job,"payer":payer,"recipient":recipient,"confirm":True}
+                    with self.assertRaises(PermissionError): mp.create(cur,partner_id,args)
+                    handoff(cur,buyer_id,{"id":split_job,"action":"deliver","body":"Synthetic delivery"})
+                    with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":split_job,"action":"complete"})
+                    with self.assertRaises(PermissionError): mp.create(cur,buyer_id,args)
+                    p=mp.create(cur,partner_id,args)
+                    first_ref=p["invoice"]["reference"]
+                    with self.assertRaises(PermissionError): mp.cancel_unissued(cur,buyer_id,{"id":split_job,"confirm":True})
+                    self.assertTrue(mp.cancel_unissued(cur,partner_id,{"id":split_job,"confirm":True})["cancelled"])
+                    with self.assertRaises(PermissionError): mp.request_transaction(first_ref,"GET",{})
+                    p=mp.create(cur,partner_id,args)
+                    ref=p["invoice"]["reference"]
+                    self.assertNotEqual(ref,first_ref)
+                    self.assertEqual((p["gross_atomic"],p["fee_atomic"],p["freelancer_atomic"]),(1000000000,50000000,950000000))
+                    self.assertEqual(mp.create(cur,partner_id,args)["invoice"]["reference"],ref)
+                    self.assertIsNone(mp.preview(cur,buyer_id,{"id":split_job})["invoice"]["reference"])
+                    with self.assertRaises(ValueError): mp.wallet(cur,buyer_id,{"id":split_job,"wallet":payer,"confirm":True})
+                    with self.assertRaises(PermissionError): handoff(cur,partner_id,{"id":split_job,"action":"revise","body":"Locked"})
+                    self.assertTrue(mp.qr(partner,{"id":split_job})["url"].endswith(ref))
+                    with self.assertRaises(PermissionError): mp.qr(buyer,{"id":split_job})
+                    self.assertIn("label",mp.request_transaction(ref,"GET",{}))
+                    with self.assertRaises(PermissionError): mp.request_transaction(ref,"POST",{"account":recipient})
+                    expected=unsigned(payer,src,d1,d2,ref,100000)
+                    with patch("marketplace_tx.build",return_value=expected):
+                        result=mp.request_transaction(ref,"POST",{"account":payer})
+                        self.assertEqual(result["transaction"],expected)
+                        with self.assertRaises(PermissionError): mp.request_transaction(ref,"POST",{"account":payer})
+                    with self.assertRaises(ValueError): mp.cancel_unissued(cur,partner_id,{"id":split_job,"confirm":True})
+                    cur.execute("SELECT issued_at FROM academy_job_payments WHERE job_id=%s",(split_job,))
+                    issued=cur.fetchone()[0]
+                    keys=[payer,src,d1,d2,USDC_MINT,ref,TOKEN]
+                    def ix(dst,amt):
+                        return {"programIdIndex":6,"accounts":[1,4,dst,0,5],"data":enc(bytes([12])+amt.to_bytes(8,"little")+bytes([6]))}
+                    def bal(i,owner,n):
+                        return {"accountIndex":i,"owner":owner,"mint":USDC_MINT,"uiTokenAmount":{"amount":str(n),"decimals":6}}
+                    tx={"blockTime":int(issued.timestamp())+1,"transaction":{"signatures":[sig],"message":{"accountKeys":keys,"header":{"numRequiredSignatures":1,"numReadonlySignedAccounts":0,"numReadonlyUnsignedAccounts":3},"instructions":[ix(2,950000000),ix(3,50000000)]}},"meta":{"err":None,"preTokenBalances":[bal(1,payer,1000000000),bal(2,recipient,0),bal(3,TREASURY,0)],"postTokenBalances":[bal(1,payer,0),bal(2,recipient,950000000),bal(3,TREASURY,50000000)]}}
+                    def fake_rpc(method,params):
+                        if method=="getSignaturesForAddress":
+                            return [{"signature":sig,"confirmationStatus":"finalized","err":None}]
+                        return tx
+                    with patch.object(mp,"reconcile_rpc",fake_rpc):
+                        self.assertEqual(mp.reconcile(partner,{"id":split_job})["matches"],[sig])
+                        self.assertEqual(mp.reconcile(owner,{"id":split_job},True)["status"],"candidate")
+                        with self.assertRaises(PermissionError): mp.reconcile(owner,{"id":split_job})
+                    import copy
+                    invalid=copy.deepcopy(tx)
+                    invalid["meta"]["postTokenBalances"][2]["uiTokenAmount"]["amount"]="49999999"
+                    def verify_fixture(s,p,r,ref,c,at):
+                        return mp.matches(invalid,s,p,r,ref,c,at)
+                    with patch.object(mp,"verify_chain",verify_fixture):
+                        with self.assertRaises(ValueError): mp.settle(partner,{"id":split_job,"signature":sig})
+                    self.assertFalse(mp.preview(cur,partner_id,{"id":split_job})["invoice"]["paid_at"])
+                    # Closing new issuance must not prevent recording an already issued payment.
+                    with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"false"}),patch.object(mp,"verify_chain",lambda s,p,r,f,c,t:mp.matches(tx,s,p,r,f,c,t)):
+                        with self.assertRaises(PermissionError): mp.settle(buyer,{"id":split_job,"signature":sig})
+                        self.assertTrue(mp.settle(partner,{"id":split_job,"signature":sig})["paid"])
+                        self.assertTrue(mp.settle(partner,{"id":split_job,"signature":sig})["paid"])
+                        with self.assertRaises(ValueError): mp.settle(partner,{"id":split_job,"signature":other_sig})
+                    self.assertEqual(job_transition(cur,partner_id,{"id":split_job,"action":"complete"})["status"],"completed")
+                    after=mp.treasury_report(cur)
+                    self.assertEqual(after["paid_count"]-baseline["paid_count"],1)
+                    self.assertEqual(int(after["gross_atomic"])-int(baseline["gross_atomic"]),1000000000)
+                    self.assertEqual(int(after["fee_atomic"])-int(baseline["fee_atomic"]),50000000)
                 raise Rollback()
         except Rollback:
             pass

@@ -56,6 +56,14 @@ def create(cur,sid,b):
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",(jid,client,worker,payer,recipient,TREASURY,reference_key(),cents))
     return preview(cur,sid,b)
 
+def cancel_unissued(cur,sid,b):
+    jid=ident(b["id"])
+    client,worker,status,_,mode=job_info(cur,sid,jid,True)
+    if sid!=client or mode!="split" or status!="delivered" or b.get("confirm") is not True: raise PermissionError()
+    cur.execute("DELETE FROM academy_job_payments WHERE job_id=%s AND issued_at IS NULL AND paid_at IS NULL RETURNING job_id",(jid,))
+    if not cur.fetchone(): raise ValueError("Issued request cannot be cancelled; reconcile first")
+    return {"cancelled":True}
+
 def request_info(cur,reference,account=None):
     if not enabled(): raise PermissionError("Marketplace payments closed")
     reference=key(reference)
@@ -189,4 +197,5 @@ def dispatch(token,action,b):
         if action=="preview": return preview(cur,sid,b)
         if action=="wallet": return wallet(cur,sid,b)
         if action=="create": return create(cur,sid,b)
+        if action=="cancel-unissued": return cancel_unissued(cur,sid,b)
     raise ValueError("Invalid action")
