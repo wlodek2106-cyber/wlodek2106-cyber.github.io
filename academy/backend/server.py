@@ -153,7 +153,12 @@ class Handler(BaseHTTPRequestHandler):
                 retry=auth_retry_after(path,email)
                 if retry:
                     return self.respond(429,{"error":"Too many attempts; retry later","code":"rate_limit","retry_after":retry})
-            if self.command=="POST" and path in ("/account/password","/account/mfa/begin","/account/mfa/confirm","/account/mfa/disable","/privacy/export","/privacy/request"):
+            if self.command=="POST" and path in ("/passkeys/login/begin","/passkeys/login/finish","/account/passkeys/begin","/account/passkeys/finish","/account/passkeys/disable"):
+                if self.headers.get("Origin")!="https://zer0life-academy.onrender.com":
+                    return self.respond(403,{"error":"Access denied"})
+                retry=auth_retry_after(path,"passkeys" if path.startswith("/passkeys/") else hashlib.sha256((token or "").encode()).hexdigest())
+                if retry: return self.respond(429,{"error":"Too many attempts; retry later","retry_after":retry})
+            if self.command=="POST" and path in ("/account/password","/account/mfa/begin","/account/mfa/confirm","/account/mfa/disable","/privacy/export","/privacy/request","/account/passkeys/begin","/account/passkeys/finish","/account/passkeys/disable"):
                 from hashlib import sha256
                 if not token or not allow_auth((path,sha256(token.encode()).hexdigest())) or not allow_auth((path,"global")):
                     return self.respond(429,{"error":"Too many attempts; retry later"})
@@ -180,6 +185,10 @@ if __name__=="__main__":
         from migrate import migrate
         migrate()
         import unittest
+        from test_passkeys import PasskeyTests
+        passkey_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PasskeyTests))
+        if not passkey_result.wasSuccessful() or passkey_result.testsRun<5:
+            raise RuntimeError("Passkey security checks failed")
         from test_accounts_integration import AccountIntegration
         from test_payment_policy import PaymentPolicyTests
         payment_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PaymentPolicyTests))

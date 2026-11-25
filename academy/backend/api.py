@@ -73,6 +73,16 @@ def dispatch(method,path,body,token):
             return 400,{"error":"Registration unavailable; try signing in if you already have an account.","code":"registration_unavailable"}
     if path=="/login" and method=="POST":
         return 200,{"token":login(body["email"],body["password"],body.get("code"))}
+    if path=="/account/passkeys" and method=="GET":
+        from passkeys import status
+        return 200,status(token)
+    if path in ("/account/passkeys/begin","/account/passkeys/finish","/account/passkeys/disable","/passkeys/login/begin","/passkeys/login/finish") and method=="POST":
+        import passkeys
+        if path=="/passkeys/login/begin": return 200,passkeys.login_begin()
+        if path=="/passkeys/login/finish": return 200,passkeys.login_finish(body)
+        action=path.rsplit("/",1)[1]
+        handler={"begin":passkeys.register_begin,"finish":passkeys.register_finish,"disable":passkeys.disable}[action]
+        return 200,handler(token,body)
     if path=="/account/me" and method=="GET":
         from accounts import profile
         return 200,profile(token)

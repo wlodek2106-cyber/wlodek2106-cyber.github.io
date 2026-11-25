@@ -415,3 +415,25 @@ ALTER TABLE students ADD COLUMN IF NOT EXISTS username text;
 UPDATE students SET username=CASE WHEN id=24 THEN 'zer0life'
  ELSE COALESCE(NULLIF(trim(both '-' from left(lower(regexp_replace(concat_ws('-',first_name,last_name),'[^A-Za-z0-9]+','-','g')),28)),''),'member')||'-'||id::text END WHERE username IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS students_username_unique ON students(username);
+
+-- WebAuthn: only public keys, counters and short-lived one-time challenges.
+CREATE TABLE IF NOT EXISTS student_passkeys (
+ credential_id bytea PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ public_key bytea NOT NULL,
+ sign_count bigint NOT NULL CHECK(sign_count>=0),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ last_used_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS student_passkeys_student_idx ON student_passkeys(student_id);
+CREATE TABLE IF NOT EXISTS passkey_challenges (
+ id uuid PRIMARY KEY,
+ challenge bytea NOT NULL,
+ purpose text NOT NULL CHECK(purpose IN ('register','login')),
+ student_id bigint REFERENCES students(id) ON DELETE CASCADE,
+ session_digest char(64),
+ expires_at timestamptz NOT NULL,
+ CHECK((purpose='register' AND student_id IS NOT NULL AND session_digest IS NOT NULL)
+    OR (purpose='login' AND student_id IS NULL AND session_digest IS NULL))
+);
+CREATE INDEX IF NOT EXISTS passkey_challenges_expiry_idx ON passkey_challenges(expires_at);

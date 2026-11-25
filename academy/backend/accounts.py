@@ -70,6 +70,8 @@ def change_password(token,current_password,new_password,code=None):
         if not cur.fetchone(): raise PermissionError("Session expired")
         verify_mfa(cur,student,code)
         cur.execute("UPDATE students SET password_hash=%s WHERE id=%s",(new_hash,student))
+        cur.execute("DELETE FROM student_passkeys WHERE student_id=%s",(student,))
+        cur.execute("DELETE FROM passkey_challenges WHERE student_id=%s",(student,))
         cur.execute("UPDATE student_sessions SET revoked_at=now() WHERE student_id=%s AND revoked_at IS NULL",(student,))
     return {"changed":True,"sign_in_required":True}
 
