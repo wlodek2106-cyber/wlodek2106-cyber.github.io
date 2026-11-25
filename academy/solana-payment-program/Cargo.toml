@@ -1,0 +1,15 @@
+[package]
+name = "zer0life-payment-prototype"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+solana-program = "=2.1.14"
+spl-token = { version = "=7.0.0", features = ["no-entrypoint"] }

@@ -1,0 +1,23 @@
+name: Academy payment program prototype
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'academy/solana-payment-program/**'
+      - '.github/workflows/academy-payment-program.yml'
+permissions:
+  contents: read
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: academy/solana-payment-program
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Rust toolchain
+        run: rustc --version && cargo --version
+      - name: Compile and run host unit tests only
+        run: cargo test --lib
