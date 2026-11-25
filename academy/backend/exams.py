@@ -45,7 +45,7 @@ def submit_exam(token,day,attempt_id,answers):
         if result["passed"]:
             cur.execute("INSERT INTO lesson_progress(enrollment_id,lesson,score) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",(eid,day,result["score"]))
             cur.execute("SELECT passed_at+interval '1 day' FROM lesson_progress WHERE enrollment_id=%s AND lesson=%s",(eid,day))
-            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<45 and (day!=30 or cur.execute("SELECT plan FROM enrollments WHERE id=%s",(eid,)).fetchone()[0]=="vip") else None
+            result["next_unlock_at"]=cur.fetchone()[0].isoformat() if day<45 and (day!=30 or cur.execute("SELECT plan FROM enrollments WHERE id=%s",(eid,)).fetchone()[0] in ("vip","elite")) else None
             if day in (30,45) and not owner_preview(authenticate(token)):
                 from certificates import issue_completed
                 result["certificate"]=issue_completed(cur,eid)
