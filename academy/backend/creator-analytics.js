@@ -25,6 +25,12 @@ const m=data.marketplace,c=m.cohort,r=m.reputation,f=data.finance_all_time;
 function section(index,metrics){const s=add(root,"section","");add(s,"h2",w()[index]);const g=add(s,"div","");g.className="grid";for(const [k,v] of metrics){const a=add(g,"article","");add(a,"p",w()[k]);add(a,"strong",String(v))}return s}
 add(root,"p",data.start+" — "+data.end+" UTC");
 const market=section(8,[[9,c.applications],[10,c.selected],[11,c.completed],[12,pct(c.selection_percent)],[13,pct(c.completion_percent)],[14,usd(c.completed_cents)],[33,r.rating===null?w()[35]:r.rating+"/5"],[34,r.review_count]]);
+// Display counts from the same server cohort, not estimated earnings.
+const funnelWords={en:["Order funnel","Applications","Selected","Completed","Counts for the selected period"],ru:["Воронка заказов","Отклики","Выбраны","Завершены","Количество за выбранный период"],uk:["Воронка замовлень","Відгуки","Обрані","Завершені","Кількість за вибраний період"],pl:["Lejek zleceń","Zgłoszenia","Wybrane","Ukończone","Liczby dla wybranego okresu"]}[$("lang").value];
+const funnel=add(market,"div","");funnel.className="zBusinessFunnel";add(funnel,"h3",funnelWords[0]);add(funnel,"p",funnelWords[4]);
+const counts=[c.applications,c.selected,c.completed];if(counts.every(v=>Number.isFinite(v)&&v>=0)){
+ const max=Math.max(1,...counts);counts.forEach((v,i)=>{const row=add(funnel,"div","");row.className="zFunnelRow";const title=add(row,"span",funnelWords[i+1]);add(row,"strong",String(v));const meter=add(row,"progress","");meter.max=max;meter.value=v;meter.setAttribute("aria-label",title.textContent+": "+v)});
+}
 function table(parent,head,rows){const wrap=add(parent,"div","");wrap.className="table";const tab=add(wrap,"table",""),tr=add(tab,"tr","");head.forEach(k=>add(tr,"th",w()[k]));for(const row of rows){const tr=add(tab,"tr","");row.forEach(v=>add(tr,"td",String(v)))}}
 table(market,[32,9,10,11],m.categories.map(x=>[x.category,x.applications,x.selected,x.completed]));
 section(15,[[16,usd(f.received_cents)],[17,usd(f.expense_cents)],[18,usd(f.cash_margin_cents)],[19,usd(f.outstanding_cents)]]);
