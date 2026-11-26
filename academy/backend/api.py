@@ -328,6 +328,13 @@ def dispatch(method,path,body,token):
         if not progress.get("access") or progress.get("plan") not in ("vip","elite"):
             raise PermissionError("VIP access required")
         return 200,{"tracks":[{"id":t["id"],"title":t["title"],"day":t["day"],"unlocked":progress["lessons"][t["day"]-1]["unlocked"]} for t in TRACKS]}
+    if path=="/ai-mega/local-bridge" and method=="GET":
+        import base64
+        p=student_progress(token)
+        if not p.get("owner_preview") and not (p.get("access") and p.get("plan") in ("starter","pro","vip","elite")):
+            raise PermissionError("Paid course access required")
+        source=Path(__file__).with_name("local-tool-bridge.py").read_bytes()
+        return 200,{"source_base64":base64.b64encode(source).decode("ascii"),"filename":"zer0life-local-tool-bridge.py"}
     if path=="/ai-mega/catalog" and method=="POST":
         from ai_mega_catalog import student_catalog
         return 200,student_catalog(token,body.get("lang","en"))
