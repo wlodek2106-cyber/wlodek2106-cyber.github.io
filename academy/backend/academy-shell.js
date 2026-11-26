@@ -115,18 +115,28 @@ SOFTWARE.
  function sync(){
    const open=mq.matches&&!panel.hidden&&sidebar.classList.contains("expanded");
    document.body.classList.toggle("zDrawerOpen",open);
-   if(open&&!wasOpen)search.focus({preventScroll:true});
+   if(open&&!wasOpen)close.focus({preventScroll:true});
    wasOpen=open;
    if(!panel.hidden&&!mq.matches&&!searching)for(const {g,details} of groups)if(!g.hidden&&g.querySelector(".navItem[aria-current=page]:not([hidden])"))details.open=true;
    filter();
  }
  search.addEventListener("input",filter);close.onclick=()=>closeDrawer();backdrop.onclick=()=>closeDrawer();
  nav.addEventListener("click",e=>{if(e.target.closest("a.navItem"))closeDrawer(false)});
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mq.matches&&sidebar.classList.contains("expanded")){e.preventDefault();closeDrawer()}});
+ document.addEventListener("keydown",e=>{
+   if(!mq.matches||panel.hidden||!sidebar.classList.contains("expanded"))return;
+   if(e.key==="Escape"){e.preventDefault();closeDrawer();return}
+   if(e.key==="Tab"){
+     const focusable=Array.from(nav.querySelectorAll("button:not([disabled]),a[href],input:not([disabled]),summary")).filter(n=>!n.hidden&&!n.closest("[hidden]")&&n.getClientRects().length>0);
+     if(!focusable.length)return;
+     const first=focusable[0],last=focusable[focusable.length-1],active=document.activeElement;
+     if(!nav.contains(active)||(e.shiftKey&&active===first)||(!e.shiftKey&&active===last)){e.preventDefault();(e.shiftKey?last:first).focus()}
+   }
+ });
  mq.addEventListener?.("change",()=>{if(!mq.matches)closeDrawer(false);sync()});
  new MutationObserver(sync).observe(sidebar,{attributes:true,subtree:true,attributeFilter:["hidden","aria-current"]});
  new MutationObserver(sync).observe(sidebar,{attributes:true,attributeFilter:["class"]});
  new MutationObserver(()=>{if(panel.hidden){search.value="";filter();for(const g of groups)g.details.open=false;closeDrawer(false)}sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  let pending=false;new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;for(const x of groups)if(x.heading.textContent!==w()[x.index])x.heading.textContent=w()[x.index];filter()})}).observe(nav,{subtree:true,childList:true,characterData:true});
+ new MutationObserver(()=>{if(!toggle.querySelector("svg"))toggle.replaceChildren(icon("menu"),document.createTextNode(w()[0]))}).observe(toggle,{childList:true});
  lang.addEventListener("change",labels);document.body.classList.add("z2027");labels();sync();
 })();
