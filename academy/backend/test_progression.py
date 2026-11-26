@@ -3,6 +3,19 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_elite_review_rubric(self):
+        from elite_program import RUBRIC,validate_review
+        self.assertEqual(sum(RUBRIC.values()),100)
+        self.assertEqual(validate_review("film",1,RUBRIC,"Evidence verified."),(100,"approved","Evidence verified."))
+        scores=dict(RUBRIC);scores["brief"]=5
+        self.assertEqual(validate_review("film",2,scores,"Review completed.")[:2],(80,"approved"))
+        scores["brief"]=4
+        self.assertEqual(validate_review("film",2,scores,"Improve the brief.")[:2],(79,"revision"))
+        for bad in ({},dict(RUBRIC,brief=26),dict(RUBRIC,brief=True)):
+            with self.assertRaises(ValueError):validate_review("film",1,bad,"Evidence verified.")
+        with self.assertRaises(ValueError):validate_review("film",0,RUBRIC,"Evidence verified.")
+        with self.assertRaises(ValueError):validate_review("film",1,RUBRIC,"")
+        with self.assertRaises(ValueError):validate_review({},"1",RUBRIC,"Evidence verified.")
     def test_free_first_lesson(self):
         from progression import lesson_available
         for plan in (None,"starter","pro","vip","elite"):
