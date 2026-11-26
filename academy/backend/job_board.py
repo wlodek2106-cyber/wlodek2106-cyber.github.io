@@ -154,6 +154,9 @@ def dispatch(token,action,b):
     with transaction() as cur:
         if action in ("feed","mine","admin"): return page(cur,sid,action,b)
         if action=="recommended": return recommend(cur,sid)
+        if action=="proposal-preview":
+            from freelance_assistant import preview
+            return preview(cur,sid,b)
         if action=="analytics":
             from freelancer_analytics import report
             return report(cur,sid,b.get("days",30))
