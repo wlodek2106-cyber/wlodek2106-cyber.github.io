@@ -449,3 +449,12 @@ ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS review_score integer CHECK(r
 ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS review_feedback text CHECK(char_length(review_feedback)<=4000);
 ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS reviewed_at timestamptz;
 CREATE INDEX IF NOT EXISTS elite_review_queue ON elite_projects(review_status,updated_at,student_id,project);
+
+-- Separate advanced credential; existing core certificates and codes are unchanged.
+CREATE TABLE IF NOT EXISTS elite_certificates (
+ enrollment_id bigint PRIMARY KEY REFERENCES enrollments(id) ON DELETE CASCADE,
+ verification_code text NOT NULL UNIQUE,
+ issued_at timestamptz NOT NULL DEFAULT now(),
+ recipient_name text NOT NULL,
+ average_score numeric(5,2) NOT NULL CHECK(average_score BETWEEN 80 AND 100)
+);
