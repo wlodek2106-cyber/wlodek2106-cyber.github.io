@@ -1080,6 +1080,17 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_creator_business_action_plan(self):
+        from creator_analytics import action_plan
+        row={"id":1,"title":"test","flags":["overdue"],"days_remaining":-2,"outstanding_cents":100,"priority":0,"contact":"private"}
+        job={"id":2,"title":"video","category":"video","budget_cents":5000,"matched_lessons":3,"service_match":True,"brief":"not needed"}
+        result=action_plan({"actions":[row]*15},["review_orders"],{"items":[job]*12})
+        self.assertEqual(len(result["order_actions"]),10)
+        self.assertEqual(len(result["matching_jobs"]),8)
+        self.assertNotIn("contact",result["order_actions"][0])
+        self.assertNotIn("brief",result["matching_jobs"][0])
+        self.assertFalse(result["automatic_execution"])
+        self.assertEqual(action_plan({"actions":[]},[],{"items":[]})["matching_jobs"],[])
     def test_creator_analytics_recommendations(self):
         from creator_analytics import recommendations
         c={"applications":0,"selection_percent":None}

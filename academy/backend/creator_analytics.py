@@ -13,6 +13,15 @@ def recommendations(cohort,finance,marketing,actions):
     if not sum(row["published"] for row in marketing): keys.append("publish_portfolio")
     return keys
 
+def action_plan(triage, suggestions, recommended):
+    """Bounded actionable snapshot; no automatic proposals, messages or purchases."""
+    actions=[]
+    for row in triage["actions"][:10]:
+        actions.append({k:row[k] for k in ("id","title","flags","days_remaining","outstanding_cents","priority")})
+    matches=[{k:row[k] for k in ("id","title","category","budget_cents","matched_lessons","service_match")} for row in recommended["items"][:8]]
+    return {"order_actions":actions,"matching_jobs":matches,"growth_actions":suggestions,
+            "engine":"rules_based","automatic_execution":False}
+
 def report(token,days=30):
     period(days)
     sid=identity(token)
@@ -28,7 +37,11 @@ def report(token,days=30):
         cur.execute("""SELECT platform,count(*),count(*) FILTER (WHERE status='published')
             FROM marketing_posts WHERE student_id=%s AND day BETWEEN %s AND %s GROUP BY platform ORDER BY platform""",(sid,start,today))
         marketing=[{"platform":p,"planned":n,"published":published} for p,n,published in cur.fetchall()]
+        from job_board import recommend
+        matches=recommend(cur,sid)
+        suggestions=recommendations(jobs["cohort"],finance,marketing,triage)
+        plan=action_plan(triage,suggestions,matches)
     return {"private":True,"days":days,"start":start.isoformat(),"end":today.isoformat(),
             "marketplace":jobs,"finance_all_time":finance,"marketing_calendar":marketing,
-            "order_action_count":triage["action_count"],"recommendations":recommendations(jobs["cohort"],finance,marketing,triage),
+            "order_action_count":triage["action_count"],"recommendations":suggestions,"business_plan":plan,
             "finance_manual":True,"social_clicks_tracked":False}
