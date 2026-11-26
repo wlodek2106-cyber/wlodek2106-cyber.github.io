@@ -3,6 +3,35 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_review_journal(self):
+        from review_journal import build_journal,validate,dispatch
+        from datetime import timedelta
+        from types import SimpleNamespace
+        from unittest.mock import Mock,patch
+        import sys
+        now=self.t
+        lessons=[{"day":1,"unlocked":True},{"day":2,"unlocked":True},{"day":3,"unlocked":False},{"day":4,"unlocked":True}]
+        attempts=[(1,85,now-timedelta(days=4)),(2,95,now-timedelta(days=2)),(3,50,now),(1,60,now-timedelta(days=5))]
+        notes={4:{"reflection":"Practice again","reviewed_at":now-timedelta(days=2)}}
+        data=build_journal(lessons,attempts,notes,now)
+        items={x["day"]:x for x in data["items"]}
+        self.assertEqual(set(items),{1,2,4})
+        self.assertEqual(data["due_count"],2)
+        self.assertEqual(items[1]["change"],25)
+        self.assertEqual(items[1]["attempts"],2)
+        self.assertEqual(items[1]["interval_days"],3)
+        self.assertEqual(items[2]["interval_days"],7)
+        self.assertFalse(items[2]["due"])
+        self.assertIsNone(items[4]["latest"])
+        self.assertEqual(items[4]["interval_days"],1)
+        notes[1]={"reflection":"Reviewed","reviewed_at":now}
+        item=next(x for x in build_journal(lessons,attempts,notes,now)["items"] if x["day"]==1)
+        self.assertFalse(item["due"])
+        self.assertEqual(validate(1,"  corrected  "),(1,"corrected"))
+        for day,reflection in [(True,"corrected"),(46,"corrected"),(1,"x"),(1,"x"*1201)]:
+            with self.assertRaises(ValueError):validate(day,reflection)
+        with patch.dict(sys.modules,{"accounts":SimpleNamespace(authenticate=lambda token:None),"learning":SimpleNamespace(student_progress=Mock()),"database":SimpleNamespace(transaction=Mock())}):
+            with self.assertRaises(PermissionError):dispatch(None,"list",{})
     def test_student_practice_drafts(self):
         from student_practice import validate,read,save,dispatch
         from unittest.mock import Mock,patch
