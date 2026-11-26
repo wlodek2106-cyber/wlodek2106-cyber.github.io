@@ -554,6 +554,22 @@ class LaunchIntegration(unittest.TestCase):
                     self.assertEqual(verify_certificate(credential["code"])["credential"],"elite")
                     self.assertNotIn("recipient_name",verify_certificate(credential["code"]))
                     self.assertTrue(certificate_pdf(credential).startswith(b"%PDF-"))
+                    import graduate_showcase as showcase
+                    profile={"headline":"Synthetic graduate","bio":"Test portfolio only","show_name":False,"projects":[{"title":"Demo","description":"Public demo","url":"https://example.invalid/demo"}]}
+                    with self.assertRaises(PermissionError):showcase.publish(partner,profile,True)
+                    with self.assertRaises(ValueError):showcase.publish(buyer,profile,False)
+                    published=showcase.publish(buyer,profile,True)
+                    public=showcase.public(published["code"])
+                    self.assertTrue(public["found"])
+                    self.assertEqual(public["credential"]["level"],"ELITE")
+                    self.assertNotIn("recipient_name",public)
+                    self.assertNotIn("student_id",public)
+                    self.assertNotIn("evidence",public["profile"])
+                    self.assertEqual(showcase.mine(buyer)["code"],published["code"])
+                    self.assertEqual(showcase.publish(buyer,dict(profile,show_name=True),True)["code"],published["code"])
+                    self.assertIn("recipient_name",showcase.public(published["code"]))
+                    showcase.withdraw(buyer)
+                    self.assertFalse(showcase.public(published["code"])["found"])
                     with self.assertRaises(ValueError):elite.save(buyer,"film","Attempt to replace an approved test report.")
                 raise Rollback()
         except Rollback:
