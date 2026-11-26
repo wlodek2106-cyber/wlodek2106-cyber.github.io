@@ -81,20 +81,23 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(PermissionError): certificates.issue_certificate(buyer)
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
                 self.assertTrue(reviews.remove(buyer)["removed"])
-                from marketplace import save as market_save,mine as market_mine,listing as market_list,decide as market_decide,withdraw as market_withdraw
+                from marketplace import save as market_save,mine as market_mine,listing as market_list,decide as market_decide,withdraw as market_withdraw,public_detail as market_detail
                 service={"name":"Test creator","title":"Test design","category":"design","description":"Test service","price":"100 USD","link":"https://example.invalid/portfolio","consent":True}
                 with self.assertRaises(ValueError): market_save(cur,buyer_id,{**service,"consent":False})
                 listing=market_save(cur,buyer_id,service)
                 self.assertIsNone(market_mine(cur,partner_id)["item"])
                 self.assertFalse(any(x["id"]==listing["id"] for x in market_list(cur,True,listing["id"]-1)["items"]))
+                self.assertIsNone(market_detail(cur,listing["id"])["item"])
                 market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
                 public_item=next(x for x in market_list(cur,True,listing["id"]-1)["items"] if x["id"]==listing["id"])
                 self.assertNotIn("student_id",public_item)
                 self.assertIs(public_item["paid_badge"],True)
+                self.assertEqual(market_detail(cur,listing["id"])["item"],public_item)
                 updated=market_save(cur,buyer_id,service)
                 with self.assertRaises(ValueError): market_decide(cur,owner_id,{"id":listing["id"],"revision":listing["revision"],"action":"approved"})
                 self.assertEqual(market_mine(cur,buyer_id)["item"]["status"],"pending")
                 self.assertTrue(market_withdraw(cur,buyer_id)["withdrawn"])
+                self.assertIsNone(market_detail(cur,listing["id"])["item"])
                 from job_board import create as job_create,page as job_page,moderate as job_moderate,apply as job_apply,applicants as job_applicants,applications as job_applications,transition as job_transition
                 job={"title":"Test project","category":"design","brief":"Test brief","budget":"150","contact":"client@example.invalid","consent":True}
                 with patch.dict(os.environ,{"ACADEMY_MARKETPLACE_PAYMENTS_ENABLED":"false"}):

@@ -53,6 +53,22 @@ def listing(cur,public=True,after=0):
         paid=dict(cur.fetchall())
         for item in items: item["paid_badge"]=bool(paid.get(item["id"]))
     return {"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
+def public_detail(cur,listing_id):
+    """Only approved public listing fields; never expose private account data."""
+    listing_id=ident(listing_id)
+    cur.execute("SELECT "+PROJECTION+" FROM marketplace_services WHERE id=%s AND status='approved'",(listing_id,))
+    row=cur.fetchone()
+    if not row:
+        return {"item":None}
+    item=dict(zip(FIELDS,row))
+    cur.execute("""SELECT EXISTS(SELECT 1 FROM enrollments e JOIN payment_invoices i
+        ON i.student_id=e.student_id AND i.signature=e.payment_signature AND i.paid_at IS NOT NULL AND i.asset='USDC'
+        WHERE e.student_id=m.student_id AND e.paid_at IS NOT NULL)
+        FROM marketplace_services m WHERE m.id=%s""",(listing_id,))
+    badge=cur.fetchone()
+    item["paid_badge"]=bool(badge and badge[0])
+    return {"item":item}
+
 def decide(cur,admin,b):
     action=b["action"]
     if action not in ("approved","rejected","blocked"): raise ValueError("Invalid decision")
@@ -63,6 +79,8 @@ def decide(cur,admin,b):
     if not cur.fetchone(): raise ValueError("Listing changed or not reviewable")
     return {"status":action}
 def dispatch(token,action,b):
+    if action=="public-detail":
+        with transaction() as cur: return public_detail(cur,b["id"])
     if action=="public":
         with transaction() as cur: return listing(cur,True,b.get("after",0))
     if action in ("admin","decide"):

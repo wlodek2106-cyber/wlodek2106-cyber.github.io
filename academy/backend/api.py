@@ -50,7 +50,7 @@ def dispatch(method,path,body,token):
     if path in ("/community/feed","/community/mine","/community/create","/community/withdraw","/community/admin","/community/decide") and method=="POST":
         from community import dispatch as community_dispatch
         return 200,community_dispatch(token,path.rsplit("/",1)[1],body)
-    if path in ("/marketplace/public","/marketplace/mine","/marketplace/save","/marketplace/withdraw","/marketplace/admin","/marketplace/decide") and method=="POST":
+    if path in ("/marketplace/public","/marketplace/public-detail","/marketplace/mine","/marketplace/save","/marketplace/withdraw","/marketplace/admin","/marketplace/decide") and method=="POST":
         from marketplace import dispatch as market_dispatch
         return 200,market_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/reviews/public" and method=="GET":
