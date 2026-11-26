@@ -2,6 +2,7 @@
 const catalog=[
 ["ai","intelligence","🧠","/free-ai","Free AI Studio",["Local browser models and desktop setup guides.","Локальные модели и инструкции для компьютера.","Локальні моделі та інструкції для комп’ютера.","Lokalne modele i instrukcje desktopowe."]],
 ["agents","intelligence","🤖","/free-ai","AI Agents Studio",["Planner, worker and reviewer on a loaded model.","Планировщик, исполнитель и ревьюер на загруженной модели.","Планувальник, виконавець і рецензент на завантаженій моделі.","Planista, wykonawca i recenzent na załadowanym modelu."]],
+["modelhub","intelligence","🧠","/free-ai","AI Model Hub",["Choose and compare local models.","Подбор и сравнение локальных моделей.","Добір і порівняння локальних моделей.","Dobór i porównanie modeli lokalnych."]],
 ["workforce","intelligence","🤖","/free-ai","AI Agent Workforce",["Specialized local text teams and agency task import.","Специализированные локальные AI-команды и импорт задач агентства.","Спеціалізовані локальні AI-команди та імпорт завдань агентства.","Lokalne zespoły AI i import zadań agencji."]],
 ["agency","business","🏢","/agency","Agency Builder",["Private team workflows and tasks.","Приватные команды и производственные задачи.","Приватні команди та виробничі завдання.","Prywatne zespoły i zadania produkcyjne."]],
 ["design","creative","🎨","/design-studio","Design Studio",["Branded graphics and PNG export.","Фирменная графика и экспорт PNG.","Фірмова графіка та експорт PNG.","Grafika marki i eksport PNG."]],
@@ -34,7 +35,7 @@ function selectTools(items,query,category,onlyFavorites,favorites,index){
 function toolHref(id,path,lang){
  const query="?lang="+encodeURIComponent(lang);
  if(path==="/dashboard"&&["projects","marketing","knowledge","learning","community","career","jobs"].includes(id))return path+query+"&module="+id;
- return path+query+((id==="agents"||id==="workforce")?"#teamHeading":id==="rag"?"#rag-studio":"");
+ return path+query+((id==="agents"||id==="workforce")?"#teamHeading":id==="rag"?"#rag-studio":id==="modelhub"?"#model-hub":"");
 }
 const $=id=>document.getElementById(id),storageKey="zer0life.workspace.favorites.v1",cats=["all","intelligence","creative","business","resources"];
 let favorites=new Set(),only=false,storageFailed=false;

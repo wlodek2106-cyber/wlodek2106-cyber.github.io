@@ -99,7 +99,7 @@ catalog.forEach(([title,tag,url,desc])=>$("desktopModels").append(card(title,des
 creative.forEach(([title,url,desc])=>$("creative").append(card(title,desc,url)));
 $("lang").onchange=()=>{resetTeacherTurns();translate();teamTranslate();renderTeacherContext()};$("role").onchange=resetTeacherTurns;const params=new URLSearchParams(location.search);if(Object.hasOwn(locales,params.get("lang")))$("lang").value=params.get("lang");translate();if(Object.hasOwn(roles,params.get("role")))$("role").value=params.get("role");renderTeacherContext();
 const status=t=>$("status").textContent=t;
-function controls(){ wfRender();personalControls();ragControls();factorySelect.disabled=factoryRevision.disabled=factoryExport.disabled=busy;renderPractice();if(teacherContext){$("lessonTeacherClear").disabled=busy;for(const b of $("lessonTeacherActions").children)b.disabled=busy}$("role").disabled=busy;$("lang").disabled=busy; $("teamRun").disabled=busy||!engine||loadedId!==$("model").value;$("teamExport").disabled=busy||!teamReport; $("discover").disabled=busy||!!lib;$("model").disabled=busy||!models.length;$("load").disabled=busy||!models.length;$("unload").disabled=busy||!engine;$("ask").disabled=busy||!engine||loadedId!==$("model").value;$("stop").disabled=!busy||!engine;}
+function controls(){ hubControls();wfRender();personalControls();ragControls();factorySelect.disabled=factoryRevision.disabled=factoryExport.disabled=busy;renderPractice();if(teacherContext){$("lessonTeacherClear").disabled=busy;for(const b of $("lessonTeacherActions").children)b.disabled=busy}$("role").disabled=busy;$("lang").disabled=busy; $("teamRun").disabled=busy||!engine||loadedId!==$("model").value;$("teamExport").disabled=busy||!teamReport; $("discover").disabled=busy||!!lib;$("model").disabled=busy||!models.length;$("load").disabled=busy||!models.length;$("unload").disabled=busy||!engine;$("ask").disabled=busy||!engine||loadedId!==$("model").value;$("stop").disabled=!busy||!engine;}
 function selected(){return models.find(x=>x.model_id===$("model").value)}
 $("model").onchange=()=>{const m=selected();$("details").textContent=m?"Estimated VRAM: "+(m.vram_required_MB?Math.ceil(m.vram_required_MB)+" MB":"not specified")+" · model weights download on demand":"";controls()};
 $("discover").onclick=async()=>{busy=true;controls();try{if(!navigator.gpu||!await navigator.gpu.requestAdapter())throw Error("WebGPU unavailable. Use a compatible browser or the Ollama desktop instructions.");
@@ -292,4 +292,63 @@ wfApply.onclick=()=>{if(busy||!importedTask)return;resetTeacherTurns();factorySe
 wfClear.onclick=()=>{if(busy||importReading)return;importedTask=null;wfFile.value="";wfStatus.textContent="";wfRender()};
 $("lang").addEventListener("change",wfRender);
 wfRender();
+const hubWords={"en":["AI Model Hub","Discover models above first. Recommendations use model names and estimated VRAM, not measured quality.","Task","General text","Programming","Reasoning","Low memory","VRAM budget (MB)","Recommend models","Select in studio","Compare 1–2 models","Same prompt (max 4000 characters)","I agree to download model weights if needed (may be several GB), unload the current model and run the comparison locally.","Run comparison","Cancel after current load / stop generation","Download comparison report","Generation time (seconds, excludes loading)","No suitable models","Select models and confirm first.","Completed","Stopped","Failed","Loading model","Generating","Results need human review; not a standardized benchmark. No remote inference or paid API is used by this comparison.","Desktop: Ollama / ComfyUI","Download local desktop engine","Clear results"],"ru":["AI Model Hub","Сначала обнаружьте модели выше. Рекомендации основаны на названиях и оценке VRAM, а не на проверенном качестве.","Задача","Обычный текст","Программирование","Рассуждения","Мало памяти","Лимит VRAM (МБ)","Подобрать модели","Выбрать в студии","Сравнить 1–2 модели","Одинаковый запрос (до 4000 символов)","Согласен загрузить веса при необходимости (возможно несколько ГБ), выгрузить текущую модель и выполнить сравнение локально.","Запустить сравнение","Отменить после загрузки / остановить генерацию","Скачать отчёт","Время генерации (сек., без загрузки)","Нет подходящих моделей","Выберите модели и подтвердите согласие.","Выполнено","Остановлено","Ошибка","Загрузка модели","Генерация","Результаты требуют проверки человеком; это не стандартизированный бенчмарк. Сравнение не использует платные API или удалённый инференс.","Компьютер: Ollama / ComfyUI","Скачать локальный движок","Очистить результаты"],"uk":["AI Model Hub","Спочатку знайдіть моделі вище. Рекомендації за назвами та оцінкою VRAM, а не перевіреною якістю.","Завдання","Звичайний текст","Програмування","Міркування","Мало пам'яті","Ліміт VRAM (МБ)","Підібрати моделі","Обрати у студії","Порівняти 1–2 моделі","Однаковий запит (до 4000 символів)","Згоден завантажити ваги за потреби (можливо кілька ГБ), вивантажити поточну модель і порівняти локально.","Запустити порівняння","Скасувати після завантаження / зупинити генерацію","Завантажити звіт","Час генерації (сек., без завантаження)","Немає відповідних моделей","Оберіть моделі та підтвердьте згоду.","Виконано","Зупинено","Помилка","Завантаження моделі","Генерація","Результати потребують перевірки людиною; це не стандартизований тест. Без платних API чи віддаленого інференсу.","Комп'ютер: Ollama / ComfyUI","Завантажити локальний рушій","Очистити результати"],"pl":["AI Model Hub","Najpierw wykryj modele powyżej. Zalecenia wynikają z nazw i szacowanej VRAM, nie ze zmierzonej jakości.","Zadanie","Tekst ogólny","Programowanie","Rozumowanie","Mało pamięci","Limit VRAM (MB)","Dobierz modele","Wybierz w studio","Porównaj 1–2 modele","Ten sam prompt (maks. 4000 znaków)","Zgadzam się pobrać wagi w razie potrzeby (możliwe kilka GB), zwolnić bieżący model i porównać lokalnie.","Uruchom porównanie","Anuluj po pobraniu / zatrzymaj generowanie","Pobierz raport","Czas generowania (s, bez ładowania)","Brak odpowiednich modeli","Wybierz modele i potwierdź zgodę.","Ukończono","Zatrzymano","Błąd","Ładowanie modelu","Generowanie","Wyniki wymagają sprawdzenia; to nie standardowy benchmark. Bez płatnych API i zdalnego wnioskowania.","Komputer: Ollama / ComfyUI","Pobierz lokalny silnik","Wyczyść wyniki"]};
+function suggestModels(records,task,maxMB){
+ if(!["general","code","reasoning","light"].includes(task)||!Number.isInteger(maxMB)||maxMB<1000||maxMB>8500)throw Error("Invalid selection");
+ const rows=records.filter(x=>typeof x.model_id==="string"&&Number.isFinite(x.vram_required_MB)&&x.vram_required_MB>0&&x.vram_required_MB<=maxMB);
+ const score=x=>task==="code"?(/coder/i.test(x.model_id)?2:0):task==="reasoning"?(/deepseek-r1/i.test(x.model_id)?2:0):task==="general"?(/qwen/i.test(x.model_id)&&!/coder|deepseek/i.test(x.model_id)?2:0):0;
+ return [...rows].sort((a,b)=>score(b)-score(a)||(task==="light"?a.vram_required_MB-b.vram_required_MB:b.vram_required_MB-a.vram_required_MB)||a.model_id.localeCompare(b.model_id)).slice(0,5);
+}
+function compareRequest(ids,available,prompt){
+ if(!Array.isArray(ids)||ids.length<1||ids.length>2||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=="string"||!available.some(m=>m.model_id===id)))throw Error("Choose 1–2 available models");
+ if(typeof prompt!=="string"||!prompt.trim()||prompt.length>4000)throw Error("Invalid prompt");
+ return {ids:[...ids],prompt:prompt.trim()};
+}
+const hub=document.createElement("section");hub.id="model-hub";$("teamOutput").parentElement.after(hub);
+const ha=(parent,tag,value="")=>{const e=document.createElement(tag);e.textContent=value;parent.append(e);return e};
+const hubText=[];function ht(parent,tag,i){const e=ha(parent,tag);hubText.push([e,i]);return e}
+const hubW=()=>hubWords[$("lang").value];
+ht(hub,"h2",0);ht(hub,"p",1);
+const taskLabel=ha(hub,"label");ht(taskLabel,"span",2);const hubTask=ha(taskLabel,"select");
+["general","code","reasoning","light"].forEach((key,i)=>{const o=ht(hubTask,"option",3+i);o.value=key});
+const memoryLabel=ha(hub,"label");ht(memoryLabel,"span",7);const hubMemory=ha(memoryLabel,"select");[2000,4000,6000,8500].forEach(n=>{const o=ha(hubMemory,"option",String(n));o.value=String(n)});hubMemory.value="4000";
+const hubSuggest=ht(hub,"button",8),hubRecommendations=ha(hub,"div");ht(hub,"h3",10);
+const hubChoices=ha(hub,"div"),promptLabel=ha(hub,"label");ht(promptLabel,"span",11);const hubPrompt=ha(promptLabel,"textarea");hubPrompt.maxLength=4000;hubPrompt.rows=5;
+const consentLabel=ha(hub,"label"),hubConsent=ha(consentLabel,"input");hubConsent.type="checkbox";ht(consentLabel,"span",12);
+const hubRun=ht(hub,"button",13),hubCancel=ht(hub,"button",14),hubDownload=ht(hub,"button",15),hubClear=ht(hub,"button",27),hubStatus=ha(hub,"p"),hubResult=ha(hub,"div");hubStatus.setAttribute("role","status");
+ht(hub,"p",24);ht(hub,"h3",25);const desktop=ht(hub,"a",26);desktop.href="/local-ai-engine.py";desktop.download="zer0life-local-ai-engine.py";
+let hubIds=new Set(),hubCatalogKey="",hubReport=null,hubRunning=false;
+function hubControls(){
+ const fingerprint=models.map(m=>m.model_id).join("|");
+ if(fingerprint!==hubCatalogKey){hubCatalogKey=fingerprint;hubIds.clear();hubChoices.replaceChildren();for(const m of models){const label=ha(hubChoices,"label"),check=ha(label,"input");check.type="checkbox";ha(label,"span",m.model_id+" · "+Math.ceil(m.vram_required_MB)+" MB");check.onchange=()=>{if(check.checked&&hubIds.size>=2){check.checked=false;return}if(check.checked)hubIds.add(m.model_id);else hubIds.delete(m.model_id);hubControls()}}}
+ for(const e of hubChoices.querySelectorAll("input"))e.disabled=busy;
+ for(const e of [hubTask,hubMemory,hubSuggest,hubPrompt,hubConsent,hubClear])e.disabled=busy;
+ hubRun.disabled=busy||!lib||!hubIds.size||!hubConsent.checked;hubCancel.disabled=!hubRunning;hubDownload.disabled=busy||!hubReport;
+}
+function hubDraw(){hubRecommendations.replaceChildren();const rows=suggestModels(models,hubTask.value,Number(hubMemory.value));if(!rows.length){ha(hubRecommendations,"p",hubW()[17]);return}for(const m of rows){const p=ha(hubRecommendations,"p",m.model_id+" · "+Math.ceil(m.vram_required_MB)+" MB ");const b=ha(p,"button",hubW()[9]);b.disabled=busy;b.onclick=()=>{if(busy)return;$("model").value=m.model_id;$("model").onchange();$("load").focus()}}}
+function hubTranslate(){for(const [e,i] of hubText)e.textContent=hubW()[i];hubDraw();hubControls()}
+hubSuggest.onclick=hubDraw;hubConsent.onchange=hubControls;
+hubCancel.onclick=()=>{if(!hubRunning)return;cancelled=true;try{engine?.interruptGenerate()}catch{}};
+hubRun.onclick=async()=>{
+ if(busy||!lib||!hubConsent.checked)return;let request;try{request=compareRequest([...hubIds],models,hubPrompt.value)}catch{hubStatus.textContent=hubW()[18];return}
+ const lang=$("lang").value,language={en:"English",ru:"Russian",uk:"Ukrainian",pl:"Polish"}[lang],l=hubW();hubRunning=true;busy=true;cancelled=false;hubConsent.checked=false;hubResult.replaceChildren();hubReport={version:1,prompt:request.prompt,language,results:[],note:"Local generation time excludes model loading; manually review quality."};controls();hubDraw();
+ try{
+  for(const id of request.ids){if(cancelled)break;const article=ha(hubResult,"article"),title=ha(article,"h3",id),state=ha(article,"p",l[22]),answer=ha(article,"pre");
+   const row={model:id,status:"error",answer:"",seconds:null};hubReport.results.push(row);
+   try{
+    if(engine){await engine.unload();engine=null;loadedId=null}
+    if(cancelled){row.status="stopped";state.textContent=l[20];break}
+    engine=await lib.CreateMLCEngine(id,{initProgressCallback:r=>{state.textContent=l[22]+" · "+Math.round(Math.max(0,Math.min(1,r.progress||0))*100)+"%"}});
+    loadedId=id;$("model").value=id;
+    if(cancelled){row.status="stopped";state.textContent=l[20];break}
+    state.textContent=l[23];const start=performance.now();const messages=[{role:"system",content:"Answer in "+language+". Provide a useful text response. Do not claim to execute external actions or invent verification."},{role:"user",content:request.prompt}];
+    const chunks=await engine.chat.completions.create({messages,temperature:0.2,max_tokens:512,stream:true});for await(const chunk of chunks){if(cancelled)break;const text=chunk.choices?.[0]?.delta?.content||"";if(typeof text==="string"){if(row.answer.length+text.length>16000)throw Error("Output limit");row.answer+=text;answer.textContent=row.answer}}
+    row.seconds=Math.round((performance.now()-start)/10)/100;row.status=cancelled?"stopped":row.answer.trim()?"ok":"error";state.textContent=l[row.status==="ok"?19:row.status==="stopped"?20:21]+" · "+l[16]+": "+row.seconds;
+   }catch(e){row.status=cancelled?"stopped":"error";state.textContent=l[row.status==="stopped"?20:21];if(engine){try{await engine.unload()}catch{}engine=null;loadedId=null}}
+  }
+ }finally{hubRunning=false;busy=false;hubStatus.textContent=l[cancelled?20:19];hubDraw();controls();$("model").onchange()}
+};
+hubDownload.onclick=()=>{if(!hubReport||busy)return;const url=URL.createObjectURL(new Blob([JSON.stringify(hubReport,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="zer0life-model-comparison.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+hubClear.onclick=()=>{if(busy)return;hubReport=null;hubResult.replaceChildren();hubStatus.textContent="";hubPrompt.value="";hubControls()};
+$("lang").addEventListener("change",hubTranslate);hubTranslate();
 controls();
