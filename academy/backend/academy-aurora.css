@@ -353,3 +353,26 @@ body.zAurora #extra .zSocialFiltered{display:none!important}
 body.zAurora #extra.zPortfolioPanel pre{padding:14px;border:1px solid #584a75;border-radius:12px;background:#1a1b2e;color:#e8dfff;white-space:pre-wrap;overflow-wrap:anywhere}
 body.zAurora #creatorJourney>details{scroll-margin-top:20px}
 @media(max-width:620px){body.zAurora .zSocialGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora .zSocialTile{min-height:84px;padding:10px}body.zAurora #extra .zCommunitySearch{grid-template-columns:minmax(0,1fr)}}
+
+/* Owner control center: navigation and server-reported metrics, no new privileges. */
+body.zAurora .zAdminRail{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+body.zAurora .zAdminRail .zAdminSwitch{width:100%;min-width:0;min-height:44px;background:#171829;color:#f1e9ff;border:1px solid #76609a;border-radius:10px;font-size:16px;padding:8px}
+body.zAurora .zAdminRail .zAdminRefresh{min-height:44px;justify-content:center}
+body.zAurora .zAdminNotice{font-size:12px;color:#c9bce1;line-height:1.6;margin:14px 0 0}
+body.zAurora .zAdminReportNav{display:flex;align-items:center;gap:12px;padding:12px;margin:0 0 14px;border:1px solid #63517f;border-radius:12px;background:#211c35}
+body.zAurora .zAdminReportNav[hidden]{display:none!important}
+body.zAurora .zAdminReportNav strong{color:#ddc8ff;font-size:13px}
+body.zAurora .zAdminReportNav select{flex:1;min-width:0;min-height:44px;background:#151729;color:#f2eaff;border:1px solid #6a578b;border-radius:9px;font-size:16px;padding:8px}
+body.zAurora #extra.zAdminArea :is(h2,h3){scroll-margin-top:20px}
+body.zAurora #extra.zAdminArea :is(h2,h3):focus{outline:2px solid #bca2ee;outline-offset:5px}
+body.zAurora #extra .zFounderMetrics{grid-template-columns:repeat(auto-fit,minmax(min(100%,175px),1fr))!important;gap:12px!important;margin:12px 0}
+body.zAurora #extra .zFounderMetric{display:flex;flex-direction:column;gap:8px;min-width:0;padding:16px;border:1px solid #665084;border-radius:15px;background:radial-gradient(ellipse at 100% 0%,#704db235,transparent 80%),linear-gradient(145deg,#2c2543,#171a2b)}
+body.zAurora #extra .zFounderMetric small{font-size:12px;line-height:1.5;color:#cbbde1}
+body.zAurora #extra .zFounderMetric h3{margin:0;color:#f4ebff;font-size:clamp(17px,2.5vw,24px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+body.zAurora #extra .zFounderSalesRow{grid-template-columns:minmax(85px,1fr) minmax(80px,2fr)!important;padding:9px 10px;margin:5px 0;border:1px solid #453a5b;border-radius:10px;background:#171a2b}
+body.zAurora #extra .zFounderSalesRow progress{accent-color:#b397f2}
+body.zAurora #extra .zFounderSalesRow small{overflow-wrap:anywhere}
+body.zAurora #extra .zModerationRow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid #58466f;border-radius:10px;background:#221e35}
+body.zAurora #extra .zModerationOpen{min-height:44px;margin:0;color:#e8d8ff;background:#392a56;border:1px solid #8369ae;border-radius:9px;padding:8px 12px;cursor:pointer}
+body.zAurora #extra .zModerationOpen[hidden]{display:none!important}
+@media(max-width:620px){body.zAurora .zAdminRail{grid-template-columns:minmax(0,1fr)}body.zAurora .zAdminReportNav{align-items:stretch;flex-direction:column}body.zAurora #extra .zFounderMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.zAurora #extra .zFounderMetric{padding:11px}}
