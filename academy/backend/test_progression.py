@@ -24,6 +24,12 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(report["results"][1]["status"],"error")
         self.assertEqual(report["results"][1]["seconds"],3)
         self.assertEqual(emitted,report["results"])
+        config=engine.nemo_provider_config(names[0],available=lambda:names)
+        self.assertIn('base_url: "http://127.0.0.1:11434/v1"',config)
+        self.assertIn('model_name: "nemotron-3-nano:4b"',config)
+        self.assertIn('api_key: "EMPTY"',config)
+        with self.assertRaises(ValueError):engine.nemo_provider_config("remote-cloud",available=lambda:names)
+        with self.assertRaises(ValueError):engine.nemo_provider_config("bad\\nkey: value",available=lambda:["bad\\nkey: value"])
         for bad in ([],[names[0],names[0]],["remote-cloud"],["x","y","z","a"]):
             with self.assertRaises(ValueError):engine.evaluate_models(bad,"test",available=lambda:names)
         with self.assertRaises(ValueError):engine.evaluate_models(names,"",available=lambda:names)
