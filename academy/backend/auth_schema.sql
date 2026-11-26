@@ -465,3 +465,11 @@ CREATE TABLE IF NOT EXISTS graduate_showcases (
  profile jsonb NOT NULL,
  published_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- One private, versioned introductory practice draft per student.
+CREATE TABLE IF NOT EXISTS student_practice_drafts (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ payload jsonb NOT NULL CHECK(jsonb_typeof(payload)='object' AND octet_length(payload::text)<=24000),
+ revision integer NOT NULL CHECK(revision>0),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
