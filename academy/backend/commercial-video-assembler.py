@@ -53,7 +53,7 @@ def build_command(ffmpeg,plan,clips,audio,output):
     return cmd
 def assemble(ffmpeg,plan,clips,audio,output):
     out=Path(output).resolve()
-    if out.exists():raise ValueError("Output already exists")
+    if out.suffix.lower()!=".mp4" or not out.parent.is_dir() or out.exists():raise ValueError("Choose a new MP4 output")
     # Render in a private temporary directory, then publish without overwriting.
     with tempfile.TemporaryDirectory(prefix="zer0life-",dir=out.parent) as tmp:
         temp=Path(tmp)/"assembled.mp4"
