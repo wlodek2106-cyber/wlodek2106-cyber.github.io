@@ -3,6 +3,29 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_ad_production_plan(self):
+        from ad_production import plan,student_plan,FORMATS
+        from unittest.mock import patch
+        brief={"product":"Original handmade mug","audience":"Adults","benefit":"Comfortable handle","evidence":"","cta":"Visit our shop","style":"Natural light","duration":30,"format":"9:16"}
+        for lang in ("en","ru","uk","pl"):
+            for duration in (15,30,60):
+                for fmt,(width,height) in FORMATS.items():
+                    result=plan(dict(brief,duration=duration,format=fmt),lang)
+                    self.assertTrue(result["draft"])
+                    self.assertEqual(len(result["scenes"]),4)
+                    self.assertEqual(sum(s["seconds"] for s in result["scenes"]),duration)
+                    self.assertEqual(result["scenes"][0]["start"],0)
+                    self.assertEqual(result["scenes"][-1]["end"],duration)
+                    self.assertEqual((result["width"],result["height"]),(width,height))
+                    self.assertEqual(result["scenes"][2]["voice_draft"],"")
+        for bad in (dict(brief,duration=True),dict(brief,format="2:3"),dict(brief,product=""),dict(brief,unexpected="x")):
+            with self.assertRaises(ValueError):plan(bad)
+        with patch("elite_program.access",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):student_plan("token",brief,"ru")
+        with patch("elite_program.access",return_value={"lessons":[],"owner_preview":False}):
+            with self.assertRaises(PermissionError):student_plan("token",brief,"ru")
+        with patch("elite_program.access",return_value={"owner_preview":True}):
+            self.assertEqual(student_plan("token",brief,"ru")["duration"],30)
     def test_open_generative_bridge(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
