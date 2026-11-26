@@ -31,7 +31,10 @@ def upstream(key, path, payload=None):
     try:
         req = Request(BASE + path, data=raw, headers=headers)
         with build_opener(NoRedirect()).open(req, timeout=10) as response:
-            data = json.loads(response.read(262145))
+            raw_response = response.read(262145)
+            if len(raw_response) > 262144:
+                raise ValueError("Provider response too large")
+            data = json.loads(raw_response)
             if not isinstance(data, dict):
                 raise ValueError()
             return data
@@ -43,6 +46,8 @@ def upstream(key, path, payload=None):
             return {"error_code": "balance_required"}
         if e.code == 429:
             return {"error_code": "provider_rate_limit"}
+        if e.code == 408:
+            return {"error_code": "outcome_unknown"}
         if 400 <= e.code < 500:
             return {"error_code": "provider_rejected"}
         return {"error_code": "outcome_unknown"}
@@ -163,19 +168,30 @@ def session_id(token):
             raise PermissionError("Graduate certificate required")
     return str(sid) + ":" + hashlib.sha256(token.encode()).hexdigest()
 
+def _prune_locked(now):
+    """Discard expired credential references even without new Studio requests.
+    An in-flight request may retain its local key until it finishes.
+    Keep pending/unknown request guards for their existing retention period.
+    """
+    for k in list(SESSIONS):
+        item = SESSIONS[k]
+        if item["expires"] <= now:
+            item["key"] = None
+            if not item["busy"] and (not (item["job"] or item["unknown"]) or item["guard_until"] <= now):
+                del SESSIONS[k]
+    for k in list(RATE):
+        if RATE[k] <= now:
+            del RATE[k]
+
+def prune_expired():
+    with LOCK:
+        _prune_locked(time.monotonic())
+
 def dispatch(token, action, body):
     owner = session_id(token)
     now = time.monotonic()
     with LOCK:
-        for k in list(SESSIONS):
-            item = SESSIONS[k]
-            if item["expires"] <= now and not item["busy"]:
-                item["key"] = None
-                if not (item["job"] or item["unknown"]) or item["guard_until"] <= now:
-                    del SESSIONS[k]
-        for k in list(RATE):
-            if RATE[k] <= now:
-                del RATE[k]
+        _prune_locked(now)
         if len(RATE) >= 5000 or RATE.get(owner, 0) > now:
             return 429, {"error": "Wait before retrying"}
         RATE[owner] = now + 2
@@ -255,7 +271,7 @@ def dispatch(token, action, body):
                 session["job"] = job
                 return 200, {"request_id": job, "status": "submitted"}
             status = result.get("status")
-            if status not in TERMINAL | {"queued", "in_progress", "processing", "running", "pending"}:
+            if not isinstance(status, str) or status not in TERMINAL | {"queued", "in_progress", "processing", "running", "pending"}:
                 status = "pending"
             output = {"status": status, "request_id": session["job"]}
             if status == "completed":

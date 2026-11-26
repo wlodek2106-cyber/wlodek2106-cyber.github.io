@@ -49,6 +49,12 @@ class BoundedHTTPServer(ThreadingHTTPServer):
     def __init__(self,*args,**kwargs):
         self.slots=threading.BoundedSemaphore(16)
         super().__init__(*args,**kwargs)
+    def service_actions(self):
+        # BaseServer invokes this on its regular serve_forever polling loop.
+        # No background worker, external service or additional paid resources.
+        from higgsfield_studio import prune_expired
+        prune_expired()
+        super().service_actions()
     def process_request(self,request,client_address):
         if not self.slots.acquire(blocking=False):
             try:

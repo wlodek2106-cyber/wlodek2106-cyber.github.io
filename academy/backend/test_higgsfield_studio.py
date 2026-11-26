@@ -94,3 +94,46 @@ class HiggsfieldStudioTests(unittest.TestCase):
         with patch.object(h,"upstream",return_value=response) as provider:
             self.assertEqual(self.call("upload",{"content_type":"image/png","size":1024,"confirm_upload_rights":True})[1],response)
             self.assertEqual(provider.call_args.args[1],"/files/generate-upload-url")
+
+    def test_expiry_without_studio_request(self):
+        key="example:secret123"
+        self.call("connect",{"key":key,"consent":True})
+        self.call("connect",{"key":key,"consent":True},owner="other")
+        with patch.object(h,"upstream",return_value={"request_id":"job_123"}):
+            self.call("submit",{"prompt":"test","confirm_charge":True})
+        now=max(s["expires"] for s in h.SESSIONS.values())+1
+        with patch.object(h.time,"monotonic",return_value=now):
+            h.prune_expired()
+            self.assertNotIn("other",h.SESSIONS)
+            self.assertIsNone(h.SESSIONS["student"]["key"])
+            self.assertEqual(h.SESSIONS["student"]["job"],"job_123")
+            self.assertEqual(self.call("connect",{"key":key,"consent":True})[1]["request_id"],"job_123")
+
+    def test_busy_expiry_retains_job_guard(self):
+        self.call("connect",{"key":"example:secret123","consent":True})
+        item=h.SESSIONS["student"]
+        item.update({"busy":True,"job":"job_123"})
+        with patch.object(h.time,"monotonic",return_value=item["expires"]+1):
+            h.prune_expired()
+        self.assertIsNone(item["key"])
+        self.assertIs(h.SESSIONS["student"],item)
+
+    def test_malformed_provider_status_preserves_pending_job(self):
+        self.call("connect",{"key":"example:secret123","consent":True})
+        with patch.object(h,"upstream",return_value={"request_id":"job_123"}):
+            self.call("submit",{"prompt":"test","confirm_charge":True})
+        for status in ([],{},None,123):
+            with patch.object(h,"upstream",return_value={"status":status}):
+                self.assertEqual(self.call("status",{})[1],{"status":"pending","request_id":"job_123"})
+        self.assertEqual(self.call("submit",{"prompt":"test","confirm_charge":True})[0],409)
+
+    def test_provider_timeout_and_oversize_are_unknown(self):
+        from urllib.error import HTTPError
+        from unittest.mock import MagicMock
+        opener=MagicMock()
+        with patch.object(h,"build_opener",return_value=opener):
+            opener.open.side_effect=HTTPError(h.BASE,408,"timeout",{},None)
+            self.assertEqual(h.upstream("example:secret123",h.MODEL,{}),{"error_code":"outcome_unknown"})
+            opener.open.side_effect=None
+            opener.open.return_value.__enter__.return_value.read.return_value=b"{}"+b" "*262143
+            self.assertEqual(h.upstream("example:secret123",h.MODEL,{}),{"error_code":"outcome_unknown"})
