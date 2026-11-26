@@ -30,6 +30,8 @@ def package(files,details,checks,output):
     required={"duration","resolution","frame_rate","video_codec","pixel_format","audio","subtitles"}
     qc_checks=qc.get("checks",{})
     if qc.get("tool")!="Zer0Life FFprobe delivery check" or target.get("duration")!=duration or target.get("format")!=fmt or set(qc_checks)!=required or not all(v is True for v in qc_checks.values()) or qc.get("metadata_pass") is not True:raise ValueError("Supply passing QC report matching the plan")
+    video_hash=qc.get("video_sha256")
+    if not isinstance(video_hash,str) or not re.fullmatch(r"[a-f0-9]{64}",video_hash):raise ValueError("Regenerate QC with the latest checker to bind it to this video")
     out=Path(output).resolve()
     if out.suffix.lower()!=".zip" or not out.parent.is_dir() or out.exists():raise ValueError("Choose new ZIP output")
     manifest={"project":details["project"],"revision":details["revision"],"limitations":details["limitations"],"duration":duration,"format":fmt,"created_at":datetime.now(timezone.utc).isoformat(),"manual_checks":checks,"files":[],"notice":"Creator-supplied checks and report; no independent Academy or client approval. Verify licenses, terms, and final file before delivery."}
@@ -44,6 +46,7 @@ def package(files,details,checks,output):
                         size+=len(chunk)
                         if size>2*1024**3:raise ValueError("File too large")
                         digest.update(chunk);dest.write(chunk)
+                if key=="video" and digest.hexdigest()!=video_hash:raise ValueError("Final video differs from inspected file; rerun QC")
                 manifest["files"].append({"role":key,"name":name,"bytes":size,"sha256":digest.hexdigest()})
             z.writestr("delivery-manifest.json",json.dumps(manifest,ensure_ascii=False,indent=2),compress_type=ZIP_DEFLATED)
         # Exclusive destination; never overwrite existing work.
