@@ -302,6 +302,20 @@ class ProgressTests(unittest.TestCase):
         self.assertFalse(lesson_available(46,None,{},self.t,"elite"))
         self.assertTrue(lesson_available(2,self.t,{1:self.t},self.t+timedelta(days=1),"starter"))
         self.assertFalse(lesson_available(2,self.t,{1:self.t-timedelta(days=4)},self.t,"starter"))
+    def test_elite_practical_guides(self):
+        from elite_program import PROJECTS, PRACTICE_GUIDES, practice_steps
+        self.assertEqual(set(PRACTICE_GUIDES),{row[0] for row in PROJECTS})
+        for project,_,langs,_ in PROJECTS:
+            self.assertEqual(set(PRACTICE_GUIDES[project]),set(langs))
+            for lang,original in langs.items():
+                guides=PRACTICE_GUIDES[project][lang]
+                self.assertEqual(len(guides),3)
+                actual=practice_steps(project,langs,lang)
+                self.assertEqual(len(actual),3)
+                for task,guide,combined in zip(original,guides,actual):
+                    self.assertGreater(len(guide),40)
+                    self.assertEqual(combined,task+"\n\n"+guide)
+            self.assertEqual(practice_steps(project,langs,"unsupported"),practice_steps(project,langs,"en"))
     def test_elite_program(self):
         from elite_program import PROJECTS, unlocked, access
         from unittest.mock import patch
