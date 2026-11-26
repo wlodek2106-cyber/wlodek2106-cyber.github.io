@@ -350,6 +350,9 @@ def dispatch(method,path,body,token):
             raise PermissionError("Paid course access required")
         source=Path(__file__).with_name("local-tool-bridge.py").read_bytes()
         return 200,{"source_base64":base64.b64encode(source).decode("ascii"),"filename":"zer0life-local-tool-bridge.py"}
+    if path=="/teacher/plan" and method=="POST":
+        from adaptive_study import plan
+        return 200,plan(token,body.get("minutes",30),body.get("lang","en"))
     if path=="/teacher/snapshot" and method=="POST":
         from teacher_profile import export
         return 200,export(token)

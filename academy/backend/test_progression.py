@@ -32,6 +32,24 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(PermissionError):grade(cur,body)
         with patch.dict(sys.modules,{"partners":SimpleNamespace(owner=Mock(side_effect=PermissionError)),"database":SimpleNamespace(transaction=Mock())}):
             with self.assertRaises(PermissionError):dispatch("invalid","grade",body)
+    def test_adaptive_study_agenda(self):
+        from adaptive_study import agenda
+        p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}]}
+        j={"items":[{"day":1,"latest":75,"due":True},{"day":3,"latest":10,"due":True}]}
+        for n in (15,30,60):
+            r=agenda(p,j,n)
+            self.assertEqual(sum(x["minutes"] for x in r["items"]),n)
+            self.assertEqual(r["focus"]["day"],1)
+            self.assertEqual(r["focus"]["level"],"foundation")
+            self.assertEqual(r["items"][0]["kind"],"review")
+        r=agenda(p,{"items":[{"day":1,"latest":95,"due":False}]},30)
+        self.assertEqual(r["focus"]["day"],2)
+        self.assertEqual(r["items"][0]["kind"],"learn")
+        self.assertEqual(agenda(p,{"items":[{"day":1,"latest":92,"due":True}]},15)["focus"]["level"],"challenge")
+        self.assertEqual(agenda(p,{"items":[{"day":1,"latest":85,"due":True}]},15)["focus"]["level"],"reinforce")
+        self.assertIsNone(agenda({"lessons":[]},{"items":[]},15)["focus"])
+        for v in (0,45,True,"30"):
+            with self.assertRaises(ValueError): agenda(p,j,v)
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}

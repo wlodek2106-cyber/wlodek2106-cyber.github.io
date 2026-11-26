@@ -77,6 +77,14 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["unlocked"])
                 with self.assertRaises(PermissionError): learning.require_lesson(buyer,2)
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["completed"])
+                from adaptive_study import plan as study_plan
+                study=study_plan(buyer,30,"ru")
+                self.assertEqual(study["focus"]["day"],1)
+                self.assertEqual(study["brief"]["language"],"ru")
+                self.assertEqual(sum(x["minutes"] for x in study["items"]),30)
+                self.assertFalse(study["official_grading"])
+                self.assertNotIn("email",study["snapshot"])
+                with self.assertRaises(PermissionError): study_plan("invalid-token",30,"en")
                 with self.assertRaises(PermissionError): exams.start_exam(buyer,1,bank)
                 with self.assertRaises(PermissionError): certificates.issue_certificate(buyer)
                 import agency
