@@ -3,6 +3,29 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_production_suite_bundle(self):
+        from production_suite import build,student_bundle,FILES,VERSION
+        from io import BytesIO
+        from zipfile import ZipFile
+        from unittest.mock import patch
+        import hashlib,json
+        for lang in ("en","ru","uk","pl"):
+            with ZipFile(BytesIO(build(lang))) as z:
+                self.assertEqual(set(z.namelist()),set(FILES)|{"README.txt","manifest.json"})
+                manifest=json.loads(z.read("manifest.json"))
+                self.assertEqual(manifest["version"],VERSION)
+                self.assertEqual(len(manifest["files"]),len(FILES)+1)
+                for f in manifest["files"]:
+                    self.assertEqual(hashlib.sha256(z.read(f["name"])).hexdigest(),f["sha256"])
+                    self.assertEqual(len(z.read(f["name"])),f["bytes"])
+                self.assertIsNone(z.testzip())
+                for name in FILES:compile(z.read(name),name,"exec")
+        with patch("elite_program.access",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):student_bundle("token","ru")
+        with patch("elite_program.access",return_value={"lessons":[],"owner_preview":False}):
+            with self.assertRaises(PermissionError):student_bundle("token","ru")
+        with patch("elite_program.access",return_value={"owner_preview":True}):
+            self.assertTrue(student_bundle("token","ru").startswith(b"PK"))
     def test_client_delivery_kit(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
