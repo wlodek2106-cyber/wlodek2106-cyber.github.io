@@ -3,6 +3,35 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_practical_assessment(self):
+        from practical_assessment import evaluate,grade,dispatch
+        from unittest.mock import Mock,patch
+        from types import SimpleNamespace
+        import sys,json
+        scores={"goal":18,"quality":18,"workflow":18,"verification":18,"rights":12}
+        note="Inspected output and test report."
+        result=evaluate(scores,note)
+        self.assertEqual(result["score"],84)
+        self.assertTrue(result["passed"])
+        self.assertFalse(evaluate({**scores,"rights":11},note)["passed"])
+        self.assertFalse(evaluate({k:12 for k in scores},note)["passed"])
+        for bad in ({**scores,"rights":True},{**scores,"quality":21},{**scores,"goal":-1},{"goal":20}):
+            with self.assertRaises(ValueError):evaluate(bad,note)
+        with self.assertRaises(ValueError):evaluate(scores,"short")
+        cur=Mock()
+        body={"id":17,"scores":scores,"feedback":note,"inspected":True}
+        cur.fetchone.return_value=(17,)
+        self.assertEqual(grade(cur,body)["id"],17)
+        sql,args=cur.execute.call_args.args
+        self.assertIn("WHERE id=%s AND score IS NULL",sql)
+        self.assertEqual(args[0],84)
+        self.assertEqual(json.loads(args[2]),scores)
+        self.assertEqual(args[-1],17)
+        with self.assertRaises(ValueError):grade(cur,{**body,"inspected":False})
+        cur.fetchone.return_value=None
+        with self.assertRaises(PermissionError):grade(cur,body)
+        with patch.dict(sys.modules,{"partners":SimpleNamespace(owner=Mock(side_effect=PermissionError)),"database":SimpleNamespace(transaction=Mock())}):
+            with self.assertRaises(PermissionError):dispatch("invalid","grade",body)
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}
