@@ -515,6 +515,12 @@ class LaunchIntegration(unittest.TestCase):
                 stid=support_create(cur,buyer_id,ticket)["id"]
                 self.assertEqual(support_list(cur,buyer_id)["items"][0]["id"],stid)
                 self.assertFalse(support_list(cur,buyer_id)["items"][0]["unread"])
+                from support_triage import assign as triage_assign
+                self.assertEqual(support_list(cur,buyer_id)["items"][0].get("priority"),None)
+                triage_assign(cur,stid,"provider","high")
+                self.assertEqual(support_thread(cur,owner_id,stid,True)["priority"],"high")
+                self.assertNotIn("priority",support_thread(cur,buyer_id,stid))
+                cur.execute("UPDATE support_tickets SET admin_unread=true WHERE id=%s",(stid,))
                 cur.execute("SELECT admin_unread FROM support_tickets WHERE id=%s",(stid,))
                 self.assertTrue(cur.fetchone()[0])
                 self.assertEqual(support_list(cur,buyer_id,status="closed")["items"],[])

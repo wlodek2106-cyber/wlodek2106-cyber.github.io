@@ -16,7 +16,9 @@ def create(cur,sid,b):
     cur.execute("SELECT count(*),count(*) FILTER(WHERE status<>'closed') FROM support_tickets WHERE student_id=%s",(sid,))
     total,active=cur.fetchone()
     if total>=200 or active>=5: raise ValueError("Ticket limit")
-    cur.execute("INSERT INTO support_tickets(student_id,category,subject,admin_unread) VALUES (%s,%s,%s,true) RETURNING id",(sid,category,subject))
+    from support_triage import classify
+    topic,priority=classify(category,subject,body)
+    cur.execute("INSERT INTO support_tickets(student_id,category,subject,admin_unread,topic,priority) VALUES (%s,%s,%s,true,%s,%s) RETURNING id",(sid,category,subject,topic,priority))
     tid=cur.fetchone()[0]
     cur.execute("INSERT INTO support_messages(ticket_id,role,body) VALUES (%s,'student',%s)",(tid,body))
     return {"id":tid,"status":"open"}
@@ -35,15 +37,17 @@ def filters(status,category):
         raise ValueError("Invalid category")
     return status,category
 
-def listing(cur,sid,admin=False,before=None,status=None,category=None):
+def listing(cur,sid,admin=False,before=None,status=None,category=None,priority=None):
     status,category=filters(status,category)
+    from support_triage import PRIORITIES
+    if priority is not None and (not isinstance(priority,str) or priority not in PRIORITIES): raise ValueError("Invalid priority")
     cur.execute("""SELECT id,category,subject,status,updated_at,
-      CASE WHEN %s THEN admin_unread ELSE student_unread END
+      CASE WHEN %s THEN admin_unread ELSE student_unread END,topic,priority,triage_manual
       FROM support_tickets WHERE (%s OR student_id=%s) AND id<%s
       AND (%s::text IS NULL OR status=%s) AND (%s::text IS NULL OR category=%s)
-      ORDER BY id DESC LIMIT 51""",(admin,admin,sid,cursor_value(before),status,status,category,category))
+      AND (%s::text IS NULL OR priority=%s) ORDER BY id DESC LIMIT 51""",(admin,admin,sid,cursor_value(before),status,status,category,category,priority,priority))
     rows=cur.fetchall()
-    items=[{"id":i,"category":c,"subject":s,"status":st,"updated_at":at.isoformat(),"unread":unread} for i,c,s,st,at,unread in rows[:50]]
+    items=[{"id":i,"category":c,"subject":s,"status":st,"updated_at":at.isoformat(),"unread":unread,**({"topic":topic,"priority":prio,"triage_manual":manual} if admin else {})} for i,c,s,st,at,unread,topic,prio,manual in rows[:50]]
     return {"items":items,"next_before":items[-1]["id"] if len(rows)>50 else None,"admin":admin,"counts":counters(cur,sid,admin)}
 
 def access(cur,sid,tid,admin=False):
@@ -56,8 +60,14 @@ def thread(cur,sid,tid,admin=False):
     _,subject,category,state=access(cur,sid,tid,admin)
     cur.execute("UPDATE support_tickets SET admin_unread=false WHERE id=%s" if admin else "UPDATE support_tickets SET student_unread=false WHERE id=%s",(tid,))
     cur.execute("SELECT id,role,body,created_at FROM support_messages WHERE ticket_id=%s ORDER BY id",(tid,))
-    return {"id":tid,"subject":subject,"category":category,"status":state,
-            "messages":[{"id":i,"role":r,"body":b,"created_at":at.isoformat()} for i,r,b,at in cur.fetchall()]}
+    rows=cur.fetchall()
+    meta={}
+    if admin:
+        cur.execute("SELECT topic,priority,triage_manual FROM support_tickets WHERE id=%s",(tid,))
+        topic,prio,manual=cur.fetchone()
+        meta={"topic":topic,"priority":prio,"triage_manual":manual}
+    return {"id":tid,"subject":subject,"category":category,"status":state,**meta,
+            "messages":[{"id":i,"role":r,"body":b,"created_at":at.isoformat()} for i,r,b,at in rows]}
 
 def reply(cur,sid,b,admin=False):
     tid=ident(b.get("id"));_,_,_,state=access(cur,sid,tid,admin)
@@ -108,7 +118,11 @@ def dispatch(token,action,b):
         if action=="feedback-summary":
             if not allowed: raise PermissionError("Owner required")
             return feedback_summary(cur)
-        if action=="list": return listing(cur,sid,admin,b.get("before"),b.get("status"),b.get("category"))
+        if action in ("triage","triage-summary"):
+            if not allowed or not admin: raise PermissionError("Owner required")
+            from support_triage import assign,summary
+            return assign(cur,b.get("id"),b.get("topic"),b.get("priority")) if action=="triage" else summary(cur,b.get("days",7))
+        if action=="list": return listing(cur,sid,admin,b.get("before"),b.get("status"),b.get("category"),b.get("priority") if admin else None)
         if action=="create": return create(cur,sid,b)
         if action=="thread": return thread(cur,sid,b.get("id"),admin)
         if action=="reply": return reply(cur,sid,b,admin)

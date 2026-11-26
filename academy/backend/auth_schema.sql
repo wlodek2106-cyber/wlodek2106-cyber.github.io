@@ -598,3 +598,8 @@ CREATE TABLE IF NOT EXISTS support_article_feedback (
  updated_at timestamptz NOT NULL DEFAULT now(),
  PRIMARY KEY(student_id,article)
 );
+
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS topic text NOT NULL DEFAULT 'other' CHECK(topic IN ('security','signin','payment','lesson','model','provider','order','connection','other'));
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'normal' CHECK(priority IN ('normal','high','urgent'));
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS triage_manual boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS support_created_topic_idx ON support_tickets(created_at,topic);

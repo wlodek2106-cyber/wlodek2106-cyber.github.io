@@ -244,7 +244,7 @@ def dispatch(method,path,body,token):
     if path=="/support/diagnose" and method=="POST":
         from support_diagnostics import report
         return 200,report(token)
-    if path in tuple("/support/"+x for x in ("list","create","thread","reply","close","admin","feedback","feedback-summary")) and method=="POST":
+    if path in tuple("/support/"+x for x in ("list","create","thread","reply","close","admin","feedback","feedback-summary","triage","triage-summary")) and method=="POST":
         from support_center import dispatch as support_dispatch
         return 200,support_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/creator/command" and method=="POST":

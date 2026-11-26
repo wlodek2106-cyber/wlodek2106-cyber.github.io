@@ -94,6 +94,18 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_support_triage_rules(self):
+        from support_triage import classify,assign,summary
+        from unittest.mock import Mock
+        self.assertEqual(classify("account","Взлом аккаунта","Помогите"),("security","urgent"))
+        self.assertEqual(classify("payment","Invoice","Pending"),("payment","high"))
+        self.assertEqual(classify("ai","Higgsfield","Credits"),("provider","normal"))
+        self.assertEqual(classify("other","503","Server"),("connection","high"))
+        self.assertEqual(classify("learning","Lesson","Question"),("lesson","normal"))
+        cur=Mock()
+        with self.assertRaises(ValueError): assign(cur,1,"invalid","high")
+        with self.assertRaises(ValueError): summary(cur,365)
+        cur.execute.assert_not_called()
     def test_support_learning_diagnostics(self):
         from support_diagnostics import learning_state
         from datetime import datetime,timezone,timedelta
