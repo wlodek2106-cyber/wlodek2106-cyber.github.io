@@ -3,6 +3,29 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_ai_mega_catalog(self):
+        from ai_mega_catalog import ROWS, PLANS, LANGS, catalog, student_catalog
+        from unittest.mock import patch
+        self.assertEqual(len(ROWS),42)
+        self.assertEqual(len({r[2].lower() for r in ROWS}),42)
+        self.assertEqual([sum(r[0]==p for r in ROWS) for p in PLANS],[8,10,12,12])
+        for lang in LANGS:
+            for index,plan in enumerate(PLANS):
+                data=catalog({"access":True,"plan":plan},lang)
+                self.assertEqual(sum(len(g["items"]) for g in data["groups"]),[8,18,30,42][index])
+                self.assertEqual([g["unlocked"] for g in data["groups"]],[i<=index for i in range(4)])
+                self.assertFalse(data["hosted_inference"])
+                for group in data["groups"]:
+                    for item in group["items"]:
+                        self.assertTrue(item["github"].startswith("https://github.com/"))
+                        self.assertEqual(item["status"],"external_reference")
+                        self.assertEqual(item["commercial_license"],"review_required")
+                        self.assertGreater(len(item["task"]),15)
+        self.assertFalse(any(g["items"] for g in catalog({"access":False,"plan":"elite"})["groups"]))
+        self.assertEqual(sum(len(g["items"]) for g in catalog({"owner_preview":True})["groups"]),42)
+        self.assertEqual(catalog({"access":True,"plan":"starter"},[]) ,catalog({"access":True,"plan":"starter"},"en"))
+        with patch("learning.student_progress",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):student_catalog(None,"ru")
     def test_extracted_production_suite_integrity(self):
         from production_suite import build
         from io import BytesIO
