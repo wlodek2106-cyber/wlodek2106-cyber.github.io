@@ -462,6 +462,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         for marker in (b'requestedLesson=true',b'!requestedLesson||panel.hidden||overview.hidden||lesson.hidden',b'lesson.scrollIntoView({block:"start",behavior:"auto"})'):
             self.assertIn(marker,script)
 
+    def test_browser_agent_import_assets(self):
+        code,_,script=self.request("/free-ai.js")
+        self.assertEqual(code,200)
+        for marker in (b"function validateAcademyTeam(",b"async function runAcademyTeam(",b"academy-team-import",b"await f.arrayBuffer()",b"academyRun.onclick"):
+            self.assertIn(marker,script)
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        self.assertIn(b"/free-ai#academy-team-import",script)
+
     def test_model_router_entrypoints(self):
         code,_,script=self.request("/academy-aurora.js")
         self.assertEqual(code,200)
@@ -469,7 +478,7 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"/free-ai#model-router",script)
         code,_,script=self.request("/free-ai.js")
         self.assertEqual(code,200)
-        self.assertIn(b'["#model-hub","#model-router"]',script)
+        self.assertIn(b'["#model-hub","#model-router","#academy-team-import"]',script)
         code,_,engine=self.request("/local-ai-engine.py")
         self.assertEqual(code,200)
         self.assertIn(b"def recommend_local_models(",engine)

@@ -939,7 +939,7 @@ function factoryDesign(){
  const overview=$("workspaceOverview"),panel=$("panel"),days=$("days");if(!overview||!panel||!days)return;
  const w=()=>factoryWords[locale()]||factoryWords.en;
  const hub=el("section","zFactory"),head=el("h2"),intro=el("p"),lesson=el("select"),role=el("select"),add=el("button","zAction"),bar=el("div","zFactoryControls"),list=el("div","zFactoryStages"),brief=el("textarea"),build=el("button","zAction primary"),save=el("button","zAction"),download=el("a"),status=el("p"),note=el("p"),result=el("div");
- hub.id="zFactory";brief.rows=3;brief.maxLength=1600;add.type=build.type=save.type="button";save.disabled=true;status.setAttribute("role","status");download.href="/local-ai-engine.py";download.download="zer0life_local_ai.py";bar.append(role,add);hub.append(head,intro,lesson,bar,list,brief,build,save,status,result,download,note);overview.append(hub);
+ hub.id="zFactory";brief.rows=3;brief.maxLength=1600;add.type=build.type=save.type="button";save.disabled=true;status.setAttribute("role","status");download.href="/local-ai-engine.py";download.download="zer0life_local_ai.py";bar.append(role,add);const browser=el("a");browser.href=url("/free-ai#academy-team-import");links.push([browser,"/free-ai#academy-team-import"]);hub.append(head,intro,lesson,bar,list,brief,build,save,status,result,download,browser,note);overview.append(hub);
  const roles=["teacher","code","design","video","marketing","project"];let team=["design","video","project"],seq=0,data=null,signature="",busy=false;
  const allowed=n=>Array.from(days.querySelectorAll("button[data-day]")).some(b=>Number(b.dataset.day)===n&&!b.disabled);
  function invalidate(){seq++;data=null;busy=false;save.disabled=true;result.replaceChildren();status.textContent="";build.disabled=!lesson.value||!team.length}
@@ -952,7 +952,7 @@ function factoryDesign(){
  function sync(){
    const vals=Array.from(days.querySelectorAll("button[data-day]")).filter(b=>!b.disabled).map(b=>b.dataset.day),key=JSON.stringify([locale(),vals]);
    if(key!==signature){signature=key;const old=lesson.value;lesson.replaceChildren();for(const n of vals){const o=el("option","",w()[3]+" "+n);o.value=n;lesson.append(o)}if(vals.includes(old))lesson.value=old;invalidate();if(!vals.length)status.textContent=w()[18]}
-   head.textContent=w()[0];intro.textContent=w()[1];lesson.setAttribute("aria-label",w()[2]);role.setAttribute("aria-label",w()[4]);add.textContent=w()[4];brief.placeholder=w()[14];brief.setAttribute("aria-label",w()[14]);build.textContent=w()[15];save.textContent=w()[16];download.textContent=w()[17];note.textContent=w()[23]+" "+w()[25];renderRoles();
+   head.textContent=w()[0];intro.textContent=w()[1];lesson.setAttribute("aria-label",w()[2]);role.setAttribute("aria-label",w()[4]);add.textContent=w()[4];brief.placeholder=w()[14];brief.setAttribute("aria-label",w()[14]);build.textContent=w()[15];save.textContent=w()[16];download.textContent=w()[17];browser.textContent=({en:"Open browser AI Studio",ru:"Открыть браузерную AI Studio",uk:"Відкрити браузерну AI Studio",pl:"Otwórz AI Studio w przeglądarce"})[locale()];note.textContent=w()[23]+" "+w()[25];renderRoles();
  }
  add.onclick=()=>{if(roles.includes(role.value)&&!team.includes(role.value)){team.push(role.value);invalidate();renderRoles()}};
  lesson.onchange=invalidate;
