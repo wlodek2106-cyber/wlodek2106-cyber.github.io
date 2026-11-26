@@ -371,6 +371,13 @@ def dispatch(method,path,body,token):
             raise PermissionError("Administration disabled")
         from admin import statistics
         return 200,statistics(token)
+    if path=="/elite/certificate/issue" and method=="POST":
+        from certificates import issue_elite_certificate
+        return 200,issue_elite_certificate(token)
+    if path=="/elite/certificate/pdf" and method=="GET":
+        from certificates import issue_elite_certificate,certificate_pdf
+        import base64
+        return 200,{"pdf_base64":base64.b64encode(certificate_pdf(issue_elite_certificate(token))).decode("ascii")}
     if path=="/certificates/pdf" and method=="GET":
         from certificates import issue_certificate,certificate_pdf
         import base64
