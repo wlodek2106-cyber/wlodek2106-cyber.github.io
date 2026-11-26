@@ -522,7 +522,9 @@ class LaunchIntegration(unittest.TestCase):
                     self.assertEqual(int(after["fee_atomic"])-int(baseline["fee_atomic"]),50000000)
                 # ELITE review regression: all rows and synthetic enrollment roll back.
                 import elite_program as elite
+                from certificates import issue_elite_certificate,verify_certificate,certificate_pdf
                 with patch("database.transaction",shared):
+                    with self.assertRaises(PermissionError):issue_elite_certificate(buyer)
                     with self.assertRaises(PermissionError):elite.review_queue(buyer)
                     with self.assertRaises(PermissionError):elite.save(buyer,"film","A synthetic project report for the test.")
                     cur.execute("UPDATE enrollments SET plan='elite' WHERE student_id=%s",(buyer_id,))
@@ -540,6 +542,18 @@ class LaunchIntegration(unittest.TestCase):
                     project=next(t for t in elite.catalog(buyer,"ru")["projects"] if t["id"]=="film")
                     self.assertEqual(project["submission"]["score"],100)
                     self.assertEqual(project["submission"]["status"],"approved")
+                    with self.assertRaises(PermissionError):issue_elite_certificate(buyer)
+                    for key,_,_,_ in elite.PROJECTS:
+                        if key=="film":continue
+                        elite.save(buyer,key,"Synthetic evidence for credential test only.")
+                        elite.review_project(owner,buyer_id,key,1,elite.RUBRIC,"Synthetic evidence reviewed.")
+                    credential=issue_elite_certificate(buyer)
+                    self.assertEqual(credential["projects"],5)
+                    self.assertEqual(credential["average_score"],100)
+                    self.assertEqual(issue_elite_certificate(buyer)["code"],credential["code"])
+                    self.assertEqual(verify_certificate(credential["code"])["credential"],"elite")
+                    self.assertNotIn("recipient_name",verify_certificate(credential["code"]))
+                    self.assertTrue(certificate_pdf(credential).startswith(b"%PDF-"))
                     with self.assertRaises(ValueError):elite.save(buyer,"film","Attempt to replace an approved test report.")
                 raise Rollback()
         except Rollback:
