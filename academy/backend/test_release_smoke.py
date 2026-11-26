@@ -192,6 +192,92 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         for marker in (b"zCompactBody[hidden]",b"zLabsCollapsed",b"zAdminRail",b"zCommunitySearch"):
             self.assertIn(marker,style)
+    def test_launch_registration_and_login_http_contract(self):
+        import api
+        from uuid import uuid4
+        headers={"Content-Type":"application/json"}
+        email="qa-"+uuid4().hex+"@example.invalid"
+        data={"first_name":" Test ","last_name":" Student ","email":email.upper(),"password":"synthetic-password-123"}
+        def post(path,value):
+            code,h,body=self.request(path,"POST",json.dumps(value).encode(),headers)
+            self.assertEqual(h["cache-control"],"no-store")
+            return code,json.loads(body)
+        with patch.dict(os.environ,{"ACADEMY_DATABASE_URL":"mock","ACADEMY_REGISTRATION_ENABLED":"false"}),patch.object(api,"ready",return_value=True),patch.object(api,"register",return_value=7001) as register:
+            self.assertEqual(post("/register",data)[0],403)
+            register.assert_not_called()
+            with patch.dict(os.environ,{"ACADEMY_REGISTRATION_ENABLED":"true"}):
+                self.assertEqual(post("/register",{**data,"password":"short"})[0],400)
+                register.assert_not_called()
+                self.assertEqual(post("/register",data),(201,{"id":7001}))
+                register.assert_called_once_with(email,data["password"],"Test","Student",None,None,None)
+                register.side_effect=ValueError("internal duplicate")
+                code,response=post("/register",data)
+                self.assertEqual(code,400)
+                self.assertEqual(response["code"],"registration_unavailable")
+                self.assertNotIn("internal duplicate",str(response))
+            with patch.object(api,"login",return_value="synthetic-session") as login:
+                self.assertEqual(post("/login",{"email":email,"password":data["password"]}),(200,{"token":"synthetic-session"}))
+                login.assert_called_once_with(email,data["password"],None)
+
+    def test_launch_checkout_flags_http_contract(self):
+        import api
+        import checkout
+        from payment_policy import PRICES,course_amount
+        headers={"Content-Type":"application/json","Authorization":"Bearer synthetic-session"}
+        self.assertEqual(set(PRICES),{"starter","pro","vip","elite"})
+        with patch.dict(os.environ,{"ACADEMY_DATABASE_URL":"mock"}),patch.object(api,"ready",return_value=True),patch.object(checkout,"create_invoice",return_value={"id":"fixture"}) as create:
+            for ready,enabled in (("false","false"),("true","false"),("false","true")):
+                with patch.dict(os.environ,{"ACADEMY_CHECKOUT_READY":ready,"ACADEMY_PAYMENTS_ENABLED":enabled}):
+                    code,_,_=self.request("/checkout/create","POST",b'{"plan":"starter"}',headers)
+                    self.assertEqual(code,503)
+            create.assert_not_called()
+            with patch.dict(os.environ,{"ACADEMY_CHECKOUT_READY":"true","ACADEMY_PAYMENTS_ENABLED":"true"}):
+                for plan,price in PRICES.items():
+                    self.assertEqual(course_amount(plan,False),price*1000000)
+                    self.assertEqual(course_amount(plan,True),price*950000)
+                    code,_,body=self.request("/checkout/create","POST",json.dumps({"plan":plan}).encode(),headers)
+                    self.assertEqual(code,201)
+                    self.assertEqual(json.loads(body),{"id":"fixture"})
+                    create.assert_called_with("synthetic-session",plan)
+            self.assertEqual(create.call_count,4)
+
+    def test_launch_owner_permission_and_passkey_origin(self):
+        import api
+        import accounts
+        with patch.dict(os.environ,{"ACADEMY_DATABASE_URL":"mock","ACADEMY_ADMIN_ENABLED":"true","ACADEMY_PARTNER_ADMIN_IDS":"7001"}),patch.object(api,"ready",return_value=True),patch.object(accounts,"authenticate") as authenticate:
+            authenticate.side_effect=lambda token:{"synthetic-owner":7001,"synthetic-student":7002}.get(token)
+            for token,allowed in ((None,False),("synthetic-student",False),("synthetic-owner",True)):
+                h={"Authorization":"Bearer "+token} if token else {}
+                code,_,body=self.request("/admin/network-access",headers=h)
+                self.assertEqual(code,200)
+                self.assertEqual(json.loads(body),{"allowed":allowed})
+            with patch.dict(os.environ,{"ACADEMY_ADMIN_ENABLED":"false"}):
+                code,_,body=self.request("/admin/network-access",headers={"Authorization":"Bearer synthetic-owner"})
+                self.assertEqual(json.loads(body),{"allowed":False})
+            for route in ("/passkeys/login/begin","/passkeys/login/finish"):
+                code,_,_=self.request(route,"POST",b"{}",{"Content-Type":"application/json","Origin":"https://example.invalid"})
+                self.assertEqual(code,403)
+
+    def test_launch_exam_answer_contract(self):
+        from assessment import prepare_attempt,grade_attempt
+        bank=[{"id":str(i),"question":"Synthetic "+str(i),"options":["correct","wrong","other"],"correct":"correct"} for i in range(10)]
+        public,key=prepare_attempt(bank)
+        self.assertEqual(len(public["questions"]),10)
+        self.assertNotIn("answer_key",public)
+        for q in public["questions"]:
+            self.assertEqual(set(q),{"id","question","options"})
+            self.assertEqual(q["options"][key[q["id"]]],"correct")
+        ids=list(key)
+        for wrong,passed in ((0,True),(2,True),(3,False)):
+            answers=dict(key)
+            for k in ids[:wrong]:
+                answers[k]=(key[k]+1)%3
+            self.assertEqual(grade_attempt(answers,key),{"score":100-10*wrong,"passed":passed})
+        with self.assertRaises(ValueError):
+            grade_attempt({**key,ids[0]:True},key)
+        with self.assertRaises(ValueError):
+            grade_attempt({k:v for k,v in key.items() if k!=ids[0]},key)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
