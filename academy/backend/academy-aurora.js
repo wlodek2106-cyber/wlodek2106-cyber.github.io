@@ -131,9 +131,69 @@ function authDesign(){
  if(passkey)new MutationObserver(()=>authRelabel()).observe(passkey,{attributes:true,attributeFilter:["hidden"]});
  authRelabel();sync();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+const profileWords={"en":["My profile","Account & security","Your Academy plan","Owner control center","Manage Academy","Operations","Finance & partners","Content & community","System monitor & support","Back to overview","Students","Paid enrollments","Completed lessons","Exam attempts","Certificates","Public reviews","Submitted projects","Referral registrations","Paid referrals","Average rating","Account settings","Your account"],"ru":["Мой профиль","Аккаунт и безопасность","Твой пакет обучения","Центр управления владельца","Управление академией","Пользователи и управление","Финансы и партнёры","Контент и сообщество","Мониторинг и поддержка","Вернуться на главную","Студенты","Оплаченные пакеты","Завершённые уроки","Попытки экзаменов","Сертификаты","Публичные отзывы","Отправленные проекты","Реферальные регистрации","Оплаченные рефералы","Средняя оценка","Настройки аккаунта","Твой аккаунт"],"uk":["Мій профіль","Акаунт і безпека","Твій пакет навчання","Центр керування власника","Керування академією","Користувачі й керування","Фінанси й партнери","Контент і спільнота","Моніторинг і підтримка","На головну","Студенти","Оплачені пакети","Завершені уроки","Спроби іспитів","Сертифікати","Публічні відгуки","Надіслані проєкти","Реферальні реєстрації","Оплачені реферали","Середня оцінка","Налаштування акаунта","Твій акаунт"],"pl":["Mój profil","Konto i bezpieczeństwo","Twój pakiet nauki","Centrum właściciela","Zarządzanie akademią","Użytkownicy i zarządzanie","Finanse i partnerzy","Treści i społeczność","Monitoring i pomoc","Wróć do startu","Studenci","Opłacone pakiety","Ukończone lekcje","Próby egzaminów","Certyfikaty","Opinie publiczne","Przesłane projekty","Rejestracje poleconych","Opłacone polecenia","Średnia ocena","Ustawienia konta","Twoje konto"]},pw=()=>profileWords[locale()];
+let profileRefresh=null;
+function profileDesign(){
+ const overview=$("workspaceOverview"),owner=$("ownerNav"),extra=$("extra"),nav=$("academyNav"),panel=$("panel"),identity=$("accountName"),accountId=$("accountId"),badge=$("accountBadge"),plan=$("workspacePlan");
+ if(!overview||!owner||!extra||!nav||!panel||!identity||!accountId||!badge||!plan)return;
+ const allowed=id=>{const n=$(id);return !!n&&!n.hidden&&!n.disabled&&!n.closest("[hidden]")};
+ const profile=el("section","zProfileCard");profile.id="zProfileCard";
+ const head=el("div","zProfileHead"),avatar=el("div","zProfileAvatar"),copy=el("div","zProfileIdentity"),eyebrow=el("small"),name=el("h2"),handle=el("p"),role=el("span","zProfileBadge");
+ copy.append(eyebrow,name,handle,role);head.append(avatar,copy);
+ const planRow=el("div","zProfilePlan"),planLabel=el("span"),planValue=el("strong");planRow.append(planLabel,planValue);
+ const actions=el("div","zProfileActions");
+ const accountControls=[["securityButton","lock"],["mfaButton","shield-check"],["passkeySettings","lock"]];
+ const controlButtons=[];
+ function navButton(id,ico){const btn=el("button","zProfileButton");btn.type="button";const label=el("span");btn.append(icon(ico),label);btn.onclick=()=>{if(allowed(id))$(id).click()};controlButtons.push({id,btn,label});return btn}
+ for(const [id,ico] of accountControls)actions.append(navButton(id,ico));
+ profile.append(head,planRow,actions);overview.prepend(profile);
+ const hub=el("section","zOwnerHub");hub.id="zOwnerHub";hub.hidden=true;
+ const title=el("h2"),intro=el("p","zOwnerIntro"),groups=el("div","zOwnerGroups");hub.append(title,intro,groups);
+ const blocks=[];
+ const sections=[[5,["admin","directoryAdmin","networkAdmin","founderAdmin"]],[6,["treasuryAdmin","partnerAdmin","acquisitionAdmin"]],[7,["contentAdmin","marketplaceAdmin","jobsAdmin","communityAdmin"]]];
+ for(const [i,ids] of sections){const section=el("div","zOwnerGroup"),heading=el("h3"),grid=el("div","zOwnerGrid");for(const id of ids)grid.append(navButton(id,navIcons[id]||"shield-check"));section.append(heading,grid);groups.append(section);blocks.push({i,ids,section,heading})}
+ const support=el("a","zProfileButton zOwnerSupport");support.append(icon("headphones"),el("span"));hub.append(support);
+ // This is a shortcut panel, not an additional source of account or administrator privileges.
+ overview.prepend(hub);
+ const ownerRail=el("div","zOwnerRail");ownerRail.id="zOwnerRail";ownerRail.hidden=true;const back=el("button","zProfileButton");back.type="button";back.append(icon("layout-dashboard"),el("span"));back.onclick=()=>{if(allowed("homeNav"))$("homeNav").click()};const railTitle=el("strong");ownerRail.append(railTitle,back);extra.before(ownerRail);
+ const metrics=["Students","Paid enrollments","Completed lessons","Exam attempts","Certificates","Public reviews","Submitted projects","Referral registrations","Paid referrals","Average rating"];
+ const metricIcons=["users","wallet","book-open","checklist","graduation","message","image","network","gift","trophy"];
+ function polishAdmin(){
+   if(!allowed("admin")||$("admin").getAttribute("aria-current")!=="page"||extra.hidden)return;
+   for(const card of extra.querySelectorAll("article")){
+     const small=card.querySelector(":scope > small"),value=card.querySelector(":scope > h2");if(!small||!value)continue;
+     let index=Number(card.dataset.zMetric);if(!card.hasAttribute("data-z-metric")){index=metrics.indexOf(small.textContent.trim());if(index<0)continue;card.dataset.zMetric=String(index);card.classList.add("zAdminMetric");const art=el("span","zMetricIcon");art.append(icon(metricIcons[index]));card.prepend(art);card.parentElement.classList.add("zAdminMetrics")}
+     const translated=pw()[10+index];if(translated&&small.textContent!==translated)small.textContent=translated;
+   }
+ }
+ function sync(){
+   const signed=!panel.hidden;
+   const own=signed&&!owner.hidden&&sections.some(([,ids])=>ids.some(allowed));
+   profile.hidden=!signed;hub.hidden=!own;
+   const n=identity.textContent.trim(),h=accountId.textContent.trim();
+   name.textContent=n||pw()[21];handle.textContent=h;handle.hidden=!h;
+   avatar.textContent=Array.from(n||"Z").slice(0,2).join("").toLocaleUpperCase();
+   role.textContent=badge.hidden?"":badge.textContent;role.hidden=badge.hidden||!role.textContent;
+   planValue.textContent=plan.textContent;eyebrow.textContent=pw()[0];planLabel.textContent=pw()[2];
+   title.textContent=pw()[3];intro.textContent=pw()[4];
+   for(const {id,btn,label} of controlButtons){btn.hidden=!signed||!allowed(id);label.textContent=$(id+"Label")?.textContent||$(id)?.textContent||""}
+   for(const block of blocks){block.heading.textContent=pw()[block.i];block.section.hidden=!block.ids.some(allowed)}
+   support.hidden=!own;support.href=url("/support");support.lastElementChild.textContent=pw()[8];
+   const ownerActive=own&&sections.some(([,ids])=>ids.some(id=>allowed(id)&&$(id).getAttribute("aria-current")==="page"));
+   ownerRail.hidden=!ownerActive||extra.hidden;railTitle.textContent=pw()[3];back.lastElementChild.textContent=pw()[9];
+   polishAdmin();
+ }
+ let scheduled=false;const schedule=()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;sync()})};
+ // Only observe original state nodes; never observe generated profile/owner contents.
+ const obs=new MutationObserver(schedule);
+ for(const node of [identity,accountId,badge,plan])obs.observe(node,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:["hidden"]});
+ obs.observe(nav,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["hidden","disabled","aria-current"]});
+ obs.observe(panel,{attributes:true,attributeFilter:["hidden"]});obs.observe(extra,{attributes:true,attributeFilter:["hidden"],childList:true});
+ profileRefresh=sync;sync();
+}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){const h=document.querySelector("main>header");if(!h)return;const original=Array.from(h.children).filter(n=>n.tagName==="A");if(!original.length)return;h.classList.add("zModuleHeader");h.querySelector("strong")?.prepend(orb());const d=el("details","zModuleNav"),summary=el("summary");summary.append(icon("menu"),label(el("span"),26));const box=el("div","zModuleLinks");for(const a of original){const p=a.getAttribute("href"),data=navMap[p?.split("?")[0]];if(data){a.replaceChildren(icon(data[1]),label(el("span"),data[0]));if(p.startsWith("/")&&!p.startsWith("//"))links.push([a,p])}else a.prepend(icon("folder"));box.append(a)}d.append(summary,box);h.insertBefore(d,lang?.parentElement===h?lang:null);d.addEventListener("click",e=>{if(e.target.closest("a"))d.open=false});document.addEventListener("click",e=>{if(!d.contains(e.target))d.open=false});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.open){d.open=false;summary.focus()}})}
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();motion()}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();

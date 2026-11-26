@@ -146,6 +146,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         for marker in (b"zAuthHero",b"zAuthCard",b"zAuthMenu",b"zAuthSeal"):
             self.assertIn(marker,style)
+    def test_aurora_profile_owner_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"profileDesign()",b"zProfileCard",b"zOwnerHub",b"zOwnerRail",b"owner.hidden",b"allowed(id)",b"accountBadge",b"zAdminMetric"):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        for marker in (b"zProfileAvatar",b"zOwnerHub[hidden]",b"zAdminMetric"):
+            self.assertIn(marker,style)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
