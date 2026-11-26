@@ -329,6 +329,13 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"if(clear.hidden!==hideClear)clear.hidden=hideClear",script)
         self.assertNotIn(b"clear.hidden=!q",script)
 
+    def test_aurora_defers_private_dashboard_until_login(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'if(started||panel?.hidden)return',b'observer?.disconnect()',b'enhance("auth"',b'enhance("production"',b'if(panel?.hidden)'):
+            self.assertIn(marker,script)
+        self.assertIn(b'function enhance(name,run)',script)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

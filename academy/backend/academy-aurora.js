@@ -251,7 +251,43 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();administrationDesign();compactOverview();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+// Optional presentation modules cannot prevent the original authentication handlers from running.
+function enhance(name,run){
+ try{run()}catch(error){console.warn("Academy presentation module:",name,error?.name||"Error")}
+}
+function dashboard(){
+ const overview=$("workspaceOverview"),panel=$("panel");
+ enhance("auth",()=>{authDesign();});
+ let started=false,observer=null;
+ function activate(){
+   if(started||panel?.hidden)return;
+   started=true;observer?.disconnect();
+   enhance("overview",()=>overview.prepend(hero(true),quick(),tiles()));
+   enhance("courses",()=>{courseCards();});
+   enhance("mobile-nav",()=>{bottomNav();});
+   enhance("profile",()=>{profileDesign();});
+   enhance("learning",()=>{learningDesign();});
+   enhance("business",()=>{businessDesign();});
+   enhance("production",()=>{productionDesign();});
+   enhance("social",()=>{socialDesign();});
+   enhance("administration",()=>{administrationDesign();});
+   enhance("compact",()=>{compactOverview();});
+   enhance("navigation-icons",()=>{
+     const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
+     for(const n of document.querySelectorAll("#academyNav .navItem")){
+       const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];
+       if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))
+     }
+     const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027";
+   });
+   enhance("locale",update);
+ }
+ // Do not construct the signed-in dashboard while a visitor is on the login screen.
+ if(panel?.hidden){
+   observer=new MutationObserver(activate);
+   observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ }else activate();
+}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
