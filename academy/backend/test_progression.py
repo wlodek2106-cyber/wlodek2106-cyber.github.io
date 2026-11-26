@@ -3,6 +3,22 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_freelance_assistant(self):
+        from freelance_assistant import estimate_job
+        job={"id":1,"title":"Design","category":"design","brief":"One poster","budget_cents":12000}
+        body={"hours":5,"rate":20,"expenses":0,"buffer":10}
+        result=estimate_job(job,body)
+        self.assertEqual(result["quote_cents"],11000)
+        self.assertEqual(result["budget_difference_cents"],1000)
+        self.assertEqual(result["fee_scenario_percent"],0)
+        result=estimate_job(job,{**body,"fee_scenario":True})
+        self.assertEqual(result["quote_cents"],11579)
+        self.assertEqual(result["budget_difference_cents"],421)
+        self.assertTrue(result["draft_only"])
+        self.assertLess(estimate_job({**job,"budget_cents":100},body)["budget_difference_cents"],0)
+        with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
+        with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
+        with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
     def test_career_skill_paths(self):
         from career import skill_paths
         lessons=[{"day":7,"unlocked":True,"completed":True},{"day":8,"unlocked":True,"completed":True},{"day":9,"unlocked":True,"completed":False},{"day":10,"unlocked":True,"completed":True},{"day":11,"unlocked":True,"completed":True},{"day":12,"unlocked":False,"completed":False},{"day":31,"unlocked":False,"completed":False}]
