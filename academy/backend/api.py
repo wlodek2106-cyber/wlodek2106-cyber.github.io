@@ -309,6 +309,9 @@ def dispatch(method,path,body,token):
     if path=="/career/accelerator" and method=="GET":
         from career import accelerator
         return 200,accelerator(token)
+    if path=="/career/evidence" and method=="GET":
+        from career import creator_evidence_report
+        return 200,creator_evidence_report(token)
     if path=="/career/overview" and method=="GET":
         from career import overview
         return 200,overview(token)

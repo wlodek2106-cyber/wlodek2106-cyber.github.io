@@ -290,6 +290,7 @@ function dashboard(){
    enhance("workforce",()=>{workforceDesign();});
    enhance("factory",()=>{factoryDesign();});
    enhance("delivery-center",installDeliveryCenter);
+   enhance("creator-evidence",creatorEvidenceDesign);
    enhance("command-dock",()=>{commandDockDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
@@ -1015,7 +1016,29 @@ function installDeliveryCenter(){
  const original=renderProjectSchedule;
  renderProjectSchedule=function(host,d,lang){const w=original(host,d,lang);try{renderDeliveryCenter(host,d,lang)}catch(e){console.warn("Delivery presentation",e.name)}return w};
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();factoryRefresh?.();motion()}
+const creatorEvidenceWords={
+ en:["Portfolio & Reputation","Refresh private evidence","Submissions","Reviewed submissions","Lessons with projects","Completed client orders","Approved client reviews","Rating","Academy lessons passed (paid enrollment)","Certificate issued","Service listing","Graduate showcase","Download summary","Yes","No","No rating","Loading…","Could not load evidence","Not a professional credential or payment confirmation. Sharing is optional; check before sending.","Not listed","Pending","Approved","Rejected","Blocked","Withdrawn"],
+ ru:["Портфолио и репутация","Обновить личные достижения","Отправленные работы","Проверенные работы","Уроки с проектами","Завершённые клиентские заказы","Одобренные отзывы клиентов","Рейтинг","Пройденные уроки (платный курс)","Сертификат выдан","Услуга на бирже","Портфолио выпускника","Скачать сводку","Да","Нет","Нет рейтинга","Загрузка…","Не удалось загрузить данные","Не является профессиональной квалификацией или подтверждением оплаты. Передавай только после проверки.","Не размещена","На модерации","Одобрена","Отклонена","Заблокирована","Снята"],
+ uk:["Портфоліо та репутація","Оновити особисті досягнення","Надіслані роботи","Перевірені роботи","Уроки з проєктами","Завершені замовлення","Схвалені відгуки клієнтів","Рейтинг","Пройдені уроки (платний курс)","Сертифікат видано","Послуга на біржі","Портфоліо випускника","Завантажити звіт","Так","Ні","Немає рейтингу","Завантаження…","Не вдалося завантажити дані","Не є професійною кваліфікацією чи підтвердженням оплати. Перевір перед поширенням.","Не розміщена","На модерації","Схвалена","Відхилена","Заблокована","Знята"],
+ pl:["Portfolio i reputacja","Odśwież prywatne osiągnięcia","Przesłane prace","Sprawdzone prace","Lekcje z projektami","Zakończone zlecenia","Zatwierdzone opinie klientów","Ocena","Ukończone lekcje (płatny kurs)","Wydany certyfikat","Usługa na giełdzie","Portfolio absolwenta","Pobierz podsumowanie","Tak","Nie","Brak oceny","Ładowanie…","Nie udało się wczytać danych","Nie jest kwalifikacją zawodową ani potwierdzeniem płatności. Sprawdź przed udostępnieniem.","Brak oferty","Moderacja","Zatwierdzona","Odrzucona","Zablokowana","Wycofana"]};
+let creatorEvidenceRefresh=null;
+function creatorEvidenceDesign(){
+ const hub=$("zCareerCenter"),panel=$("panel"),nav=$("academyNav"),career=$("careerButton");if(!hub||!panel||!nav||!career)return;
+ const w=()=>creatorEvidenceWords[locale()]||creatorEvidenceWords.en;
+ const section=el("details","zCreatorEvidence"),head=el("summary"),load=el("button","zAction"),exportBtn=el("button","zAction"),status=el("p"),rows=el("div","zEvidenceRows"),note=el("p");
+ section.id="zCreatorEvidence";load.type=exportBtn.type="button";status.setAttribute("role","status");section.append(head,load,status,rows,exportBtn,note);hub.append(section);
+ let data=null,request=0,busy=false,lastAccess=false;
+ const allowed=()=>!panel.hidden&&!career.disabled&&!career.closest("[hidden]");
+ function entries(){if(!data)return [];const x=data,t=w(),yes=v=>t[v===true?13:14],states={none:19,pending:20,approved:21,rejected:22,blocked:23,withdrawn:24};return [[2,x.submitted],[3,x.reviewed],[4,x.project_lessons],[5,x.completed_orders],[6,x.approved_reviews],[7,x.rating===null?t[15]:x.rating+" / 5"],[8,x.completed_lessons],[9,yes(x.certificate_issued)],[10,t[states[x.listing_status]??19]],[11,yes(x.showcase_published)]]}
+ function draw(){rows.replaceChildren();for(const [i,v] of entries()){const row=el("div","zCareerStage");row.append(el("span","",w()[i]),el("strong","",String(v)));rows.append(row)}exportBtn.disabled=!data||busy||!allowed()}
+ function reset(){request++;data=null;busy=false;status.textContent="";section.open=false;draw()}
+ function sync(){const access=allowed();if(lastAccess&&!access)reset();lastAccess=access;section.hidden=!access;head.textContent=w()[0];load.textContent=w()[1];exportBtn.textContent=w()[12];note.textContent=w()[18];load.disabled=busy||!access;draw()}
+ load.onclick=async()=>{if(!allowed()||busy||typeof api!=="function")return;const id=++request;busy=true;data=null;status.textContent=w()[16];sync();try{const d=await api("/career/evidence");if(id!==request||!allowed())return;if(d.private!==true||d.official_credential!==false)throw Error("Invalid evidence");data=d;status.textContent=""}catch(e){if(id===request&&allowed())status.textContent=w()[17]}finally{if(id===request){busy=false;sync()}}};
+ exportBtn.onclick=()=>{if(!data||busy||!allowed())return;const text=[w()[0],...entries().map(([i,v])=>w()[i]+": "+v),w()[18]].join("\n");const address=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=el("a");a.href=address;a.download="zer0life-creator-evidence.txt";a.click();setTimeout(()=>URL.revokeObjectURL(address),1000)};
+ let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
+ new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});new MutationObserver(schedule).observe(nav,{subtree:true,attributes:true,attributeFilter:["disabled","hidden"]});creatorEvidenceRefresh=schedule;sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();creatorEvidenceRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();factoryRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();

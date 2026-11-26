@@ -91,3 +91,31 @@ def accelerator(token):
     p=student_progress(token)
     with transaction() as cur:
         return accelerator_data(cur,sid,sum(x["completed"] for x in p["lessons"]),len(p["lessons"]))
+
+def creator_evidence(cur,sid):
+    """Private aggregates; never expose submissions, client identity or review text."""
+    from reputation import stats
+    cur.execute("""SELECT count(*),count(*) FILTER (WHERE p.reviewed_at IS NOT NULL),
+        count(DISTINCT p.lesson) FROM project_submissions p
+        JOIN enrollments e ON e.id=p.enrollment_id WHERE e.student_id=%s""",(sid,))
+    submitted,reviewed,days=cur.fetchone()
+    cur.execute("SELECT status FROM marketplace_services WHERE student_id=%s",(sid,))
+    row=cur.fetchone()
+    status=row[0] if row else "none"
+    cur.execute("SELECT EXISTS(SELECT 1 FROM graduate_showcases WHERE student_id=%s)",(sid,))
+    showcase=bool(cur.fetchone()[0])
+    r=stats(cur,sid)
+    return {"submitted":submitted,"reviewed":reviewed,"project_lessons":days,
+            "listing_status":status,"showcase_published":showcase and r["certificate_issued"],
+            "completed_orders":r["completed_orders"],"approved_reviews":r["review_count"],
+            "rating":r["rating"],"completed_lessons":r["completed_lessons"],
+            "certificate_issued":r["certificate_issued"],"experience_level":r["experience_level"],
+            "private":True,"official_credential":False,"payment_verified":False}
+
+def creator_evidence_report(token):
+    from career_profile import identity
+    from database import transaction
+    sid=identity(token)
+    with transaction() as cur:
+        cur.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
+        return creator_evidence(cur,sid)

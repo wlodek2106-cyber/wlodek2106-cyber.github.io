@@ -318,6 +318,28 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(pathway(lessons,[],"design")["review_passed"],0)
         for invalid in (None,[],"other"):
             with self.assertRaises(ValueError):pathway(lessons,projects,invalid)
+    def test_creator_evidence_private_aggregates(self):
+        from career import creator_evidence
+        from unittest.mock import Mock,patch
+        cur=Mock()
+        cur.fetchone.side_effect=[(5,3,2),("approved",),(True,)]
+        stats={"completed_orders":4,"review_count":2,"rating":4.5,"completed_lessons":7,"certificate_issued":True,"experience_level":"experienced"}
+        with patch("reputation.stats",return_value=stats) as fn:
+            result=creator_evidence(cur,42)
+            fn.assert_called_once_with(cur,42)
+        self.assertEqual(result["submitted"],5)
+        self.assertEqual(result["reviewed"],3)
+        self.assertEqual(result["approved_reviews"],2)
+        self.assertEqual(result["rating"],4.5)
+        self.assertTrue(result["showcase_published"])
+        self.assertTrue(result["private"])
+        self.assertFalse(result["official_credential"])
+        self.assertFalse(result["payment_verified"])
+        self.assertNotIn("submission",result)
+        self.assertNotIn("comment",result)
+        for call in cur.execute.call_args_list:
+            self.assertEqual(call.args[1],(42,))
+
     def test_career_skill_paths(self):
         from career import skill_paths
         lessons=[{"day":7,"unlocked":True,"completed":True},{"day":8,"unlocked":True,"completed":True},{"day":9,"unlocked":True,"completed":False},{"day":10,"unlocked":True,"completed":True},{"day":11,"unlocked":True,"completed":True},{"day":12,"unlocked":False,"completed":False},{"day":31,"unlocked":False,"completed":False}]

@@ -506,3 +506,5 @@ body.zAurora .zFactoryProject summary{cursor:pointer;padding:8px 0;font-weight:6
 body.zAurora .zFactoryProject input{width:100%;box-sizing:border-box;min-height:44px;padding:8px;margin:6px 0;color:#eee5ff;background:#19192c;border:1px solid #78669d;border-radius:10px;font-size:16px}
 
 body.zAurora .zDeliveryCenter{border:1px solid #665184;border-radius:12px;padding:12px;margin:12px 0;overflow-wrap:anywhere}body.zAurora .zDeliveryCenter summary{cursor:pointer;font-weight:650;padding:8px 0}body.zAurora .zDeliveryCenter article{padding:8px;margin:6px 0}body.zAurora .zDeliveryCenter button{min-height:44px}
+
+body.zAurora .zCreatorEvidence{border:1px solid #665184;border-radius:12px;padding:12px;margin:14px 0;min-width:0}body.zAurora .zCreatorEvidence summary{cursor:pointer;font-weight:650;padding:8px 0}body.zAurora .zEvidenceRows{display:grid;gap:6px;margin:10px 0}body.zAurora .zCreatorEvidence button{min-height:44px}
