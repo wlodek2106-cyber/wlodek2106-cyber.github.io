@@ -3,6 +3,34 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_delivery_quality_check(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        import json
+        spec=spec_from_file_location("qc",Path(__file__).with_name("delivery-quality-check.py"))
+        qc=module_from_spec(spec);spec.loader.exec_module(qc)
+        video={"codec_type":"video","codec_name":"h264","pix_fmt":"yuv420p","width":1080,"height":1920,"avg_frame_rate":"30/1"}
+        audio={"codec_type":"audio","codec_name":"aac"}
+        subs={"codec_type":"subtitle","codec_name":"mov_text"}
+        data={"format":{"duration":"30.033"},"streams":[video,audio,subs]}
+        self.assertTrue(qc.evaluate(data,30,"9:16",True,True)["metadata_pass"])
+        self.assertFalse(qc.evaluate(data,15,"9:16",True,True)["checks"]["duration"])
+        self.assertFalse(qc.evaluate(data,30,"16:9")["checks"]["resolution"])
+        self.assertFalse(qc.evaluate(dict(data,streams=[video]),30,"9:16")["checks"]["audio"])
+        self.assertTrue(qc.evaluate(dict(data,streams=[video]),30,"9:16",False)["metadata_pass"])
+        self.assertFalse(qc.evaluate(dict(data,streams=[video,audio]),30,"9:16",True,True)["checks"]["subtitles"])
+        self.assertFalse(qc.evaluate(dict(data,streams=[dict(video,side_data_list=[{"rotation":90}]),audio]),30,"9:16")["checks"]["resolution"])
+        with self.assertRaises(ValueError):qc.evaluate(dict(data,streams=[dict(video,avg_frame_rate="0/0")]),30,"9:16")
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);exe=root/"ffprobe";exe.touch()
+            media=root/"result.mp4";media.touch()
+            with patch.object(qc.subprocess,"run",return_value=SimpleNamespace(returncode=0,stdout=json.dumps(data).encode(),stderr=b"")) as run:
+                self.assertTrue(qc.inspect(exe,media,30,"9:16",True,True)["metadata_pass"])
+                self.assertFalse(run.call_args.kwargs["shell"])
+                self.assertIn("file",run.call_args.args[0])
     def test_local_narration_render(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
