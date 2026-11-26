@@ -94,6 +94,14 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_client_acquisition_actions(self):
+        from client_acquisition import actions
+        self.assertEqual(actions(False,"none",0,0,0),["profile"])
+        self.assertEqual(actions(True,"pending",0,0,0),["listing"])
+        self.assertEqual(actions(True,"approved",0,0,0),["proposal","portfolio"])
+        self.assertEqual(actions(True,"approved",5,0,0),["improve","portfolio"])
+        self.assertEqual(actions(True,"approved",5,1,1),["followup","proposal"])
+        self.assertEqual(actions(True,"approved",5,1,0),["portfolio","proposal"])
     def test_career_pathway_evidence(self):
         from career_pathway import pathway
         lessons=[{"day":d,"unlocked":d<=8,"completed":d<=7} for d in range(1,31)]

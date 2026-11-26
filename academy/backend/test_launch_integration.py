@@ -398,6 +398,10 @@ class LaunchIntegration(unittest.TestCase):
                 with self.assertRaises(ValueError): business_delete(cur,buyer_id,"client",cid)
                 self.assertTrue(business_delete(cur,buyer_id,"order",oid)["deleted"])
                 self.assertTrue(business_delete(cur,buyer_id,"client",cid)["deleted"])
+                from client_acquisition import collect as acquisition_collect,snapshot as acquisition_snapshot
+                self.assertEqual(acquisition_collect(cur,buyer_id)["leads"],0)
+                self.assertIsNone(acquisition_snapshot(partner)["metrics"])
+                with self.assertRaises(PermissionError): acquisition_snapshot("invalid-token")
                 from student_business import import_job
                 with self.assertRaises(PermissionError): import_job(cur,partner_id,{"job_id":jid,"client_name":"No access"})
                 imported=import_job(cur,buyer_id,{"job_id":jid,"client_name":"Marketplace test client"})

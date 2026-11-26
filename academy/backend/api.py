@@ -268,6 +268,9 @@ def dispatch(method,path,body,token):
     if path=="/career/profile/delete" and method=="POST":
         from career_profile import delete_profile
         return 200,delete_profile(token)
+    if path=="/career/acquisition" and method=="POST":
+        from client_acquisition import snapshot
+        return 200,snapshot(token)
     if path=="/career/pathway" and method=="POST":
         from career_pathway import report
         return 200,report(token,body["category"],body.get("lang","en"))
