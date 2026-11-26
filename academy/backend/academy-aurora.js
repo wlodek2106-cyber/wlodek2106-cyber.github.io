@@ -251,7 +251,7 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();administrationDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -428,7 +428,76 @@ function socialDesign(){
  const obs=new MutationObserver(schedule);obs.observe(extra,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["hidden"]});obs.observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-current","hidden","disabled"]});obs.observe(journey,{childList:true,attributes:true,attributeFilter:["hidden"]});
  socialRefresh=()=>{for(const [n,i] of labels)n.textContent=sw()[i];schedule()};socialRefresh();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();motion()}
+const adminWords={
+ en:["Administration & Control Center","Switch administrator module","Refresh active module","Jump to report section","Report sections","Open review queue","Sales and commission records","Administrator modules only. Actions continue to require server authorization.","Select section","Recorded payments are not wallet balance or net profit."],
+ ru:["Administration & Control Center","Перейти в раздел администратора","Обновить текущий раздел","Перейти к разделу отчёта","Разделы отчёта","Открыть очередь проверки","Учтённые продажи и комиссии","Только для администратора. Действия по-прежнему проверяются сервером.","Выбери раздел","Учтённые платежи — не баланс кошелька и не чистая прибыль."],
+ uk:["Administration & Control Center","Перейти до розділу адміністратора","Оновити поточний розділ","Перейти до розділу звіту","Розділи звіту","Відкрити чергу перевірки","Облік продажів і комісій","Лише для адміністратора. Дії перевіряються сервером.","Обери розділ","Облік платежів — не баланс гаманця і не чистий прибуток."],
+ pl:["Administration & Control Center","Przejdź do modułu administratora","Odśwież bieżący moduł","Przejdź do sekcji raportu","Sekcje raportu","Otwórz kolejkę weryfikacji","Zarejestrowana sprzedaż i prowizje","Tylko dla administratora. Działania nadal wymagają autoryzacji serwera.","Wybierz sekcję","Zarejestrowane płatności to nie saldo portfela ani zysk netto."]};
+let adminRefresh=null;
+function administrationDesign(){
+ const owner=$("ownerNav"),rail=$("zOwnerRail"),hub=$("zOwnerHub"),extra=$("extra"),panel=$("panel");
+ if(!owner||!rail||!hub||!extra||!panel)return;
+ const ids=["admin","founderAdmin","directoryAdmin","networkAdmin","treasuryAdmin","partnerAdmin","acquisitionAdmin","contentAdmin","marketplaceAdmin","jobsAdmin","communityAdmin"];
+ const aw=()=>adminWords[locale()]||adminWords.en;
+ const allowed=id=>{const n=$(id);return !panel.hidden&&!owner.hidden&&!!n&&!n.hidden&&!n.disabled&&!n.closest("[hidden]")};
+ const active=()=>ids.find(id=>allowed(id)&&$(id).getAttribute("aria-current")==="page");
+ const title=id=>$(id+"Label")?.textContent?.trim()||$(id)?.textContent?.trim()||id;
+ const switcher=el("select","zAdminSwitch");switcher.id="zAdminSwitch";
+ const refresh=el("button","zProfileButton zAdminRefresh"),refreshText=el("span");refresh.type="button";refresh.append(icon("refresh-cw"),refreshText);
+ rail.append(switcher,refresh);
+ switcher.onchange=()=>{const id=switcher.value;if(ids.includes(id)&&allowed(id))$(id).click()};
+ refresh.onclick=()=>{const id=active();if(id&&confirm(aw()[2]+"?"))$(id).click()};
+ const helper=el("p","zAdminNotice");hub.append(helper);
+ const toc=el("div","zAdminReportNav");toc.hidden=true;const tocTitle=el("strong"),jump=el("select");toc.append(tocTitle,jump);extra.before(toc);
+ let sections=[],lastOptions="",lastSections="",scheduled=false;
+ const queueMap=[
+ ["marketplaceAdmin",["Pending marketplace services","Услуги на модерации","Послуги на модерації","Usługi do moderacji"]],
+ ["communityAdmin",["Pending community posts","Публикации на модерации","Публікації на модерації","Wpisy do moderacji"]],
+ ["partnerAdmin",["Pending partners","Заявки партнёров","Заявки партнерів","Wnioski partnerów"]]];
+ const scrollTo=n=>{if(n?.isConnected){n.scrollIntoView({block:"start",behavior:"auto"});n.tabIndex=-1;n.focus({preventScroll:true})}};
+ jump.onchange=()=>{const n=sections[Number(jump.value)];if(active()==="founderAdmin"&&jump.value!=="")scrollTo(n)};
+ function decorateFounder(){
+   for(const grid of extra.querySelectorAll("div")){
+     const children=Array.from(grid.children);
+     if(children.length>=3&&children.every(n=>n.tagName==="ARTICLE"&&n.querySelector(":scope > small")&&n.querySelector(":scope > h3"))){
+       grid.classList.add("zFounderMetrics");
+       for(const card of children)card.classList.add("zFounderMetric");
+     }
+   }
+   for(const bar of extra.querySelectorAll("progress[title]"))bar.closest("div")?.classList.add("zFounderSalesRow");
+   for(const row of extra.querySelectorAll("p")){
+     const value=row.firstChild?.nodeType===3?row.firstChild.textContent.trim():"";
+     const spec=queueMap.find(([,names])=>names.some(n=>value.startsWith(n+":")));
+     if(!spec)continue;
+     row.classList.add("zModerationRow");
+     let b=row.querySelector(":scope > .zModerationOpen");
+     if(!b){b=el("button","zModerationOpen");b.type="button";const id=spec[0];b.onclick=()=>{if(active()==="founderAdmin"&&allowed(id))$(id).click()};row.append(b)}
+     if(b.textContent!==aw()[5])b.textContent=aw()[5];const hide=!allowed(spec[0]);if(b.hidden!==hide)b.hidden=hide;
+   }
+ }
+ function sync(){
+   scheduled=false;
+   const id=active(),permitted=ids.filter(allowed);
+   const list=permitted.map(id=>[id,title(id)]),signature=JSON.stringify(list);
+   if(signature!==lastOptions){lastOptions=signature;switcher.replaceChildren();for(const [key,name] of list){const o=el("option","",name);o.value=key;switcher.append(o)}}
+   if(id)switcher.value=id;
+   switcher.setAttribute("aria-label",aw()[1]);refreshText.textContent=aw()[2];helper.textContent=aw()[7];
+   rail.classList.toggle("zAdminRail",!!id);extra.classList.toggle("zAdminArea",!!id&&!extra.hidden);
+   if(id==="founderAdmin"&&!extra.hidden){
+     decorateFounder();
+     sections=Array.from(extra.querySelectorAll("h2,h3")).filter(n=>!n.closest("article")&&!n.closest("[hidden]")&&n.textContent.trim());
+   }else sections=[];
+   const sectionKey=JSON.stringify([locale(),sections.map(n=>n.textContent.trim())]);
+   if(sectionKey!==lastSections){lastSections=sectionKey;jump.replaceChildren();const initial=el("option","",aw()[8]);initial.value="";jump.append(initial);sections.forEach((n,i)=>{const o=el("option","",n.textContent.trim());o.value=String(i);jump.append(o)})}
+   tocTitle.textContent=aw()[4];jump.setAttribute("aria-label",aw()[3]);toc.hidden=sections.length<2;
+ }
+ const schedule=()=>{if(!scheduled){scheduled=true;queueMicrotask(sync)}};
+ const obs=new MutationObserver(schedule);
+ obs.observe(owner,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["hidden","disabled","aria-current"]});obs.observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ obs.observe(extra,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["hidden"]});
+ adminRefresh=schedule;schedule();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
