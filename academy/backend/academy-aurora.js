@@ -935,14 +935,37 @@ ru:["AI Agent Factory","Собери последовательную коман
 uk:["AI Agent Factory","Створи послідовну команду для доступного уроку.","Урок","День","Додати роль","Видалити","Вище","Нижче","Викладач","Розробник","Дизайнер","Продюсер","Маркетолог","Рев’юер","Додатковий бриф (лише локально)","Підготувати команду","Експорт JSON","Завантажити Local AI Engine","Немає доступних уроків","Обери хоча б одну роль","Підготовка…","Не вдалося підготувати команду","Готово до експорту","Відкрий JSON у desktop Local AI Engine з Ollama та встановленою моделлю. На сервері академії запуску немає. Перевіряй результати.","Етап","Без автоматичних списань і зовнішніх дій."],
 pl:["AI Agent Factory","Zbuduj sekwencyjny zespół dla dostępnej lekcji.","Lekcja","Dzień","Dodaj rolę","Usuń","Wyżej","Niżej","Nauczyciel","Programista","Projektant","Producent","Marketing","Recenzent","Dodatkowy brief (tylko lokalnie)","Przygotuj zespół","Eksport JSON","Pobierz Local AI Engine","Brak dostępnych lekcji","Wybierz co najmniej jedną rolę","Przygotowanie…","Nie udało się przygotować zespołu","Gotowe do eksportu","Otwórz JSON w desktop Local AI Engine z Ollama i zainstalowanym modelem. Brak uruchamiania na serwerze akademii. Sprawdź wyniki.","Etap","Bez automatycznych opłat i działań zewnętrznych."]};
 let factoryRefresh=null;
+const factoryProjectWords={
+en:["Save as private project","Project title","Project type","Image","Video","Advertising","Animation","Audio","Product","Deadline (optional)","Save project and tasks","Project saved","Could not save project. Check title, date and combined brief (max 2000 characters).","Open Project Manager","Save this project and checklist to your Academy account? No external actions.","Only task checklist and brief are saved; export JSON separately for AI execution."],
+ru:["Сохранить как личный проект","Название проекта","Тип проекта","Изображение","Видео","Реклама","Анимация","Аудио","Продукт","Срок (необязательно)","Сохранить проект и задачи","Проект сохранён","Не удалось сохранить. Проверь название, дату и общий бриф (до 2000 символов).","Открыть Project Manager","Сохранить проект и список задач в аккаунте академии? Внешних действий не будет.","Сохраняются бриф и чек-лист; для запуска AI скачай JSON отдельно."],
+uk:["Зберегти як особистий проєкт","Назва проєкту","Тип проєкту","Зображення","Відео","Реклама","Анімація","Аудіо","Продукт","Термін (необов’язково)","Зберегти проєкт і завдання","Проєкт збережено","Не вдалося зберегти. Перевір назву, дату й загальний бриф (до 2000 символів).","Відкрити Project Manager","Зберегти проєкт і завдання в акаунті академії? Без зовнішніх дій.","Зберігаються бриф і чекліст; для запуску ШІ експортуй JSON окремо."],
+pl:["Zapisz jako prywatny projekt","Nazwa projektu","Typ projektu","Obraz","Wideo","Reklama","Animacja","Audio","Produkt","Termin (opcjonalnie)","Zapisz projekt i zadania","Projekt zapisany","Nie zapisano. Sprawdź nazwę, datę i łączny brief (maks. 2000 znaków).","Otwórz Project Manager","Zapisać projekt i listę zadań na koncie Akademii? Bez działań zewnętrznych.","Zapisywany jest brief i lista zadań; wyeksportuj JSON osobno, aby uruchomić AI."]};
 function factoryDesign(){
  const overview=$("workspaceOverview"),panel=$("panel"),days=$("days");if(!overview||!panel||!days)return;
  const w=()=>factoryWords[locale()]||factoryWords.en;
  const hub=el("section","zFactory"),head=el("h2"),intro=el("p"),lesson=el("select"),role=el("select"),add=el("button","zAction"),bar=el("div","zFactoryControls"),list=el("div","zFactoryStages"),brief=el("textarea"),build=el("button","zAction primary"),save=el("button","zAction"),download=el("a"),status=el("p"),note=el("p"),result=el("div");
  hub.id="zFactory";brief.rows=3;brief.maxLength=1600;add.type=build.type=save.type="button";save.disabled=true;status.setAttribute("role","status");download.href="/local-ai-engine.py";download.download="zer0life_local_ai.py";bar.append(role,add);const browser=el("a");browser.href=url("/free-ai#academy-team-import");links.push([browser,"/free-ai#academy-team-import"]);hub.append(head,intro,lesson,bar,list,brief,build,save,status,result,download,browser,note);overview.append(hub);
  const roles=["teacher","code","design","video","marketing","project"];let team=["design","video","project"],seq=0,data=null,signature="",busy=false;
+ const pw=()=>factoryProjectWords[locale()]||factoryProjectWords.en;
+ const project=el("details","zFactoryProject"),projectHead=el("summary"),projectTitle=el("input"),projectKind=el("select"),projectDue=el("input"),projectSave=el("button","zAction primary"),projectOpen=el("button","zAction"),projectStatus=el("p"),projectHint=el("p");
+ const kinds=["image","video","advertising","animation","audio","product"];for(const k of kinds){const o=el("option");o.value=k;projectKind.append(o)}projectKind.value="video";projectTitle.maxLength=160;projectDue.type="date";projectSave.type=projectOpen.type="button";projectStatus.setAttribute("role","status");project.append(projectHead,projectTitle,projectKind,projectDue,projectSave,projectOpen,projectHint,projectStatus);hub.append(project);project.hidden=true;let projectBusy=false,projectSaved=false;
+ function projectSync(){
+   projectHead.textContent=pw()[0];projectTitle.placeholder=pw()[1];projectTitle.setAttribute("aria-label",pw()[1]);projectKind.setAttribute("aria-label",pw()[2]);projectDue.setAttribute("aria-label",pw()[9]);Array.from(projectKind.options).forEach((o,i)=>o.textContent=pw()[3+i]);projectSave.textContent=pw()[10];projectOpen.textContent=pw()[13];projectHint.textContent=pw()[15];projectSave.disabled=projectBusy||projectSaved||!data;projectTitle.disabled=projectKind.disabled=projectDue.disabled=projectBusy||projectSaved;project.hidden=!data;
+ }
+ projectSave.onclick=async()=>{
+   if(projectBusy||projectSaved||!data||panel.hidden||!allowed(data.day)||typeof api!=="function")return;
+   const title=projectTitle.value.trim(),custom=brief.value.trim();
+   if(!title||Array.from(data.deliverable+"\\n\\n"+custom).length>2000){projectStatus.textContent=pw()[12];return}
+   if(!confirm(pw()[14]))return;
+   const id=seq,payload={day:data.day,roles:data.stages.map(s=>s.role),lang:data.language,title,kind:projectKind.value,due:projectDue.value,custom_brief:custom};projectBusy=true;projectSync();
+   try{const r=await api("/agents/project",payload);if(id!==seq||panel.hidden)return;projectSaved=true;projectStatus.textContent=pw()[11]+" · #"+r.id+" · "+r.tasks}
+   catch(e){if(id===seq&&!panel.hidden)projectStatus.textContent=pw()[12]}
+   finally{projectBusy=false;projectSync()}
+ };
+ projectOpen.onclick=()=>{const b=$("workflowButton");if(b&&!b.hidden&&!b.disabled&&!panel.hidden)b.click()};
+
  const allowed=n=>Array.from(days.querySelectorAll("button[data-day]")).some(b=>Number(b.dataset.day)===n&&!b.disabled);
- function invalidate(){seq++;data=null;busy=false;save.disabled=true;result.replaceChildren();status.textContent="";build.disabled=!lesson.value||!team.length}
+ function invalidate(){seq++;data=null;busy=false;save.disabled=true;result.replaceChildren();status.textContent="";build.disabled=!lesson.value||!team.length;projectSaved=false;projectStatus.textContent="";projectSync()}
  function renderRoles(){
    const previous=role.value;role.replaceChildren();for(const r of roles.filter(r=>!team.includes(r))){const option=el("option","",w()[8+roles.indexOf(r)]);option.value=r;role.append(option)}if(Array.from(role.options).some(o=>o.value===previous))role.value=previous;add.disabled=team.length===roles.length;
    list.replaceChildren();
@@ -952,21 +975,21 @@ function factoryDesign(){
  function sync(){
    const vals=Array.from(days.querySelectorAll("button[data-day]")).filter(b=>!b.disabled).map(b=>b.dataset.day),key=JSON.stringify([locale(),vals]);
    if(key!==signature){signature=key;const old=lesson.value;lesson.replaceChildren();for(const n of vals){const o=el("option","",w()[3]+" "+n);o.value=n;lesson.append(o)}if(vals.includes(old))lesson.value=old;invalidate();if(!vals.length)status.textContent=w()[18]}
-   head.textContent=w()[0];intro.textContent=w()[1];lesson.setAttribute("aria-label",w()[2]);role.setAttribute("aria-label",w()[4]);add.textContent=w()[4];brief.placeholder=w()[14];brief.setAttribute("aria-label",w()[14]);build.textContent=w()[15];save.textContent=w()[16];download.textContent=w()[17];browser.textContent=({en:"Open browser AI Studio",ru:"Открыть браузерную AI Studio",uk:"Відкрити браузерну AI Studio",pl:"Otwórz AI Studio w przeglądarce"})[locale()];note.textContent=w()[23]+" "+w()[25];renderRoles();
+   head.textContent=w()[0];intro.textContent=w()[1];lesson.setAttribute("aria-label",w()[2]);role.setAttribute("aria-label",w()[4]);add.textContent=w()[4];brief.placeholder=w()[14];brief.setAttribute("aria-label",w()[14]);build.textContent=w()[15];save.textContent=w()[16];download.textContent=w()[17];browser.textContent=({en:"Open browser AI Studio",ru:"Открыть браузерную AI Studio",uk:"Відкрити браузерну AI Studio",pl:"Otwórz AI Studio w przeglądarce"})[locale()];note.textContent=w()[23]+" "+w()[25];renderRoles();projectSync();
  }
  add.onclick=()=>{if(roles.includes(role.value)&&!team.includes(role.value)){team.push(role.value);invalidate();renderRoles()}};
  lesson.onchange=invalidate;
  build.onclick=async()=>{
    if(busy||panel.hidden||!allowed(Number(lesson.value))||!team.length||typeof api!=="function")return;
-   const id=++seq,n=Number(lesson.value);busy=true;build.disabled=true;data=null;save.disabled=true;result.replaceChildren();status.textContent=w()[20];
-   try{const d=await api("/agents/team",{day:n,roles:team.slice(),lang:locale()});if(id!==seq||panel.hidden||!allowed(n))return;if(d.schema!=="zer0life-agent-team-v1"||d.external_request!==false||d.automatic_execution!==false)throw Error("Invalid team");data=d;result.append(el("p","",d.deliverable));for(const s of d.stages){const card=el("div","zFactoryStage");card.append(el("strong","",w()[24]+" "+s.stage+" · "+w()[8+roles.indexOf(s.role)]),el("p","",s.steps.join(" · ")));result.append(card)}save.disabled=false;status.textContent=w()[22]}
+   const id=++seq,n=Number(lesson.value);busy=true;build.disabled=true;data=null;save.disabled=true;projectSaved=false;projectStatus.textContent="";projectSync();result.replaceChildren();status.textContent=w()[20];
+   try{const d=await api("/agents/team",{day:n,roles:team.slice(),lang:locale()});if(id!==seq||panel.hidden||!allowed(n))return;if(d.schema!=="zer0life-agent-team-v1"||d.external_request!==false||d.automatic_execution!==false)throw Error("Invalid team");data=d;result.append(el("p","",d.deliverable));for(const s of d.stages){const card=el("div","zFactoryStage");card.append(el("strong","",w()[24]+" "+s.stage+" · "+w()[8+roles.indexOf(s.role)]),el("p","",s.steps.join(" · ")));result.append(card)}save.disabled=false;status.textContent=w()[22];projectSync()}
    catch(e){if(id===seq&&!panel.hidden)status.textContent=w()[21]}
    finally{if(id===seq){busy=false;build.disabled=false}}
  };
  save.onclick=()=>{if(!data||panel.hidden||!allowed(data.day))return;const blob=new Blob([JSON.stringify({...data,custom_brief:brief.value.trim()},null,2)],{type:"application/json"}),address=URL.createObjectURL(blob),a=el("a");a.href=address;a.download="zer0life-agent-team.json";a.click();setTimeout(()=>URL.revokeObjectURL(address),1500)};
  let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
  new MutationObserver(schedule).observe(days,{subtree:true,childList:true,attributes:true,attributeFilter:["disabled","data-state"]});
- new MutationObserver(()=>{if(panel.hidden){brief.value="";team=["design","video","project"];invalidate()}else sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ new MutationObserver(()=>{if(panel.hidden){brief.value="";projectTitle.value="";projectDue.value="";team=["design","video","project"];invalidate()}else sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  factoryRefresh=schedule;sync();
 }
 function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();factoryRefresh?.();motion()}

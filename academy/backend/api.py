@@ -62,6 +62,9 @@ def dispatch(method,path,body,token):
     if path=="/reviews/remove" and method=="POST":
         from reviews import remove
         return 200,remove(token)
+    if path=="/agents/project" and method=="POST":
+        from agent_workforce import create_team_project
+        return 200,create_team_project(token,body)
     if path=="/agents/team" and method=="POST":
         from agent_workforce import team_plan
         return 200,team_plan(token,body.get("day"),body.get("roles"),body.get("lang","en"))

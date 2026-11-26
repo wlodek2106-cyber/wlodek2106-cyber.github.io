@@ -97,6 +97,26 @@ class ProgressTests(unittest.TestCase):
             with self.assertRaises(PermissionError):student_playbook("session",2,"code","en")
         for day,role,lang in [(True,"code","en"),(1,"unknown","en"),(1,"code","unknown")]:
             with self.assertRaises(ValueError):student_playbook("session",day,role,lang)
+    def test_agent_team_project_payload(self):
+        from agent_workforce import team_plan,project_payload,create_team_project,ROLES,STEPS
+        from unittest.mock import patch
+        with patch("practice_lab.student_brief",return_value={"deliverable":"Demo"}) as brief:
+            for lang in STEPS:
+                plan=team_plan("session",1,ROLES,lang)
+                payload=project_payload(plan,"Project","video","Client brief")
+                self.assertEqual(len(payload["tasks"]),19)
+                self.assertFalse(any(t["done"] for t in payload["tasks"]))
+                self.assertTrue(all(len(t["title"])<=120 for t in payload["tasks"]))
+                self.assertEqual(payload["brief"],"Demo\\n\\nClient brief")
+            with patch("creative_workflow.dispatch",return_value={"id":7}) as save:
+                result=create_team_project("session",{"day":1,"roles":["design"],"lang":"ru","title":"Project","kind":"video","id":999})
+                self.assertEqual(result,{"id":7,"tasks":4,"automatic_execution":False})
+                self.assertNotIn("id",save.call_args.args[2])
+                self.assertEqual(save.call_args.args[:2],("session","save"))
+            with self.assertRaises(ValueError):project_payload(plan,"Project","invalid")
+        with patch("practice_lab.student_brief",side_effect=PermissionError("Locked")):
+            with self.assertRaises(PermissionError):create_team_project("session",{"day":2,"roles":["code"]})
+
     def test_agent_factory_local_team(self):
         from unittest.mock import patch
         from importlib.util import spec_from_file_location,module_from_spec

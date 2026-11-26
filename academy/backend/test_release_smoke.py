@@ -462,6 +462,12 @@ class ReleaseSmokeTests(unittest.TestCase):
         for marker in (b'requestedLesson=true',b'!requestedLesson||panel.hidden||overview.hidden||lesson.hidden',b'lesson.scrollIntoView({block:"start",behavior:"auto"})'):
             self.assertIn(marker,script)
 
+    def test_agent_project_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"/agents/project",b"zFactoryProject",b"projectSave.onclick",b"projectOpen.onclick"):
+            self.assertIn(marker,script)
+
     def test_browser_agent_import_assets(self):
         code,_,script=self.request("/free-ai.js")
         self.assertEqual(code,200)

@@ -154,3 +154,36 @@ def team_plan(token,day,roles,lang):
     return {"schema":"zer0life-agent-team-v1","day":day,"language":lang,"deliverable":brief["deliverable"],
             "stages":[{"role":r,"steps":STEPS[lang][ROLES.index(r)],"depends_on":i if i else None,"stage":i+1} for i,r in enumerate(roles)],
             "automatic_execution":False,"external_request":False,"human_review_required":True}
+
+PROJECT_LABELS={
+ "en":["Teacher","Developer","Designer","Producer","Marketing","Reviewer","Human review and approval"],
+ "ru":["Преподаватель","Разработчик","Дизайнер","Продюсер","Маркетолог","Ревьюер","Проверка и утверждение человеком"],
+ "uk":["Викладач","Розробник","Дизайнер","Продюсер","Маркетолог","Рев’юер","Перевірка та затвердження людиною"],
+ "pl":["Nauczyciel","Programista","Projektant","Producent","Marketing","Recenzent","Weryfikacja i zatwierdzenie przez człowieka"]
+}
+
+def project_payload(plan,title,kind,custom_brief="",due=""):
+    """Build a private checklist from a server-authorized team plan."""
+    from student_business import clean
+    title=clean(title,160,True)
+    if not isinstance(kind,str) or kind not in ("image","video","advertising","animation","audio","product"):
+        raise ValueError("Invalid project type")
+    custom=clean(custom_brief,1600)
+    brief=clean(plan["deliverable"]+("\n\n"+custom if custom else ""),2000,True)
+    tasks=[]
+    labels=PROJECT_LABELS[plan["language"]]
+    for stage in plan["stages"]:
+        label=labels[ROLES.index(stage["role"])]
+        for i,step in enumerate(stage["steps"],1):
+            task=clean(f'{stage["stage"]}.{i} {label}: {step}',120,True)
+            tasks.append({"title":task,"done":False})
+    tasks.append({"title":labels[6],"done":False})
+    return {"title":title,"kind":kind,"brief":brief,"due":due,"tasks":tasks,"completed":[],"notes":"","materials":""}
+
+def create_team_project(token,body):
+    # Recompute authorized lesson and steps; never trust client-provided instructions or IDs.
+    plan=team_plan(token,body.get("day"),body.get("roles"),body.get("lang","en"))
+    payload=project_payload(plan,body.get("title"),body.get("kind"),body.get("custom_brief",""),body.get("due",""))
+    from creative_workflow import dispatch
+    result=dispatch(token,"save",payload)
+    return {"id":result["id"],"tasks":len(payload["tasks"]),"automatic_execution":False}
