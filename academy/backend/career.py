@@ -17,6 +17,28 @@ def quote(hours, rate, expenses, buffer):
     contingency=(labor+e)*b/100
     return {"labor":money(labor),"expenses":money(e),"contingency":money(contingency),"total":money(labor+e+contingency),"currency":"USD"}
 
+def skill_paths(lessons,projects):
+    """Learning evidence, not proof of professional skill. No inferred employment."""
+    from job_matching import TOPICS
+    visible={l["day"] for l in lessons if l["unlocked"]}
+    passed={l["day"] for l in lessons if l["completed"] and l["day"] in visible}
+    result=[]
+    for category,days in TOPICS.items():
+        if not days:continue
+        matched=sorted(passed.intersection(days))
+        relevant=[p for p in projects if p["lesson"] in days and p["lesson"] in visible]
+        submitted=sorted({p["lesson"] for p in relevant})
+        evidence_days=sorted(set(submitted).intersection(matched))
+        next_day=next((d for d in days if d in visible and d not in passed),None)
+        practice_day=next((d for d in matched if d not in submitted),None)
+        status="portfolio_to_review" if len(evidence_days)>=2 else "build_portfolio" if matched or submitted else "learning"
+        result.append({"category":category,"status":status,"completed_days":matched,
+                       "total_lessons":len(days),"submitted_days":submitted,
+                       "project_count":len(relevant),"evidence_days":evidence_days,
+                       "practice_day":practice_day,"next_day":next_day})
+    result.sort(key=lambda r:(-len(r["evidence_days"]),-len(r["completed_days"]),-len(r["submitted_days"]),r["category"]))
+    return result
+
 def overview(token):
     from learning import student_progress
     from portfolio import list_projects
@@ -25,7 +47,7 @@ def overview(token):
     projects=list_projects(token)["items"]
     return {"plan":p["plan"],"completed":sum(x["completed"] for x in p["lessons"]),"total":len(p["lessons"]),
             "projects":[{"id":x["id"],"lesson":x["lesson"],"submission":x["submission"],"score":x["score"]} for x in projects],
-            "private":True}
+            "private":True,"skill_paths":skill_paths(p["lessons"],projects),"skill_evidence":"course_and_submissions_only"}
 
 def estimate(token,body):
     from learning import student_progress
