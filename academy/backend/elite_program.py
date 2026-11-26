@@ -30,6 +30,124 @@ PROJECTS=[
 "uk":["Обери нішу, три послуги, портфоліо, права, правки та мінімальну ціну.","Через Career Center підготуй три пропозиції й чекліст клієнта. Лише реальні заявки, розрахуй комісію та окремо податки.","Здай портфоліо, прайс, пропозиції та план залучення на 30 днів. Дохід не гарантовано."],
 "pl":["Wybierz niszę, trzy usługi, portfolio, prawa, poprawki i cenę minimalną.","W Career Center przygotuj trzy oferty i checklistę klienta. Tylko realne zlecenia; oszacuj prowizję i osobno podatki.","Oddaj portfolio, cennik, oferty i plan pozyskania na 30 dni. Dochód nie jest gwarantowany."]},[["Career Center","/dashboard?module=career"],["Jobs","/dashboard?module=jobs"],["Business Center","/dashboard?module=business"]])
 ]
+# Worked examples and self-checks for each localized residency day.
+PRACTICE_GUIDES={
+  "humans": {
+    "en": [
+      "Example: a fictional coffee brand ambassador. Write a fixed character card (hair, clothes, palette), generate one portrait, then vary angle while keeping the card and seed/settings. Compare six frames side by side; note identity drift.",
+      "Storyboard two clips: cheerful product introduction and calm explanation. Record or synthesize permitted narration; align mouth movement to the audio, inspect at normal and half speed. Repeat the weakest shot.",
+      "Acceptance: six references, two 15-second clips, clear synthetic-media label, rights notes and settings sufficient for another creator to repeat the workflow."
+    ],
+    "ru": [
+      "Пример: вымышленный амбассадор кофейни. Зафиксируй причёску, одежду и палитру в паспорте; создай портрет, затем меняй ракурс, сохраняя описание и параметры. Сравни шесть кадров и отметь изменения лица.",
+      "Раскадруй два ролика: радостное представление продукта и спокойное объяснение. Запиши разрешённую озвучку, синхронизируй губы, просмотри на обычной и половинной скорости. Переделай самый слабый кадр.",
+      "Самопроверка: 6 референсов, 2 ролика по 15 секунд, маркировка AI, журнал прав и настройки, позволяющие другому автору повторить работу."
+    ],
+    "uk": [
+      "Приклад: вигаданий амбасадор кав’ярні. Зафіксуй зачіску, одяг і палітру; створи портрет, змінюй ракурси зі сталим описом. Порівняй шість кадрів.",
+      "Розкадруй веселе представлення й спокійне пояснення. Додай дозволений голос, перевір рух губ на звичайній і половинній швидкості. Перероби слабкий кадр.",
+      "Самоперевірка: 6 референсів, 2 кліпи по 15 с, маркування ШІ, права та відтворювані налаштування."
+    ],
+    "pl": [
+      "Przykład: fikcyjny ambasador kawiarni. Ustal fryzurę, strój i paletę; stwórz portret, zmieniaj kąty przy stałym opisie. Porównaj sześć kadrów.",
+      "Rozpisz pogodną prezentację i spokojne wyjaśnienie. Dodaj dozwolony głos, sprawdź usta w normalnym i połowicznym tempie. Popraw najsłabsze ujęcie.",
+      "Samokontrola: 6 referencji, 2 klipy po 15 s, oznaczenie AI, prawa i odtwarzalne ustawienia."
+    ]
+  },
+  "film": {
+    "en": [
+      "Example: a 60-second café story. Make a six-shot timeline of 10 seconds each, assign a framing and sound cue to each shot. Photograph a static textured object from overlapping angles in consistent light.",
+      "Import clips into your editor, assemble the timeline, balance narration and music, and export a preview. Run the local reconstruction on the photos and record settings, result and errors. Compare one enhanced shot with its original.",
+      "Acceptance: 60–90 seconds, captions matching speech, no unintended gaps, documented reconstruction outcome, rights log and reproducible export settings. Review full playback before submission."
+    ],
+    "ru": [
+      "Пример: история кофейни на 60 секунд. Разбей её на шесть сцен по 10 секунд, укажи ракурс и звук каждой. Сними неподвижный фактурный объект с разных перекрывающихся ракурсов при одинаковом свете.",
+      "Импортируй кадры в редактор, собери таймлайн, выровняй громкость музыки и речи, экспортируй черновик. Запусти локальную реконструкцию фото; запиши настройки, результат и ошибки. Сравни улучшенный кадр с оригиналом.",
+      "Самопроверка: 60–90 секунд, совпадение субтитров с речью, отсутствие случайных пауз, отчёт о реконструкции, права и параметры экспорта. Просмотри весь фильм перед сдачей."
+    ],
+    "uk": [
+      "Приклад: історія кав’ярні на 60 с. Створи шість сцен по 10 с із ракурсами та звуком. Сфотографуй нерухомий фактурний об’єкт із перекриттям.",
+      "Змонтуй кадри, збалансуй музику й мовлення, експортуй чернетку. Запусти локальну реконструкцію, запиши параметри та помилки. Порівняй покращений кадр з оригіналом.",
+      "Самоперевірка: 60–90 с, синхронні субтитри, відсутність випадкових пауз, звіт реконструкції, права та експорт. Переглянь усе відео."
+    ],
+    "pl": [
+      "Przykład: historia kawiarni w 60 s. Rozpisz sześć scen po 10 s z kadrami i dźwiękiem. Fotografuj nieruchomy obiekt z nakładających się ujęć.",
+      "Zmontuj materiał, wyrównaj muzykę i mowę, wyeksportuj podgląd. Uruchom rekonstrukcję lokalną, zanotuj ustawienia i błędy. Porównaj ulepszone ujęcie z oryginałem.",
+      "Samokontrola: 60–90 s, zsynchronizowane napisy, brak przypadkowych przerw, raport rekonstrukcji, prawa i eksport. Obejrzyj cały film."
+    ]
+  },
+  "agents": {
+    "en": [
+      "Example: classify fictional customer requests into billing, support and sales. Specify JSON inputs, allowed categories and a draft-only output. Planner assigns, producer drafts, reviewer checks; a person approves any real action.",
+      "Run locally with synthetic requests. Test normal requests, missing category, malicious instructions embedded in input and a timeout. Record expected vs actual and revise the prompt or validation when they differ.",
+      "Acceptance: six documented cases including failures, no unauthorized external actions, explicit escalation for uncertainty, inputs/outputs and measured runtime."
+    ],
+    "ru": [
+      "Пример: классификация вымышленных заявок клиентов на оплату, поддержку и продажи. Опиши вход JSON, разрешённые категории и выход только в виде черновика. Планировщик распределяет, исполнитель пишет, ревьюер проверяет; реальное действие подтверждает человек.",
+      "Запусти локально на вымышленных заявках. Проверь обычные обращения, отсутствие категории, постороннюю команду внутри входных данных и таймаут. Запиши ожидаемый и фактический результат, исправь промпт или валидацию.",
+      "Самопроверка: 6 тестов, включая ошибки, отсутствие неразрешённых действий, передача сомнений человеку, описание входов и выходов, измеренное время выполнения."
+    ],
+    "uk": [
+      "Приклад: класифікація вигаданих звернень на оплату, підтримку й продажі. Визнач JSON, категорії та вихід лише як чернетку. Планувальник, виконавець, рев’юер; реальні дії схвалює людина.",
+      "Запусти локально на синтетичних даних. Перевір звичайні звернення, відсутню категорію, сторонні команди у вході й таймаут. Порівняй очікуване з фактичним.",
+      "Самоперевірка: 6 тестів, зокрема помилки, відсутність несанкціонованих дій, ескалація, входи/виходи й час виконання."
+    ],
+    "pl": [
+      "Przykład: klasyfikacja fikcyjnych zgłoszeń na płatności, wsparcie i sprzedaż. Ustal JSON, kategorie i wynik tylko jako szkic. Planista, wykonawca, recenzent; realne działania zatwierdza człowiek.",
+      "Uruchom lokalnie na danych syntetycznych. Sprawdź zwykłe zgłoszenia, brak kategorii, obce polecenia w danych i timeout. Porównaj oczekiwane wyniki z rzeczywistymi.",
+      "Samokontrola: 6 testów z błędami, brak nieuprawnionych działań, eskalacja, wejścia/wyjścia i czas."
+    ]
+  },
+  "teacher": {
+    "en": [
+      "Example: teach percentages. Goal: calculate 15% of 200, explain the formula, distinguish discount from final price. Reference answer: 30 discount, 170 final price. Build a rubric around the reasoning, not only the number.",
+      "Ask the local tutor to review 170 (correct final price), 30 (discount only), and an unexplained answer. Require a hint first, then a worked example and a new question. Check the feedback against the reference yourself.",
+      "Acceptance: three objectives, a worked example, three tested learner answers, correction evidence and review questions for days 1, 3 and 7."
+    ],
+    "ru": [
+      "Пример: обучение процентам. Цели: вычислить 15% от 200, объяснить формулу, отличить скидку от итоговой цены. Эталон: скидка 30, цена 170. Оценивай ход рассуждений, а не только число.",
+      "Попроси локального преподавателя проверить 170 (верная цена), 30 (только скидка) и ответ без объяснения. Сначала подсказка, затем разбор примера и новый вопрос. Самостоятельно сверь обратную связь с эталоном.",
+      "Самопроверка: три цели, разобранный пример, три проверенных ответа ученика, журнал исправлений и вопросы для повторения через 1, 3 и 7 дней."
+    ],
+    "uk": [
+      "Приклад: відсотки. Цілі: обчислити 15% від 200, пояснити формулу, відрізнити знижку від ціни. Еталон: знижка 30, ціна 170. Оціни також міркування.",
+      "Попроси локального викладача перевірити 170, 30 і відповідь без пояснення. Спочатку підказка, потім розбір та нове питання. Звір відгук з еталоном.",
+      "Самоперевірка: три цілі, розібраний приклад, три відповіді, журнал виправлень і повторення через 1, 3 та 7 днів."
+    ],
+    "pl": [
+      "Przykład: procenty. Cele: obliczyć 15% z 200, wyjaśnić wzór i odróżnić rabat od ceny. Wzorzec: rabat 30, cena 170. Oceń także rozumowanie.",
+      "Poproś lokalnego tutora o sprawdzenie 170, 30 i odpowiedzi bez wyjaśnienia. Najpierw wskazówka, następnie przykład i nowe pytanie. Porównaj z wzorcem.",
+      "Samokontrola: trzy cele, rozwiązany przykład, trzy odpowiedzi, rejestr poprawek i powtórki po 1, 3 i 7 dniach."
+    ]
+  },
+  "business": {
+    "en": [
+      "Example: a fictional 30-second ad package with one revision. Estimate four hours at 20 units/hour plus 10 units of expenses. With a 5% platform fee the price floor is 90/0.95 = 94.74 units before taxes; round upward.",
+      "Build one sample ad using owned assets, a one-page brief and a proposal that states scope, deadline, revision cap and license. Personalize it for real listings only; do not send without approval.",
+      "Acceptance: three distinct services, sample portfolio, transparent cost sheet, three proposals, client intake checklist and a weekly outreach plan. Track replies, not invented revenue."
+    ],
+    "ru": [
+      "Пример: рекламный ролик 30 секунд с одной правкой. Четыре часа по 20 у.е. плюс 10 у.е. расходов. При комиссии 5% минимальная цена до налогов: 90/0,95 = 94,74 у.е.; округляй вверх.",
+      "Сделай образец рекламы из собственных материалов, бриф на одну страницу и предложение с объёмом, сроком, лимитом правок и лицензией. Персонализируй только под реальные заявки; не отправляй без согласия.",
+      "Самопроверка: три разные услуги, образец портфолио, прозрачный расчёт затрат, три предложения, анкета клиента и недельный план поиска. Учитывай реальные ответы, а не выдуманный доход."
+    ],
+    "uk": [
+      "Приклад: реклама 30 с з однією правкою. 4 години по 20 у.о. + 10 витрат. За комісії 5% мінімум до податків: 90/0,95 = 94,74; округли вгору.",
+      "Зроби зразок із власних матеріалів, короткий бриф і пропозицію зі строком, обсягом, правками й ліцензією. Лише реальні заявки; не надсилай без згоди.",
+      "Самоперевірка: три послуги, портфоліо, розрахунок витрат, три пропозиції, анкета клієнта й тижневий план. Враховуй реальні відповіді."
+    ],
+    "pl": [
+      "Przykład: reklama 30 s z jedną poprawką. 4 godziny po 20 jednostek + 10 kosztów. Przy prowizji 5% minimum przed podatkiem: 90/0,95 = 94,74; zaokrąglij w górę.",
+      "Stwórz próbkę z własnych materiałów, krótki brief i ofertę z terminem, zakresem, poprawkami i licencją. Tylko realne zlecenia; nie wysyłaj bez zgody.",
+      "Samokontrola: trzy usługi, portfolio, koszty, trzy oferty, ankieta klienta i tygodniowy plan. Zapisuj rzeczywiste odpowiedzi."
+    ]
+  }
+}
+
+def practice_steps(project,steps,lang):
+    language=lang if lang in steps else "en"
+    return [task+"\n\n"+guide for task,guide in zip(steps[language],PRACTICE_GUIDES[project][language])]
+
 def access(token):
     p=student_progress(token)
     if not p.get("access") or p.get("plan")!="elite":
@@ -46,7 +164,7 @@ def catalog(token,lang):
         cur.execute("SELECT project,evidence,updated_at,review_status,review_score,review_feedback,revision FROM elite_projects WHERE student_id=%s",(sid,))
         saved={k:{"evidence":e,"updated_at":t.isoformat(),"status":status,"score":score,"feedback":feedback,"revision":rev} for k,e,t,status,score,feedback,rev in cur.fetchall()}
     is_open=unlocked(p)
-    return {"unlocked":is_open,"projects":[{"id":k,"title":title,"days":3,**({"steps":steps.get(lang,steps["en"]),"links":links,"submission":saved.get(k)} if is_open else {})} for k,title,steps,links in PROJECTS]}
+    return {"unlocked":is_open,"projects":[{"id":k,"title":title,"days":3,**({"steps":practice_steps(k,steps,lang),"links":links,"submission":saved.get(k)} if is_open else {})} for k,title,steps,links in PROJECTS]}
 def save(token,project,evidence):
     p=access(token)
     if not unlocked(p):raise PermissionError("Complete the 45 core lessons first")
