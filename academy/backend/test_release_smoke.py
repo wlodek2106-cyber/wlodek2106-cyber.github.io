@@ -298,6 +298,31 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"/support.js",classic)
         self.assertNotIn(b'<script src="/academy-aurora.js">',classic)
 
+    def test_startup_serves_page_and_blocks_sensitive_routes(self):
+        self.http.startup_ready=False
+        try:
+            code,headers,body=self.request("/dashboard?lang=ru")
+            self.assertEqual(code,200)
+            self.assertIn(b"Starting Academy",body)
+            self.assertIn(b'http-equiv="refresh"',body)
+            self.assertEqual(headers["cache-control"],"no-store")
+            for path in ("/health","/ready"):
+                code,headers,body=self.request(path)
+                self.assertEqual(code,503)
+                self.assertEqual(headers["retry-after"],"8")
+                self.assertFalse(json.loads(body)["ready"])
+            for path in ("/login","/register","/checkout/create","/admin/directory"):
+                code,_,body=self.request(path,"POST",b"{}",{"Content-Type":"application/json"})
+                self.assertEqual(code,503)
+                self.assertFalse(json.loads(body)["payments"])
+            code,_,_=self.request("/health","HEAD")
+            self.assertEqual(code,503)
+        finally:
+            self.http.startup_ready=True
+        code,_,body=self.request("/dashboard")
+        self.assertEqual(code,200)
+        self.assertIn(b'id="login"',body)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

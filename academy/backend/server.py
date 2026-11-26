@@ -68,12 +68,14 @@ class BoundedHTTPServer(ThreadingHTTPServer):
     daemon_threads=True
     def __init__(self,*args,**kwargs):
         self.slots=threading.BoundedSemaphore(16)
+        self.startup_ready=True
         super().__init__(*args,**kwargs)
     def service_actions(self):
         # BaseServer invokes this on its regular serve_forever polling loop.
         # No background worker, external service or additional paid resources.
-        from higgsfield_studio import prune_expired
-        prune_expired()
+        if self.startup_ready:
+            from higgsfield_studio import prune_expired
+            prune_expired()
         super().service_actions()
     def process_request(self,request,client_address):
         if not self.slots.acquire(blocking=False):
@@ -123,9 +125,37 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length",str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+    def startup_response(self,path):
+        if self.command=="GET" and path in ("/","/dashboard"):
+            body=('<!doctype html><html lang="en"><meta charset="utf-8">'
+                  '<meta name="viewport" content="width=device-width,initial-scale=1">'
+                  '<meta http-equiv="refresh" content="8"><title>Zer0Life Academy</title>'
+                  '<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#151121;color:#f0e7ff;font:16px system-ui}main{max-width:460px;padding:28px}h1{font-size:26px}p{line-height:1.6}a{color:#ccb2ff}small{color:#c2b2dd}</style>'
+                  '<main><small>ZER0LIFE / ACADEMY</small><h1>Starting Academy</h1>'
+                  '<p>Сервер запускается и проверяет безопасность. Страница обновится автоматически.</p>'
+                  '<p>The server is starting and checking readiness. This page refreshes automatically.</p>'
+                  '<a href="/dashboard?view=classic">Classic mode / Без 3D</a></main></html>').encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type","text/html; charset=utf-8")
+            self.send_header("Cache-Control","no-store")
+            self.send_header("Content-Security-Policy","default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+            self.send_header("Content-Length",str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        self.send_response(503)
+        body=b'{"error":"Academy is starting","code":"starting","ready":false,"payments":false}'
+        self.send_header("Content-Type","application/json")
+        self.send_header("Cache-Control","no-store")
+        self.send_header("Retry-After","8")
+        self.send_header("Content-Length",str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
     def handle_api(self):
         try: path=urlsplit(self.path).path
         except ValueError: return self.respond(400,{"error":"Invalid path"})
+        if not self.server.startup_ready:
+            return self.startup_response(path)
         assets={"/academy-aurora.css":("academy-aurora.css","text/css; charset=utf-8"),"/academy-aurora.js":("academy-aurora.js","application/javascript; charset=utf-8"),"/academy-shell.css":("academy-shell.css","text/css; charset=utf-8"),"/academy-shell.js":("academy-shell.js","application/javascript; charset=utf-8"),"/support.js":("support.js","application/javascript; charset=utf-8"),"/module-auth.js":("module-auth.js","application/javascript; charset=utf-8"),"/command-center.js":("command-center.js","application/javascript; charset=utf-8"),"/agency.js":("agency.js","application/javascript; charset=utf-8"),"/creator-analytics.js":("creator-analytics.js","application/javascript; charset=utf-8"),"/client-portal.js":("client-portal.js","application/javascript; charset=utf-8"),"/production-cost.js":("production-cost.js","application/javascript; charset=utf-8"),"/graduate-showcase.js":("graduate-showcase.js","application/javascript; charset=utf-8"),"/local-ai-engine.py":("local-ai-engine.py","application/octet-stream"),"/veyra-lab.js":("veyra-lab.js","application/javascript; charset=utf-8"),"/openmvs-lab.js":("openmvs-lab.js","application/javascript; charset=utf-8"),"/openmvs-runner.py":("openmvs-runner.py","application/octet-stream"),"/openmotion-lab.js":("openmotion-lab.js","application/javascript; charset=utf-8"),"/marketplace-preview.js":("marketplace-preview.js","application/javascript; charset=utf-8"),"/hire.js":("hire.js","application/javascript; charset=utf-8"),"/marketplace.js":("marketplace.js","application/javascript; charset=utf-8"),"/ai-workspace.js":("ai-workspace.js","application/javascript; charset=utf-8"),"/automation-studio.js":("automation-studio.js","application/javascript; charset=utf-8"),"/website-builder.js":("website-builder.js","application/javascript; charset=utf-8"),"/music-studio.js":("music-studio.js","application/javascript; charset=utf-8"),"/animation-studio.js":("animation-studio.js","application/javascript; charset=utf-8"),"/design-studio.js":("design-studio.js","application/javascript; charset=utf-8"),"/voice-studio.js":("voice-studio.js","application/javascript; charset=utf-8"),"/local-media.js":("local-media.js","application/javascript; charset=utf-8"),"/creator-suite.js":("creator-suite.js","application/javascript; charset=utf-8"),"/free-ai.js":("free-ai.js","application/javascript; charset=utf-8"),"/manifest.webmanifest":("manifest.webmanifest","application/manifest+json"),"/academy-icon.svg":("academy-icon.svg","image/svg+xml"),"/academy-sw.js":("academy-sw.js","application/javascript")}
         if self.command=="GET" and path in assets:
             name,mime=assets[path]
@@ -226,14 +256,20 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(400)
             self.end_headers()
             return
+        if not self.server.startup_ready and path=="/health":
+            self.send_response(503)
+            self.send_header("Retry-After","8")
+            self.end_headers()
+            return
         self.send_response(200 if path in ("/","/health","/graduate-showcase","/veyra-lab","/openmvs-lab","/openmotion-lab","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace","/hire","/marketplace-preview","/production-cost","/client-portal","/creator-analytics","/agency","/command-center","/support") else 404)
         self.end_headers()
     do_GET=handle_api
     do_POST=handle_api
-if __name__=="__main__":
+def initialize():
     if os.getenv("ACADEMY_DATABASE_URL"):
         import subprocess, sys
-        subprocess.check_call([sys.executable,"-m","pip","install","-r",str(Path(__file__).with_name("requirements.txt"))])
+        if not (os.getenv("RENDER")=="true" or os.getenv("RENDER_SERVICE_NAME")=="zer0life-academy"):
+            subprocess.check_call([sys.executable,"-m","pip","install","-r",str(Path(__file__).with_name("requirements.txt"))])
         from migrate import migrate
         migrate()
         import unittest
@@ -260,4 +296,17 @@ if __name__=="__main__":
     from certificate_mail import configured,run
     if configured():
         threading.Thread(target=run,daemon=True,name="certificate-email").start()
-    BoundedHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler).serve_forever()
+if __name__=="__main__":
+    with BoundedHTTPServer(("0.0.0.0",int(os.environ.get("PORT","10000"))),Handler) as http:
+        http.startup_ready=False
+        worker=threading.Thread(target=http.serve_forever,daemon=True,name="academy-http")
+        worker.start()
+        print("Academy HTTP bound; startup checks in progress",flush=True)
+        try:
+            initialize()
+            http.startup_ready=True
+            print("Academy startup checks complete; API ready",flush=True)
+            worker.join()
+        finally:
+            http.shutdown()
+            worker.join(timeout=5)
