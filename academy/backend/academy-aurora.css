@@ -376,3 +376,16 @@ body.zAurora #extra .zModerationRow{display:flex;justify-content:space-between;a
 body.zAurora #extra .zModerationOpen{min-height:44px;margin:0;color:#e8d8ff;background:#392a56;border:1px solid #8369ae;border-radius:9px;padding:8px 12px;cursor:pointer}
 body.zAurora #extra .zModerationOpen[hidden]{display:none!important}
 @media(max-width:620px){body.zAurora .zAdminRail{grid-template-columns:minmax(0,1fr)}body.zAurora .zAdminReportNav{align-items:stretch;flex-direction:column}body.zAurora #extra .zFounderMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.zAurora #extra .zFounderMetric{padding:11px}}
+
+/* Compact launch layout: keep course controls reachable without scrolling through all labs. */
+body.zAurora .zCompactHub .zCompactHeading{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0}
+body.zAurora .zCompactHub .zCompactHeading>span{flex:1;min-width:0}
+body.zAurora .zCompactToggle{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 12px;border:1px solid #6d5892;border-radius:10px;background:#27203e;color:#eadcff;font:inherit;font-size:12px;cursor:pointer}
+body.zAurora .zCompactToggle svg{width:17px;height:17px;flex:none}
+body.zAurora .zCompactToggle[aria-expanded=true] svg{transform:rotate(180deg)}
+body.zAurora .zCompactBody{margin-top:14px;min-width:0}
+body.zAurora .zCompactBody[hidden],body.zAurora #creatorJourney.zLabsCollapsed{display:none!important}
+body.zAurora .zLabVisibility{margin:8px 0 0;min-height:44px}
+body.zAurora .zProductionHub .zCompactBody>p{margin:0 0 12px;color:#cec3e2}
+body.zAurora .zCompactToggle:focus-visible{outline:2px solid #d2b8ff;outline-offset:3px}
+@media(max-width:480px){body.zAurora .zCompactHub .zCompactHeading{font-size:17px}body.zAurora .zCompactToggle{padding:8px;font-size:11px}}
