@@ -91,6 +91,23 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"academySidebar",body)
         self.assertIn("frame-ancestors 'none'",headers["content-security-policy"])
 
+    def test_dashboard_shell_assets(self):
+        from server import dashboard_shell,dashboard_csp
+        original=b'<html><style>body{}</style><nav id="academyNav"></nav><script>let original=1;</script></html>'
+        changed=dashboard_shell(original)
+        self.assertIn(b'<script>let original=1;</script>',changed)
+        self.assertIn(b'id="academyNav"',changed)
+        self.assertEqual(dashboard_csp(original),dashboard_csp(changed))
+        self.assertEqual(dashboard_shell(b'invalid'),b'invalid')
+        code,headers,body=self.request("/dashboard")
+        self.assertEqual(code,200)
+        self.assertIn(b'/academy-shell.css',body)
+        self.assertIn(b'/academy-shell.js',body)
+        for asset,mime in (("/academy-shell.css","text/css"),("/academy-shell.js","javascript")):
+            code,headers,body=self.request(asset)
+            self.assertEqual(code,200)
+            self.assertIn(mime,headers["content-type"])
+            self.assertGreater(len(body),1000)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

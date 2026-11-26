@@ -1,0 +1,55 @@
+/* ZER0LIFE Academy 2027 — grouped navigation */
+body.z2027.signedIn{--bg:#0b0d12;--panel:#12161f;--line:#2b3240;--muted:#a6afbf;--text:#f1f3f8;background:#0b0d12;max-width:1680px;padding:24px}
+body.z2027.signedIn>header{margin-bottom:12px;justify-content:space-between}
+body.z2027.signedIn>header>a{display:none}
+body.z2027 #panel{grid-template-columns:264px minmax(0,1fr);gap:24px}
+body.z2027 #academySidebar{background:#12161f;border-color:#2b3240;border-radius:16px;padding:14px;max-height:calc(100dvh - 48px)}
+body.z2027 .sidebarIdentity{gap:12px;padding:7px 3px 16px;margin-bottom:10px}
+body.z2027 .sidebarIdentity>div{min-width:0}
+body.z2027 .sidebarIdentity strong{font-size:13px;letter-spacing:.4px;overflow-wrap:anywhere}
+body.z2027 .sideMark{background:#b1a0fc;color:#171127;border-radius:10px}
+body.z2027 #academyNav{display:flex;flex-direction:column;gap:5px;padding:0}
+body.z2027 #academyNav .navGroup{display:block;padding:0;border:0;min-width:0}
+body.z2027 #academyNav details{border:0;margin:0;background:none;padding:0}
+body.z2027 #academyNav summary{display:flex;list-style:none;align-items:center;gap:10px;cursor:pointer;min-height:44px;padding:9px;border-radius:9px;color:#e1e6ef}
+body.z2027 #academyNav summary::-webkit-details-marker{display:none}
+body.z2027 #academyNav summary h3{color:inherit;font-size:13px;letter-spacing:0;text-transform:none;font-weight:650;line-height:1.4;margin:0;flex:1;overflow-wrap:anywhere}
+body.z2027 #academyNav summary:hover,body.z2027 #academyNav summary:focus-visible{background:#202735;outline-offset:2px}
+body.z2027 #academyNav summary .zChevron{margin-left:auto;transition:transform .15s ease}
+body.z2027 #academyNav details[open]>summary .zChevron{transform:rotate(180deg)}
+body.z2027 #academyNav details[open]>summary{background:#1c2330}
+body.z2027 #academyNav .zChildren{padding:4px 0 4px 10px;margin-left:12px;border-left:1px solid #303746;display:grid;gap:3px}
+body.z2027 #academyNav .navItem{font-size:13px;line-height:1.45;padding:9px;min-height:44px;border-radius:9px;color:#dce1ea;overflow-wrap:anywhere}
+body.z2027 #academyNav .navItem:hover,body.z2027 #academyNav .navItem[aria-current=page]{background:#27243b;border-color:#51446e;color:#fff}
+body.z2027 #academyNav svg,body.z2027 #mobileNavToggle svg{width:18px;height:18px;flex:none;color:#b5a7f3}
+body.z2027 #academyNav .zFiltered{display:none!important}
+body.z2027 .zSearch{display:flex;align-items:center;gap:8px;background:#0c1017;border:1px solid #2e3644;border-radius:10px;padding:0 10px;margin-bottom:8px;min-height:44px}
+body.z2027 .zSearch input{padding:8px 0;background:transparent;border:0;min-width:0;font-size:16px;width:100%;color:#f0f3f8}
+body.z2027 .zSearch:focus-within{outline:2px solid #b1a0fc}
+body.z2027 .zSearch input:focus{outline:none}
+body.z2027 .zDrawerTop,body.z2027 .zBackdrop{display:none}
+body.z2027 .zSubheading{font-size:11px;color:#a4adbd;padding:8px 8px 2px;font-weight:700}
+body.z2027 .workspaceTop{padding:8px 0 14px;border-bottom:1px solid #2b3240;margin-bottom:16px}
+body.z2027 .workspaceTop h1{font-size:clamp(27px,4vw,40px);letter-spacing:-1px;font-weight:750}
+body.z2027 #workspaceOverview>article,body.z2027 #workspaceOverview>section,body.z2027 #extra,body.z2027 #lesson{background:#12161f;border-color:#2b3240;border-radius:16px}
+body.z2027 #extra article,body.z2027 #extra section{background:#0c1017;border-color:#2b3240}
+body.z2027 #extra input,body.z2027 #extra textarea,body.z2027 #extra select{font-size:16px}
+body.z2027 #days button{border-radius:12px;min-height:52px}
+body.z2027 #planCards{grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))!important}
+@media(max-width:900px){
+ body.z2027.signedIn{padding:12px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+ body.z2027 #panel{grid-template-columns:1fr;gap:12px}
+ body.z2027 #academySidebar{display:flex;align-items:center;justify-content:space-between;gap:10px;position:static;max-height:none;overflow:visible;padding:10px}
+ body.z2027 .sidebarIdentity{padding:0;margin:0;max-width:72%;border:0;align-items:center}
+ body.z2027 #mobileNavToggle{float:none;display:flex;align-items:center;gap:6px;padding:8px 12px;min-height:44px;font-size:14px;margin:0}
+ body.z2027 #academyNav{display:none;position:fixed;inset:0 auto 0 0;width:min(360px,calc(100vw - 24px));height:100dvh;z-index:1001;padding:max(14px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom));background:#12161f;border-right:1px solid #343b49;overflow-y:auto;overscroll-behavior:contain;box-shadow:16px 0 48px #0007}
+ body.z2027 #academySidebar.expanded #academyNav{display:flex}
+ body.z2027 #academySidebar.expanded .zBackdrop{display:block;position:fixed;inset:0;width:100%;height:100%;z-index:1000;border:0;border-radius:0;background:#0009;margin:0;padding:0}
+ body.z2027 .zDrawerTop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px}
+ body.z2027 .zDrawerTop button{display:grid;place-items:center;width:44px;height:44px;padding:0;margin:0;color:#f0f3f8;background:#202633}
+ body.z2027.zDrawerOpen{overflow:hidden}
+ body.z2027 #academyNav .navItem,body.z2027 #academyNav summary h3{font-size:14px}
+ body.z2027 .workspaceTop h1{font-size:28px}
+}
+@media(max-width:480px){body.z2027 #days{grid-template-columns:repeat(2,minmax(0,1fr))}body.z2027 #extra,body.z2027 #lesson,body.z2027 #checkout{padding:14px}}
+@media(prefers-reduced-motion:reduce){body.z2027 #academyNav *{transition:none!important}}
