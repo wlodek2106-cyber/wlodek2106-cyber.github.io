@@ -1317,3 +1317,18 @@ from test_higgsfield_studio import HiggsfieldStudioTests
 
 # Verify the real HTTP adapter and page assets before every Render deployment.
 from test_release_smoke import ReleaseSmokeTests
+
+
+def load_tests(loader, tests, pattern):
+    """Compatibility bridge for the Academy's existing Render build command.
+    Install declared dependencies in the build environment, not during server startup.
+    Local test runs use the developer's preinstalled environment.
+    """
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+    if os.environ.get("RENDER") == "true" or os.environ.get("RENDER_SERVICE_NAME") == "zer0life-academy":
+        requirements = Path(__file__).with_name("requirements.txt")
+        subprocess.run([sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "-r", str(requirements)], check=True)
+    return tests
