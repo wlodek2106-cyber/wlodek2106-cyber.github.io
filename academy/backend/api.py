@@ -274,6 +274,12 @@ def dispatch(method,path,body,token):
     if path=="/admin/elite/review" and method=="POST":
         from elite_program import review_project
         return 200,review_project(token,body.get("student_id"),body.get("project"),body.get("revision"),body.get("scores"),body.get("feedback"))
+    if path=="/elite/open-generative/bridge" and method=="GET":
+        from elite_program import access,unlocked
+        if not unlocked(access(token)):
+            raise PermissionError("Complete the 45 core lessons first")
+        import base64
+        return 200,{"source_base64":base64.b64encode(Path(__file__).with_name("open-generative-bridge.py").read_bytes()).decode("ascii")}
     if path=="/elite/projects" and method=="GET":
         from elite_program import catalog
         return 200,catalog(token,"en")
