@@ -42,6 +42,16 @@ def run_task(model,mode,task,emit=lambda x:None):
         result=chat(model,role,task+"\n\nPrior stages (reference data):\n"+"\n\n".join(report)[-12000:])
         stage=title+"\n"+result;report.append(stage);emit(stage)
     return "\n\n".join(report)
+def nemo_provider_config(model,available=local_models):
+    """Provider fragment for an existing NeMo Agent Toolkit workflow, not a workflow."""
+    if not isinstance(model,str) or not re.fullmatch(r"[A-Za-z0-9._:/-]{1,200}",model) or model not in available():
+        raise ValueError("Select an installed local model")
+    return ("# Merge into an existing reviewed NeMo Agent Toolkit workflow.\n"
+            "# Configure the workflow to use local_llm; remove hosted tools.\n"
+            "llms:\n  local_llm:\n    _type: openai\n"
+            '    api_key: "EMPTY"\n    base_url: "http://127.0.0.1:11434/v1"\n'
+            "    model_name: "+json.dumps(model)+"\n")
+
 def model_family(name):
     return "NVIDIA Nemotron" if re.search(r"(?:^|/)nemotron(?:[-:.]|$)",name,re.I) else "Local model"
 
@@ -134,6 +144,16 @@ def main():
         except Exception as e:messagebox.showerror("Invalid workflow",str(e));return
         if not messagebox.askyesno("Confirm local execution","Only submit your own reviewed API workflow to local ComfyUI started with --disable-api-nodes. Custom nodes can execute code or access the network. Have you checked every node and disabled paid/cloud nodes?"):return
         worker(lambda:events.put(("text","ComfyUI accepted prompt "+submit_workflow(graph)+"; inspect execution and output in ComfyUI. Acceptance is not completion.")))
+    def nemo_fn():
+        if busy:return
+        try:config=nemo_provider_config(model.get())
+        except Exception as e:messagebox.showerror("NeMo provider",str(e));return
+        name=filedialog.asksaveasfilename(defaultextension=".yml",filetypes=[("YAML","*.yml")])
+        if name:
+            try:
+                with Path(name).open("x",encoding="utf-8") as file:file.write(config)
+                messagebox.showinfo("NeMo provider","Saved provider fragment, not a full workflow. Merge into your reviewed local NeMo workflow and disable external tools and cloud inference.")
+            except OSError as e:messagebox.showerror("Save",str(e))
     def save_fn():
         t=output.get("1.0","end").strip()
         if not t:return
@@ -147,6 +167,7 @@ def main():
     comfy=ttk.Button(buttons,text="Submit reviewed ComfyUI workflow",command=comfy_fn);comfy.pack(side="left",padx=8)
     compare=ttk.Button(buttons,text="Compare models",command=compare_fn);compare.pack(side="left",padx=8)
     ttk.Button(buttons,text="Save report",command=save_fn).pack(side="left")
+    ttk.Button(root,text="Export NeMo local provider YAML",command=nemo_fn).pack(pady=5)
     ttk.Label(root,textvariable=status,wraplength=820).pack(pady=8)
     def poll():
         nonlocal busy
