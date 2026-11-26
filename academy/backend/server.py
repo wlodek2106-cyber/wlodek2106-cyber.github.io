@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json, os, re, hashlib, base64
 import time, threading
 from collections import OrderedDict
+from functools import lru_cache
 _limits=OrderedDict()
 _limit_lock=threading.Lock()
 def allow_auth(key):
@@ -53,6 +54,9 @@ def aurora_shell(body):
     head,_,tail=body.rpartition(b'</html>')
     return head+b'<script src="/academy-aurora.js"></script></html>'+tail
 
+# The public static dashboard is identical for all visitors; cache only two content variants.
+# The entire immutable HTML is the cache key, so edited scripts always get new hashes.
+@lru_cache(maxsize=2)
 def dashboard_csp(body):
     text=body.decode("utf-8").replace("\r\n","\n").replace("\r","\n")
     scripts=re.findall(r"<script>(.*?)</script>",text,re.S)
