@@ -274,6 +274,10 @@ def dispatch(method,path,body,token):
     if path=="/admin/elite/review" and method=="POST":
         from elite_program import review_project
         return 200,review_project(token,body.get("student_id"),body.get("project"),body.get("revision"),body.get("scores"),body.get("feedback"))
+    if path=="/elite/production-suite" and method=="POST":
+        from production_suite import student_bundle,VERSION
+        import base64
+        return 200,{"version":VERSION,"zip_base64":base64.b64encode(student_bundle(token,body.get("lang","en"))).decode("ascii")}
     if path=="/elite/ad-production/plan" and method=="POST":
         from ad_production import student_plan
         return 200,student_plan(token,body["brief"],body.get("lang","en"))
