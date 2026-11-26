@@ -63,3 +63,18 @@ class HiggsfieldStudioTests(unittest.TestCase):
             self.assertEqual(provider.call_args.args[1],"/bytedance/seedream/v5.0/pro/text-to-image")
         with patch.object(h,"upstream",return_value={"status":"completed","images":[{"url":"https://example.com/a.png"},{"url":"javascript:bad"},{"url":"https://user:password@example.com/b.png"}]}):
             self.assertEqual(self.call("status",{})[1],{"status":"completed","request_id":"image_123","image_urls":["https://example.com/a.png"]})
+
+    def test_reference_modes_and_consent(self):
+        for name, config in h.REFERENCE_PRESETS.items():
+            body={"model":name,"prompt":"animate","confirm_charge":True,"confirm_reference_rights":True,"references":["https://example.com/image.png"]}
+            path,payload,kind=h.selected_request(body)
+            self.assertEqual(path,config["path"])
+            self.assertEqual(kind,config["kind"])
+            self.assertEqual(payload.get("image_url") or payload.get("image_urls"),"https://example.com/image.png" if config["reference"]=="single" else ["https://example.com/image.png"])
+            with self.assertRaises(ValueError):
+                h.selected_request({**body,"confirm_reference_rights":False})
+            with self.assertRaises(ValueError):
+                h.selected_request({**body,"references":["https://example.com/a.png"]*(config["limit"]+1)})
+        for url in ["http://example.com/a.png","https://localhost/a.png","https://127.0.0.1/a.png","https://service.internal/a.png","https://user:secret@example.com/a.png","https://example.com:8888/a.png","file:///tmp/a.png","https://example.com/a.png#fragment"]:
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                h.reference_url(url)

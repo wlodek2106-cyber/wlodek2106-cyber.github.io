@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 BASE = "https://api.higgsfield.ai"
 MODEL = "/bytedance/seedance-2.0/text-to-video"
 MODEL_PRESETS = {"seedream_v5_pro": {"path": "/bytedance/seedream/v5.0/pro/text-to-image", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "1:1"}}, "kling_image_4_0": {"path": "/kling-image/v4.0/text-to-image", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "16:9"}}, "recraft_v4_1": {"path": "/recraft/v4.1/text-to-image", "kind": "image", "settings": {"resolution": "1k", "aspect_ratio": "1:1", "output_format": "jpg"}}, "qwen_image_3": {"path": "/alibaba/qwen-image-3/text-to-image", "kind": "image", "settings": {"resolution": "1k", "aspect_ratio": "1:1", "prompt_extend": True, "enable_thinking": True, "prompt_extend_mode": "direct"}}, "soul_2": {"path": "/higgsfield-ai/soul/v2/standard", "kind": "image", "settings": {"seed": None, "batch_size": 1, "resolution": "720p", "aspect_ratio": "4:3", "enhance_prompt": True}}, "kling_video_4_0": {"path": "/kling-video/v4.0/text-to-video", "kind": "video", "settings": {"duration": 10, "resolution": "1080p", "aspect_ratio": "16:9"}}, "wan_3_0": {"path": "/alibaba/wan-3.0/text-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "1080p", "aspect_ratio": "adaptive", "generate_audio": True, "enable_thinking": False}}, "wan_3_0_prime": {"path": "/alibaba/wan-3.0-prime/text-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "1080p", "aspect_ratio": "adaptive", "generate_audio": True, "enable_thinking": False}}}
+REFERENCE_PRESETS = {"seedance_2_0_i2v": {"path": "/bytedance/seedance-2.0/image-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "720p", "generate_audio": True}, "reference": "single", "limit": 1}, "kling_4_i2v": {"path": "/kling-video/v4.0/image-to-video", "kind": "video", "settings": {"duration": 10, "resolution": "1080p"}, "reference": "single", "limit": 1}, "magi_2_i2v": {"path": "/sand/magi-2/image-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "1080p", "aspect_ratio": "16:9", "generate_audio": True}, "reference": "single", "limit": 1}, "seedream_5_edit": {"path": "/bytedance/seedream/v5.0/pro/edit", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "1:1"}, "reference": "multi", "limit": 10}, "kling_4_edit": {"path": "/kling-image/v4.0/edit", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "16:9"}, "reference": "multi", "limit": 1}, "qwen_3_edit": {"path": "/alibaba/qwen-image-3/edit", "kind": "image", "settings": {"resolution": "1k", "aspect_ratio": "1:1", "prompt_extend": True, "enable_thinking": True, "prompt_extend_mode": "direct"}, "reference": "multi", "limit": 1}}
 TTL = 1800
 LOCK = threading.Lock()
 SESSIONS = {}
@@ -71,14 +72,38 @@ def selected_request(body):
         raise ValueError("Invalid model")
     if model == "seedance_2_0":
         return MODEL, generation_payload(body), "video"
-    config = MODEL_PRESETS.get(model)
+    config = MODEL_PRESETS.get(model) or REFERENCE_PRESETS.get(model)
     if not config:
         raise ValueError("Unsupported API model")
     prompt = body.get("prompt")
     if body.get("confirm_charge") is not True or not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 4000:
         raise ValueError("Invalid prompt or consent")
     # Fixed, documented initial settings. Never accept a caller-supplied endpoint or arbitrary provider fields.
-    return config["path"], {"prompt": prompt.strip(), **config["settings"]}, config["kind"]
+    payload = {"prompt": prompt.strip(), **config["settings"]}
+    if "reference" in config:
+        refs = body.get("references")
+        if body.get("confirm_reference_rights") is not True or not isinstance(refs, list) or not 1 <= len(refs) <= config["limit"]:
+            raise ValueError("Reference consent and valid images required")
+        urls = [reference_url(url) for url in refs]
+        if config["reference"] == "single":
+            payload["image_url"] = urls[0]
+        else:
+            payload["image_urls"] = urls
+    return config["path"], payload, config["kind"]
+
+def reference_url(value):
+    # Do not fetch user URLs on Academy servers. Only forward public HTTPS DNS names.
+    # Provider is responsible for its own media fetch and redirect security.
+    url = safe_url(value)
+    if not url:
+        raise ValueError("Use an accessible HTTPS image URL")
+    u = urlsplit(url)
+    host = u.hostname.lower().rstrip(".")
+    if u.port not in (None, 443) or u.fragment or len(host) > 253 or not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+", host):
+        raise ValueError("Invalid image host")
+    if not re.search(r"[a-z]", host.rsplit(".", 1)[-1]) or host.endswith((".local", ".localhost", ".internal", ".test", ".invalid", ".onion", ".lan", ".home", ".arpa")):
+        raise ValueError("Public image host required")
+    return url
 
 def safe_url(value):
     if not isinstance(value, str) or len(value) > 4096:

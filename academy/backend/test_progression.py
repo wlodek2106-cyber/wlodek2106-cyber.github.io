@@ -1106,3 +1106,6 @@ class ProgressTests(unittest.TestCase):
         self.assertFalse(quiz_passed({},key))
 if __name__ == "__main__":
     unittest.main()
+
+# Run provider-mocked studio regression checks with the existing build suite.
+from test_higgsfield_studio import HiggsfieldStudioTests
