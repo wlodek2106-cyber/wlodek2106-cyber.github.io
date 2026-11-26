@@ -368,6 +368,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b'id="login"',classic)
         self.assertIn(b'id="academyNav"',classic)
 
+    def test_smart_onboarding_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"function onboardingDesign()",b'zOnboarding',b'b.dataset.state==="completed"',b'b.dataset.state==="open"',b'!b.disabled',b'!checkout.hidden',b'enhance("onboarding"'):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        self.assertIn(b"zOnboardingShortcut[hidden]",style)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

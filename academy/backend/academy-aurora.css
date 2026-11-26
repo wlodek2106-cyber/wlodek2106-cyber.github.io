@@ -389,3 +389,16 @@ body.zAurora .zLabVisibility{margin:8px 0 0;min-height:44px}
 body.zAurora .zProductionHub .zCompactBody>p{margin:0 0 12px;color:#cec3e2}
 body.zAurora .zCompactToggle:focus-visible{outline:2px solid #d2b8ff;outline-offset:3px}
 @media(max-width:480px){body.zAurora .zCompactHub .zCompactHeading{font-size:17px}body.zAurora .zCompactToggle{padding:8px;font-size:11px}}
+
+/* Smart onboarding: server-derived lesson state, no access overrides. */
+body.zAurora .zOnboarding{min-width:0;padding:18px;border:1px solid #766094;border-radius:18px;background:linear-gradient(145deg,#2c2445,#181c30);margin:14px 0}
+body.zAurora .zOnboarding[hidden],body.zAurora .zOnboardingShortcut[hidden]{display:none!important}
+body.zAurora .zOnboarding h2{font-size:clamp(18px,4vw,24px);color:#eadcff;margin:0 0 10px}
+body.zAurora .zOnboardingStatus{color:#e6d8fa;font-size:14px;margin:8px 0}
+body.zAurora .zOnboarding progress{width:100%;height:10px;accent-color:#b99af3;margin:6px 0 12px}
+body.zAurora .zOnboarding>.primary{min-height:44px;width:100%;margin:8px 0 12px}
+body.zAurora .zOnboardingActions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:8px}
+body.zAurora .zOnboardingShortcut{display:flex;align-items:center;gap:8px;min-width:0;min-height:48px;margin:0;padding:9px;border-radius:10px;border:1px solid #665486;background:#221f36;color:#e8ddfc;text-decoration:none;text-align:left;font:inherit;font-size:12px;overflow-wrap:anywhere}
+body.zAurora .zOnboardingShortcut svg{flex:none;width:20px;height:20px;color:#c1a5f5}
+body.zAurora .zOnboardingNotice{font-size:12px;line-height:1.5;color:#c8bddb;margin:12px 0 0}
+@media(max-width:620px){body.zAurora .zOnboardingActions{grid-template-columns:repeat(2,minmax(0,1fr))}}

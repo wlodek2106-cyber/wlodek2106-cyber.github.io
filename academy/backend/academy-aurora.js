@@ -272,6 +272,7 @@ function dashboard(){
    enhance("social",()=>{socialDesign();});
    enhance("administration",()=>{administrationDesign();});
    enhance("compact",()=>{compactOverview();});
+   enhance("onboarding",()=>{onboardingDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -563,7 +564,55 @@ function compactOverview(){
  compactRefresh=()=>{for(const fn of relabellers)fn()};
  if(new URLSearchParams(location.search).has("lab")){expandOverviewHub(".zProductionHub");revealCreatorLabs()}
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();motion()}
+const onboardingWords={
+ en:["Your next step","Start your free lesson","Choose a learning package","Continue learning","Review your learning plan","All available course days completed","No learning data yet","Loading your progress…","Lesson progress","Day","Explore tools","My portfolio","Find projects","Get help","Access is determined by your account. Tools and projects may have separate requirements."],
+ ru:["Твой следующий шаг","Начать бесплатный урок","Выбрать пакет обучения","Продолжить обучение","Посмотреть план обучения","Все дни курса в твоём плане пройдены","Данные обучения ещё не загружены","Загружаем твой прогресс…","Прогресс обучения","День","AI-инструменты","Моё портфолио","Найти проекты","Получить помощь","Доступ определяется аккаунтом. Для инструментов и проектов могут действовать отдельные условия."],
+ uk:["Твій наступний крок","Почати безкоштовний урок","Обрати пакет навчання","Продовжити навчання","Переглянути план навчання","Усі дні курсу у твоєму плані пройдено","Дані навчання ще не завантажено","Завантажуємо твій прогрес…","Прогрес навчання","День","AI-інструменти","Моє портфоліо","Знайти проєкти","Отримати допомогу","Доступ визначається акаунтом. Для інструментів і проєктів можуть діяти окремі умови."],
+ pl:["Twój następny krok","Rozpocznij bezpłatną lekcję","Wybierz pakiet nauki","Kontynuuj naukę","Zobacz plan nauki","Wszystkie dni kursu w Twoim planie ukończone","Dane nauki nie zostały jeszcze wczytane","Wczytujemy postęp…","Postęp nauki","Dzień","Narzędzia AI","Moje portfolio","Znajdź projekty","Uzyskaj pomoc","Dostęp zależy od konta. Narzędzia i projekty mogą mieć odrębne wymagania."]};
+let onboardingRefresh=null;
+function onboardingDesign(){
+ const overview=$("workspaceOverview"),days=$("days"),checkout=$("checkout"),panel=$("panel"),nav=$("academyNav");if(!overview||!days||!checkout||!panel||!nav)return;
+ const words=()=>onboardingWords[locale()]||onboardingWords.en;
+ const hub=el("section","zOnboarding");hub.id="zOnboarding";hub.hidden=true;
+ const head=el("h2"),status=el("p","zOnboardingStatus"),meter=el("progress"),primary=el("button","zAction primary"),actions=el("div","zOnboardingActions"),notice=el("p","zOnboardingNotice");
+ primary.type="button";status.setAttribute("role","status");hub.append(head,status,meter,primary,actions,notice);
+ const shortcuts=[];
+ const visible=id=>{const n=$(id);return !!n&&!n.disabled&&!n.closest("[hidden]")};
+ for(const [id,label,glyph,path] of [[null,10,"wand-sparkles","/ai-workspace"],["portfolioButton",11,"image",null],["jobsButton",12,"briefcase",null],[null,13,"headphones","/support"]]){
+   const b=el(path?"a":"button","zOnboardingShortcut"),txt=el("span");b.append(icon(glyph),txt);
+   if(path){b.href=url(path);links.push([b,path])}else{b.type="button";b.onclick=()=>{if(visible(id))$(id).click()}}
+   shortcuts.push({b,txt,id,label});actions.append(b);
+ }
+ const profile=$("zProfileCard");if(profile)profile.after(hub);else overview.prepend(hub);
+ const write=(n,v)=>{if(n.textContent!==v)n.textContent=v};
+ const hide=(n,v)=>{if(n.hidden!==v)n.hidden=v};
+ let scheduled=false;
+ function sync(){
+   scheduled=false;hide(hub,panel.hidden);if(panel.hidden)return;
+   const w=words(),list=Array.from(days.querySelectorAll("button[data-day]")),done=list.filter(b=>b.dataset.state==="completed").length,open=list.find(b=>b.dataset.state==="open"&&!b.disabled),first=list.find(b=>b.dataset.day==="1");
+   const hasCheckout=!checkout.hidden;
+   write(head,w[0]);write(notice,w[14]);meter.max=Math.max(1,list.length);meter.value=done;meter.setAttribute("aria-label",w[8]);hide(meter,!list.length);
+   primary.disabled=false;
+   if(!list.length){write(status,w[7]);write(primary,w[6]);primary.disabled=true;primary.onclick=null}
+   else{
+     let label=4,action=()=>days.scrollIntoView({block:"start",behavior:"auto"}),detail=done+" / "+list.length+" · "+w[8];
+     if(open&&first===open&&hasCheckout){label=1;action=()=>{if(open.isConnected&&!open.disabled)open.click()};detail+=" · "+w[9]+" 1"}
+     else if(hasCheckout&&!open){label=2;action=()=>{if(!checkout.hidden)checkout.scrollIntoView({block:"start",behavior:"auto"})}}
+     else if(open){label=3;action=()=>{if(open.isConnected&&!open.disabled)open.click()};detail+=" · "+w[9]+" "+open.dataset.day}
+     else if(done===list.length){label=4;detail=w[5]+" · "+detail}
+     write(status,detail);write(primary,w[label]);primary.onclick=action;
+   }
+   for(const {b,txt,id,label} of shortcuts){write(txt,w[label]);hide(b,!!id&&!visible(id))}
+ }
+ const schedule=()=>{if(!scheduled){scheduled=true;queueMicrotask(sync)}};
+ const observer=new MutationObserver(schedule);
+ observer.observe(days,{subtree:true,childList:true,attributes:true,attributeFilter:["disabled","data-state"]});
+ observer.observe(checkout,{attributes:true,attributeFilter:["hidden"]});
+ observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ observer.observe(nav,{subtree:true,attributes:true,attributeFilter:["hidden","disabled"]});
+ onboardingRefresh=schedule;schedule();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
