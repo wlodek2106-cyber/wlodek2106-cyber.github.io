@@ -107,7 +107,7 @@ SOFTWARE.
  const clear=document.createElement("button");clear.type="button";clear.className="zProfileButton";clear.hidden=true;clear.append(icon("x"));searchWrap.append(clear);
  clear.addEventListener("click",()=>{search.value="";filter();search.focus()});
  function filter(){
-   const q=normalize(search.value.trim());const tokens=q.split(/\s+/).filter(Boolean);clear.hidden=!q;
+   const q=normalize(search.value.trim());const tokens=q.split(/\s+/).filter(Boolean);const hideClear=!q;if(clear.hidden!==hideClear)clear.hidden=hideClear;
    if(q&&!searching){saved=new Map(groups.map(g=>[g.details,g.details.open]));searching=true}
    if(!q&&searching){for(const [d,open] of saved)d.open=open;searching=false;saved.clear()}
    let total=0;

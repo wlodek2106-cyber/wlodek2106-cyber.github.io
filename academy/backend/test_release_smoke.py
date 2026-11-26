@@ -323,6 +323,12 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         self.assertIn(b'id="login"',body)
 
+    def test_shell_observer_search_guard(self):
+        code,_,script=self.request("/academy-shell.js")
+        self.assertEqual(code,200)
+        self.assertIn(b"if(clear.hidden!==hideClear)clear.hidden=hideClear",script)
+        self.assertNotIn(b"clear.hidden=!q",script)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
