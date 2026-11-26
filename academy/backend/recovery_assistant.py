@@ -1,6 +1,5 @@
 """Manual recovery evidence; no commands, credentials, deploys or payment actions."""
 from student_business import ident,clean
-from psycopg.types.json import Jsonb
 CHECKS=("scope","cause","change_review","smoke_test","followup")
 
 def validate(checks,evidence,consent):
@@ -25,6 +24,7 @@ def save(cur,b):
     if not row or row[1]!=rev or row[0] not in ("investigating","mitigated"): raise ValueError("Incident is not ready or has changed")
     old=read(cur,iid,rev)
     if (old["version"] if old else 0)!=v: raise ValueError("Stale recovery checklist")
+    from psycopg.types.json import Jsonb
     cur.execute("""INSERT INTO system_incident_recovery(incident_id,incident_revision,version,checks,evidence)
        VALUES (%s,%s,%s,%s,%s) ON CONFLICT(incident_id,incident_revision) DO UPDATE
        SET version=EXCLUDED.version,checks=EXCLUDED.checks,evidence=EXCLUDED.evidence,updated_at=now()""",

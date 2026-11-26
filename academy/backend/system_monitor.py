@@ -15,7 +15,8 @@ TABLES={
 }
 GROUPS=tuple(TABLES)+("creator","system","other")
 def group(path):
-    p=urlsplit(path).path
+    try: p=urlsplit(path).path
+    except (ValueError,TypeError): return "other"
     if p in ("/login","/register","/logout") or p.startswith(("/account/","/passkeys/")): return "account"
     if p.startswith(("/checkout/","/admin/payment-support")): return "payments"
     if p=="/progress" or p.startswith(("/elite/certificate/","/learning/","/lesson/","/lessons/","/exam/","/exams/","/quiz/","/teacher/","/practice/","/review-journal/","/certificate")): return "learning"

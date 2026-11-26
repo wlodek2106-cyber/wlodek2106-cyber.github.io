@@ -63,7 +63,9 @@ class HttpBoundary(unittest.TestCase):
                     self.assertIn("connect-src 'self'",r.headers["Content-Security-Policy"])
                     self.assertIn(b'/support.js',r.read())
                 with req("/support.js") as r:
-                    self.assertIn(b'/support/create',r.read())
+                    script=r.read()
+                    for route in (b"/support/create",b"/support/diagnose",b"/admin/system-monitor",b"/admin/incidents/recovery",b"/admin/launch-control"):
+                        self.assertIn(route,script)
                 with req("/module-auth.js") as r:
                     self.assertEqual(r.status,200)
                     script=r.read()

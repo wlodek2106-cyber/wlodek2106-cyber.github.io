@@ -104,7 +104,8 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
     def handle_api(self):
-        path=urlsplit(self.path).path
+        try: path=urlsplit(self.path).path
+        except ValueError: return self.respond(400,{"error":"Invalid path"})
         assets={"/support.js":("support.js","application/javascript; charset=utf-8"),"/module-auth.js":("module-auth.js","application/javascript; charset=utf-8"),"/command-center.js":("command-center.js","application/javascript; charset=utf-8"),"/agency.js":("agency.js","application/javascript; charset=utf-8"),"/creator-analytics.js":("creator-analytics.js","application/javascript; charset=utf-8"),"/client-portal.js":("client-portal.js","application/javascript; charset=utf-8"),"/production-cost.js":("production-cost.js","application/javascript; charset=utf-8"),"/graduate-showcase.js":("graduate-showcase.js","application/javascript; charset=utf-8"),"/local-ai-engine.py":("local-ai-engine.py","application/octet-stream"),"/veyra-lab.js":("veyra-lab.js","application/javascript; charset=utf-8"),"/openmvs-lab.js":("openmvs-lab.js","application/javascript; charset=utf-8"),"/openmvs-runner.py":("openmvs-runner.py","application/octet-stream"),"/openmotion-lab.js":("openmotion-lab.js","application/javascript; charset=utf-8"),"/marketplace-preview.js":("marketplace-preview.js","application/javascript; charset=utf-8"),"/hire.js":("hire.js","application/javascript; charset=utf-8"),"/marketplace.js":("marketplace.js","application/javascript; charset=utf-8"),"/ai-workspace.js":("ai-workspace.js","application/javascript; charset=utf-8"),"/automation-studio.js":("automation-studio.js","application/javascript; charset=utf-8"),"/website-builder.js":("website-builder.js","application/javascript; charset=utf-8"),"/music-studio.js":("music-studio.js","application/javascript; charset=utf-8"),"/animation-studio.js":("animation-studio.js","application/javascript; charset=utf-8"),"/design-studio.js":("design-studio.js","application/javascript; charset=utf-8"),"/voice-studio.js":("voice-studio.js","application/javascript; charset=utf-8"),"/local-media.js":("local-media.js","application/javascript; charset=utf-8"),"/creator-suite.js":("creator-suite.js","application/javascript; charset=utf-8"),"/free-ai.js":("free-ai.js","application/javascript; charset=utf-8"),"/manifest.webmanifest":("manifest.webmanifest","application/manifest+json"),"/academy-icon.svg":("academy-icon.svg","image/svg+xml"),"/academy-sw.js":("academy-sw.js","application/javascript")}
         if self.command=="GET" and path in assets:
             name,mime=assets[path]
@@ -192,7 +193,12 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             return self.respond(503,{"error":"Service unavailable"})
     def do_HEAD(self):
-        self.send_response(200 if urlsplit(self.path).path in ("/","/health","/graduate-showcase","/veyra-lab","/openmvs-lab","/openmotion-lab","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace","/hire","/marketplace-preview","/production-cost","/client-portal","/creator-analytics","/agency","/command-center","/support") else 404)
+        try: path=urlsplit(self.path).path
+        except ValueError:
+            self.send_response(400)
+            self.end_headers()
+            return
+        self.send_response(200 if path in ("/","/health","/graduate-showcase","/veyra-lab","/openmvs-lab","/openmotion-lab","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace","/hire","/marketplace-preview","/production-cost","/client-portal","/creator-analytics","/agency","/command-center","/support") else 404)
         self.end_headers()
     do_GET=handle_api
     do_POST=handle_api

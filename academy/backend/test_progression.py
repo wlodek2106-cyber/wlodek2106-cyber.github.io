@@ -124,6 +124,7 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(group("/login?token=private"),"account")
         self.assertEqual(group("/support/thread"),"support")
         self.assertEqual(group("/unknown/private"),"other")
+        self.assertEqual(group("http://[invalid"),"other")
         m.record("account",200);m.record("support",429);m.record("payments",503)
         m.record("user-secret",503)
         snap=m.snapshot(15)
