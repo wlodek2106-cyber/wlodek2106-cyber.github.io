@@ -3,6 +3,36 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_client_delivery_kit(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        import hashlib,json
+        from zipfile import ZipFile
+        spec=spec_from_file_location("kit",Path(__file__).with_name("client-delivery-kit.py"))
+        kit=module_from_spec(spec);spec.loader.exec_module(kit)
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);video=root/"sample.mp4";video.write_bytes(b"synthetic-video")
+            plan=root/"plan.json";plan.write_text(json.dumps({"duration":30,"format":"9:16"}))
+            qc=root/"qc.json"
+            report={"tool":"Zer0Life FFprobe delivery check","target":{"duration":30,"format":"9:16"},"checks":{k:True for k in ("duration","resolution","frame_rate","video_codec","pixel_format","audio","subtitles")},"metadata_pass":True,"video_sha256":hashlib.sha256(video.read_bytes()).hexdigest()}
+            qc.write_text(json.dumps(report))
+            rights=root/"rights.txt";rights.write_text("Synthetic rights notes")
+            files={"video":video,"plan":plan,"qc":qc,"rights":rights}
+            details={"project":"Test","revision":"v1","limitations":"Synthetic fixture"}
+            checks={k:True for k in kit.CHECKS};out=root/"delivery.zip"
+            with self.assertRaises(ValueError):kit.package(files,details,dict(checks,rights=False),out)
+            result=kit.package(files,details,checks,out)
+            with ZipFile(out) as z:
+                self.assertEqual(set(z.namelist()),{"final.mp4","production-plan.json","quality-report.json","rights.txt","delivery-manifest.json"})
+                manifest=json.loads(z.read("delivery-manifest.json"))
+                self.assertEqual(manifest,result)
+                for entry in manifest["files"]:
+                    self.assertEqual(hashlib.sha256(z.read(entry["name"])).hexdigest(),entry["sha256"])
+            with self.assertRaises(ValueError):kit.package(files,details,checks,out)
+            video.write_bytes(b"changed")
+            with self.assertRaises(ValueError):kit.package(files,details,checks,root/"bad.zip")
+            self.assertFalse((root/"bad.zip").exists())
     def test_delivery_quality_check(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
