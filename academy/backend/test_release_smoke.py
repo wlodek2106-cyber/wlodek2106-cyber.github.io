@@ -356,7 +356,7 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertNotIn("content-encoding",h)
         self.assertEqual(body,plain)
         for name in ("academy-shell.js","academy-shell.css","academy-aurora.js","academy-aurora.css"):
-            match=re.search(rb"/"+re.escape(name.encode())+rb"\\?v=([0-9a-f]{16})",plain)
+            match=re.search(rb"/"+re.escape(name.encode())+rb"\?v=([0-9a-f]{16})",plain)
             self.assertIsNotNone(match)
             code,_,asset=self.request(match.group(0).decode())
             self.assertEqual(code,200)
