@@ -114,6 +114,46 @@ def safe_url(value):
     except ValueError:
         return None
 
+UPLOAD_TYPES = {"image/jpeg", "image/png"}
+UPLOAD_MAX = 10 * 1024 * 1024
+
+def upload_request(body):
+    mime = body.get("content_type")
+    size = body.get("size")
+    if body.get("confirm_upload_rights") is not True or not isinstance(mime, str) or mime not in UPLOAD_TYPES or type(size) is not int or not 1 <= size <= UPLOAD_MAX:
+        raise ValueError("Invalid image upload or consent")
+    return {"content_type": mime}
+
+def signed_upload_fields(result, mime):
+    # Only known HTTPS S3 storage endpoints. Never follow redirects or send the
+    # Academy/provider Authorization header to the storage host.
+    upload = safe_url(result.get("upload_url"))
+    public = reference_url(result.get("public_url"))
+    if not upload:
+        raise ValueError("Invalid upload URL")
+    u = urlsplit(upload)
+    host = u.hostname.lower()
+    if u.port not in (None, 443) or u.fragment or not u.query or not re.fullmatch(r"(?:[a-z0-9-]+\.)*s3(?:[.-][a-z0-9-]+)*\.amazonaws\.com", host):
+        raise ValueError("Unsupported upload storage host")
+    headers = result.get("upload_headers")
+    if headers is None:
+        headers = {"Content-Type": mime}
+    if not isinstance(headers, dict) or len(headers) > 20:
+        raise ValueError("Invalid upload headers")
+    cleaned = {}
+    seen = set()
+    for name, value in headers.items():
+        if not isinstance(name, str) or not isinstance(value, str) or len(value) > 4096 or any(ord(c) < 32 or ord(c) > 126 for c in value):
+            raise ValueError("Invalid upload header")
+        lower = name.lower()
+        if lower in seen or not (lower == "content-type" or re.fullmatch(r"x-amz-[a-z0-9-]+", lower)):
+            raise ValueError("Unsupported upload header")
+        if lower == "content-type" and value.lower() != mime:
+            raise ValueError("Upload MIME mismatch")
+        seen.add(lower)
+        cleaned[name] = value
+    return {"upload_url": upload, "public_url": public, "upload_headers": cleaned}
+
 def session_id(token):
     from graduate_showcase import identity, credential
     from database import transaction
@@ -177,6 +217,9 @@ def dispatch(token, action, body):
                 return 409, {"error": "Resolve the previous request first"}
             session["guard_until"] = now + GUARD_TTL
             session["kind"] = kind
+        elif action == "upload":
+            payload = upload_request(body)
+            path = "/files/generate-upload-url"
         elif action == "reviewed":
             if body.get("checked_provider_history") is not True or session["job"] or not session["unknown"]:
                 raise ValueError("Review the unknown request in the provider console first")
@@ -199,6 +242,11 @@ def dispatch(token, action, body):
                 if action == "submit" and result["error_code"] == "outcome_unknown":
                     session["unknown"] = True
                 return 200, {"error_code": result["error_code"]}
+            if action == "upload":
+                try:
+                    return 200, signed_upload_fields(result, payload["content_type"])
+                except (ValueError, TypeError):
+                    return 200, {"error_code": "unsupported_upload_storage"}
             if action == "submit":
                 job = result.get("request_id")
                 if not isinstance(job, str) or not ID.fullmatch(job):

@@ -41,7 +41,7 @@ def dashboard_csp(body):
     text=body.decode("utf-8").replace("\r\n","\n").replace("\r","\n")
     scripts=re.findall(r"<script>(.*?)</script>",text,re.S)
     hashes=["'sha256-"+base64.b64encode(hashlib.sha256(s.encode()).digest()).decode()+"'" for s in scripts]
-    return "default-src 'none'; script-src 'self' "+" ".join(hashes)+"; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"
+    return "default-src 'none'; script-src 'self' "+" ".join(hashes)+"; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src blob:; connect-src 'self' https://*.amazonaws.com; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"
 
 class BoundedHTTPServer(ThreadingHTTPServer):
     # One small service, bounded thread and database connection pressure.

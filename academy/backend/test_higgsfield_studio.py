@@ -78,3 +78,19 @@ class HiggsfieldStudioTests(unittest.TestCase):
         for url in ["http://example.com/a.png","https://localhost/a.png","https://127.0.0.1/a.png","https://service.internal/a.png","https://user:secret@example.com/a.png","https://example.com:8888/a.png","file:///tmp/a.png","https://example.com/a.png#fragment"]:
             with self.subTest(url=url), self.assertRaises(ValueError):
                 h.reference_url(url)
+
+    def test_signed_upload(self):
+        payload=h.upload_request({"content_type":"image/png","size":1024,"confirm_upload_rights":True})
+        self.assertEqual(payload,{"content_type":"image/png"})
+        response={"upload_url":"https://example.s3.us-east-1.amazonaws.com/image.png?X-Amz-Signature=example","public_url":"https://cdn.example.com/image.png","upload_headers":{"Content-Type":"image/png","x-amz-tagging":"project=example"}}
+        self.assertEqual(h.signed_upload_fields(response,"image/png"),response)
+        for patch_values in [{"size":0},{"size":10485761},{"size":True},{"content_type":"image/svg+xml"},{"confirm_upload_rights":False}]:
+            with self.assertRaises(ValueError):
+                h.upload_request({"content_type":"image/png","size":1024,"confirm_upload_rights":True,**patch_values})
+        for patch_values in [{"upload_url":"https://example.com/upload?x=1"},{"upload_url":"https://example.s3.amazonaws.com.evil.com/a?x=1"},{"upload_headers":{"Authorization":"secret"}},{"upload_headers":{"Content-Type":"image/jpeg"}},{"public_url":"https://localhost/image.png"}]:
+            with self.assertRaises(ValueError):
+                h.signed_upload_fields({**response,**patch_values},"image/png")
+        self.call("connect",{"key":"example:secret123","consent":True})
+        with patch.object(h,"upstream",return_value=response) as provider:
+            self.assertEqual(self.call("upload",{"content_type":"image/png","size":1024,"confirm_upload_rights":True})[1],response)
+            self.assertEqual(provider.call_args.args[1],"/files/generate-upload-url")
