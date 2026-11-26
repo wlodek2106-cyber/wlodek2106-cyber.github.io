@@ -554,3 +554,11 @@ CREATE TABLE IF NOT EXISTS creator_agency_knowledge (
  revision integer NOT NULL CHECK(revision>0),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Quality evidence is explicitly recorded by an agency owner.
+CREATE TABLE IF NOT EXISTS creator_agency_quality (
+ task_id bigint PRIMARY KEY REFERENCES creator_agency_tasks(id) ON DELETE CASCADE,
+ checks jsonb NOT NULL CHECK(jsonb_typeof(checks)='object'),
+ evidence text NOT NULL CHECK(char_length(evidence) BETWEEN 1 AND 2000),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);

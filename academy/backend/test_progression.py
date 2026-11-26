@@ -1080,6 +1080,15 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_agency_quality_validation(self):
+        from agency_quality import validate,FIELDS
+        checks={k:"pass" for k in FIELDS}
+        self.assertTrue(validate(checks,"Test evidence")["ready"])
+        self.assertFalse(validate({**checks,"technical":"fail"},"Test evidence")["ready"])
+        self.assertFalse(validate({**checks,"rights":"unchecked"},"Test evidence")["ready"])
+        for invalid in ({}, {**checks,"other":"pass"}, {**checks,"scope":True}, {**checks,"scope":"unknown"}):
+            with self.assertRaises(ValueError): validate(invalid,"Test evidence")
+        with self.assertRaises(ValueError): validate(checks," ")
     def test_agency_workflow_templates(self):
         from agency_workflow import plan,TEMPLATES
         self.assertEqual(len(TEMPLATES),5)

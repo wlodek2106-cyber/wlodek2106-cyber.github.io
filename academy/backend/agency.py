@@ -111,8 +111,14 @@ def status(cur,sid,b):
     if state==row[1]: return {"status":state}
     if row[2]:
         from agency_workflow import plan
-        if plan(row[2])[row[3]-1]["review"] and state=="done" and not owner:
-            raise PermissionError("Owner approval required")
+        review=plan(row[2])[row[3]-1]["review"]
+        if review and state=="done":
+            if not owner: raise PermissionError("Owner approval required")
+            from agency_quality import require_ready
+            require_ready(cur,tid)
+        if review and row[1]=="done" and state!="done":
+            if not owner: raise PermissionError("Owner approval required")
+            cur.execute("DELETE FROM creator_agency_quality WHERE task_id=%s",(tid,))
         if state in ("doing","done") and row[4] is not None:
             cur.execute("SELECT status FROM creator_agency_tasks WHERE id=%s AND agency_id=%s",(row[4],aid))
             prev=cur.fetchone()
@@ -137,6 +143,9 @@ def dispatch(token,action,b):
         if action=="remove": return remove(cur,sid,b)
         if action=="task": return task(cur,sid,b)
         if action=="status": return status(cur,sid,b)
+        if action in ("quality","quality-save"):
+            from agency_quality import get,save
+            return (get if action=="quality" else save)(cur,sid,b)
         if action in ("knowledge","knowledge-save"):
             from agency_knowledge import get,save
             return (get if action=="knowledge" else save)(cur,sid,b)

@@ -130,7 +130,17 @@ class LaunchIntegration(unittest.TestCase):
                 for x in flow[:-1]: agency.status(cur,partner_id,{"id":aid,"task":x["id"],"status":"done"})
                 workflow_assign(cur,buyer_id,{"id":aid,"task":flow[-1]["id"],"assignee":partner_id})
                 with self.assertRaises(PermissionError): agency.status(cur,partner_id,{"id":aid,"task":flow[-1]["id"],"status":"done"})
-                agency.status(cur,buyer_id,{"id":aid,"task":flow[-1]["id"],"status":"done"})
+                from agency_quality import save as quality_save,get as quality_get,FIELDS
+                review={"id":aid,"task":flow[-1]["id"]}
+                with self.assertRaises(ValueError): agency.status(cur,buyer_id,{**review,"status":"done"})
+                checks={k:"pass" for k in FIELDS}
+                with self.assertRaises(PermissionError): quality_save(cur,partner_id,{**review,"checks":checks,"evidence":"Synthetic evidence","consent":True})
+                quality_save(cur,buyer_id,{**review,"checks":{**checks,"rights":"unchecked"},"evidence":"Synthetic evidence","consent":True})
+                with self.assertRaises(ValueError): agency.status(cur,buyer_id,{**review,"status":"done"})
+                quality_save(cur,buyer_id,{**review,"checks":checks,"evidence":"Synthetic evidence","consent":True})
+                self.assertTrue(quality_get(cur,partner_id,review)["report"]["ready"])
+                agency.status(cur,buyer_id,{**review,"status":"done"})
+                with self.assertRaises(ValueError): quality_save(cur,buyer_id,{**review,"checks":checks,"evidence":"Another report","consent":True})
                 with self.assertRaises(ValueError): agency.status(cur,buyer_id,{"id":aid,"task":flow[0]["id"],"status":"todo"})
                 agency.remove(cur,buyer_id,{"id":aid,"member":partner_id})
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
