@@ -485,3 +485,7 @@ CREATE TABLE IF NOT EXISTS student_review_notes (
 
 -- Optional agreed calendar deadline per project milestone (UTC date).
 ALTER TABLE academy_job_milestones ADD COLUMN IF NOT EXISTS due_date date;
+
+-- Practical assessment evidence; legacy scores remain unchanged.
+ALTER TABLE project_submissions ADD COLUMN IF NOT EXISTS rubric_scores jsonb;
+ALTER TABLE project_submissions ADD COLUMN IF NOT EXISTS reviewed_at timestamptz;
