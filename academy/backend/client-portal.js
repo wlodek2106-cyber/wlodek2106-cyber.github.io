@@ -41,8 +41,11 @@ add(host,"h3",w()[22]);const room=await api("/jobs/room",{id:x.id,after:0});for(
 const history=add(host,"div","");function append(r){for(const m of r.items)add(history,"p",m.role+" · "+m.created_at+"\n"+m.body)}
 append(room);let cursor=room.next_after;if(cursor!==null){const b=btn(host,w()[18],async()=>{const page=await api("/jobs/room",{id:x.id,after:cursor});append(page);cursor=page.next_after;b.hidden=cursor===null})}
 if(x.status!=="completed"){const msg=add(host,"textarea","");msg.maxLength=1600;msg.placeholder=w()[30];msg.setAttribute("aria-label",w()[30]);btn(host,w()[23],async()=>{if(!msg.value.trim())throw Error();await api("/jobs/room-message",{id:x.id,body:msg.value});await detail(x);say(28)});if(x.status==="delivered"){btn(host,w()[24],async()=>{if(!msg.value.trim()||!confirm(w()[31]))return;await api("/jobs/room-handoff",{id:x.id,action:"revise",body:msg.value});await load(true);say(28)});btn(host,w()[25],async()=>{if(!confirm(w()[31]))return;await api("/jobs/transition",{id:x.id,action:"complete"});await load(true);say(28)})}}}
-$("signIn").onclick=()=>run(async()=>{try{const d=await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null});if(typeof d.token!=="string"||!d.token)throw Error();token=d.token;$("loginBox").hidden=true;$("private").hidden=false;await load(true)}finally{$("password").value="";$("code").value=""}});
+async function finishLogin(d){if(typeof d.token!=="string"||!d.token)throw Error();token=d.token;try{await load(true)}catch(e){try{await api("/logout")}catch{}close();throw e}$("loginBox").hidden=true;$("private").hidden=false}
+$("signIn").onclick=()=>run(async()=>{try{await finishLogin(await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null}))}finally{$("password").value="";$("code").value=""}});
 $("signOut").onclick=()=>run(async()=>{try{await api("/logout")}finally{close()}});
 $("refresh").onclick=()=>run(()=>load(true));$("more").onclick=()=>run(()=>load(false));
 $("create").onclick=()=>run(async()=>{if(!$("consent").checked||!confirm(w()[31]))return;await api("/jobs/create",{title:$("jobTitle").value,category:$("category").value,brief:$("brief").value,budget:$("budget").value,contact:$("contact").value,consent:true});clearDraft();await load(true);say(28)});
 $("lang").onchange=()=>{if(!busy)translate()};const lang=new URLSearchParams(location.search).get("lang");$("lang").value=Object.hasOwn(words,lang)?lang:"en";translate();
+
+moduleAuth.mount(run,api,finishLogin);

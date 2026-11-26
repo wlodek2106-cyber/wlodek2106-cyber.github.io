@@ -57,6 +57,17 @@ class HttpBoundary(unittest.TestCase):
                 with req("/creator-suite") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"creator-suite.js",r.read())
+                with req("/module-auth.js") as r:
+                    self.assertEqual(r.status,200)
+                    script=r.read()
+                    self.assertIn(b"/passkeys/login/begin",script)
+                    self.assertIn(b"/passkeys/login/finish",script)
+                    self.assertNotIn(b"localStorage",script)
+                for module in ("/command-center","/agency","/creator-analytics","/client-portal"):
+                    with req(module) as r:
+                        page=r.read()
+                        self.assertIn(b'/module-auth.js',page)
+                        self.assertIn(b'id="passkeySignIn"',page)
                 with req("/command-center") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn("noindex",r.headers["X-Robots-Tag"])

@@ -33,5 +33,8 @@ const rec=add(root,"section","");add(rec,"h2",w()[23]);const ul=add(rec,"ul","")
 }
 async function load(){data=null;render();data=await api("/creator/analytics",{days:Number($("period").value)});render()}
 function close(){token=null;data=null;goalValues=["1000","200","25"];$("private").hidden=true;$("loginBox").hidden=false;$("password").value="";$("code").value="";render()}
-$("signIn").onclick=()=>run(async()=>{try{const d=await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null});if(typeof d.token!=="string"||!d.token)throw Error();token=d.token;try{await load()}catch(e){try{await api("/logout")}catch{}close();throw e}$("loginBox").hidden=true;$("private").hidden=false}finally{$("password").value="";$("code").value=""}});
+async function finishLogin(d){if(typeof d.token!=="string"||!d.token)throw Error();token=d.token;try{await load()}catch(e){try{await api("/logout")}catch{}close();throw e}$("loginBox").hidden=true;$("private").hidden=false}
+$("signIn").onclick=()=>run(async()=>{try{await finishLogin(await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null}))}finally{$("password").value="";$("code").value=""}});
 $("signOut").onclick=()=>run(async()=>{try{await api("/logout")}finally{close()}});$("refresh").onclick=()=>run(load);$("period").onchange=()=>run(load);$("lang").onchange=render;const lang=new URLSearchParams(location.search).get("lang");$("lang").value=Object.hasOwn(words,lang)?lang:"en";render();
+
+moduleAuth.mount(run,api,finishLogin);

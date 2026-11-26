@@ -82,8 +82,11 @@ const select=add(card,"select","");select.setAttribute("aria-label",t.title);sta
 finance(s,d);knowledgePanel(s,d);
 }
 function close(){token=null;items=[];data=null;["password","code","name","alias","invite"].forEach(id=>$(id).value="");$("consent").checked=false;$("private").hidden=true;$("loginBox").hidden=false;render()}
-$("signIn").onclick=()=>run(async()=>{try{const r=await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null});if(typeof r.token!=="string"||!r.token)throw Error();token=r.token;try{await load();const target=new URLSearchParams(location.search).get("agency");if(target&&items.some(x=>String(x.id)===target))await detail(items.find(x=>String(x.id)===target).id)}catch(e){try{await api("/logout")}catch{}close();throw e}$("private").hidden=false;$("loginBox").hidden=true}finally{$("password").value="";$("code").value=""}});
+async function finishLogin(r){if(typeof r.token!=="string"||!r.token)throw Error();token=r.token;try{await load();const target=new URLSearchParams(location.search).get("agency");if(target&&items.some(x=>String(x.id)===target))await detail(items.find(x=>String(x.id)===target).id)}catch(e){try{await api("/logout")}catch{}close();throw e}$("private").hidden=false;$("loginBox").hidden=true}
+$("signIn").onclick=()=>run(async()=>{try{await finishLogin(await api("/login",{email:$("login").value,password:$("password").value,code:$("code").value||null}))}finally{$("password").value="";$("code").value=""}});
 $("signOut").onclick=()=>run(async()=>{try{await api("/logout")}finally{close()}});$("refresh").onclick=()=>run(load);
 $("create").onclick=()=>run(async()=>{const r=await api("/agency/create",{name:$("name").value,alias:$("alias").value});$("name").value="";await load();await detail(r.id);say()});
 $("join").onclick=()=>run(async()=>{if(!$("consent").checked)throw Error();const r=await api("/agency/join",{code:$("invite").value.trim(),alias:$("alias").value,consent:true});$("invite").value="";$("consent").checked=false;await load();await detail(r.id);say()});
 $("lang").onchange=render;const lang=new URLSearchParams(location.search).get("lang");$("lang").value=Object.hasOwn(words,lang)?lang:"en";render();
+
+moduleAuth.mount(run,api,finishLogin);
