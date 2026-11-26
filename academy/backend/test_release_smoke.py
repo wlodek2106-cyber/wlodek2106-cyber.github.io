@@ -173,6 +173,25 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         for marker in (b"zProductionGrid",b"zLabSearch",b"zLabFiltered"):
             self.assertIn(marker,style)
+    def test_compact_launch_assets_and_csp_cache(self):
+        from server import dashboard_csp
+        original=b"<html><script>let a=1;</script></html>"
+        changed=b"<html><script>let a=2;</script></html>"
+        dashboard_csp.cache_clear()
+        first=dashboard_csp(original)
+        self.assertEqual(first,dashboard_csp(original))
+        self.assertEqual(dashboard_csp.cache_info().hits,1)
+        self.assertNotEqual(first,dashboard_csp(changed))
+        self.assertLessEqual(dashboard_csp.cache_info().currsize,2)
+        dashboard_csp.cache_clear()
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"compactOverview()",b"aria-controls",b"revealCreatorLabs()",b"zSocialHub",b"zAdminSwitch",b"zAdminReportNav"):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        for marker in (b"zCompactBody[hidden]",b"zLabsCollapsed",b"zAdminRail",b"zCommunitySearch"):
+            self.assertIn(marker,style)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
