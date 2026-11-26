@@ -94,6 +94,25 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_system_monitor_bounded_metrics(self):
+        from system_monitor import Metrics,group,recommendations
+        now=[0]
+        m=Metrics(lambda:now[0])
+        self.assertEqual(group("/login?token=private"),"account")
+        self.assertEqual(group("/support/thread"),"support")
+        self.assertEqual(group("/unknown/private"),"other")
+        m.record("account",200);m.record("support",429);m.record("payments",503)
+        m.record("user-secret",503)
+        snap=m.snapshot(15)
+        self.assertEqual(sum(x["requests"] for x in snap["rows"]),3)
+        self.assertEqual(recommendations([{"present":True}],snap,True),["errors","limits"])
+        self.assertNotIn("user-secret",str(snap))
+        now[0]=16*60
+        self.assertEqual(sum(x["requests"] for x in m.snapshot(15)["rows"]),0)
+        self.assertEqual(sum(x["requests"] for x in m.snapshot(60)["rows"]),3)
+        now[0]=61*60
+        self.assertEqual(sum(x["requests"] for x in m.snapshot(60)["rows"]),0)
+        with self.assertRaises(ValueError):m.snapshot(1440)
     def test_support_triage_rules(self):
         from support_triage import classify,assign,summary
         from unittest.mock import Mock

@@ -57,6 +57,8 @@ class BoundedHTTPServer(ThreadingHTTPServer):
         super().service_actions()
     def process_request(self,request,client_address):
         if not self.slots.acquire(blocking=False):
+            from system_monitor import metrics
+            metrics.record("system",503)
             try:
                 request.settimeout(1)
                 request.sendall(b"HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nCache-Control: no-store\r\nRetry-After: 2\r\nContent-Length: 0\r\n\r\n")
@@ -77,6 +79,11 @@ class BoundedHTTPServer(ThreadingHTTPServer):
 
 class Handler(BaseHTTPRequestHandler):
     timeout=15
+    def send_response(self,code,message=None):
+        from system_monitor import metrics,group
+        if self.command in ("GET","POST"):
+            metrics.record(group(self.path),code)
+        super().send_response(code,message)
     def log_request(self,code="-",size="-"):
         # Do not put query strings, referral codes or supplied path data in logs.
         self.log_message("request %s %s",self.command,code)

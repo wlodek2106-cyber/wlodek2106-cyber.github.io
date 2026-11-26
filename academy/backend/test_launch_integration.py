@@ -367,6 +367,9 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertGreaterEqual(report["activity"]["alltime"]["paid_referred"],1)
                 self.assertIn("students",admin.statistics(owner))
                 from security_center import inspect as security_inspect,report as security_report
+                from system_monitor import table_status,report as monitor_report
+                self.assertTrue(all(x["present"] for x in table_status(cur)))
+                with self.assertRaises(PermissionError): monitor_report(partner,15)
                 diagnostics=security_inspect(cur)
                 self.assertIn("database_checks_pass",diagnostics)
                 for key in ("agency_owner_without_membership","agency_task_project_mismatch","agency_task_dependency_mismatch","agency_active_task_without_completed_predecessor"):
