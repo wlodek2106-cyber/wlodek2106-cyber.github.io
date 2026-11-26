@@ -251,7 +251,7 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -370,7 +370,65 @@ function productionDesign(){
  }else{const anchor=main.querySelector(":scope > .zModuleHero,:scope > .zAuroraHero")||main.querySelector(":scope > header,:scope > nav");if(anchor)anchor.after(box);else main.prepend(box)}
  productionRefresh=()=>{for(const [n,i] of labels)n.textContent=pw()[i];input.placeholder=pw()[2];input.setAttribute("aria-label",pw()[2]);if(preset!==null&&preset){const spec=labQueries.find(x=>x[2]===preset);if(spec)input.value=pw()[spec[0]]}apply()};productionRefresh();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();motion()}
+const socialWords={
+ en:["Social & Community","Portfolio & public profile","Student discussions","Share my work","Build a case study","Create service page","Find clients","Marketplace","Search loaded discussions","Matching loaded posts","Clear search","No matching loaded posts","Search covers loaded posts only. Load more to search further.","Publishing remains voluntary. Community posts require moderation; external sharing needs your confirmation."],
+ ru:["Social & Community","Портфолио и публичный профиль","Сообщество студентов","Поделиться работой","Создать кейс","Страница услуг","Привлечение клиентов","Биржа услуг","Поиск по загруженным обсуждениям","Найдено среди загруженных","Очистить поиск","Нет совпадений среди загруженных","Поиск работает по загруженным темам. Загрузи ещё для расширения поиска.","Публикация добровольная. Темы проходят модерацию, а внешняя публикация требует твоего подтверждения."],
+ uk:["Social & Community","Портфоліо й публічний профіль","Спільнота студентів","Поділитися роботою","Створити кейс","Сторінка послуг","Залучення клієнтів","Біржа послуг","Пошук у завантажених обговореннях","Знайдено серед завантажених","Очистити пошук","Немає збігів серед завантажених","Пошук працює із завантаженими темами. Завантаж ще для ширшого пошуку.","Публікація добровільна. Теми модеруються, а зовнішня публікація потребує підтвердження."],
+ pl:["Social & Community","Portfolio i profil publiczny","Społeczność studentów","Udostępnij pracę","Utwórz studium przypadku","Strona usług","Pozyskiwanie klientów","Giełda usług","Szukaj we wczytanych dyskusjach","Znaleziono we wczytanych","Wyczyść wyszukiwanie","Brak pasujących wczytanych wpisów","Wyszukiwanie obejmuje wczytane wpisy. Wczytaj więcej, aby rozszerzyć wyniki.","Publikowanie jest dobrowolne. Dyskusje wymagają moderacji, a zewnętrzne udostępnianie — potwierdzenia."]};
+let socialRefresh=null;
+function socialDesign(){
+ const overview=$("workspaceOverview"),journey=$("creatorJourney"),extra=$("extra"),nav=$("academyNav");if(!overview||!journey||!extra||!nav)return;
+ const sw=()=>socialWords[locale()]||socialWords.en,labels=[],syncers=[];
+ const tr=(node,i)=>{labels.push([node,i]);node.textContent=sw()[i];return node};
+ const hub=el("section","zSocialHub"),heading=el("h2"),grid=el("div","zSocialGrid");
+ heading.append(icon("users"),tr(el("span"),0));hub.append(heading,grid,tr(el("p","zSocialNotice"),13));overview.append(hub);
+ const normalize=s=>s.normalize("NFKD").replace(/\p{M}/gu,"").toLowerCase().replace(/ł/g,"l");
+ function tile(tag,i,g){const n=el(tag,"zSocialTile"),art=el("span","zSocialIcon");art.append(icon(g));n.append(art,tr(el("span"),i));grid.append(n);if(tag==="button")n.type="button";return n}
+ for(const [i,id,g] of [[1,"portfolioButton","image"],[2,"communityButton","message"]]){
+   const original=$(id);if(!original)continue;const b=tile("button",i,g);
+   const sync=()=>{b.hidden=original.hidden||original.disabled};syncers.push(sync);
+   b.onclick=()=>{if(!original.hidden&&!original.disabled)original.click()};
+ }
+ const labs=[[3,"share-2","Social Share Studio"],[4,"file","Creator Portfolio Builder"],[5,"layout-dashboard","Creator Service Page"],[6,"chart","Client Acquisition Lab"]];
+ const findLab=prefix=>Array.from(journey.querySelectorAll(":scope > details")).find(n=>!n.hidden&&normalize(n.querySelector(":scope > summary")?.textContent||"").startsWith(normalize(prefix)));
+ for(const [i,g,prefix] of labs){const b=tile("button",i,g);syncers.push(()=>{b.disabled=!findLab(prefix)});b.onclick=()=>{
+   const target=findLab(prefix);if(!target)return;
+   const field=document.querySelector("#zProductionHub .zLabSearch input");
+   if(field){field.value=prefix;field.dispatchEvent(new Event("input",{bubbles:true}))}
+   target.open=true;target.scrollIntoView({block:"start",behavior:"auto"});target.querySelector(":scope > summary")?.focus({preventScroll:true})
+ }}
+ const market=tile("a",7,"briefcase");market.href=url("/marketplace");links.push([market,"/marketplace"]);
+ let view=null,scheduled=false;
+ function filter(){
+   if(!view||!view.list.isConnected)return;
+   const terms=normalize(view.input.value.trim()).split(/\s+/).filter(Boolean),items=Array.from(view.list.querySelectorAll(":scope > article"));let matches=0;
+   for(const item of items){const text=normalize(item.textContent);const show=terms.every(t=>text.includes(t));item.classList.toggle("zSocialFiltered",!show);if(show)matches++}
+   const text=terms.length&&!matches?sw()[11]:sw()[9]+": "+matches+" / "+items.length;if(view.count.textContent!==text)view.count.textContent=text;
+ }
+ function sync(){
+   scheduled=false;for(const fn of syncers)fn();
+   const active=$("communityButton")?.getAttribute("aria-current")==="page"&&!extra.hidden;
+   const portfolio=$("portfolioButton")?.getAttribute("aria-current")==="page"&&!extra.hidden;
+   extra.classList.toggle("zCommunityPanel",active);extra.classList.toggle("zPortfolioPanel",portfolio);
+   if(!active){if(view?.bar.isConnected)view.bar.remove();view=null;return}
+   const divs=Array.from(extra.querySelectorAll(":scope > div")).filter(n=>!n.classList.contains("zCommunitySearch"));
+   if(divs.length<2)return;const list=divs[divs.length-1];
+   if(!view||view.list!==list){
+     if(view?.bar.isConnected)view.bar.remove();
+     const bar=el("div","zCommunitySearch"),input=el("input"),clear=el("button","zAction"),count=el("p","zCommunityCount"),hint=el("small");
+     input.type="search";input.maxLength=100;input.autocomplete="off";clear.type="button";count.setAttribute("role","status");bar.append(input,clear,count,hint);list.before(bar);
+     view={bar,input,clear,count,hint,list};input.addEventListener("input",filter);clear.onclick=()=>{input.value="";filter();input.focus()};
+   }
+   view.input.placeholder=sw()[8];view.input.setAttribute("aria-label",sw()[8]);
+   if(view.clear.textContent!==sw()[10])view.clear.textContent=sw()[10];
+   if(view.hint.textContent!==sw()[12])view.hint.textContent=sw()[12];
+   filter();
+ }
+ const schedule=()=>{if(!scheduled){scheduled=true;queueMicrotask(sync)}};
+ const obs=new MutationObserver(schedule);obs.observe(extra,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["hidden"]});obs.observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-current","hidden","disabled"]});obs.observe(journey,{childList:true,attributes:true,attributeFilter:["hidden"]});
+ socialRefresh=()=>{for(const [n,i] of labels)n.textContent=sw()[i];schedule()};socialRefresh();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
