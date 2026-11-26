@@ -441,3 +441,11 @@ CREATE INDEX IF NOT EXISTS passkey_challenges_expiry_idx ON passkey_challenges(e
 ALTER TABLE payment_invoices DROP CONSTRAINT IF EXISTS payment_invoices_plan_check;
 ALTER TABLE payment_invoices ADD CONSTRAINT payment_invoices_plan_check CHECK(plan IN ('starter','pro','vip','elite'));
 CREATE TABLE IF NOT EXISTS elite_projects (student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE, project text NOT NULL CHECK(project IN ('humans','film','agents','teacher','business')), evidence text NOT NULL CHECK(char_length(evidence) BETWEEN 30 AND 4000), updated_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(student_id,project));
+
+-- ELITE review workflow: existing submissions are pending, not automatically approved.
+ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS revision integer NOT NULL DEFAULT 1;
+ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS review_status text NOT NULL DEFAULT 'pending' CHECK(review_status IN ('pending','revision','approved'));
+ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS review_score integer CHECK(review_score BETWEEN 0 AND 100);
+ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS review_feedback text CHECK(char_length(review_feedback)<=4000);
+ALTER TABLE elite_projects ADD COLUMN IF NOT EXISTS reviewed_at timestamptz;
+CREATE INDEX IF NOT EXISTS elite_review_queue ON elite_projects(review_status,updated_at,student_id,project);
