@@ -30,7 +30,8 @@ class ProgressTests(unittest.TestCase):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
         from tempfile import TemporaryDirectory
-        from unittest.mock import patch,SimpleNamespace
+        from unittest.mock import patch
+        from types import SimpleNamespace
         spec=spec_from_file_location("open_gen_bridge",Path(__file__).with_name("open-generative-bridge.py"))
         bridge=module_from_spec(spec);spec.loader.exec_module(bridge)
         with TemporaryDirectory() as tmp:
