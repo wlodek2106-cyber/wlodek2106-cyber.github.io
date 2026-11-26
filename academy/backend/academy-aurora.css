@@ -431,3 +431,17 @@ body.zAurora .zMentorChecks{display:grid;gap:8px;margin:12px 0}
 body.zAurora .zMentorCheck{padding:10px;border:1px solid #5a4877;border-radius:10px;background:#211c35;overflow-wrap:anywhere}
 body.zAurora .zMentorCheck p{margin:6px 0 0;color:#c8bddb;font-size:13px}
 body.zAurora .zProjectMentor>button{min-height:44px;margin:4px 6px 4px 0}
+
+body.zAurora .zCareerCenter{min-width:0;padding:16px;margin:14px 0;border:1px solid #746096;border-radius:18px;background:linear-gradient(145deg,#27213f,#171b2c)}
+body.zAurora .zCareerCenter[hidden],body.zAurora .zCareerLinks button[hidden]{display:none!important}
+body.zAurora .zCareerCenter>summary{display:flex;align-items:center;gap:10px;min-height:44px;color:#ebddff;font-size:19px;font-weight:700;cursor:pointer}
+body.zAurora .zCareerCenter>summary svg{width:24px;height:24px;color:#c4a7ff}
+body.zAurora .zCareerRoad,body.zAurora .zCareerResult{display:grid;gap:8px;margin:12px 0}
+body.zAurora .zCareerRoad progress{width:100%;accent-color:#b998f6;height:9px}
+body.zAurora .zCareerStage{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #5a4877;border-radius:10px;background:#211c35;color:#e7dbfb;overflow-wrap:anywhere}
+body.zAurora .zCareerTotal{border-color:#9e7ae1;background:#392b57}
+body.zAurora .zCareerLinks,body.zAurora .zCareerInputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px;margin:12px 0}
+body.zAurora .zCareerInputs label{display:grid;gap:6px;font-size:13px;min-width:0}
+body.zAurora .zCareerInputs input{box-sizing:border-box;min-width:0;width:100%;min-height:44px;font-size:16px;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px;padding:9px}
+body.zAurora .zCareerCenter button{min-height:44px}
+body.zAurora .zCareerNote{font-size:12px;line-height:1.5;color:#c9bddc}

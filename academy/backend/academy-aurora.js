@@ -275,6 +275,7 @@ function dashboard(){
    enhance("onboarding",()=>{onboardingDesign();});
    enhance("teacher-center",()=>{teacherCenterDesign();});
    enhance("project-mentor",()=>{projectMentorDesign();});
+   enhance("career-center",()=>{careerCenterDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -717,7 +718,63 @@ function projectMentorDesign(){
  new MutationObserver(()=>{if(panel.hidden){invalidate(true);hub.open=false}else refresh()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  mentorRefresh=refresh;refresh();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();motion()}
+const careerCenterWords={
+ en:["Career Center","Prepare for real client work. Progress is based on your own Academy records.","Refresh career roadmap","Loading…","Could not load. Try again.","Profile","Portfolio (3 projects)","Approved service listing","First client","First delivered project","Next step","Open career profile","Open portfolio","My service listing","Find jobs","Business & proposals","Project estimate · USD","Estimated hours","Hourly rate · USD","Direct expenses · USD","Contingency %","Calculate","Labor","Expenses","Contingency","Suggested project quote","Estimates exclude taxes, marketplace fees and actual payment costs. No promise of clients or earnings.","All roadmap steps recorded","Invalid estimate or unavailable service.","Stages completed","Academy progress is not a verified professional qualification."],
+ ru:["Career Center","Подготовка к реальным заказам. Прогресс основан на твоих записях в академии.","Обновить карьерный маршрут","Загрузка…","Не удалось загрузить. Попробуй снова.","Профиль","Портфолио (3 проекта)","Одобренная услуга на бирже","Первый клиент","Первый завершённый заказ","Следующий шаг","Карьерный профиль","Открыть портфолио","Моя услуга на бирже","Найти заказы","Бизнес и предложения","Расчёт проекта · USD","Количество часов","Ставка за час · USD","Прямые расходы · USD","Резерв %","Рассчитать","Работа","Расходы","Резерв","Предлагаемая стоимость проекта","Расчёт не включает налоги, комиссии биржи и реальные платёжные расходы. Заказы и доход не гарантированы.","Все этапы маршрута зафиксированы","Некорректный расчёт или сервис недоступен.","Этапов завершено","Прогресс академии не подтверждает профессиональную квалификацию."],
+ uk:["Career Center","Підготовка до реальних замовлень. Прогрес ґрунтується на твоїх записах в академії.","Оновити кар'єрний маршрут","Завантаження…","Не вдалося завантажити. Спробуй знову.","Профіль","Портфоліо (3 проєкти)","Схвалена послуга на біржі","Перший клієнт","Перше завершене замовлення","Наступний крок","Кар'єрний профіль","Відкрити портфоліо","Моя послуга на біржі","Знайти замовлення","Бізнес і пропозиції","Розрахунок проєкту · USD","Кількість годин","Ставка за годину · USD","Прямі витрати · USD","Резерв %","Розрахувати","Робота","Витрати","Резерв","Запропонована вартість проєкту","Розрахунок не враховує податки, комісії біржі й платіжні витрати. Замовлення та доходи не гарантовано.","Усі етапи маршруту зафіксовані","Некоректний розрахунок або сервіс недоступний.","Етапів завершено","Прогрес академії не підтверджує професійну кваліфікацію."],
+ pl:["Career Center","Przygotuj się do pracy z klientami. Postęp opiera się na Twoich danych w akademii.","Odśwież ścieżkę kariery","Wczytywanie…","Nie udało się wczytać. Spróbuj ponownie.","Profil","Portfolio (3 projekty)","Zatwierdzona usługa na giełdzie","Pierwszy klient","Pierwsze zrealizowane zlecenie","Następny krok","Profil kariery","Otwórz portfolio","Moja usługa na giełdzie","Znajdź zlecenia","Biznes i oferty","Wycena projektu · USD","Liczba godzin","Stawka godzinowa · USD","Koszty bezpośrednie · USD","Rezerwa %","Oblicz","Praca","Koszty","Rezerwa","Proponowana cena projektu","Wycena nie obejmuje podatków, prowizji giełdy i opłat płatniczych. Brak gwarancji klientów lub zarobków.","Wszystkie etapy zapisane","Nieprawidłowa wycena lub usługa niedostępna.","Ukończone etapy","Postęp akademii nie potwierdza kwalifikacji zawodowych."]};
+let careerCenterRefresh=null;
+function careerCenterDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),nav=$("academyNav"),career=$("careerButton");if(!overview||!panel||!nav||!career)return;
+ const w=()=>careerCenterWords[locale()]||careerCenterWords.en;
+ const hub=el("details","zCareerCenter"),summary=el("summary"),title=el("span"),intro=el("p"),load=el("button","zAction primary"),status=el("p"),road=el("div","zCareerRoad"),linksBox=el("div","zCareerLinks"),head=el("h3"),form=el("form","zCareerEstimate"),fields=el("div","zCareerInputs"),calc=el("button","zAction"),result=el("div","zCareerResult"),note=el("p","zCareerNote");
+ hub.id="zCareerCenter";summary.append(icon("briefcase"),title);hub.append(summary,intro,load,status,road,linksBox,head,form,note);form.append(fields,calc,result);load.type="button";calc.type="submit";status.setAttribute("role","status");result.setAttribute("aria-live","polite");
+ const anchor=$("zProjectMentor")||$("zTeacherCenter");if(anchor)anchor.after(hub);else overview.append(hub);
+ const allowed=id=>{const b=$(id);return !panel.hidden&&!!b&&!b.disabled&&!b.closest("[hidden]")};
+ const navs=[["careerButton",11,"graduation"],["portfolioButton",12,"image"],["marketplaceButton",13,"briefcase"],["jobsButton",14,"search"],["businessButton",15,"chart"]],buttons=[];
+ for(const [id,i,glyph] of navs){const b=el("button","zAction"),txt=el("span");b.type="button";b.append(icon(glyph),txt);b.onclick=()=>{if(allowed(id))$(id).click()};linksBox.append(b);buttons.push({id,i,b,txt})}
+ const inputs={};
+ for(const [key,i,max,initial] of [["hours",17,1000,"10"],["rate",18,10000,"25"],["expenses",19,100000,"20"],["buffer",20,100,"10"]]){
+   const label=el("label"),txt=el("span"),input=el("input");input.type="number";input.min="0";input.max=String(max);input.step="0.01";input.required=true;input.value=initial;label.append(txt,input);fields.append(label);inputs[key]={input,txt,i};
+ }
+ let roadId=0,quoteId=0,lastLang=locale(),lastAllowed=false,roadData=null,quoteData=null;
+ const stages={profile:[5,"careerButton"],portfolio:[6,"portfolioButton"],listing:[7,"marketplaceButton"],clients:[8,"businessButton"],delivery:[9,"businessButton"]};
+ const reset=()=>{roadId++;quoteId++;roadData=quoteData=null;road.replaceChildren();result.replaceChildren();status.textContent="";load.disabled=calc.disabled=false};
+ const renderRoad=d=>{
+   road.replaceChildren();const valid=Array.isArray(d?.stages)?d.stages.filter(s=>Object.hasOwn(stages,s.id)):[];
+   if(!valid.length)return;const meter=el("progress");meter.max=valid.length;meter.value=valid.filter(s=>s.done===true).length;meter.setAttribute("aria-label",w()[29]);road.append(el("strong","",w()[29]+": "+meter.value+" / "+meter.max),meter);
+   for(const stage of valid){const [i,id]=stages[stage.id],row=el("div","zCareerStage"),label=el("span","",(stage.done?"✓ ":"○ ")+w()[i]),count=el("strong","",String(stage.value)+" / "+String(stage.target));row.append(label,count);road.append(row)}
+   const next=stages[d.next];if(next){const b=el("button","zAction",w()[10]+": "+w()[next[0]]);b.type="button";b.disabled=!allowed(next[1]);b.onclick=()=>{if(allowed(next[1]))$(next[1]).click()};road.append(b)}else if(d.next===null)road.append(el("p","",w()[27]));
+ };
+ const renderQuote=d=>{result.replaceChildren();for(const [key,i] of [["labor",22],["expenses",23],["contingency",24],["total",25]]){const row=el("div","zCareerStage"+(key==="total"?" zCareerTotal":""));row.append(el("span","",w()[i]),el("strong","","$"+String(d[key])));result.append(row)}};
+ load.onclick=async()=>{
+   if(!allowed("careerButton")||typeof api!=="function")return;const id=++roadId;load.disabled=true;status.textContent=w()[3];road.replaceChildren();roadData=null;
+   try{const d=await api("/career/accelerator");if(id!==roadId||!allowed("careerButton"))return;roadData=d;renderRoad(d);status.textContent=""}
+   catch(e){if(id===roadId&&allowed("careerButton"))status.textContent=w()[4]}
+   finally{if(id===roadId)load.disabled=false}
+ };
+ form.onsubmit=async e=>{
+   e.preventDefault();if(!allowed("careerButton")||typeof api!=="function"||!form.reportValidity())return;const id=++quoteId;calc.disabled=true;quoteData=null;result.textContent=w()[3];
+   try{const body=Object.fromEntries(Object.entries(inputs).map(([k,f])=>[k,f.input.value]));const d=await api("/career/estimate",body);if(id!==quoteId||!allowed("careerButton"))return;quoteData=d;renderQuote(d)}
+   catch(e){if(id===quoteId&&allowed("careerButton"))result.textContent=w()[28]}
+   finally{if(id===quoteId)calc.disabled=false}
+ };
+ for(const f of Object.values(inputs))f.input.oninput=()=>{quoteId++;quoteData=null;result.replaceChildren();calc.disabled=false};
+ let pending=false;
+ function sync(){
+   pending=false;const access=allowed("careerButton");if(!access&&lastAllowed){reset();hub.open=false;for(const [k,f] of Object.entries(inputs))f.input.value={hours:"10",rate:"25",expenses:"20",buffer:"10"}[k]}lastAllowed=access;
+   if(hub.hidden===access)hub.hidden=!access;
+   if(lastLang!==locale()){lastLang=locale();roadId++;quoteId++;load.disabled=calc.disabled=false;status.textContent="";if(roadData)renderRoad(roadData);else road.replaceChildren();if(quoteData)renderQuote(quoteData);else result.replaceChildren()}
+   title.textContent=w()[0];intro.textContent=w()[1];load.textContent=w()[2];head.textContent=w()[16];calc.textContent=w()[21];note.textContent=w()[26]+" "+w()[30];
+   for(const {id,i,b,txt} of buttons){if(txt.textContent!==w()[i])txt.textContent=w()[i];const hidden=!allowed(id);if(b.hidden!==hidden)b.hidden=hidden}
+   for(const f of Object.values(inputs))f.txt.textContent=w()[f.i];
+ }
+ const schedule=()=>{if(!pending){pending=true;queueMicrotask(sync)}};
+ new MutationObserver(schedule).observe(nav,{subtree:true,attributes:true,attributeFilter:["hidden","disabled"]});
+ new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ careerCenterRefresh=schedule;sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
