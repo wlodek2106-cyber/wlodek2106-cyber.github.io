@@ -485,7 +485,7 @@ function administrationDesign(){
    rail.classList.toggle("zAdminRail",!!id);extra.classList.toggle("zAdminArea",!!id&&!extra.hidden);
    if(id==="founderAdmin"&&!extra.hidden){
      decorateFounder();
-     sections=Array.from(extra.querySelectorAll("h2,h3")).filter(n=>!n.closest("article")&&!n.closest("[hidden]")&&n.textContent.trim());
+     sections=Array.from(extra.querySelectorAll("h2,h3")).filter(n=>n.closest("article")===extra&&!n.closest("[hidden]")&&n.textContent.trim());
    }else sections=[];
    const sectionKey=JSON.stringify([locale(),sections.map(n=>n.textContent.trim())]);
    if(sectionKey!==lastSections){lastSections=sectionKey;jump.replaceChildren();const initial=el("option","",aw()[8]);initial.value="";jump.append(initial);sections.forEach((n,i)=>{const o=el("option","",n.textContent.trim());o.value=String(i);jump.append(o)})}
