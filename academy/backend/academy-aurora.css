@@ -197,3 +197,34 @@ body.zAurora .zMetricIcon svg{width:21px;height:21px}
 body.zAurora #extra .zAdminMetric small{font-size:12px;color:#c4bad7;overflow-wrap:anywhere}
 body.zAurora #extra .zAdminMetric h2{font-size:clamp(23px,4vw,32px);margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:#f4eaff}
 @media(max-width:620px){body.zAurora .zProfileActions,body.zAurora .zOwnerGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora.z2027 #workspaceOverview>.zProfileCard,body.zAurora.z2027 #workspaceOverview>.zOwnerHub{padding:14px}body.zAurora .zProfileAvatar{width:54px;height:54px;border-radius:16px}body.zAurora .zProfileIdentity h2{font-size:19px}body.zAurora .zOwnerRail{flex-wrap:wrap}}
+
+/* Aurora workspace surfaces: scoped to standalone modules, not the dashboard. */
+body.zAurora.zModulePage main{max-width:1200px;min-width:0;padding:clamp(14px,3vw,28px) max(14px,env(safe-area-inset-right)) max(48px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));overflow-wrap:anywhere}
+body.zAurora.zModulePage .zModuleHeader{background:linear-gradient(135deg,#211d38,#15182b);border-color:#51456e;box-shadow:0 10px 25px #09071755;position:relative;z-index:10}
+body.zAurora.zModulePage .zModuleHeader .zModuleBrand{display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.6px;color:#e7dcff;min-width:0}
+body.zAurora.zModulePage .zModuleHeader .zModuleLinkRow{display:flex;align-items:center;gap:8px;padding:0 8px;border-radius:9px}
+body.zAurora.zModulePage .zModuleLinkRow>svg{width:19px;height:19px;flex:none;color:#bd9dff}
+body.zAurora.zModulePage .zModuleLinkRow>a{flex:1;min-width:0;padding:10px 0;overflow-wrap:anywhere}
+body.zAurora.zModulePage .zModuleLinkRow:hover{background:#332847}
+body.zAurora.zModulePage .zModuleHero{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:16px;align-items:center;padding:clamp(18px,4vw,34px);margin:0 0 20px;border:1px solid #69558e;border-radius:22px;background:radial-gradient(ellipse at 100% 0%,#7852b34a,transparent 65%),linear-gradient(135deg,#24213e,#15182b);box-shadow:0 12px 36px #08061166}
+body.zAurora.zModulePage .zModuleHero h1{font-size:clamp(28px,4vw,48px);line-height:1.12;letter-spacing:-.025em;margin:6px 0 10px;color:#f7f2ff}
+body.zAurora.zModulePage .zModuleHero p{margin:0;color:#d1c7e5;line-height:1.6}
+body.zAurora.zModulePage .zModuleKicker{font-size:10px;letter-spacing:2px;color:#c3aaff;font-weight:750}
+body.zAurora.zModulePage .zModuleArt{width:92px;height:92px;display:grid;place-items:center;border:1px solid #a58bd8;border-radius:23px;background:linear-gradient(145deg,#7655b6,#30254d);box-shadow:inset 0 1px #e2cdff77,6px 8px 0 #251e40,0 12px 28px #0a071b99;transform:perspective(350px) rotateY(-12deg) rotateX(8deg);justify-self:center}
+body.zAurora.zModulePage .zModuleArt svg{width:48px;height:48px;color:#f2e7ff;filter:drop-shadow(3px 4px 0 #442e76)}
+body.zAurora.zModulePage .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px}
+body.zAurora.zModulePage main :is(section,article){min-width:0;border-color:#49405f;border-radius:16px}
+body.zAurora.zModulePage main :is(.grid>article,#private>section,#private article){background:linear-gradient(145deg,#242139,#17192a);border:1px solid #49405f;box-shadow:inset 0 1px #c9abff0c}
+body.zAurora.zModulePage main .grid>article:hover{border-color:#8c76bd}
+body.zAurora.zModulePage main :is(input:not([type=checkbox]):not([type=radio]),textarea,select){min-width:0;max-width:100%;border-color:#5a4d75;background:#111426;color:#f0ebff;font-size:16px}
+body.zAurora.zModulePage main :is(input,textarea,select):focus-visible{outline:2px solid #c7afff;outline-offset:2px}
+body.zAurora.zModulePage main :is(button,a).zModuleBack{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#e5d9ff;text-decoration:none}
+body.zAurora.zModulePage main .zModuleBack svg{width:18px;height:18px}
+body.zAurora.zModulePage main .controls{padding:12px;border:1px solid #433854;border-radius:14px;background:#18192a;gap:10px;min-width:0}
+body.zAurora.zModulePage main :is(button,select){min-height:44px;max-width:100%;overflow-wrap:anywhere}
+body.zAurora.zModulePage main button:disabled{opacity:.55;cursor:not-allowed}
+body.zAurora.zModulePage main :is(img,video,canvas,pre){max-width:100%}
+body.zAurora.zModulePage main #loginBox{max-width:620px;margin-inline:auto;padding:clamp(16px,4vw,26px);border-color:#68548c;background:linear-gradient(145deg,#25213c,#14182a)}
+body.zAurora.zModulePage main :is(#private,#loginBox)[hidden]{display:none!important}
+@media(max-width:620px){body.zAurora.zModulePage .zModuleHero{grid-template-columns:minmax(0,1fr) 58px;gap:10px;padding:16px}body.zAurora.zModulePage .zModuleArt{width:52px;height:52px;border-radius:14px;box-shadow:3px 4px 0 #251e40}body.zAurora.zModulePage .zModuleArt svg{width:29px;height:29px}body.zAurora.zModulePage .zModuleHero h1{font-size:clamp(23px,6vw,31px)}body.zAurora.zModulePage .zModuleHeader .zModuleNav{margin-left:0}body.zAurora.zModulePage .zModuleHeader .zModuleNav[open]{flex-basis:100%}body.zAurora.zModulePage .controls>*{min-width:0;max-width:100%}}
+@media(prefers-reduced-motion:reduce){body.zAurora.zModulePage .zModuleArt{transform:none}}
