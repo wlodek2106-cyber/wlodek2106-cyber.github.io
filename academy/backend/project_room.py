@@ -12,12 +12,14 @@ def access(cur,sid,jid):
 
 def room(cur,sid,b):
     jid=ident(b["id"]);role,status,quote=access(cur,sid,jid)
-    cur.execute("SELECT id,title,done FROM academy_job_milestones WHERE job_id=%s ORDER BY id",(jid,))
-    milestones=[{"id":i,"title":t,"done":d} for i,t,d in cur.fetchall()]
+    from project_schedule import summarize
+    cur.execute("SELECT id,title,done,due_date FROM academy_job_milestones WHERE job_id=%s ORDER BY id",(jid,))
+    milestones=[{"id":i,"title":t,"done":d,"due_date":deadline.isoformat() if deadline else None} for i,t,d,deadline in cur.fetchall()]
+    schedule=summarize(milestones)
     cur.execute("SELECT id,role,kind,body,created_at FROM academy_job_messages WHERE job_id=%s AND id>%s ORDER BY id LIMIT 51",(jid,cursor(b)))
     rows=cur.fetchall()
     items=[{"id":i,"role":r,"kind":k,"body":t,"created_at":at.isoformat()} for i,r,k,t,at in rows[:50]]
-    return {"role":role,"status":status,"quote_cents":quote,"milestones":milestones,"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
+    return {"role":role,"status":status,"quote_cents":quote,"milestones":schedule["items"],"schedule":{k:v for k,v in schedule.items() if k!="items"},"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
 
 def append(cur,jid,role,kind,body):
     cur.execute("SELECT count(*) FROM academy_job_messages WHERE job_id=%s",(jid,))
@@ -42,8 +44,17 @@ def milestone(cur,sid,b):
         if role!="client": raise PermissionError()
         cur.execute("SELECT count(*) FROM academy_job_milestones WHERE job_id=%s",(jid,))
         if cur.fetchone()[0]>=20: raise ValueError("Milestone limit reached")
-        cur.execute("INSERT INTO academy_job_milestones(job_id,title) VALUES (%s,%s) RETURNING id",(jid,clean(b["title"],160,True)))
+        from project_schedule import due_date
+        deadline=due_date(b.get("due_date"))
+        cur.execute("INSERT INTO academy_job_milestones(job_id,title,due_date) VALUES (%s,%s,%s) RETURNING id",(jid,clean(b["title"],160,True),deadline))
         return {"id":cur.fetchone()[0]}
+    if b["action"]=="deadline":
+        if role!="client":raise PermissionError("Only client can set deadlines")
+        from project_schedule import due_date
+        deadline=due_date(b.get("due_date"))
+        cur.execute("UPDATE academy_job_milestones SET due_date=%s WHERE id=%s AND job_id=%s RETURNING id",(deadline,ident(b["milestone"]),jid))
+        if not cur.fetchone():raise PermissionError("Milestone unavailable")
+        return {"saved":True}
     if b["action"]!="set" or type(b.get("done")) is not bool: raise ValueError("Invalid milestone action")
     if role!="freelancer" and b["done"]: raise PermissionError("Freelancer marks milestones done")
     cur.execute("UPDATE academy_job_milestones SET done=%s WHERE id=%s AND job_id=%s RETURNING id",(b["done"],ident(b["milestone"]),jid))
