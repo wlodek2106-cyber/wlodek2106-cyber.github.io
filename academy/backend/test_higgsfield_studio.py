@@ -137,3 +137,39 @@ class HiggsfieldStudioTests(unittest.TestCase):
             opener.open.side_effect=None
             opener.open.return_value.__enter__.return_value.read.return_value=b"{}"+b" "*262143
             self.assertEqual(h.upstream("example:secret123",h.MODEL,{}),{"error_code":"outcome_unknown"})
+
+    def test_untrusted_provider_errors_never_leak_or_retry(self):
+        for response in (None, [], {"error_code": ["private"]}, {"error_code":"unexpected secret"}):
+            with self.subTest(response=response):
+                h.SESSIONS.clear()
+                self.call("connect",{"key":"example:secret123","consent":True})
+                with patch.object(h,"upstream",return_value=response) as provider:
+                    self.assertEqual(self.call("submit",{"prompt":"test","confirm_charge":True})[1],{"error_code":"outcome_unknown"})
+                    self.assertEqual(self.call("submit",{"prompt":"test","confirm_charge":True})[0],409)
+                    self.assertEqual(provider.call_count,1)
+        h.SESSIONS.clear()
+        self.call("connect",{"key":"example:secret123","consent":True})
+        with patch.object(h,"upstream",side_effect=RuntimeError("private provider data")) as provider:
+            self.assertEqual(self.call("submit",{"prompt":"test","confirm_charge":True})[1],{"error_code":"outcome_unknown"})
+            self.assertEqual(self.call("submit",{"prompt":"test","confirm_charge":True})[0],409)
+            self.assertEqual(provider.call_count,1)
+
+    def test_logout_clears_only_matching_key(self):
+        import hashlib
+        owner="1:"+hashlib.sha256(b"token-one").hexdigest()
+        other="1:"+hashlib.sha256(b"token-two").hexdigest()
+        for identity in (owner,other):
+            self.call("connect",{"key":"example:secret123","consent":True},owner=identity)
+        with patch.object(h,"upstream",return_value={"request_id":"job_123"}):
+            self.call("submit",{"prompt":"test","confirm_charge":True},owner=owner)
+        h.revoke_key("token-one")
+        self.assertIsNone(h.SESSIONS[owner]["key"])
+        self.assertEqual(h.SESSIONS[owner]["job"],"job_123")
+        self.assertEqual(h.SESSIONS[other]["key"],"example:secret123")
+        self.assertEqual(self.call("status",{},owner=owner)[0],409)
+        h.revoke_key("token-two")
+        self.assertNotIn(other,h.SESSIONS)
+
+    def test_control_characters_in_provider_urls(self):
+        for value in ("https://example.com/a\x00", "https://example.com/a\x7f", "https://example.com/a\n"):
+            self.assertIsNone(h.safe_url(value))

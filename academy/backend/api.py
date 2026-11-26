@@ -168,6 +168,8 @@ def dispatch(method,path,body,token):
     if path=="/logout" and method=="POST":
         if not token: raise PermissionError("Authentication required")
         logout(token)
+        from higgsfield_studio import revoke_key
+        revoke_key(token)
         return 200,{"ok":True}
     if path=="/pro/library" and method=="GET":
         p=student_progress(token)

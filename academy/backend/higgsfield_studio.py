@@ -17,6 +17,7 @@ TERMINAL = {"completed", "failed", "nsfw", "canceled", "cancelled"}
 RESOLUTIONS = {"480p", "720p", "1080p", "4k"}
 RATIOS = {"16:9", "4:3", "1:1", "3:4", "9:16", "21:9"}
 GUARD_TTL = 86400
+ERROR_CODES = {"key_rejected", "balance_required", "provider_rate_limit", "provider_rejected", "outcome_unknown"}
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -115,7 +116,7 @@ def safe_url(value):
         return None
     try:
         u = urlsplit(value)
-        return value if u.scheme == "https" and u.hostname and not u.username and not u.password and not any(c.isspace() for c in value) and "\\" not in value else None
+        return value if u.scheme == "https" and u.hostname and not u.username and not u.password and not any(c.isspace() or ord(c)<32 or ord(c)==127 for c in value) and "\\" not in value else None
     except ValueError:
         return None
 
@@ -187,6 +188,17 @@ def prune_expired():
     with LOCK:
         _prune_locked(time.monotonic())
 
+def revoke_key(token):
+    """Forget credentials on logout; retain in-flight and unresolved guards."""
+    if not isinstance(token, str): return
+    suffix = ":" + hashlib.sha256(token.encode()).hexdigest()
+    with LOCK:
+        for owner, item in list(SESSIONS.items()):
+            if owner.endswith(suffix):
+                item["key"] = None
+                item["expires"] = 0
+        _prune_locked(time.monotonic())
+
 def dispatch(token, action, body):
     owner = session_id(token)
     now = time.monotonic()
@@ -252,12 +264,21 @@ def dispatch(token, action, body):
         session["busy"] = True
         key = session["key"]
     try:
-        result = upstream(key, path, payload)
+        try:
+            result = upstream(key, path, payload)
+        except Exception:
+            # A submission might have reached the provider before the failure.
+            result = {"error_code": "outcome_unknown"}
         with LOCK:
+            if not isinstance(result, dict):
+                result = {"error_code": "outcome_unknown"}
             if "error_code" in result:
-                if action == "submit" and result["error_code"] == "outcome_unknown":
+                error = result["error_code"]
+                if not isinstance(error, str) or error not in ERROR_CODES:
+                    error = "outcome_unknown"
+                if action == "submit" and error == "outcome_unknown":
                     session["unknown"] = True
-                return 200, {"error_code": result["error_code"]}
+                return 200, {"error_code": error}
             if action == "upload":
                 try:
                     return 200, signed_upload_fields(result, payload["content_type"])

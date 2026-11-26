@@ -832,6 +832,15 @@ class ProgressTests(unittest.TestCase):
         for lab in labs:
             namespace={"__name__":"__main__"}
             exec(compile(lab["code"],lab["filename"],"exec"),namespace)
+    def test_paid_ai_defaults_closed(self):
+        from ai_models import configuration,ROLES,status
+        from unittest.mock import patch
+        import os
+        with patch.dict(os.environ,{"ACADEMY_AI_ENABLED":"true","ACADEMY_AI_API_KEY":"synthetic","ACADEMY_AI_MODEL":"synthetic","ACADEMY_ALLOW_BILLED_API":"false"},clear=True):
+            for role in ROLES: self.assertIsNone(configuration(role))
+            self.assertTrue(all(not x["available"] for x in status()))
+        with patch.dict(os.environ,{"ACADEMY_AI_ENABLED":"false","ACADEMY_ALLOW_BILLED_API":"true"},clear=True):
+            self.assertTrue(all(configuration(role) is None for role in ROLES))
     def test_model_adapters(self):
         from ai_models import request_spec,parse_answer
         for provider in ("openai","anthropic","gemini"):
