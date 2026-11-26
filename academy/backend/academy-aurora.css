@@ -228,3 +228,45 @@ body.zAurora.zModulePage main #loginBox{max-width:620px;margin-inline:auto;paddi
 body.zAurora.zModulePage main :is(#private,#loginBox)[hidden]{display:none!important}
 @media(max-width:620px){body.zAurora.zModulePage .zModuleHero{grid-template-columns:minmax(0,1fr) 58px;gap:10px;padding:16px}body.zAurora.zModulePage .zModuleArt{width:52px;height:52px;border-radius:14px;box-shadow:3px 4px 0 #251e40}body.zAurora.zModulePage .zModuleArt svg{width:29px;height:29px}body.zAurora.zModulePage .zModuleHero h1{font-size:clamp(23px,6vw,31px)}body.zAurora.zModulePage .zModuleHeader .zModuleNav{margin-left:0}body.zAurora.zModulePage .zModuleHeader .zModuleNav[open]{flex-basis:100%}body.zAurora.zModulePage .controls>*{min-width:0;max-width:100%}}
 @media(prefers-reduced-motion:reduce){body.zAurora.zModulePage .zModuleArt{transform:none}}
+
+/* Aurora Learning Experience: presentation only; official grading remains server-side. */
+body.zAurora.z2027 #lesson{scroll-margin-top:16px;padding:clamp(16px,3vw,30px);white-space:normal}
+body.zAurora #lesson .zLearningGuide{border:1px solid #5d4b86;border-radius:18px;background:linear-gradient(145deg,#28223e,#181a2c);padding:clamp(14px,3vw,24px);min-width:0}
+body.zAurora #lesson .zLearningGuide>h2{font-size:clamp(20px,3.5vw,30px);line-height:1.25;margin:0 0 14px;color:#eee4ff}
+body.zAurora #lesson .zLearningStepLabel{color:#d8c5ff;font-weight:700;margin:10px 0 6px}
+body.zAurora #lesson .zLearningMeter,body.zAurora #lesson .zExamMeter{width:100%;height:10px;display:block;accent-color:#b49aff;margin:0 0 16px}
+body.zAurora #lesson .zLearningStep{background:#121625;border:1px solid #453b60;padding:clamp(12px,3vw,20px);border-radius:14px;min-width:0}
+body.zAurora #lesson .zLearningStep h3{margin:0 0 10px;color:#e8d9ff}
+body.zAurora #lesson .zLearningStep label:has(input[type=radio]),body.zAurora #lesson .zExamForm label{display:flex;align-items:flex-start;gap:10px;background:#171b2e;border:1px solid #4b4265;border-radius:11px;padding:12px;min-height:46px;cursor:pointer;line-height:1.5;margin:8px 0}
+body.zAurora #lesson :is(.zLearningStep,.zExamForm) label:has(input:checked){background:#332850;border-color:#b69af2}
+body.zAurora #lesson :is(.zLearningStep,.zExamForm) label:has(input:focus-visible){outline:2px solid #c7afff;outline-offset:2px}
+body.zAurora #lesson :is(.zLearningStep,.zExamForm) input[type=radio]{flex:none;width:20px;height:20px;min-height:20px;margin:2px 0 0;accent-color:#bca3ff}
+body.zAurora #lesson .zLearningNav{display:flex;justify-content:space-between;gap:8px;margin:12px 0;flex-wrap:wrap}
+body.zAurora #lesson .zLearningNav button{flex:1;min-height:46px}
+body.zAurora #lesson .zTeacherCard{margin-top:18px;padding:18px;border:1px solid #7560a1;border-radius:16px;background:radial-gradient(ellipse at right top,#7852b33d,transparent 70%),#211c36;white-space:normal}
+body.zAurora #lesson .zTeacherCard h3{display:flex;align-items:center;gap:10px;margin:0;color:#eedfff}
+body.zAurora #lesson .zTeacherCard h3 svg{width:29px;height:29px;color:#d9baff;flex:none;filter:drop-shadow(2px 3px 0 #583a8b)}
+body.zAurora #lesson .zTeacherCard>a{min-height:44px;background:#302748;color:#eaddff;text-decoration:none;line-height:1.4}
+body.zAurora #lesson>details{margin:16px 0;padding:12px;border:1px solid #50446b;background:#1c1a2d;border-radius:13px}
+body.zAurora #lesson>details>summary{font-weight:650;color:#dfd0ff;cursor:pointer;min-height:40px}
+body.zAurora #lesson .zExamHeader{margin:0 0 18px;padding:16px;border:1px solid #6d5996;border-radius:16px;background:linear-gradient(140deg,#302345,#171c2f);white-space:normal}
+body.zAurora #lesson .zExamHeader h2{display:flex;align-items:center;gap:10px;margin:0 0 8px;color:#f0e5ff;font-size:clamp(20px,4vw,28px)}
+body.zAurora #lesson .zExamHeader h2 svg{width:27px;height:27px;color:#d7bcff;flex:none}
+body.zAurora #lesson .zExamHeader p{color:#ded1f7;margin:6px 0}
+body.zAurora #lesson .zExamForm{counter-reset:zQuestion;white-space:normal}
+body.zAurora #lesson .zExamForm fieldset{counter-increment:zQuestion;background:#15192b;border:1px solid #53466e;border-radius:15px;padding:16px;margin:0 0 18px;scroll-margin-top:18px}
+body.zAurora #lesson .zExamForm fieldset.zAnswered{border-color:#779e92}
+body.zAurora #lesson .zExamForm legend{color:#efebff;font-weight:650;max-width:100%;overflow-wrap:anywhere;padding:0 6px}
+body.zAurora #lesson .zExamForm legend:before{content:counter(zQuestion) ". ";color:#c6abff;font-variant-numeric:tabular-nums}
+body.zAurora #lesson .zExamForm fieldset>br{display:none}
+body.zAurora #lesson .zExamForm>button[type=submit],body.zAurora #lesson .zExamForm>button:not([type]){min-height:48px;width:100%;background:linear-gradient(115deg,#7554d9,#a66ef2);color:#fff}
+body.zAurora #lesson .zLearningStep pre,body.zAurora #extra.zTutorPanel pre{background:#0d1020;border:1px solid #4f436d;padding:14px;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;font-size:14px}
+body.zAurora #extra:is(.zPracticePanel,.zTutorPanel){padding:clamp(15px,3vw,26px);border-color:#6b5791;background:linear-gradient(145deg,#242139,#15192a);scroll-margin-top:16px}
+body.zAurora #extra.zPracticePanel h3{margin-top:20px;color:#e4d4ff;border-bottom:1px solid #4a3e62;padding-bottom:8px}
+body.zAurora #extra.zPracticePanel label:has(input[type=number]){display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #4c4266;background:#15192b;border-radius:10px;padding:10px;margin:8px 0}
+body.zAurora #extra.zPracticePanel input[type=number]{width:92px;flex:none}
+body.zAurora #extra:is(.zPracticePanel,.zTutorPanel) textarea{width:100%;min-height:112px;resize:vertical;font-size:16px;background:#101423;border:1px solid #5c4d7c;color:#f2ebff}
+body.zAurora #extra.zTutorPanel>select{width:100%;margin:6px 0;min-height:44px}
+body.zAurora #extra.zTutorPanel>small{display:block;color:#c9bbdf;white-space:normal}
+body.zAurora #extra.zTutorPanel>label{padding:10px;border:1px solid #4c4266;border-radius:10px}
+@media(max-width:620px){body.zAurora #lesson .zTeacherCard{padding:12px}body.zAurora #lesson .zTeacherCard>a{display:flex!important;align-items:center;margin:8px 0!important}body.zAurora #lesson .zExamForm fieldset{padding:10px}body.zAurora #lesson .zLearningNav button{min-width:0}}
