@@ -277,6 +277,12 @@ def dispatch(method,path,body,token):
     if path=="/elite/ad-production/plan" and method=="POST":
         from ad_production import student_plan
         return 200,student_plan(token,body["brief"],body.get("lang","en"))
+    if path=="/elite/ad-production/assembler" and method=="GET":
+        from elite_program import access,unlocked
+        if not unlocked(access(token)):
+            raise PermissionError("Complete the 45 core lessons first")
+        import base64
+        return 200,{"source_base64":base64.b64encode(Path(__file__).with_name("commercial-video-assembler.py").read_bytes()).decode("ascii")}
     if path=="/elite/open-generative/bridge" and method=="GET":
         from elite_program import access,unlocked
         if not unlocked(access(token)):
