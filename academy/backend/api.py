@@ -328,6 +328,9 @@ def dispatch(method,path,body,token):
         if not progress.get("access") or progress.get("plan") not in ("vip","elite"):
             raise PermissionError("VIP access required")
         return 200,{"tracks":[{"id":t["id"],"title":t["title"],"day":t["day"],"unlocked":progress["lessons"][t["day"]-1]["unlocked"]} for t in TRACKS]}
+    if path=="/ai-mega/catalog" and method=="POST":
+        from ai_mega_catalog import student_catalog
+        return 200,student_catalog(token,body.get("lang","en"))
     if path=="/progress" and method=="GET":
         return 200,student_progress(token)
     if path=="/checkout/support" and method=="POST":
