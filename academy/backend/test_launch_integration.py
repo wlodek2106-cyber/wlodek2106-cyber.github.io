@@ -520,6 +520,27 @@ class LaunchIntegration(unittest.TestCase):
                     self.assertEqual(after["paid_count"]-baseline["paid_count"],1)
                     self.assertEqual(int(after["gross_atomic"])-int(baseline["gross_atomic"]),1000000000)
                     self.assertEqual(int(after["fee_atomic"])-int(baseline["fee_atomic"]),50000000)
+                # ELITE review regression: all rows and synthetic enrollment roll back.
+                import elite_program as elite
+                with patch("database.transaction",shared):
+                    with self.assertRaises(PermissionError):elite.review_queue(buyer)
+                    with self.assertRaises(PermissionError):elite.save(buyer,"film","A synthetic project report for the test.")
+                    cur.execute("UPDATE enrollments SET plan='elite' WHERE student_id=%s",(buyer_id,))
+                    with self.assertRaises(PermissionError):elite.save(buyer,"film","A synthetic project report for the test.")
+                    cur.execute("INSERT INTO lesson_progress(enrollment_id,lesson,score) SELECT e.id,n,100 FROM enrollments e CROSS JOIN generate_series(1,45) n WHERE e.student_id=%s ON CONFLICT DO NOTHING",(buyer_id,))
+                    self.assertTrue(elite.save(buyer,"film","A synthetic project report for the test.")["saved"])
+                    queue=elite.review_queue(owner)
+                    # Verify the exact fixture in the private table even when queue is paginated.
+                    cur.execute("SELECT revision FROM elite_projects WHERE student_id=%s AND project='film'",(buyer_id,))
+                    rev=cur.fetchone()[0]
+                    self.assertEqual(elite.review_project(owner,buyer_id,"film",rev,dict(elite.RUBRIC,brief=0),"Please improve the synthetic brief.")["status"],"revision")
+                    elite.save(buyer,"film","A revised synthetic project report for the test.")
+                    with self.assertRaises(ValueError):elite.review_project(owner,buyer_id,"film",rev,elite.RUBRIC,"Stale synthetic revision.")
+                    self.assertEqual(elite.review_project(owner,buyer_id,"film",rev+1,elite.RUBRIC,"Synthetic report checked.")["status"],"approved")
+                    project=next(t for t in elite.catalog(buyer,"ru")["projects"] if t["id"]=="film")
+                    self.assertEqual(project["submission"]["score"],100)
+                    self.assertEqual(project["submission"]["status"],"approved")
+                    with self.assertRaises(ValueError):elite.save(buyer,"film","Attempt to replace an approved test report.")
                 raise Rollback()
         except Rollback:
             pass
