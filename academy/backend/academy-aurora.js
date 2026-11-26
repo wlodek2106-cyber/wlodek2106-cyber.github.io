@@ -215,7 +215,7 @@ function learningDesign(){
    }
    let count=0;for(const field of fields){const checked=!!field.querySelector('input[type="radio"]:checked');field.classList.toggle("zAnswered",checked);if(checked)count++}
    setText(v.copy,words()[0]);setText(v.jump,words()[2]);setText(v.status,words()[1]+": "+count+" / "+fields.length+(count===fields.length?" · "+words()[3]:""));
-   v.bar.max=fields.length;v.bar.value=count;v.bar.setAttribute("aria-label",words()[1]);v.jump.hidden=count===fields.length;
+   v.bar.max=fields.length;v.bar.value=count;v.bar.setAttribute("aria-label",words()[1]);const allAnswered=count===fields.length;if(v.jump.hidden!==allAnswered)v.jump.hidden=allAnswered;
  }
  function guided(root){
    const heading=root.querySelector(":scope > h2"),counter=root.querySelector(":scope > p"),parts=Array.from(root.querySelectorAll(":scope > div"));
