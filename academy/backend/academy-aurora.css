@@ -106,3 +106,63 @@ body.zAurora .zBottomNav{display:none}
  body.zAurora.zDrawerOpen .zBottomNav{display:none!important}
 }
 @media(max-width:620px){body.zAurora .zCourseGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}body.zAurora .zCourseCard{padding:9px;gap:6px}body.zAurora .zCourseArt{height:73px}body.zAurora .zCourseArt svg{width:36px;height:36px}body.zAurora .zCourseName{font-size:12px}body.zAurora .zCourseDays{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Aurora public authentication: preserve original form controls and server auth. */
+body.zAurora.zAuthMode{max-width:1100px;margin:0 auto;padding:clamp(16px,4vw,36px);background:radial-gradient(ellipse at 70% 15%,#3b205e66,transparent 50%),radial-gradient(ellipse at 0% 60%,#284d7d33,transparent 50%),#090b16}
+body.zAurora.zAuthMode>header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 20px;padding:9px 12px;border:1px solid #39314f;border-radius:16px;background:#17182ce8;position:relative;z-index:5}
+body.zAurora.zAuthMode>header .brand{display:flex;gap:9px;align-items:center;font-size:15px;letter-spacing:1px;color:#f5f0ff}
+body.zAurora.zAuthMode>header #lang{font-size:16px;min-height:44px;width:auto;max-width:42%;margin:0}
+body.zAurora .zAuthMenu{position:relative;margin:0 0 0 auto}
+body.zAurora .zAuthMenu summary{list-style:none;display:flex;gap:7px;align-items:center;justify-content:center;min-height:44px;padding:8px 10px;border:1px solid #594873;border-radius:10px;background:#29223f;color:#e4d5ff;font-size:12px;cursor:pointer}
+body.zAurora .zAuthMenu summary::-webkit-details-marker{display:none}
+body.zAurora .zAuthMenu summary svg,.zAuthLink svg{width:19px;height:19px;flex:none;color:#c4aaff}
+body.zAurora .zAuthMenu[hidden]{display:none!important}
+body.zAurora .zAuthLink{display:flex;align-items:center;gap:4px;padding:0 10px}
+body.zAurora .zAuthLink a{flex:1}
+body.zAurora .zAuthHero{position:relative;isolation:isolate;text-align:center;margin:0 auto 18px;padding:20px 15px 14px;width:100%;border:1px solid #59487d;border-radius:24px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#69439d66,transparent 60%),linear-gradient(155deg,#201933,#11192c 80%);box-shadow:inset 0 1px #c5b2ef20,0 14px 48px #0005}
+body.zAurora .zAuthHero .eyebrow{font-size:11px;font-weight:800;letter-spacing:3px;color:#d0baff;margin:0}
+body.zAurora .zAuthArt{position:relative;width:100%;max-width:390px;margin:0 auto}
+body.zAurora .zAuthArt .zStage{height:200px}
+body.zAurora .zAuthArt .zPause{bottom:0;right:0;min-height:36px;font-size:10px}
+body.zAurora .zAuthHero h1{font-size:clamp(30px,5vw,54px);font-weight:800;line-height:1.05;letter-spacing:-1.4px;margin:8px 0 10px;background:linear-gradient(115deg,#fff,#d1b5ff,#9ac6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.zAurora .zAuthHero #heroSubtitle{font-size:15px;margin:8px 0;color:#cbc3e1}
+body.zAurora .zAuthHero .facts{margin:12px 0;justify-content:center;gap:6px}
+body.zAurora .zAuthHero .facts span{font-size:11px;border-color:#6d5a9299;background:#2c2445;color:#dbd1ef;padding:6px 9px}
+body.zAurora .zAuthSlogan{font-size:14px;font-weight:750;color:#e1ceff;margin:10px 0 4px}
+body.zAurora .zAuthTagline{font-size:11px;color:#bfb4d5;margin:0 0 6px}
+body.zAurora .zAuthCard{width:100%;max-width:520px;margin:0 auto 18px;border:1px solid #4c4069;border-radius:22px;background:linear-gradient(150deg,#201d35,#151727);box-shadow:0 16px 48px #0005,inset 0 1px #d3b5ff15;padding:clamp(16px,3vw,24px)}
+body.zAurora .zAuthCard[hidden]{display:none!important}
+body.zAurora .zAuthSeal{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#d0c1f5;margin:0 0 14px}
+body.zAurora .zAuthSeal svg{width:19px;height:19px;color:#b3a1ef}
+body.zAurora .zAuthCard .tabs{border:1px solid #3c3258;background:#101322;padding:4px;border-radius:13px}
+body.zAurora .zAuthCard .tabs button{font-size:14px;min-height:48px;margin:0;border-radius:10px}
+body.zAurora .zAuthCard .tabs button[aria-selected=true]{background:linear-gradient(120deg,#57418a,#362a5a);color:#fff;box-shadow:inset 0 1px #e2ccff26}
+body.zAurora .zAuthCard h2{font-size:24px;letter-spacing:-.5px;margin:20px 0 14px;color:#f7f2ff}
+body.zAurora .zAuthCard input{width:100%;font-size:16px;min-height:49px;border:1px solid #52476b;background:#111423;color:#fff;border-radius:11px;margin:0 0 11px;padding:12px;box-sizing:border-box}
+body.zAurora .zAuthCard input::placeholder{color:#b2acc6}
+body.zAurora .zAuthCard input:focus{outline:2px solid #ae91f5;outline-offset:1px}
+body.zAurora .zAuthCard form button:not(#passkeyLogin){width:100%;min-height:51px;background:linear-gradient(110deg,#7951d2,#a57af0);border:1px solid #bda2f4;color:#fff;font-size:16px;border-radius:11px;box-shadow:0 7px 20px #7951d233;margin-top:6px}
+body.zAurora .zAuthCard #passkeyLogin{width:100%;min-height:49px;border-radius:11px;border:1px solid #7661a8;background:#27223e;color:#eee5ff;font-size:14px;margin:10px 0 0}
+body.zAurora .zAuthHint{font-size:11px;line-height:1.55;color:#c6bedb;margin:0 0 10px}
+body.zAurora .zAuthCard button:disabled{opacity:.6;cursor:not-allowed}
+body.zAurora .zAuthInactive .zCube{animation-play-state:paused}
+body.zAurora.zAuthMode #installAcademy{position:static;display:block;margin:16px auto 0;max-width:100%;min-height:44px;font-size:13px;background:#211d38;color:#dcd0fa;border:1px solid #554773}
+body.zAurora.zAuthMode #installAcademy[hidden]{display:none!important}
+body.zAurora.zAuthMode>#verifyWrap{max-width:520px;margin:12px auto}
+@media(min-width:1000px){
+ body.zAurora.zAuthMode{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:14px 24px;align-items:center}
+ body.zAurora.zAuthMode>header,body.zAurora.zAuthMode>p,body.zAurora.zAuthMode>#verifyWrap,body.zAurora.zAuthMode>#installAcademy{grid-column:1/-1}
+ body.zAurora.zAuthMode>.zAuthHero{margin:0;min-height:440px;display:flex;flex-direction:column;justify-content:center}
+ body.zAurora.zAuthMode>.zAuthCard{margin:0;max-width:none}
+ body.zAurora .zAuthArt .zStage{height:245px}
+}
+@media(max-width:620px){
+ body.zAurora.zAuthMode{padding:12px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+ body.zAurora.zAuthMode>header{margin-bottom:12px;padding:8px}
+ body.zAurora .zAuthMenu[open]{flex-basis:100%;order:3}
+ body.zAurora .zAuthHero{padding:14px 12px 10px;margin-bottom:12px}
+ body.zAurora .zAuthArt .zStage{height:155px;transform:scale(.82)}
+ body.zAurora .zAuthHero h1{font-size:32px}
+ body.zAurora .zAuthCard{padding:16px}
+ body.zAurora.z2027.signedIn #installAcademy{bottom:calc(86px + env(safe-area-inset-bottom))}
+}

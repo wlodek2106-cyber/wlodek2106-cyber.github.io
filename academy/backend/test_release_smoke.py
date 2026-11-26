@@ -133,6 +133,19 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         for marker in (b"zCourseArt",b"zBottomItem",b"safe-area-inset-bottom",b"zDrawerOpen"):
             self.assertIn(marker,style)
+    def test_aurora_public_auth_design(self):
+        code,_,body=self.request("/dashboard?lang=ru")
+        self.assertEqual(code,200)
+        for marker in (b'id="auth"',b'id="login"',b'id="register"',b'id="passkeyLogin"',b'/academy-aurora.js'):
+            self.assertIn(marker,body)
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"function authDesign()",b"zAuthArt",b"zAuthMode",b"authDesign();",b"zAuthMfaHint"):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        for marker in (b"zAuthHero",b"zAuthCard",b"zAuthMenu",b"zAuthSeal"):
+            self.assertIn(marker,style)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
