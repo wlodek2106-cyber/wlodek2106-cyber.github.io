@@ -370,6 +370,16 @@ class LaunchIntegration(unittest.TestCase):
                 from system_monitor import table_status,report as monitor_report
                 self.assertTrue(all(x["present"] for x in table_status(cur)))
                 with self.assertRaises(PermissionError): monitor_report(partner,15)
+                from incident_manager import create as incident_create,detail as incident_detail,advance as incident_advance,dispatch as incident_dispatch
+                with self.assertRaises(PermissionError): incident_dispatch(partner,"list",{})
+                inc=incident_create(cur,{"module":"support","severity":"high","title":"Synthetic test incident","note":"Synthetic observation","consent":True})
+                args={"id":inc["id"],"revision":1,"state":"investigating","note":"Synthetic investigation","consent":True}
+                self.assertEqual(incident_advance(cur,args)["revision"],2)
+                with self.assertRaises(ValueError): incident_advance(cur,args)
+                with self.assertRaises(ValueError): incident_advance(cur,{**args,"revision":2,"state":"resolved"})
+                incident_advance(cur,{**args,"revision":2,"state":"resolved","verified":True})
+                self.assertTrue(incident_detail(cur,inc["id"])["events"][-1]["verified"])
+                self.assertEqual(incident_detail(cur,inc["id"])["state"],"resolved")
                 diagnostics=security_inspect(cur)
                 self.assertIn("database_checks_pass",diagnostics)
                 for key in ("agency_owner_without_membership","agency_task_project_mismatch","agency_task_dependency_mismatch","agency_active_task_without_completed_predecessor"):

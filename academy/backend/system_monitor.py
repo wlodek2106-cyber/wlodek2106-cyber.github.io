@@ -18,7 +18,7 @@ def group(path):
     p=urlsplit(path).path
     if p in ("/login","/register","/logout") or p.startswith(("/account/","/passkeys/")): return "account"
     if p.startswith(("/checkout/","/admin/payment-support")): return "payments"
-    if p.startswith(("/learning/","/lesson/","/lessons/","/exam/","/exams/","/quiz/","/teacher/","/practice/","/review-journal/","/certificate")): return "learning"
+    if p=="/progress" or p.startswith(("/elite/certificate/","/learning/","/lesson/","/lessons/","/exam/","/exams/","/quiz/","/teacher/","/practice/","/review-journal/","/certificate")): return "learning"
     if p.startswith(("/marketplace","/jobs/","/hire","/client-portal","/notifications/")): return "marketplace"
     if p=="/agency" or p.startswith("/agency/"): return "agency"
     if p=="/support" or p.startswith("/support/"): return "support"

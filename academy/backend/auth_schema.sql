@@ -603,3 +603,24 @@ ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS topic text NOT NULL DEFAULT
 ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'normal' CHECK(priority IN ('normal','high','urgent'));
 ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS triage_manual boolean NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS support_created_topic_idx ON support_tickets(created_at,topic);
+
+CREATE TABLE IF NOT EXISTS system_incidents (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ module text NOT NULL CHECK(module IN ('account','learning','payments','marketplace','agency','support','creator','system','other')),
+ severity text NOT NULL CHECK(severity IN ('normal','high','urgent')),
+ title text NOT NULL CHECK(char_length(title) BETWEEN 1 AND 120),
+ state text NOT NULL DEFAULT 'detected' CHECK(state IN ('detected','investigating','mitigated','resolved')),
+ revision integer NOT NULL DEFAULT 1 CHECK(revision BETWEEN 1 AND 100),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS system_incident_events (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ incident_id bigint NOT NULL REFERENCES system_incidents(id) ON DELETE CASCADE,
+ state text NOT NULL CHECK(state IN ('detected','investigating','mitigated','resolved')),
+ note text NOT NULL CHECK(char_length(note) BETWEEN 1 AND 2000),
+ verified boolean NOT NULL DEFAULT false,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ CHECK((state='resolved')=verified)
+);
+CREATE INDEX IF NOT EXISTS system_incident_events_idx ON system_incident_events(incident_id,id);

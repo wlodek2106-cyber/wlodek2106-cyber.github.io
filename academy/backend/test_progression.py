@@ -94,6 +94,13 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_incident_transitions(self):
+        from incident_manager import validate_transition
+        for a,b in (("detected","investigating"),("investigating","mitigated"),("resolved","investigating")):
+            validate_transition(a,b,False)
+        validate_transition("mitigated","resolved",True)
+        for a,b,v in (("detected","resolved",True),("investigating","resolved",False),("resolved","resolved",True)):
+            with self.assertRaises(ValueError): validate_transition(a,b,v)
     def test_system_monitor_bounded_metrics(self):
         from system_monitor import Metrics,group,recommendations
         now=[0]
