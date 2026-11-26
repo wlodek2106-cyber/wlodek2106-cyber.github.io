@@ -35,9 +35,10 @@ def detail(cur,sid,aid):
     owner,name=lock(cur,sid,aid)
     cur.execute("SELECT student_id,alias FROM creator_agency_members WHERE agency_id=%s ORDER BY student_id",(aid,))
     members=[{"id":i,"alias":a,"self":i==sid} for i,a in cur.fetchall()]
-    cur.execute("SELECT id,title,assignee_id,status FROM creator_agency_tasks WHERE agency_id=%s ORDER BY id DESC",(aid,))
-    tasks=[{"id":i,"title":t,"assignee":a,"status":s} for i,t,a,s in cur.fetchall()]
-    return {"id":aid,"name":name,"owner":owner,"members":members,"tasks":tasks}
+    cur.execute("SELECT id,title,assignee_id,status,project_id,due_date FROM creator_agency_tasks WHERE agency_id=%s ORDER BY id DESC",(aid,))
+    tasks=[{"id":i,"title":t,"assignee":a,"status":s,"project":pid,"due":d.isoformat() if d else None} for i,t,a,s,pid,d in cur.fetchall()]
+    from agency_finance import summary
+    return {"id":aid,"name":name,"owner":owner,"members":members,"tasks":tasks,"finance":summary(cur,sid,aid,owner)}
 
 def digest(code):
     if not isinstance(code,str) or not re.fullmatch(r"[A-Za-z0-9_-]{43}",code): raise ValueError("Invalid invitation")
@@ -92,7 +93,13 @@ def task(cur,sid,b):
         if not cur.fetchone(): raise PermissionError("Invalid assignee")
     cur.execute("SELECT count(*) FROM creator_agency_tasks WHERE agency_id=%s",(aid,))
     if cur.fetchone()[0]>=200: raise ValueError("Task limit")
-    cur.execute("INSERT INTO creator_agency_tasks(agency_id,title,assignee_id) VALUES (%s,%s,%s) RETURNING id",(aid,title,assignee))
+    from agency_finance import due
+    deadline=due(b.get("due"));pid=b.get("project")
+    if pid is not None:
+        pid=ident(pid)
+        cur.execute("SELECT 1 FROM creator_agency_projects WHERE agency_id=%s AND id=%s",(aid,pid))
+        if not cur.fetchone(): raise PermissionError("Project unavailable")
+    cur.execute("INSERT INTO creator_agency_tasks(agency_id,title,assignee_id,project_id,due_date) VALUES (%s,%s,%s,%s,%s) RETURNING id",(aid,title,assignee,pid,deadline))
     return {"id":cur.fetchone()[0]}
 
 def status(cur,sid,b):
@@ -118,4 +125,7 @@ def dispatch(token,action,b):
         if action=="remove": return remove(cur,sid,b)
         if action=="task": return task(cur,sid,b)
         if action=="status": return status(cur,sid,b)
+        if action in ("project","reward"):
+            from agency_finance import project,reward
+            return (project if action=="project" else reward)(cur,sid,b)
         raise ValueError("Invalid action")

@@ -520,3 +520,24 @@ CREATE TABLE IF NOT EXISTS creator_agency_tasks (
  FOREIGN KEY (agency_id,assignee_id) REFERENCES creator_agency_members(agency_id,student_id)
 );
 CREATE INDEX IF NOT EXISTS creator_agency_tasks_agency_idx ON creator_agency_tasks(agency_id);
+
+-- Agency project budgets and manual reward records; no transfer or custody.
+CREATE TABLE IF NOT EXISTS creator_agency_projects (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ agency_id bigint NOT NULL REFERENCES creator_agencies(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(char_length(title) BETWEEN 1 AND 160),
+ due_date date,
+ budget_cents bigint NOT NULL CHECK(budget_cents BETWEEN 0 AND 100000000),
+ received_cents bigint NOT NULL DEFAULT 0 CHECK(received_cents>=0 AND received_cents<=budget_cents),
+ expense_cents bigint NOT NULL DEFAULT 0 CHECK(expense_cents BETWEEN 0 AND 100000000),
+ UNIQUE(agency_id,id)
+);
+CREATE TABLE IF NOT EXISTS creator_agency_rewards (
+ project_id bigint NOT NULL REFERENCES creator_agency_projects(id) ON DELETE CASCADE,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ agreed_cents bigint NOT NULL CHECK(agreed_cents BETWEEN 0 AND 100000000),
+ paid_cents bigint NOT NULL CHECK(paid_cents>=0 AND paid_cents<=agreed_cents),
+ PRIMARY KEY(project_id,student_id)
+);
+ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS project_id bigint REFERENCES creator_agency_projects(id) ON DELETE SET NULL;
+ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS due_date date;

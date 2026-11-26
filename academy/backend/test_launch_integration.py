@@ -91,7 +91,20 @@ class LaunchIntegration(unittest.TestCase):
                 tid=agency.task(cur,buyer_id,{"id":aid,"title":"Test task","assignee":partner_id})["id"]
                 with self.assertRaises(PermissionError): agency.task(cur,partner_id,{"id":aid,"title":"Denied"})
                 self.assertEqual(agency.status(cur,partner_id,{"id":aid,"task":tid,"status":"done"})["status"],"done")
+                from agency_finance import project as agency_project,reward as agency_reward
+                values={"id":aid,"title":"Budget test","budget":"100","received":"50","expense":"10","due":"2027-01-01"}
+                with self.assertRaises(PermissionError): agency_project(cur,partner_id,values)
+                pid=agency_project(cur,buyer_id,values)["id"]
+                with self.assertRaises(ValueError): agency_reward(cur,buyer_id,{"id":aid,"project":pid,"member":partner_id,"agreed":"20","paid":"21"})
+                agency_reward(cur,buyer_id,{"id":aid,"project":pid,"member":partner_id,"agreed":"20","paid":"5"})
+                finances=agency.detail(cur,buyer_id,aid)["finance"]
+                self.assertEqual(finances["projects"][0]["projected_margin_cents"],7000)
+                self.assertEqual(finances["projects"][0]["cash_margin_cents"],3500)
+                member_finance=agency.detail(cur,partner_id,aid)["finance"]
+                self.assertNotIn("budget_cents",member_finance["projects"][0])
+                self.assertEqual(member_finance["rewards"][0]["paid_cents"],500)
                 agency.remove(cur,buyer_id,{"id":aid,"member":partner_id})
+                self.assertEqual(agency.detail(cur,buyer_id,aid)["finance"]["rewards"][0]["agreed_cents"],2000)
                 with self.assertRaises(PermissionError): agency.detail(cur,partner_id,aid)
                 self.assertIsNone(agency.detail(cur,buyer_id,aid)["tasks"][0]["assignee"])
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
