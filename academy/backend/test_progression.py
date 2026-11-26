@@ -3,6 +3,27 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_career_skill_paths(self):
+        from career import skill_paths
+        lessons=[{"day":7,"unlocked":True,"completed":True},{"day":8,"unlocked":True,"completed":True},{"day":9,"unlocked":True,"completed":False},{"day":10,"unlocked":True,"completed":True},{"day":11,"unlocked":True,"completed":True},{"day":12,"unlocked":False,"completed":False},{"day":31,"unlocked":False,"completed":False}]
+        projects=[{"lesson":7},{"lesson":7},{"lesson":8},{"lesson":9},{"lesson":12},{"lesson":31}]
+        rows=skill_paths(lessons,projects)
+        by={x["category"]:x for x in rows}
+        self.assertEqual(len(rows),6)
+        self.assertEqual(rows[0]["category"],"design")
+        self.assertEqual(by["design"]["completed_days"],[7,8])
+        self.assertEqual(by["design"]["evidence_days"],[7,8])
+        self.assertEqual(by["design"]["project_count"],4)
+        self.assertEqual(by["design"]["submitted_days"],[7,8,9])
+        self.assertEqual(by["design"]["status"],"portfolio_to_review")
+        self.assertEqual(by["design"]["next_day"],9)
+        self.assertIsNone(by["design"]["practice_day"])
+        self.assertEqual(by["video"]["status"],"build_portfolio")
+        self.assertEqual(by["video"]["practice_day"],10)
+        self.assertEqual(by["video"]["project_count"],0)
+        self.assertEqual(by["web"]["status"],"learning")
+        self.assertIsNone(by["web"]["next_day"])
+        self.assertTrue(all(x["status"]=="learning" for x in skill_paths([],[])))
     def test_review_journal(self):
         from review_journal import build_journal,validate,dispatch
         from datetime import timedelta
