@@ -1274,3 +1274,6 @@ if __name__ == "__main__":
 
 # Run provider-mocked studio regression checks with the existing build suite.
 from test_higgsfield_studio import HiggsfieldStudioTests
+
+# Verify the real HTTP adapter and page assets before every Render deployment.
+from test_release_smoke import ReleaseSmokeTests
