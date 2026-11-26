@@ -94,6 +94,20 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_four_package_progression_boundaries(self):
+        from progression import lesson_available
+        now=datetime(2026,11,26,tzinfo=timezone.utc)
+        for plan,total in (("starter",30),("pro",30),("vip",45),("elite",45)):
+            with self.subTest(plan=plan):
+                self.assertTrue(lesson_available(1,None,{},now,plan))
+                self.assertFalse(lesson_available(2,None,{},now,plan))
+                self.assertFalse(lesson_available(2,now-timedelta(days=2),{},now,plan))
+                self.assertFalse(lesson_available(2,now-timedelta(days=2),{1:now-timedelta(hours=23)},now,plan))
+                self.assertTrue(lesson_available(2,now-timedelta(days=2),{1:now-timedelta(days=1)},now,plan))
+                passed={d:now-timedelta(days=total-d) for d in range(1,total)}
+                self.assertTrue(lesson_available(total,now-timedelta(days=total),passed,now,plan))
+                self.assertFalse(lesson_available(total+1,now-timedelta(days=total+1),passed,now,plan))
+                self.assertFalse(lesson_available(True,now,{},now,plan))
     def test_launch_control_package_coverage(self):
         from launch_control import packages
         coverage={lang:{kind:{"missing":list(range(31,46))} for kind in ("lesson","exam")} for lang in ("en","ru","uk","pl")}

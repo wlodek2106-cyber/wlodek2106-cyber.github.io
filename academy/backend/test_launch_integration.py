@@ -42,6 +42,36 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertFalse(learning.student_progress(buyer)["access"])
                 self.assertTrue(learning.require_lesson(buyer,1))
                 with self.assertRaises(PermissionError): learning.require_lesson(buyer,2)
+                # Exercise the API, not only the policy helpers; content is a synthetic fallback fixture.
+                import api
+                with patch.object(api,"ready",return_value=True),patch("content_vault.get",return_value=None) as content:
+                    for lang in ("en","ru","uk","pl"):
+                        status,lesson=api.dispatch("GET","/lessons/1/"+lang,{},buyer)
+                        self.assertEqual(status,200)
+                        self.assertEqual(lesson["content_language"],lang)
+                        self.assertTrue(lesson["title"])
+                        self.assertTrue(all(set(q)=={"id","question","options"} for q in lesson["questions"]))
+                    content.reset_mock()
+                    for day in (2,30,31,45):
+                        with self.assertRaises(PermissionError): api.dispatch("GET","/lessons/"+str(day)+"/ru",{},buyer)
+                    with self.assertRaises(PermissionError): api.dispatch("GET","/lessons/1/en",{},None)
+                    content.assert_not_called()
+                    for route in ("/lessons/1/ru/extra","/lessons/1/","/lessons/1/invalid"):
+                        with self.assertRaises(ValueError): api.dispatch("GET",route,{},buyer)
+                    # Separate content coverage from access: the production entitlement function is
+                    # patched only here, never in the actual trial and paid-access assertions.
+                    with patch.object(api,"require_lesson",return_value=True):
+                        for day in range(1,46):
+                            for lang in ("en","ru","uk","pl"):
+                                with self.subTest(day=day,language=lang):
+                                    status,lesson=api.dispatch("GET",f"/lessons/{day}/{lang}",{},buyer)
+                                    self.assertEqual(status,200)
+                                    self.assertEqual(lesson["content_language"],lang)
+                                    self.assertTrue(lesson["title"])
+                                    if day>1:
+                                        self.assertEqual(lesson["day"],day)
+                                        self.assertNotIn("questions",lesson)
+                                        self.assertTrue(lesson["assignment"])
                 portfolio.save(buyer,1,"First free practice submission")
                 with self.assertRaises(PermissionError): portfolio.save(buyer,2,"Not allowed")
                 bank=[{"id":str(i),"question":q[0],"options":q[1],"correct":q[1][q[2]]} for i,q in enumerate(LESSON["questions"])]
@@ -77,6 +107,10 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["unlocked"])
                 with self.assertRaises(PermissionError): learning.require_lesson(buyer,2)
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["completed"])
+                with patch.object(api,"ready",return_value=True),patch("content_vault.get",return_value=None) as content:
+                    with self.assertRaises(PermissionError): api.dispatch("GET","/lessons/2/en",{},buyer)
+                    with self.assertRaises(PermissionError): api.dispatch("GET","/lessons/31/en",{},buyer)
+                    content.assert_not_called()
                 from adaptive_study import plan as study_plan
                 study=study_plan(buyer,30,"ru")
                 self.assertEqual(study["focus"]["day"],1)

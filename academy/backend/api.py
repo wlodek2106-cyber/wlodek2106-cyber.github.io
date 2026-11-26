@@ -528,6 +528,8 @@ def dispatch(method,path,body,token):
         return 200,submit_exam(token,body["day"],body["attempt_id"],body["answers"])
     if path.startswith("/lessons/") and method=="GET":
         parts=path.split("/")
+        if len(parts) not in (3,4) or (len(parts)==4 and parts[3] not in ("en","ru","uk","pl")):
+            raise ValueError("Invalid lesson route")
         day=int(parts[2])
         lang=parts[3] if len(parts)==4 else "en"
         require_lesson(token,day)
