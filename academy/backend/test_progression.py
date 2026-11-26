@@ -1315,6 +1315,20 @@ class ProgressTests(unittest.TestCase):
         for completed,reviews,rating,expected in cases:
             with self.subTest(completed=completed,reviews=reviews,rating=rating):
                 self.assertEqual(experience_level(completed,reviews,rating),expected)
+    def test_business_studio_summary(self):
+        from datetime import date
+        from business_assistant import studio_summary
+        rows=[{"id":1,"title":"A","status":"delivered","due":"","agreed_cents":50000,"received_cents":20000,"expense_cents":10000,"notes":"private"},{"id":2,"title":"B","status":"cancelled","due":"","agreed_cents":10000,"received_cents":2000,"expense_cents":3000}]
+        d=studio_summary(2,rows,date(2026,11,26))
+        self.assertEqual(d["clients"],2)
+        self.assertEqual(d["counts"],{"lead":0,"in_progress":0,"delivered":1,"cancelled":1})
+        self.assertEqual(d["totals"]["received_cents"],"22000")
+        self.assertEqual(d["totals"]["outstanding_cents"],"30000")
+        self.assertEqual(d["totals"]["cash_margin_cents"],"9000")
+        self.assertEqual(d["actions"][0]["flags"],["collect_payment"])
+        self.assertNotIn("notes",d["actions"][0])
+        self.assertTrue(d["manual"])
+        self.assertEqual(studio_summary(0,[],date(2026,11,26))["actions"],[])
     def test_business_assistant(self):
         from business_assistant import report
         from datetime import date

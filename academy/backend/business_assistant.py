@@ -32,3 +32,24 @@ def assistant(token):
         cur.execute("SELECT id,title,status,due,agreed_cents,received_cents,expense_cents FROM business_orders WHERE student_id=%s",(sid,))
         rows=[{"id":i,"title":t,"status":s,"due":d.isoformat() if d else "","agreed_cents":a,"received_cents":r,"expense_cents":e} for i,t,s,d,a,r,e in cur.fetchall()]
     return report(rows,datetime.now(timezone.utc).date())
+
+def studio_summary(clients_count,orders,today):
+    """Minimal read-only snapshot; never return client contacts or private notes."""
+    from student_business import totals,STATES
+    counts={state:sum(o["status"]==state for o in orders) for state in STATES}
+    financial=totals((o["status"],o["agreed_cents"],o["received_cents"],o["expense_cents"]) for o in orders)
+    priorities=report(orders,today)
+    return {"clients":clients_count,"orders":len(orders),"counts":counts,"totals":financial,
+            "actions":[{k:a[k] for k in ("id","title","flags","days_remaining","outstanding_cents")} for a in priorities["actions"][:12]],
+            "action_count":priorities["action_count"],"currency":"USD","manual":True,"private":True,"as_of":today.isoformat()}
+
+def studio(token):
+    from student_business import identity,transaction
+    sid=identity(token)
+    with transaction() as cur:
+        cur.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
+        cur.execute("SELECT count(*) FROM business_clients WHERE student_id=%s",(sid,))
+        clients=cur.fetchone()[0]
+        cur.execute("SELECT id,title,status,due,agreed_cents,received_cents,expense_cents FROM business_orders WHERE student_id=%s",(sid,))
+        rows=[{"id":i,"title":t,"status":s,"due":d.isoformat() if d else "","agreed_cents":a,"received_cents":r,"expense_cents":e} for i,t,s,d,a,r,e in cur.fetchall()]
+    return studio_summary(clients,rows,datetime.now(timezone.utc).date())

@@ -276,6 +276,7 @@ function dashboard(){
    enhance("teacher-center",()=>{teacherCenterDesign();});
    enhance("project-mentor",()=>{projectMentorDesign();});
    enhance("career-center",()=>{careerCenterDesign();});
+   enhance("business-studio",()=>{businessStudioDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -774,7 +775,53 @@ function careerCenterDesign(){
  new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  careerCenterRefresh=schedule;sync();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();motion()}
+const businessStudioWords={
+ en:["Creator Business Studio","Your private CRM dashboard","Refresh records","Loading…","Could not load. Try again.","Clients","Orders","Recorded contract value","Received","Expenses","Outstanding","Cash difference","Leads","In progress","Delivered","Cancelled","Priority actions","Overdue","Cost overrun","Due soon","Collect payment","Set deadline","Follow up","Open CRM & PDF proposals","Find jobs","No priority actions","Manual USD records, not bank balances, verified payments or net profit. Taxes and fees are not calculated.","As of","Showing first 12 priority actions"],
+ ru:["Creator Business Studio","Личная панель управления клиентами","Обновить данные","Загрузка…","Не удалось загрузить. Попробуй снова.","Клиенты","Заказы","Учтённая стоимость заказов","Получено","Расходы","Остаток к оплате","Разница поступлений и расходов","Потенциальные заказы","В работе","Выполнено","Отменено","Приоритетные задачи","Просрочено","Превышение расходов","Срок приближается","Проверить получение оплаты","Установить срок","Связаться с клиентом","CRM и PDF-предложения","Найти заказы","Нет приоритетных задач","Ручной учёт в USD, не баланс кошелька, подтверждение оплаты или чистая прибыль. Налоги и комиссии не рассчитаны.","Данные на","Первые 12 приоритетных задач"],
+ uk:["Creator Business Studio","Приватна панель керування клієнтами","Оновити дані","Завантаження…","Не вдалося завантажити. Спробуй знову.","Клієнти","Замовлення","Врахована вартість замовлень","Отримано","Витрати","Залишок до оплати","Різниця надходжень і витрат","Потенційні замовлення","У роботі","Виконано","Скасовано","Пріоритетні завдання","Прострочено","Перевищення витрат","Термін наближається","Перевірити отримання оплати","Встановити термін","Зв'язатися з клієнтом","CRM і PDF-пропозиції","Знайти замовлення","Немає пріоритетних завдань","Ручний облік у USD, не баланс гаманця, підтвердження оплати або чистий прибуток. Податки й комісії не розраховано.","Дані на","Перші 12 пріоритетних завдань"],
+ pl:["Creator Business Studio","Prywatny panel CRM","Odśwież dane","Wczytywanie…","Nie udało się wczytać. Spróbuj ponownie.","Klienci","Zlecenia","Zapisana wartość zleceń","Otrzymano","Koszty","Pozostało do zapłaty","Różnica wpływów i kosztów","Potencjalne zlecenia","W realizacji","Dostarczono","Anulowano","Pilne zadania","Po terminie","Przekroczenie kosztów","Zbliża się termin","Sprawdź płatność","Ustal termin","Skontaktuj się z klientem","CRM i oferty PDF","Znajdź zlecenia","Brak pilnych zadań","Ręczny zapis w USD, nie saldo portfela, potwierdzenie płatności ani zysk netto. Podatki i prowizje nie zostały obliczone.","Stan na","Pierwsze 12 pilnych zadań"]};
+let businessStudioRefresh=null;
+function businessStudioDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),nav=$("academyNav"),button=$("businessButton");if(!overview||!panel||!nav||!button)return;
+ const w=()=>businessStudioWords[locale()]||businessStudioWords.en;
+ const hub=el("details","zBusinessStudio"),summary=el("summary"),title=el("span"),intro=el("p"),load=el("button","zAction primary"),status=el("p"),report=el("div","zBusinessReport"),actions=el("div","zBusinessStudioLinks"),crm=el("button","zAction"),jobs=el("button","zAction"),note=el("p","zBusinessStudioNote");
+ hub.id="zBusinessStudio";summary.append(icon("chart"),title);hub.append(summary,intro,load,status,report,actions,note);actions.append(crm,jobs);load.type=crm.type=jobs.type="button";status.setAttribute("role","status");
+ const anchor=$("zCareerCenter");if(anchor)anchor.after(hub);else overview.append(hub);
+ const allowed=id=>{const b=$(id);return !panel.hidden&&!!b&&!b.disabled&&!b.closest("[hidden]")};
+ crm.onclick=()=>{if(allowed("businessButton"))button.click()};jobs.onclick=()=>{if(allowed("jobsButton"))$("jobsButton").click()};
+ const money=c=>{try{const n=BigInt(c),a=n<0n?-n:n;return (n<0n?"-":"")+"$"+(a/100n).toString()+"."+(a%100n).toString().padStart(2,"0")}catch(e){return "—"}};
+ let seq=0,data=null,lang=locale(),hadAccess=false;
+ function clear(){seq++;data=null;report.replaceChildren();status.textContent="";load.disabled=false}
+ function render(d){
+   report.replaceChildren();const grid=el("div","zStudioMetrics");
+   const values=[[5,d.clients],[6,d.orders],[7,money(d.totals.agreed_cents)],[8,money(d.totals.received_cents)],[9,money(d.totals.expense_cents)],[10,money(d.totals.outstanding_cents)],[11,money(d.totals.cash_margin_cents)]];
+   for(const [i,value] of values){const card=el("div","zStudioMetric");card.append(el("small","",w()[i]),el("strong","",String(value)));grid.append(card)}report.append(grid);
+   const pipeline=el("div","zStudioPipeline");
+   for(const [key,i] of [["lead",12],["in_progress",13],["delivered",14],["cancelled",15]]){const row=el("div","zStudioOrder");row.append(el("span","",w()[i]),el("strong","",String(d.counts[key]||0)));pipeline.append(row)}report.append(pipeline);
+   const flagWords={overdue:17,cost_overrun:18,due_soon:19,collect_payment:20,set_deadline:21,follow_up:22};
+   report.append(el("h3","",w()[16]+" · "+d.action_count));
+   if(!d.actions.length)report.append(el("p","",w()[25]));
+   for(const action of d.actions){const row=el("div","zStudioAction");row.append(el("strong","",action.title),el("p","",action.flags.filter(f=>Object.hasOwn(flagWords,f)).map(f=>w()[flagWords[f]]).join(" · ")));report.append(row)}
+   if(d.action_count>d.actions.length)report.append(el("small","",w()[28]));
+   report.append(el("small","",w()[27]+": "+d.as_of+" UTC"));
+ }
+ load.onclick=async()=>{
+   if(!allowed("businessButton")||typeof api!=="function")return;const id=++seq;load.disabled=true;data=null;report.replaceChildren();status.textContent=w()[3];
+   try{const d=await api("/business/studio");if(id!==seq||!allowed("businessButton"))return;if(d.manual!==true||d.private!==true)throw Error("Invalid report");data=d;render(d);status.textContent=""}
+   catch(e){if(id===seq&&allowed("businessButton"))status.textContent=w()[4]}
+   finally{if(id===seq)load.disabled=false}
+ };
+ function sync(){
+   const access=allowed("businessButton");if(!access&&hadAccess){clear();hub.open=false}hadAccess=access;if(hub.hidden===access)hub.hidden=!access;
+   if(lang!==locale()){lang=locale();seq++;load.disabled=false;status.textContent="";if(data&&access)render(data)}
+   title.textContent=w()[0];intro.textContent=w()[1];load.textContent=w()[2];crm.textContent=w()[23];jobs.textContent=w()[24];note.textContent=w()[26];const hideJobs=!allowed("jobsButton");if(jobs.hidden!==hideJobs)jobs.hidden=hideJobs;
+ }
+ let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
+ new MutationObserver(schedule).observe(nav,{subtree:true,attributes:true,attributeFilter:["hidden","disabled"]});
+ new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ businessStudioRefresh=schedule;sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
