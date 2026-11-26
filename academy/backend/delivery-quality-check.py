@@ -1,5 +1,5 @@
 """Local delivery metadata check using trusted FFprobe. No media upload or API."""
-import json, math, shutil, subprocess, threading, queue
+import json, math, shutil, subprocess, threading, queue, hashlib
 from fractions import Fraction
 from pathlib import Path
 FORMATS={"9:16":(1080,1920),"16:9":(1920,1080),"1:1":(1080,1080)}
@@ -37,7 +37,12 @@ def inspect(engine,media,duration,fmt,require_audio=True,require_subtitles=False
     if not file.is_file() or file.suffix.lower()!=".mp4":raise ValueError("Select local MP4")
     result=subprocess.run([str(exe),"-v","error","-protocol_whitelist","file","-show_streams","-show_format","-of","json",str(file)],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=60)
     if result.returncode or len(result.stdout)>1000000:raise ValueError("FFprobe could not inspect the file")
-    return evaluate(json.loads(result.stdout),duration,fmt,require_audio,require_subtitles)
+    report=evaluate(json.loads(result.stdout),duration,fmt,require_audio,require_subtitles)
+    digest=hashlib.sha256()
+    with file.open("rb") as f:
+        for chunk in iter(lambda:f.read(1024*1024),b""):digest.update(chunk)
+    report["video_sha256"]=digest.hexdigest()
+    return report
 def main():
     import tkinter as tk
     from tkinter import ttk,filedialog,messagebox
