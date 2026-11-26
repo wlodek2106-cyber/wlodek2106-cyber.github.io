@@ -362,6 +362,20 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(read(cur,17)["draft"],data)
         with patch.dict(sys.modules,{"accounts":SimpleNamespace(authenticate=lambda token:None),"database":SimpleNamespace(transaction=Mock())}):
             with self.assertRaises(PermissionError):dispatch(None,"read",{})
+    def test_release_gate_skips_database_on_fast_failure(self):
+        calls=[]
+        def good():calls.append("unit")
+        def bad():raise AssertionError("fixture")
+        def gate():calls.append("gate")
+        ok=unittest.TestResult()
+        ReleaseGateSuite([unittest.FunctionTestCase(good)],gate).run(ok)
+        self.assertTrue(ok.wasSuccessful())
+        self.assertEqual(calls,["unit","gate"])
+        calls.clear()
+        failed=unittest.TestResult()
+        ReleaseGateSuite([unittest.FunctionTestCase(bad)],gate).run(failed)
+        self.assertFalse(failed.wasSuccessful())
+        self.assertEqual(calls,[])
     def test_installed_local_model_router(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
@@ -1416,6 +1430,17 @@ from test_higgsfield_studio import HiggsfieldStudioTests
 from test_release_smoke import ReleaseSmokeTests
 
 
+class ReleaseGateSuite(unittest.TestSuite):
+    """Fast tests first; never spend DB integration time on a failed unit suite."""
+    def __init__(self, tests, gate):
+        super().__init__(tests)
+        self.gate=gate
+    def run(self,result,debug=False):
+        super().run(result,debug)
+        if not debug and result.wasSuccessful() and not result.shouldStop:
+            unittest.FunctionTestCase(self.gate,description="Rollback-only database release gate")(result)
+        return result
+
 def load_tests(loader, tests, pattern):
     """Compatibility bridge for the Academy's existing Render build command.
     Install declared dependencies in the build environment, not during server startup.
@@ -1434,6 +1459,8 @@ def load_tests(loader, tests, pattern):
         proof.unlink(missing_ok=True)
         commit=os.getenv("RENDER_GIT_COMMIT")
         if commit and os.getenv("ACADEMY_DATABASE_URL"):
-            subprocess.run([sys.executable,"-c","from server import run_release_db_checks; run_release_db_checks()"],check=True,timeout=900)
-            proof.write_text(commit,encoding="utf-8")
+            def verify_release():
+                subprocess.run([sys.executable,"-c","from server import run_release_db_checks; run_release_db_checks()"],check=True,timeout=900)
+                proof.write_text(commit,encoding="utf-8")
+            return ReleaseGateSuite(tests,verify_release)
     return tests

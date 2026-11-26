@@ -74,8 +74,18 @@ function courseCards(){
    if(preferred)selectTrack(preferred.index);
    relabel();observe();
  }
- // All existing shortcuts can still call the original lesson button, including a collapsed module.
- days.addEventListener("click",e=>{const b=e.target.closest("button[data-day]");if(!b||b.disabled)return;const item=cards.find(x=>x.panel.contains(b));if(item)selectTrack(item.index)},{capture:true});
+ // All existing shortcuts retain the original lesson handler. Scroll after its async render.
+ const lesson=$("lesson"),overview=$("workspaceOverview"),panel=$("panel");let requestedLesson=false;
+ if(lesson&&overview&&panel){
+   new MutationObserver(records=>{
+     if(!requestedLesson||panel.hidden||overview.hidden||lesson.hidden||!records.some(r=>r.type==="childList")||!lesson.firstElementChild)return;
+     requestedLesson=false;lesson.scrollIntoView({block:"start",behavior:"auto"});
+   }).observe(lesson,{childList:true});
+   const cancel=()=>{if(panel.hidden||overview.hidden)requestedLesson=false};
+   new MutationObserver(cancel).observe(overview,{attributes:true,attributeFilter:["hidden"]});
+   new MutationObserver(cancel).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ }
+ days.addEventListener("click",e=>{const b=e.target.closest("button[data-day]");if(!b||b.disabled)return;const item=cards.find(x=>x.panel.contains(b));if(item)selectTrack(item.index);requestedLesson=true},{capture:true});
  courseRefresh=refresh;courseRelabel=relabel;observe();refresh();
 }
 function bottomNav(){

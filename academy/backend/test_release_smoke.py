@@ -456,6 +456,12 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"def run_team(",engine)
         self.assertIn(b"def validate_team(",engine)
 
+    def test_lesson_navigation_after_render(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'requestedLesson=true',b'!requestedLesson||panel.hidden||overview.hidden||lesson.hidden',b'lesson.scrollIntoView({block:"start",behavior:"auto"})'):
+            self.assertIn(marker,script)
+
     def test_model_router_entrypoints(self):
         code,_,script=self.request("/academy-aurora.js")
         self.assertEqual(code,200)
