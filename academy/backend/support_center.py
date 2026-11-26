@@ -78,6 +78,19 @@ def close(cur,sid,tid,admin=False):
         cur.execute("UPDATE support_tickets SET status='closed',updated_at=now(),student_unread=%s,admin_unread=%s WHERE id=%s",(admin,not admin,tid))
     return {"status":"closed"}
 
+ARTICLES=["login","passkey","payment","lesson","webgpu","higgsfield","marketplace","connection"]
+def feedback(cur,sid,b):
+    article=b.get("article");helpful=b.get("helpful")
+    if not isinstance(article,str) or article not in ARTICLES or type(helpful) is not bool:
+        raise ValueError("Invalid article feedback")
+    cur.execute("""INSERT INTO support_article_feedback(student_id,article,helpful) VALUES (%s,%s,%s)
+       ON CONFLICT(student_id,article) DO UPDATE SET helpful=EXCLUDED.helpful,updated_at=now()""",(sid,article,helpful))
+    return {"saved":True}
+
+def feedback_summary(cur):
+    cur.execute("SELECT article,count(*) FILTER(WHERE helpful),count(*) FILTER(WHERE NOT helpful) FROM support_article_feedback GROUP BY article ORDER BY article")
+    return {"items":[{"article":a,"helpful":h,"not_helpful":n} for a,h,n in cur.fetchall()]}
+
 def dispatch(token,action,b):
     from accounts import authenticate
     from partners import owner
@@ -91,6 +104,10 @@ def dispatch(token,action,b):
     if type(admin) is not bool or admin and not allowed: raise PermissionError("Owner required")
     with transaction() as cur:
         if action=="admin": return {"allowed":allowed}
+        if action=="feedback": return feedback(cur,sid,b)
+        if action=="feedback-summary":
+            if not allowed: raise PermissionError("Owner required")
+            return feedback_summary(cur)
         if action=="list": return listing(cur,sid,admin,b.get("before"),b.get("status"),b.get("category"))
         if action=="create": return create(cur,sid,b)
         if action=="thread": return thread(cur,sid,b.get("id"),admin)

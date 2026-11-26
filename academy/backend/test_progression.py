@@ -94,6 +94,14 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_support_article_validation(self):
+        from support_center import feedback,ARTICLES
+        from unittest.mock import Mock
+        cur=Mock()
+        for b in ({"article":"bad","helpful":True},{"article":[],"helpful":True},{"article":"payment","helpful":1}):
+            with self.assertRaises(ValueError): feedback(cur,1,b)
+        cur.execute.assert_not_called()
+        self.assertEqual(len(ARTICLES),8)
     def test_client_acquisition_actions(self):
         from client_acquisition import actions
         self.assertEqual(actions(False,"none",0,0,0),["profile"])

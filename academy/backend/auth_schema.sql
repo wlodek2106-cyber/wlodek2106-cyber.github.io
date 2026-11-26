@@ -590,3 +590,11 @@ CREATE INDEX IF NOT EXISTS support_message_idx ON support_messages(ticket_id,id)
 ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS student_unread boolean NOT NULL DEFAULT false;
 ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS admin_unread boolean NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS support_admin_open_idx ON support_tickets(status,id DESC);
+
+CREATE TABLE IF NOT EXISTS support_article_feedback (
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ article text NOT NULL CHECK(article IN ('login','passkey','payment','lesson','webgpu','higgsfield','marketplace','connection')),
+ helpful boolean NOT NULL,
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(student_id,article)
+);

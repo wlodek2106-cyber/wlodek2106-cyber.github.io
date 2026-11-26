@@ -518,6 +518,14 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(support_reply(cur,buyer_id,{"id":stid,"body":"Follow up","consent":True})["status"],"open")
                 self.assertEqual(support_close(cur,buyer_id,stid)["status"],"closed")
                 with self.assertRaises(ValueError): support_reply(cur,buyer_id,{"id":stid,"body":"Closed","consent":True})
+                from support_center import feedback as article_feedback,feedback_summary
+                with self.assertRaises(ValueError): article_feedback(cur,buyer_id,{"article":"invalid","helpful":True})
+                with self.assertRaises(ValueError): article_feedback(cur,buyer_id,{"article":"payment","helpful":1})
+                self.assertTrue(article_feedback(cur,buyer_id,{"article":"payment","helpful":True})["saved"])
+                article_feedback(cur,buyer_id,{"article":"payment","helpful":False})
+                cur.execute("SELECT helpful FROM support_article_feedback WHERE student_id=%s AND article='payment'",(buyer_id,))
+                self.assertEqual(cur.fetchall(),[(False,)])
+                self.assertTrue(any(x["article"]=="payment" and x["not_helpful"]>=1 for x in feedback_summary(cur)["items"]))
                 from career_pathway import collect as career_collect,pathway as career_pathway
                 self.assertTrue(any(x["lesson"]==1 for x in career_collect(cur,buyer_id)))
                 self.assertEqual(career_collect(cur,partner_id),[])
