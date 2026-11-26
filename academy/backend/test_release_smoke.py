@@ -278,6 +278,26 @@ class ReleaseSmokeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             grade_attempt({k:v for k,v in key.items() if k!=ids[0]},key)
 
+    def test_classic_recovery_keeps_auth_and_csp(self):
+        for path in ("/","/dashboard"):
+            code,h,normal=self.request(path+"?lang=ru")
+            self.assertEqual(code,200)
+            self.assertIn(b'href="/dashboard?view=classic"',normal)
+            self.assertIn(b"/academy-aurora.js",normal)
+            code,h2,classic=self.request(path+"?view=classic&lang=ru")
+            self.assertEqual(code,200)
+            self.assertNotIn(b'<script src="/academy-aurora.js">',classic)
+            self.assertNotIn(b'href="/academy-aurora.css"',classic)
+            self.assertIn(b"/academy-shell.js",classic)
+            self.assertEqual(h["content-security-policy"],h2["content-security-policy"])
+            self.assertEqual(h2["cache-control"],"no-store")
+            for marker in (b'id="login"',b'id="register"',b'id="passkeyLogin"',b'id="academyNav"',b'id="days"'):
+                self.assertIn(marker,classic)
+        code,_,classic=self.request("/support?view=classic")
+        self.assertEqual(code,200)
+        self.assertIn(b"/support.js",classic)
+        self.assertNotIn(b'<script src="/academy-aurora.js">',classic)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
