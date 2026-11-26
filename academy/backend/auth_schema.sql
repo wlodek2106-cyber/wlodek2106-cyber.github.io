@@ -458,3 +458,10 @@ CREATE TABLE IF NOT EXISTS elite_certificates (
  recipient_name text NOT NULL,
  average_score numeric(5,2) NOT NULL CHECK(average_score BETWEEN 80 AND 100)
 );
+
+CREATE TABLE IF NOT EXISTS graduate_showcases (
+ student_id bigint PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
+ share_code text UNIQUE NOT NULL,
+ profile jsonb NOT NULL,
+ published_at timestamptz NOT NULL DEFAULT now()
+);
