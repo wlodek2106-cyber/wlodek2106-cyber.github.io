@@ -261,6 +261,10 @@ class LaunchIntegration(unittest.TestCase):
                     self.assertEqual(tree["items"][0]["usdc_atomic"],"199000000")
                 report=founder.report(cur,7)
                 self.assertIn("after_all_commissions_atomic",report["alltime"])
+                funnel=report["activity"]["trial_funnel"]
+                self.assertGreaterEqual(funnel["registered"],3)
+                self.assertLessEqual(funnel["paid_after_pass"],funnel["passed"])
+                self.assertEqual(sum(funnel["plans"].values()),funnel["paid_after_pass"])
                 ig=next(x for x in report["campaign_growth"]["items"] if x["source"]=="instagram")
                 self.assertGreaterEqual(ig["registered"],1)
                 self.assertGreaterEqual(ig["paid"],1)
