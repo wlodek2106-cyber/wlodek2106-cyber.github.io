@@ -177,6 +177,18 @@ def dispatch(method,path,body,token):
     if path=="/practice/brief" and method=="POST":
         from practice_lab import student_brief
         return 200,student_brief(token,body["day"],body.get("lang","en"))
+    if path=="/showcase/public" and method=="POST":
+        from graduate_showcase import public
+        return 200,public(body.get("code"))
+    if path=="/showcase/mine" and method=="GET":
+        from graduate_showcase import mine
+        return 200,mine(token)
+    if path=="/showcase/publish" and method=="POST":
+        from graduate_showcase import publish
+        return 200,publish(token,body.get("profile"),body.get("consent"))
+    if path=="/showcase/withdraw" and method=="POST":
+        from graduate_showcase import withdraw
+        return 200,withdraw(token)
     if path=="/portfolio" and method=="GET":
         from portfolio import list_projects
         return 200,list_projects(token)
