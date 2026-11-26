@@ -192,8 +192,40 @@ function profileDesign(){
  profileRefresh=sync;sync();
 }
 function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
-function moduleHeader(){const h=document.querySelector("main>header");if(!h)return;const original=Array.from(h.children).filter(n=>n.tagName==="A");if(!original.length)return;h.classList.add("zModuleHeader");h.querySelector("strong")?.prepend(orb());const d=el("details","zModuleNav"),summary=el("summary");summary.append(icon("menu"),label(el("span"),26));const box=el("div","zModuleLinks");for(const a of original){const p=a.getAttribute("href"),data=navMap[p?.split("?")[0]];if(data){a.replaceChildren(icon(data[1]),label(el("span"),data[0]));if(p.startsWith("/")&&!p.startsWith("//"))links.push([a,p])}else a.prepend(icon("folder"));box.append(a)}d.append(summary,box);h.insertBefore(d,lang?.parentElement===h?lang:null);d.addEventListener("click",e=>{if(e.target.closest("a"))d.open=false});document.addEventListener("click",e=>{if(!d.contains(e.target))d.open=false});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.open){d.open=false;summary.focus()}})}
+function moduleHeader(){
+ const h=document.querySelector("main>header,main>nav");if(!h)return;
+ h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
+ if(!brand){brand=el("strong","","ZER0LIFE / ACADEMY");h.prepend(brand)}
+ brand.classList.add("zModuleBrand");brand.prepend(orb());
+ const original=Array.from(h.children).filter(n=>n.tagName==="A");
+ const back=original.find(a=>a.getAttribute("href")?.split("?")[0]==="/dashboard");
+ if(back){back.classList.add("zModuleBack")}else{const a=route("/dashboard",6,"graduation","zModuleBack");h.append(a)}
+ const remaining=original.filter(a=>a!==back);if(!remaining.length)return;
+ const d=el("details","zModuleNav"),summary=el("summary");summary.append(icon("menu"),label(el("span"),26));const box=el("div","zModuleLinks");
+ for(const a of remaining){const p=a.getAttribute("href"),data=navMap[p?.split("?")[0]];const row=el("div","zModuleLinkRow");row.append(icon(data?.[1]||"folder"),a);box.append(row)}
+ d.append(summary,box);h.insertBefore(d,lang?.parentElement===h?lang:null);
+ d.addEventListener("click",e=>{if(e.target.closest("a"))d.open=false});
+ document.addEventListener("click",e=>{if(!d.contains(e.target))d.open=false});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.open){d.open=false;summary.focus()}});
+}
+function moduleDesign(){
+ const main=document.querySelector("main");if(!main)return;document.body.classList.add("zModulePage");
+ const heading=main.querySelector(":scope > h1,:scope > .hero > h1");
+ if(!heading)return;
+ const glyphs={"/creator-suite":"layers","/ai-workspace":"wand-sparkles","/support":"headphones","/command-center":"layout-dashboard","/agency":"network","/creator-analytics":"chart","/client-portal":"users","/production-cost":"wallet","/marketplace":"briefcase","/hire":"briefcase","/animation-studio":"video","/music-studio":"music","/website-builder":"code","/automation-studio":"workflow","/design-studio":"palette","/voice-studio":"mic","/local-media":"image","/graduate-showcase":"graduation"};
+ const glyph=glyphs[location.pathname];if(!glyph)return;
+ const art=el("span","zModuleArt");art.setAttribute("aria-hidden","true");art.append(icon(glyph));
+ const oldHero=heading.closest("section.hero");
+ // Preserve existing form and link elements, IDs, and localized text nodes.
+ if(oldHero){oldHero.classList.add("zModuleExistingHero");const kicker=oldHero.querySelector("small");if(kicker)kicker.classList.add("zModuleKicker");return}
+ const intro=heading.nextElementSibling?.tagName==="P"?heading.nextElementSibling:null;
+ const tag=heading.previousElementSibling?.classList.contains("tag")?heading.previousElementSibling:null;
+ const hero=el("div","zModuleHero"),copy=el("div","zModuleCopy");
+ const kicker=el("div","zModuleKicker","ZER0LIFE / AURORA");hero.append(copy,art);(tag||heading).before(hero);
+ if(tag){tag.classList.add("zModuleKicker");copy.append(tag)}else copy.append(kicker);
+ copy.append(heading);if(intro)copy.append(intro);
+}
 function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();motion()}
-document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
+document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
