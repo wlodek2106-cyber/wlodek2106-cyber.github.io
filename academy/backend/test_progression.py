@@ -94,6 +94,22 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_career_pathway_evidence(self):
+        from career_pathway import pathway
+        lessons=[{"day":d,"unlocked":d<=8,"completed":d<=7} for d in range(1,31)]
+        projects=[{"lesson":7,"passed":False},{"lesson":7,"passed":True},{"lesson":9,"passed":True}]
+        r=pathway(lessons,projects,"design")
+        self.assertEqual((r["completed"],r["submitted"],r["review_passed"]),(1,1,1))
+        self.assertEqual(r["next"],{"action":"practice","day":8})
+        self.assertFalse(r["qualification_verified"])
+        w=pathway(lessons,projects,"web")
+        self.assertEqual(w["in_plan"],0)
+        self.assertEqual(w["outside_plan"],10)
+        self.assertEqual(w["next"],{"action":"continue_course","day":8})
+        self.assertEqual(pathway(lessons,[{"lesson":7,"passed":True},{"lesson":8,"passed":False}],"design")["next"],{"action":"review_project","day":8})
+        self.assertEqual(pathway(lessons,[],"design")["review_passed"],0)
+        for invalid in (None,[],"other"):
+            with self.assertRaises(ValueError):pathway(lessons,projects,invalid)
     def test_career_skill_paths(self):
         from career import skill_paths
         lessons=[{"day":7,"unlocked":True,"completed":True},{"day":8,"unlocked":True,"completed":True},{"day":9,"unlocked":True,"completed":False},{"day":10,"unlocked":True,"completed":True},{"day":11,"unlocked":True,"completed":True},{"day":12,"unlocked":False,"completed":False},{"day":31,"unlocked":False,"completed":False}]

@@ -494,6 +494,10 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
                 self.assertEqual(load_profile(cur,buyer_id),profile)
                 self.assertEqual(load_profile(cur,partner_id),EMPTY)
+                from career_pathway import collect as career_collect,pathway as career_pathway
+                self.assertTrue(any(x["lesson"]==1 for x in career_collect(cur,buyer_id)))
+                self.assertEqual(career_collect(cur,partner_id),[])
+                self.assertFalse(career_pathway(learning.student_progress(buyer)["lessons"],career_collect(cur,buyer_id),"design")["qualification_verified"])
                 from career import accelerator_data
                 mine=accelerator_data(cur,buyer_id,30,30)
                 self.assertGreaterEqual(mine["projects"],1)
