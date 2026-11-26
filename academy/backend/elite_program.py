@@ -62,7 +62,7 @@ def save(token,project,evidence):
 
 RUBRIC={"brief":25,"quality":25,"evidence":20,"rights":20,"presentation":10}
 def validate_review(project,revision,scores,feedback):
-    if project not in {x[0] for x in PROJECTS} or type(revision) is not int or revision<1:
+    if not isinstance(project,str) or project not in {x[0] for x in PROJECTS} or type(revision) is not int or revision<1:
         raise ValueError("Invalid project revision")
     if not isinstance(scores,dict) or set(scores)!=set(RUBRIC) or any(type(v) is not int or not 0<=v<=RUBRIC[k] for k,v in scores.items()):
         raise ValueError("Invalid rubric scores")
