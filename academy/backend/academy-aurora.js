@@ -251,7 +251,7 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();administrationDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();socialDesign();administrationDesign();compactOverview();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -351,7 +351,7 @@ function productionDesign(){
    for(const card of all){const title=normalize(card.querySelector(":scope > summary")?.textContent||"");const match=preset!==null?(!preset||preset.split("|").some(x=>title.includes(normalize(x)))):need.every(x=>title.includes(x));card.classList.toggle("zLabFiltered",!match);if(match)found++}
    const message=found?pw()[4]+": "+found+" / "+all.length:pw()[5];if(count.textContent!==message)count.textContent=message;
  }
- function focusLabs(i,query){if(!journey)return;preset=query;input.value=query?pw()[i]:"";apply();filters.scrollIntoView({block:"start",behavior:"auto"});input.focus({preventScroll:true})}
+ function focusLabs(i,query){if(!journey)return;expandOverviewHub('.zProductionHub');revealCreatorLabs();preset=query;input.value=query?pw()[i]:"";apply();filters.scrollIntoView({block:"start",behavior:"auto"});input.focus({preventScroll:true})}
  for(const [i,g,q] of labQueries){
    if(dashboard){const b=tileNode("button",i,g);b.type="button";b.onclick=()=>focusLabs(i,q)}
    else{const a=tileNode("a",i,g),p="/dashboard?lab="+encodeURIComponent(i);a.href=url(p);links.push([a,p])}
@@ -359,7 +359,7 @@ function productionDesign(){
  const note=el("div","zProductionNote");note.append(tr(el("p"),9),tr(el("p"),8));box.append(note);
  if(dashboard){
    box.id="zProductionHub";journey.before(box);box.append(filters,count);
-   input.addEventListener("input",()=>{preset=null;apply()});clear.onclick=()=>{preset=null;input.value="";apply();input.focus()};
+   input.addEventListener("input",()=>{revealCreatorLabs();preset=null;apply()});clear.onclick=()=>{revealCreatorLabs();preset=null;input.value="";apply();input.focus()};
    const refresh=()=>{
      apply();
      if(!requested&&cards().length&&!journey.hidden&&!$("panel")?.hidden){requested=true;const v=new URLSearchParams(location.search).get("lab"),spec=labQueries.find(x=>String(x[0])===v);if(spec)focusLabs(spec[0],spec[2])}
@@ -392,7 +392,7 @@ function socialDesign(){
  const labs=[[3,"share-2","Social Share Studio"],[4,"file","Creator Portfolio Builder"],[5,"layout-dashboard","Creator Service Page"],[6,"chart","Client Acquisition Lab"]];
  const findLab=prefix=>Array.from(journey.querySelectorAll(":scope > details")).find(n=>!n.hidden&&normalize(n.querySelector(":scope > summary")?.textContent||"").startsWith(normalize(prefix)));
  for(const [i,g,prefix] of labs){const b=tile("button",i,g);syncers.push(()=>{b.disabled=!findLab(prefix)});b.onclick=()=>{
-   const target=findLab(prefix);if(!target)return;
+   const target=findLab(prefix);if(!target)return;expandOverviewHub(".zProductionHub");revealCreatorLabs();
    const field=document.querySelector("#zProductionHub .zLabSearch input");
    if(field){field.value=prefix;field.dispatchEvent(new Event("input",{bubbles:true}))}
    target.open=true;target.scrollIntoView({block:"start",behavior:"auto"});target.querySelector(":scope > summary")?.focus({preventScroll:true})
@@ -497,7 +497,37 @@ function administrationDesign(){
  obs.observe(extra,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["hidden"]});
  adminRefresh=schedule;schedule();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();motion()}
+const compactWords={en:["Open section","Collapse section","Show creator labs","Hide creator labs"],ru:["Открыть раздел","Свернуть раздел","Показать лаборатории","Скрыть лаборатории"],uk:["Відкрити розділ","Згорнути розділ","Показати лабораторії","Приховати лабораторії"],pl:["Otwórz sekcję","Zwiń sekcję","Pokaż laboratoria","Ukryj laboratoria"]};
+let compactRefresh=null;
+const compactHubs=new Map();
+let labsToggle=null;
+function expandOverviewHub(selector){compactHubs.get(selector)?.(true)}
+function revealCreatorLabs(){labsToggle?.(true)}
+function compactOverview(){
+ const overview=$("workspaceOverview"),journey=$("creatorJourney");if(!overview||!journey)return;
+ const words=()=>compactWords[locale()]||compactWords.en,relabellers=[];
+ for(const [selector,name] of [[".zProductionHub","production"],[".zBusinessHub","business"],[".zSocialHub","social"],["#zAcademyTools","tools"]]){
+   const hub=overview.querySelector(":scope > "+selector),heading=hub?.querySelector(":scope > h2");if(!hub||!heading)continue;
+   // Native button toggles only generated presentation; no original access flags or form nodes change.
+   const b=el("button","zCompactToggle"),text=el("span");b.type="button";b.append(text,icon("chevron-down"));
+   heading.classList.add("zCompactHeading");heading.append(b);hub.classList.add("zCompactHub");
+   const target=Array.from(hub.children).filter(n=>n!==heading);
+   const body=el("div","zCompactBody");body.id="zCompact-"+name;hub.append(body);body.append(...target);
+   b.setAttribute("aria-controls",body.id);
+   let open=false;
+   const sync=()=>{b.setAttribute("aria-expanded",String(open));body.hidden=!open;text.textContent=words()[open?1:0]};
+   const set=value=>{open=value;sync()};compactHubs.set(selector,set);b.onclick=()=>set(!open);relabellers.push(sync);sync();
+ }
+ const prod=overview.querySelector(".zProductionHub .zCompactBody");
+ if(prod){
+   const b=el("button","zAction zLabVisibility");b.type="button";b.setAttribute("aria-controls","creatorJourney");prod.append(b);let open=false;
+   const sync=()=>{journey.classList.toggle("zLabsCollapsed",!open);b.setAttribute("aria-expanded",String(open));b.textContent=words()[open?3:2]};
+   labsToggle=v=>{open=v;sync()};b.onclick=()=>labsToggle(!open);relabellers.push(sync);sync();
+ }
+ compactRefresh=()=>{for(const fn of relabellers)fn()};
+ if(new URLSearchParams(location.search).has("lab"))expandOverviewHub(".zProductionHub");
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
