@@ -3,6 +3,18 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_teacher_snapshot(self):
+        from teacher_profile import snapshot
+        p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}
+        j={"items":[{"day":1,"latest":85,"attempts":2,"due":False,"reflection":"private"},{"day":2,"latest":60,"attempts":1,"due":True,"reflection":"private"},{"day":3,"latest":20,"attempts":1,"due":True}]}
+        result=snapshot(p,j)
+        self.assertEqual(result["completed"],1)
+        self.assertEqual(result["available"],2)
+        self.assertEqual(result["next_day"],2)
+        self.assertEqual([x["day"] for x in result["review"]],[2,1])
+        self.assertEqual(set(result["review"][0]),{"day","latest","attempts","due"})
+        self.assertNotIn("email",result)
+        self.assertEqual(snapshot({"lessons":[]},{"items":[]})["next_day"],None)
     def test_project_schedule(self):
         from project_schedule import due_date,summarize
         from datetime import date
