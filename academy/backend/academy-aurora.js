@@ -278,6 +278,7 @@ function dashboard(){
    enhance("career-center",()=>{careerCenterDesign();});
    enhance("business-studio",()=>{businessStudioDesign();});
    enhance("workforce",()=>{workforceDesign();});
+   enhance("factory",()=>{factoryDesign();});
    enhance("command-dock",()=>{commandDockDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
@@ -824,10 +825,10 @@ function businessStudioDesign(){
  businessStudioRefresh=schedule;sync();
 }
 const commandDockWords={
- en:["Creator Command Center","Choose a workspace","Personal Teacher","Project Mentor","Career Center","Business Studio","AI Production","Portfolio","Find jobs","AI Support","Close workspace","Open full Command Center","Only one workspace is expanded at a time. Access remains account-dependent.","AI Agent Workforce"],
- ru:["Creator Command Center","Выбери рабочий раздел","Персональный преподаватель","Наставник проектов","Карьера","Бизнес-студия","AI Production","Портфолио","Найти заказы","AI-поддержка","Закрыть раздел","Полный Command Center","Одновременно открыт один рабочий раздел. Доступ определяется аккаунтом.","AI Agent Workforce"],
- uk:["Creator Command Center","Обери робочий розділ","Персональний викладач","Наставник проєктів","Кар'єра","Бізнес-студія","AI Production","Портфоліо","Знайти замовлення","ШІ-підтримка","Закрити розділ","Повний Command Center","Одночасно відкрито один робочий розділ. Доступ визначає акаунт.","AI Agent Workforce"],
- pl:["Creator Command Center","Wybierz obszar pracy","Osobisty nauczyciel","Mentor projektów","Kariera","Studio biznesowe","AI Production","Portfolio","Znajdź zlecenia","Wsparcie AI","Zamknij obszar","Pełne Command Center","Jednocześnie otwarty jest jeden obszar. Dostęp zależy od konta.","AI Agent Workforce"]};
+ en:["Creator Command Center","Choose a workspace","Personal Teacher","Project Mentor","Career Center","Business Studio","AI Production","Portfolio","Find jobs","AI Support","Close workspace","Open full Command Center","Only one workspace is expanded at a time. Access remains account-dependent.","AI Agent Workforce","AI Agent Factory"],
+ ru:["Creator Command Center","Выбери рабочий раздел","Персональный преподаватель","Наставник проектов","Карьера","Бизнес-студия","AI Production","Портфолио","Найти заказы","AI-поддержка","Закрыть раздел","Полный Command Center","Одновременно открыт один рабочий раздел. Доступ определяется аккаунтом.","AI Agent Workforce","AI Agent Factory"],
+ uk:["Creator Command Center","Обери робочий розділ","Персональний викладач","Наставник проєктів","Кар'єра","Бізнес-студія","AI Production","Портфоліо","Знайти замовлення","ШІ-підтримка","Закрити розділ","Повний Command Center","Одночасно відкрито один робочий розділ. Доступ визначає акаунт.","AI Agent Workforce","AI Agent Factory"],
+ pl:["Creator Command Center","Wybierz obszar pracy","Osobisty nauczyciel","Mentor projektów","Kariera","Studio biznesowe","AI Production","Portfolio","Znajdź zlecenia","Wsparcie AI","Zamknij obszar","Pełne Command Center","Jednocześnie otwarty jest jeden obszar. Dostęp zależy od konta.","AI Agent Workforce","AI Agent Factory"]};
 let commandDockRefresh=null;
 function commandDockDesign(){
  const overview=$("workspaceOverview"),panel=$("panel"),nav=$("academyNav");if(!overview||!panel||!nav)return;
@@ -836,7 +837,7 @@ function commandDockDesign(){
  hub.id="zCommandDock";body.id="zCommandBody";close.type="button";close.hidden=true;body.hidden=true;hub.append(head,intro,grid,close,body,note);
  const onboarding=$("zOnboarding");if(onboarding)onboarding.after(hub);else overview.prepend(hub);
  const permitted=id=>{const n=$(id);return !panel.hidden&&!!n&&!n.disabled&&!n.closest("[hidden]")};
- const panels=[["zTeacherCenter",2,"graduation",null],["zProjectMentor",3,"clipboard-check",null],["zCareerCenter",4,"briefcase","careerButton"],["zBusinessStudio",5,"chart","businessButton"],["zWorkforce",13,"network",null]];
+ const panels=[["zTeacherCenter",2,"graduation",null],["zProjectMentor",3,"clipboard-check",null],["zCareerCenter",4,"briefcase","careerButton"],["zBusinessStudio",5,"chart","businessButton"],["zWorkforce",13,"network",null],["zFactory",14,"workflow",null]];
  const entries=[];let selected=null;
  function tile(i,glyph){
    const b=el("button","zCommandTile"),art=el("span","zCommandIcon"),label=el("span");b.type="button";art.append(icon(glyph));b.append(art,label);grid.append(b);return {b,label,i};
@@ -916,7 +917,47 @@ function workforceDesign(){
  new MutationObserver(()=>{if(panel.hidden){brief.value="";clear()}else sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  workforceRefresh=schedule;sync();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();motion()}
+const factoryWords={
+en:["AI Agent Factory","Build an ordered team for an available lesson.","Lesson","Day","Add role","Remove","Move up","Move down","Teacher","Developer","Designer","Producer","Marketing","Reviewer","Optional project brief (local only)","Prepare team","Export JSON","Download local AI engine","No available lessons","Select at least one role","Preparing…","Could not prepare team","Ready to export","Open the JSON in the desktop Local AI Engine with Ollama and an installed model. No execution on the Academy server. Review all outputs.","Stage","No automatic charges or external actions."],
+ru:["AI Agent Factory","Собери последовательную команду для доступного урока.","Урок","День","Добавить роль","Удалить","Выше","Ниже","Преподаватель","Разработчик","Дизайнер","Продюсер","Маркетолог","Ревьюер","Дополнительный бриф (только локально)","Подготовить команду","Экспорт JSON","Скачать Local AI Engine","Нет доступных уроков","Выбери хотя бы одну роль","Подготовка…","Не удалось подготовить команду","Готово к экспорту","Открой JSON в desktop Local AI Engine с Ollama и установленной моделью. На сервере академии запуск не выполняется. Проверяй результаты.","Этап","Без автоматических списаний и внешних действий."],
+uk:["AI Agent Factory","Створи послідовну команду для доступного уроку.","Урок","День","Додати роль","Видалити","Вище","Нижче","Викладач","Розробник","Дизайнер","Продюсер","Маркетолог","Рев’юер","Додатковий бриф (лише локально)","Підготувати команду","Експорт JSON","Завантажити Local AI Engine","Немає доступних уроків","Обери хоча б одну роль","Підготовка…","Не вдалося підготувати команду","Готово до експорту","Відкрий JSON у desktop Local AI Engine з Ollama та встановленою моделлю. На сервері академії запуску немає. Перевіряй результати.","Етап","Без автоматичних списань і зовнішніх дій."],
+pl:["AI Agent Factory","Zbuduj sekwencyjny zespół dla dostępnej lekcji.","Lekcja","Dzień","Dodaj rolę","Usuń","Wyżej","Niżej","Nauczyciel","Programista","Projektant","Producent","Marketing","Recenzent","Dodatkowy brief (tylko lokalnie)","Przygotuj zespół","Eksport JSON","Pobierz Local AI Engine","Brak dostępnych lekcji","Wybierz co najmniej jedną rolę","Przygotowanie…","Nie udało się przygotować zespołu","Gotowe do eksportu","Otwórz JSON w desktop Local AI Engine z Ollama i zainstalowanym modelem. Brak uruchamiania na serwerze akademii. Sprawdź wyniki.","Etap","Bez automatycznych opłat i działań zewnętrznych."]};
+let factoryRefresh=null;
+function factoryDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),days=$("days");if(!overview||!panel||!days)return;
+ const w=()=>factoryWords[locale()]||factoryWords.en;
+ const hub=el("section","zFactory"),head=el("h2"),intro=el("p"),lesson=el("select"),role=el("select"),add=el("button","zAction"),bar=el("div","zFactoryControls"),list=el("div","zFactoryStages"),brief=el("textarea"),build=el("button","zAction primary"),save=el("button","zAction"),download=el("a"),status=el("p"),note=el("p"),result=el("div");
+ hub.id="zFactory";brief.rows=3;brief.maxLength=1600;add.type=build.type=save.type="button";save.disabled=true;status.setAttribute("role","status");download.href="/local-ai-engine.py";download.download="zer0life_local_ai.py";bar.append(role,add);hub.append(head,intro,lesson,bar,list,brief,build,save,status,result,download,note);overview.append(hub);
+ const roles=["teacher","code","design","video","marketing","project"];let team=["design","video","project"],seq=0,data=null,signature="",busy=false;
+ const allowed=n=>Array.from(days.querySelectorAll("button[data-day]")).some(b=>Number(b.dataset.day)===n&&!b.disabled);
+ function invalidate(){seq++;data=null;busy=false;save.disabled=true;result.replaceChildren();status.textContent="";build.disabled=!lesson.value||!team.length}
+ function renderRoles(){
+   const previous=role.value;role.replaceChildren();for(const r of roles.filter(r=>!team.includes(r))){const option=el("option","",w()[8+roles.indexOf(r)]);option.value=r;role.append(option)}if(Array.from(role.options).some(o=>o.value===previous))role.value=previous;add.disabled=team.length===roles.length;
+   list.replaceChildren();
+   for(const [i,r] of team.entries()){const row=el("div","zFactoryStage"),text=el("strong","",(i+1)+". "+w()[8+roles.indexOf(r)]);row.append(text);
+     for(const [word,action,disabled] of [[6,()=>{[team[i-1],team[i]]=[team[i],team[i-1]]},i===0],[7,()=>{[team[i+1],team[i]]=[team[i],team[i+1]]},i===team.length-1],[5,()=>team.splice(i,1),false]]){const b=el("button","zAction",w()[word]);b.type="button";b.disabled=disabled;b.onclick=()=>{action();invalidate();renderRoles()};row.append(b)}list.append(row)}
+ }
+ function sync(){
+   const vals=Array.from(days.querySelectorAll("button[data-day]")).filter(b=>!b.disabled).map(b=>b.dataset.day),key=JSON.stringify([locale(),vals]);
+   if(key!==signature){signature=key;const old=lesson.value;lesson.replaceChildren();for(const n of vals){const o=el("option","",w()[3]+" "+n);o.value=n;lesson.append(o)}if(vals.includes(old))lesson.value=old;invalidate();if(!vals.length)status.textContent=w()[18]}
+   head.textContent=w()[0];intro.textContent=w()[1];lesson.setAttribute("aria-label",w()[2]);role.setAttribute("aria-label",w()[4]);add.textContent=w()[4];brief.placeholder=w()[14];brief.setAttribute("aria-label",w()[14]);build.textContent=w()[15];save.textContent=w()[16];download.textContent=w()[17];note.textContent=w()[23]+" "+w()[25];renderRoles();
+ }
+ add.onclick=()=>{if(roles.includes(role.value)&&!team.includes(role.value)){team.push(role.value);invalidate();renderRoles()}};
+ lesson.onchange=invalidate;
+ build.onclick=async()=>{
+   if(busy||panel.hidden||!allowed(Number(lesson.value))||!team.length||typeof api!=="function")return;
+   const id=++seq,n=Number(lesson.value);busy=true;build.disabled=true;data=null;save.disabled=true;result.replaceChildren();status.textContent=w()[20];
+   try{const d=await api("/agents/team",{day:n,roles:team.slice(),lang:locale()});if(id!==seq||panel.hidden||!allowed(n))return;if(d.schema!=="zer0life-agent-team-v1"||d.external_request!==false||d.automatic_execution!==false)throw Error("Invalid team");data=d;result.append(el("p","",d.deliverable));for(const s of d.stages){const card=el("div","zFactoryStage");card.append(el("strong","",w()[24]+" "+s.stage+" · "+w()[8+roles.indexOf(s.role)]),el("p","",s.steps.join(" · ")));result.append(card)}save.disabled=false;status.textContent=w()[22]}
+   catch(e){if(id===seq&&!panel.hidden)status.textContent=w()[21]}
+   finally{if(id===seq){busy=false;build.disabled=false}}
+ };
+ save.onclick=()=>{if(!data||panel.hidden||!allowed(data.day))return;const blob=new Blob([JSON.stringify({...data,custom_brief:brief.value.trim()},null,2)],{type:"application/json"}),address=URL.createObjectURL(blob),a=el("a");a.href=address;a.download="zer0life-agent-team.json";a.click();setTimeout(()=>URL.revokeObjectURL(address),1500)};
+ let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
+ new MutationObserver(schedule).observe(days,{subtree:true,childList:true,attributes:true,attributeFilter:["disabled","data-state"]});
+ new MutationObserver(()=>{if(panel.hidden){brief.value="";team=["design","video","project"];invalidate()}else sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ factoryRefresh=schedule;sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();factoryRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();

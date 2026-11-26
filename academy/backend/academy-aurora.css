@@ -491,3 +491,12 @@ body.zAurora .zWorkforce [hidden]{display:none!important}
 body.zAurora .zWorkforceResult{overflow-wrap:anywhere;line-height:1.5}
 body.zAurora .zWorkforce>a{display:inline-flex;min-height:44px;align-items:center;margin:0 10px;color:#d2b9ff}
 @media(max-width:620px){body.zAurora .zWorkforceRoles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+body.zAurora .zFactory{min-width:0;padding:16px;border:1px solid #746096;border-radius:18px;background:linear-gradient(145deg,#27213f,#171b2c)}
+body.zAurora .zFactoryControls,body.zAurora .zFactoryStage{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+body.zAurora .zFactoryStage{padding:10px;background:#211c35;border:1px solid #5a4877;border-radius:10px;overflow-wrap:anywhere}
+body.zAurora .zFactoryStage strong{flex:1 1 100%}
+body.zAurora .zFactoryStage p{margin:4px 0;line-height:1.5}
+body.zAurora .zFactory select,body.zAurora .zFactory textarea{box-sizing:border-box;width:100%;min-width:0;min-height:44px;font-size:16px;padding:10px;margin:6px 0;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px}
+body.zAurora .zFactory button,body.zAurora .zFactory>a{min-height:44px}
+body.zAurora .zFactory>a{display:inline-flex;align-items:center;margin:8px;color:#d2b9ff}

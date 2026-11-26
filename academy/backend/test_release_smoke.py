@@ -446,6 +446,16 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         self.assertIn(b"zWorkforceRoles",style)
 
+    def test_agent_factory_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'function factoryDesign()',b'"/agents/team"',b'zer0life-agent-team.json',b'enhance("factory"',b'["zFactory",14,"workflow",null]'):
+            self.assertIn(marker,script)
+        code,_,engine=self.request("/local-ai-engine.py")
+        self.assertEqual(code,200)
+        self.assertIn(b"def run_team(",engine)
+        self.assertIn(b"def validate_team(",engine)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

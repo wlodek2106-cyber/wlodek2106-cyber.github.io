@@ -97,6 +97,29 @@ class ProgressTests(unittest.TestCase):
             with self.assertRaises(PermissionError):student_playbook("session",2,"code","en")
         for day,role,lang in [(True,"code","en"),(1,"unknown","en"),(1,"code","unknown")]:
             with self.assertRaises(ValueError):student_playbook("session",day,role,lang)
+    def test_agent_factory_local_team(self):
+        from unittest.mock import patch
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from agent_workforce import team_plan
+        with patch("practice_lab.student_brief",return_value={"deliverable":"Demo"}) as brief:
+            team=team_plan("session",1,["design","video","project"],"ru")
+            brief.assert_called_once_with("session",1,"ru")
+        self.assertEqual([s["depends_on"] for s in team["stages"]],[None,1,2])
+        self.assertFalse(team["external_request"])
+        with self.assertRaises(ValueError):team_plan("session",1,["design","design"],"en")
+        spec=spec_from_file_location("factory_engine",Path(__file__).with_name("local-ai-engine.py"))
+        engine=module_from_spec(spec);spec.loader.exec_module(engine)
+        prompts=[]
+        def fake(model,role,task):
+            prompts.append(task);return "draft "+str(len(prompts))
+        report=engine.run_team("local",team,generate=fake,available=lambda:["local"])
+        self.assertEqual(len(prompts),3)
+        self.assertIn("draft 1",prompts[1])
+        self.assertIn("draft 3",report)
+        with self.assertRaises(ValueError):engine.run_team("cloud",team,generate=fake,available=lambda:["local"])
+        team["stages"][1]["depends_on"]=99
+        with self.assertRaises(ValueError):engine.validate_team(team)
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}

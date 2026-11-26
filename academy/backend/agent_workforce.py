@@ -142,3 +142,15 @@ def student_playbook(token,day,role,lang):
         raise ValueError("Invalid lesson, agent or language")
     from practice_lab import student_brief
     return playbook(day,role,lang,student_brief(token,day,lang))
+
+def team_plan(token,day,roles,lang):
+    """Export a bounded sequential team, with no model invocation."""
+    if type(day) is not int or not 1<=day<=45 or not isinstance(lang,str) or lang not in STEPS:
+        raise ValueError("Invalid lesson or language")
+    if not isinstance(roles,list) or not 1<=len(roles)<=6 or any(not isinstance(r,str) or r not in ROLES for r in roles) or len(set(roles))!=len(roles):
+        raise ValueError("Select one to six distinct roles")
+    from practice_lab import student_brief
+    brief=student_brief(token,day,lang)
+    return {"schema":"zer0life-agent-team-v1","day":day,"language":lang,"deliverable":brief["deliverable"],
+            "stages":[{"role":r,"steps":STEPS[lang][ROLES.index(r)],"depends_on":i if i else None,"stage":i+1} for i,r in enumerate(roles)],
+            "automatic_execution":False,"external_request":False,"human_review_required":True}
