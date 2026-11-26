@@ -191,7 +191,67 @@ function profileDesign(){
  obs.observe(panel,{attributes:true,attributeFilter:["hidden"]});obs.observe(extra,{attributes:true,attributeFilter:["hidden"],childList:true});
  profileRefresh=sync;sync();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+const learningWords={
+ en:["Official exam","Answered","Next unanswered question","All questions answered. Review your choices before submitting.","Lesson steps","Practice Lab"],
+ ru:["Официальный экзамен","Отвечено","Следующий вопрос без ответа","Все вопросы заполнены. Проверь ответы перед отправкой.","Этапы урока","Практическая лаборатория"],
+ uk:["Офіційний іспит","Відповіді","Наступне запитання без відповіді","На всі запитання є відповіді. Перевір їх перед надсиланням.","Етапи уроку","Практична лабораторія"],
+ pl:["Oficjalny egzamin","Odpowiedziano","Następne pytanie bez odpowiedzi","Wszystkie pytania mają odpowiedzi. Sprawdź je przed wysłaniem.","Etapy lekcji","Laboratorium praktyczne"]};
+let learningRefresh=null;
+function learningDesign(){
+ const lesson=$("lesson"),extra=$("extra"),panel=$("panel");if(!lesson||!extra||!panel)return;
+ const words=()=>learningWords[locale()]||learningWords.en,examViews=new WeakMap(),guidedViews=new WeakMap();
+ let lastRoot=null,lastExtraKind="",lastExtraRoot=null,scheduled=false;
+ const setText=(n,value)=>{if(n.textContent!==value)n.textContent=value};
+ function exam(form){
+   const fields=Array.from(form.querySelectorAll(":scope > fieldset")).filter(f=>f.querySelector('input[type="radio"]'));if(!fields.length)return;
+   let v=examViews.get(form);
+   if(!v){
+     form.classList.add("zExamForm");
+     const box=el("div","zExamHeader"),title=el("h2"),copy=el("span"),status=el("p"),bar=el("progress","zExamMeter"),jump=el("button","zAction");
+     jump.type="button";title.append(icon("checklist"),copy);status.setAttribute("aria-live","polite");box.append(title,status,bar,jump);form.prepend(box);
+     v={copy,status,bar,jump};examViews.set(form,v);
+     jump.addEventListener("click",()=>{const target=fields.find(f=>!f.querySelector('input[type="radio"]:checked'));if(!target)return;target.scrollIntoView({block:"start",behavior:"auto"});target.querySelector('input[type="radio"]')?.focus({preventScroll:true})});
+     form.addEventListener("change",()=>exam(form));form.addEventListener("reset",()=>queueMicrotask(()=>exam(form)));
+   }
+   let count=0;for(const field of fields){const checked=!!field.querySelector('input[type="radio"]:checked');field.classList.toggle("zAnswered",checked);if(checked)count++}
+   setText(v.copy,words()[0]);setText(v.jump,words()[2]);setText(v.status,words()[1]+": "+count+" / "+fields.length+(count===fields.length?" · "+words()[3]:""));
+   v.bar.max=fields.length;v.bar.value=count;v.bar.setAttribute("aria-label",words()[1]);v.jump.hidden=count===fields.length;
+ }
+ function guided(root){
+   const heading=root.querySelector(":scope > h2"),counter=root.querySelector(":scope > p"),parts=Array.from(root.querySelectorAll(":scope > div"));
+   if(!heading||!counter||parts.length!==2||!/^\s*[1-4]\s*\/\s*4\b/.test(counter.textContent))return;
+   root.classList.add("zLearningGuide");counter.classList.add("zLearningStepLabel");parts[0].classList.add("zLearningStep");parts[1].classList.add("zLearningNav");
+   let bar=guidedViews.get(root);
+   if(!bar){bar=el("progress","zLearningMeter");bar.max=4;counter.after(bar);guidedViews.set(root,bar)}
+   bar.value=Number(counter.textContent.trim()[0]);bar.setAttribute("aria-label",words()[4]);
+   const teacher=root.querySelector(":scope > article");
+   if(teacher&&!teacher.classList.contains("zTeacherCard")){teacher.classList.add("zTeacherCard");teacher.querySelector("h3")?.prepend(icon("graduation"))}
+ }
+ function sync(){
+   scheduled=false;
+   if(panel.hidden){lastRoot=null;lastExtraRoot=null;lastExtraKind="";extra.classList.remove("zPracticePanel","zTutorPanel");return}
+   if(!lesson.hidden&&!lesson.closest("[hidden]")){
+     const root=lesson.firstElementChild;
+     if(root?.tagName==="FORM")exam(root);else if(root?.tagName==="SECTION")guided(root);
+     if(root&&root!==lastRoot){lastRoot=root;lesson.scrollIntoView({block:"start",behavior:"auto"})}
+   }else lastRoot=null;
+   const h=extra.querySelector(":scope > h2"),heading=h?.textContent.trim()||"";
+   const practice=Object.values(learningWords).some(w=>heading.startsWith(w[5]+" ·"))&&!!extra.querySelector('input[type="number"]')&&!!extra.querySelector(":scope > textarea");
+   const role=Array.from(extra.querySelectorAll(":scope > select")).find(n=>["teacher","coach","code","exam","project"].every(v=>Array.from(n.options).some(o=>o.value===v)));
+   const tutor=!!role&&!!extra.querySelector(":scope > textarea")&&!!extra.querySelector(":scope > pre");
+   extra.classList.toggle("zPracticePanel",!extra.hidden&&practice);extra.classList.toggle("zTutorPanel",!extra.hidden&&tutor);
+   const kind=extra.hidden?"":practice?"practice":tutor?"tutor":"",first=extra.firstElementChild;
+   if(kind&&(kind!==lastExtraKind||first!==lastExtraRoot))extra.scrollIntoView({block:"start",behavior:"auto"});
+   lastExtraKind=kind;lastExtraRoot=first;
+ }
+ const schedule=()=>{if(!scheduled){scheduled=true;queueMicrotask(sync)}};
+ const observer=new MutationObserver(schedule);
+ observer.observe(lesson,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["hidden"]});
+ observer.observe(extra,{childList:true,attributes:true,attributeFilter:["hidden"]});
+ observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ learningRefresh=schedule;schedule();
+}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -225,7 +285,7 @@ function moduleDesign(){
  if(tag){tag.classList.add("zModuleKicker");copy.append(tag)}else copy.append(kicker);
  copy.append(heading);if(intro)copy.append(intro);
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();motion()}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
