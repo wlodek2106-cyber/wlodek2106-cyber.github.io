@@ -94,6 +94,21 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_support_learning_diagnostics(self):
+        from support_diagnostics import learning_state
+        from datetime import datetime,timezone,timedelta
+        now=datetime(2026,11,26,tzinfo=timezone.utc)
+        r=learning_state(None,None,{},False,now)
+        self.assertEqual((r["access"],r["next"],r["reason"]),("trial",1,"available"))
+        r=learning_state("starter",None,{1:now},False,now)
+        self.assertEqual((r["plan"],r["reason"]),(None,"payment_required"))
+        r=learning_state("pro",now-timedelta(days=2),{1:now},False,now)
+        self.assertEqual(r["reason"],"scheduled")
+        self.assertEqual(r["earliest"],(now+timedelta(days=1)).isoformat())
+        r=learning_state("vip",now-timedelta(days=3),{1:now-timedelta(days=2)},False,now)
+        self.assertEqual((r["total"],r["next"],r["reason"]),(45,2,"available"))
+        self.assertEqual(learning_state(None,None,{},True,now)["unlocked"],45)
+        self.assertEqual(learning_state("starter",now,{d:now for d in range(1,31)},False,now)["reason"],"finished")
     def test_support_article_validation(self):
         from support_center import feedback,ARTICLES
         from unittest.mock import Mock

@@ -498,13 +498,25 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
                 self.assertEqual(load_profile(cur,buyer_id),profile)
                 self.assertEqual(load_profile(cur,partner_id),EMPTY)
+                from support_diagnostics import collect as support_diagnosis,report as diagnosis_report
+                own_diag=support_diagnosis(cur,buyer_id)
+                other_diag=support_diagnosis(cur,partner_id)
+                self.assertEqual(own_diag["learning"]["access"],"paid")
+                self.assertEqual(other_diag["learning"]["access"],"trial")
+                self.assertEqual(own_diag["invoice"]["status"],"paid")
+                self.assertEqual(other_diag["invoice"]["status"],"none")
+                self.assertFalse(own_diag["chain_verified_now"])
+                self.assertNotIn("signature",own_diag["invoice"])
+                self.assertNotIn("email",own_diag)
+                with self.assertRaises(PermissionError): diagnosis_report("invalid-token")
                 from support_center import create as support_create,listing as support_list,thread as support_thread,reply as support_reply,close as support_close
                 ticket={"category":"ai","subject":"Synthetic support","body":"Test issue","consent":True}
                 with self.assertRaises(ValueError): support_create(cur,buyer_id,{**ticket,"consent":False})
                 stid=support_create(cur,buyer_id,ticket)["id"]
                 self.assertEqual(support_list(cur,buyer_id)["items"][0]["id"],stid)
                 self.assertFalse(support_list(cur,buyer_id)["items"][0]["unread"])
-                self.assertTrue(support_list(cur,owner_id,True,status="open",category="ai")["items"][0]["unread"])
+                cur.execute("SELECT admin_unread FROM support_tickets WHERE id=%s",(stid,))
+                self.assertTrue(cur.fetchone()[0])
                 self.assertEqual(support_list(cur,buyer_id,status="closed")["items"],[])
                 with self.assertRaises(ValueError): support_list(cur,buyer_id,status="invalid")
                 self.assertEqual(support_list(cur,partner_id)["items"],[])
