@@ -107,6 +107,20 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(agency.detail(cur,buyer_id,aid)["finance"]["rewards"][0]["agreed_cents"],2000)
                 with self.assertRaises(PermissionError): agency.detail(cur,partner_id,aid)
                 self.assertIsNone(agency.detail(cur,buyer_id,aid)["tasks"][0]["assignee"])
+                from agency_workflow import create as workflow_create,assign as workflow_assign
+                agency.join(cur,partner_id,{"code":agency.invite(cur,buyer_id,aid)["code"],"alias":"Partner","consent":True})
+                args={"id":aid,"project":pid,"template":"design","assignee":partner_id}
+                with self.assertRaises(PermissionError): workflow_create(cur,partner_id,args)
+                self.assertEqual(workflow_create(cur,buyer_id,args)["created"],5)
+                with self.assertRaises(ValueError): workflow_create(cur,buyer_id,args)
+                flow=sorted([x for x in agency.detail(cur,buyer_id,aid)["tasks"] if x["workflow"]=="design"],key=lambda x:x["step"])
+                with self.assertRaises(ValueError): agency.status(cur,partner_id,{"id":aid,"task":flow[1]["id"],"status":"done"})
+                for x in flow[:-1]: agency.status(cur,partner_id,{"id":aid,"task":x["id"],"status":"done"})
+                workflow_assign(cur,buyer_id,{"id":aid,"task":flow[-1]["id"],"assignee":partner_id})
+                with self.assertRaises(PermissionError): agency.status(cur,partner_id,{"id":aid,"task":flow[-1]["id"],"status":"done"})
+                agency.status(cur,buyer_id,{"id":aid,"task":flow[-1]["id"],"status":"done"})
+                with self.assertRaises(ValueError): agency.status(cur,buyer_id,{"id":aid,"task":flow[0]["id"],"status":"todo"})
+                agency.remove(cur,buyer_id,{"id":aid,"member":partner_id})
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
                 self.assertTrue(reviews.remove(buyer)["removed"])
                 from marketplace import save as market_save,mine as market_mine,listing as market_list,decide as market_decide,withdraw as market_withdraw,public_detail as market_detail

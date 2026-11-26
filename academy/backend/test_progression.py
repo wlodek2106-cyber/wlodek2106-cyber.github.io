@@ -1080,6 +1080,16 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_agency_workflow_templates(self):
+        from agency_workflow import plan,TEMPLATES
+        self.assertEqual(len(TEMPLATES),5)
+        for key in TEMPLATES:
+            rows=plan(key)
+            self.assertEqual([x["step"] for x in rows],list(range(1,len(rows)+1)))
+            self.assertTrue(rows[-1]["review"])
+            self.assertEqual(sum(x["review"] for x in rows),1)
+        for invalid in (None,[], "unknown"):
+            with self.assertRaises(ValueError): plan(invalid)
     def test_creator_business_action_plan(self):
         from creator_analytics import action_plan
         row={"id":1,"title":"test","flags":["overdue"],"days_remaining":-2,"outstanding_cents":100,"priority":0,"contact":"private"}

@@ -35,8 +35,8 @@ def detail(cur,sid,aid):
     owner,name=lock(cur,sid,aid)
     cur.execute("SELECT student_id,alias FROM creator_agency_members WHERE agency_id=%s ORDER BY student_id",(aid,))
     members=[{"id":i,"alias":a,"self":i==sid} for i,a in cur.fetchall()]
-    cur.execute("SELECT id,title,assignee_id,status,project_id,due_date FROM creator_agency_tasks WHERE agency_id=%s ORDER BY id DESC",(aid,))
-    tasks=[{"id":i,"title":t,"assignee":a,"status":s,"project":pid,"due":d.isoformat() if d else None} for i,t,a,s,pid,d in cur.fetchall()]
+    cur.execute("SELECT id,title,assignee_id,status,project_id,due_date,workflow_key,workflow_step,depends_on FROM creator_agency_tasks WHERE agency_id=%s ORDER BY id DESC",(aid,))
+    tasks=[{"id":i,"title":t,"assignee":a,"status":s,"project":pid,"due":d.isoformat() if d else None,"workflow":wk,"step":step,"depends_on":dep} for i,t,a,s,pid,d,wk,step,dep in cur.fetchall()]
     from agency_finance import summary
     return {"id":aid,"name":name,"owner":owner,"members":members,"tasks":tasks,"finance":summary(cur,sid,aid,owner)}
 
@@ -105,9 +105,21 @@ def task(cur,sid,b):
 def status(cur,sid,b):
     aid=ident(b["id"]);owner,_=lock(cur,sid,aid);tid=ident(b["task"]);state=b["status"]
     if state not in ("todo","doing","done"): raise ValueError("Invalid status")
-    cur.execute("SELECT assignee_id FROM creator_agency_tasks WHERE agency_id=%s AND id=%s",(aid,tid))
+    cur.execute("SELECT assignee_id,status,workflow_key,workflow_step,depends_on FROM creator_agency_tasks WHERE agency_id=%s AND id=%s",(aid,tid))
     row=cur.fetchone()
     if not row or (not owner and row[0]!=sid): raise PermissionError()
+    if state==row[1]: return {"status":state}
+    if row[2]:
+        from agency_workflow import plan
+        if plan(row[2])[row[3]-1]["review"] and state=="done" and not owner:
+            raise PermissionError("Owner approval required")
+        if state in ("doing","done") and row[4] is not None:
+            cur.execute("SELECT status FROM creator_agency_tasks WHERE id=%s AND agency_id=%s",(row[4],aid))
+            prev=cur.fetchone()
+            if not prev or prev[0]!="done": raise ValueError("Previous step incomplete")
+        if row[1]=="done" and state!="done":
+            cur.execute("SELECT 1 FROM creator_agency_tasks WHERE agency_id=%s AND depends_on=%s AND status!='todo'",(aid,tid))
+            if cur.fetchone(): raise ValueError("Reset later steps first")
     cur.execute("UPDATE creator_agency_tasks SET status=%s WHERE agency_id=%s AND id=%s",(state,aid,tid))
     return {"status":state}
 
@@ -125,6 +137,9 @@ def dispatch(token,action,b):
         if action=="remove": return remove(cur,sid,b)
         if action=="task": return task(cur,sid,b)
         if action=="status": return status(cur,sid,b)
+        if action in ("workflow","assign"):
+            from agency_workflow import create as workflow_create,assign
+            return (workflow_create if action=="workflow" else assign)(cur,sid,b)
         if action in ("project","reward"):
             from agency_finance import project,reward
             return (project if action=="project" else reward)(cur,sid,b)

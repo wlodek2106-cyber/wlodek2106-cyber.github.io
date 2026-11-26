@@ -541,3 +541,8 @@ CREATE TABLE IF NOT EXISTS creator_agency_rewards (
 );
 ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS project_id bigint REFERENCES creator_agency_projects(id) ON DELETE SET NULL;
 ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS due_date date;
+
+ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS workflow_key text;
+ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS workflow_step integer;
+ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS depends_on bigint REFERENCES creator_agency_tasks(id) ON DELETE SET NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS creator_agency_workflow_step_idx ON creator_agency_tasks(agency_id,project_id,workflow_key,workflow_step) WHERE workflow_key IS NOT NULL;
