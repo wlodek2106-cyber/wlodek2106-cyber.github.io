@@ -130,6 +130,13 @@ class LaunchIntegration(unittest.TestCase):
                 for x in flow[:-1]: agency.status(cur,partner_id,{"id":aid,"task":x["id"],"status":"done"})
                 workflow_assign(cur,buyer_id,{"id":aid,"task":flow[-1]["id"],"assignee":partner_id})
                 with self.assertRaises(PermissionError): agency.status(cur,partner_id,{"id":aid,"task":flow[-1]["id"],"status":"done"})
+                from command_center import agency_snapshot
+                own_snapshot=agency_snapshot(cur,buyer_id)
+                member_snapshot=agency_snapshot(cur,partner_id)
+                self.assertTrue(any(x["id"]==aid and x["owner"] for x in own_snapshot["agencies"]))
+                self.assertTrue(any(x["id"]==aid and not x["owner"] for x in member_snapshot["agencies"]))
+                self.assertTrue(any(x["id"]==flow[-1]["id"] for x in member_snapshot["tasks"]))
+                self.assertFalse(any(x["id"]==aid for x in agency_snapshot(cur,owner_id)["agencies"]))
                 from agency_quality import save as quality_save,get as quality_get,FIELDS
                 review={"id":aid,"task":flow[-1]["id"]}
                 with self.assertRaises(ValueError): agency.status(cur,buyer_id,{**review,"status":"done"})

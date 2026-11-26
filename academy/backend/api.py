@@ -241,6 +241,9 @@ def dispatch(method,path,body,token):
     if path in tuple("/agency/"+x for x in ("list","create","detail","invite","join","remove","task","status","project","reward","workflow","assign","knowledge","knowledge-save","quality","quality-save")) and method=="POST":
         from agency import dispatch as agency_dispatch
         return 200,agency_dispatch(token,path.rsplit("/",1)[1],body)
+    if path=="/creator/command" and method=="POST":
+        from command_center import report
+        return 200,report(token)
     if path=="/creator/analytics" and method=="POST":
         from creator_analytics import report
         return 200,report(token,body.get("days",30))

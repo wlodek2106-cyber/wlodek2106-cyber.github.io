@@ -1,5 +1,6 @@
 "use strict";
 const catalog=[
+["command","business","🧭","/command-center","AI Command Center",["Private progress, agency tasks and tool navigation.","Личный прогресс, задачи агентства и навигация по инструментам.","Особистий прогрес, завдання агенції та навігація.","Prywatne postępy, zadania agencji i narzędzia."]],
 ["ai","intelligence","🧠","/free-ai","Free AI Studio",["Local browser models and desktop setup guides.","Локальные модели и инструкции для компьютера.","Локальні моделі та інструкції для комп’ютера.","Lokalne modele i instrukcje desktopowe."]],
 ["agents","intelligence","🤖","/free-ai","AI Agents Studio",["Planner, worker and reviewer on a loaded model.","Планировщик, исполнитель и ревьюер на загруженной модели.","Планувальник, виконавець і рецензент на завантаженій моделі.","Planista, wykonawca i recenzent na załadowanym modelu."]],
 ["modelrouter","intelligence","🧠","/free-ai","Intelligent Model Router",["Choose a local model and optional fallback for your AI team.","Подбор локальной и резервной модели для AI-команды.","Добір локальної та резервної моделі для AI-команди.","Dobór lokalnego i zapasowego modelu dla zespołu AI."]],
