@@ -286,9 +286,10 @@ class ReleaseSmokeTests(unittest.TestCase):
             self.assertIn(b"/academy-aurora.js",normal)
             code,h2,classic=self.request(path+"?view=classic&lang=ru")
             self.assertEqual(code,200)
-            self.assertNotIn(b'<script src="/academy-aurora.js">',classic)
-            self.assertNotIn(b'href="/academy-aurora.css"',classic)
-            self.assertIn(b"/academy-shell.js",classic)
+            self.assertNotIn(b'/academy-aurora.js',classic)
+            self.assertNotIn(b'/academy-aurora.css',classic)
+            self.assertNotIn(b"/academy-shell.js",classic)
+            self.assertNotIn(b"/academy-shell.css",classic)
             self.assertEqual(h["content-security-policy"],h2["content-security-policy"])
             self.assertEqual(h2["cache-control"],"no-store")
             for marker in (b'id="login"',b'id="register"',b'id="passkeyLogin"',b'id="academyNav"',b'id="days"'):
@@ -296,7 +297,7 @@ class ReleaseSmokeTests(unittest.TestCase):
         code,_,classic=self.request("/support?view=classic")
         self.assertEqual(code,200)
         self.assertIn(b"/support.js",classic)
-        self.assertNotIn(b'<script src="/academy-aurora.js">',classic)
+        self.assertNotIn(b'/academy-aurora.js',classic)
 
     def test_startup_serves_page_and_blocks_sensitive_routes(self):
         self.http.startup_ready=False
@@ -335,6 +336,37 @@ class ReleaseSmokeTests(unittest.TestCase):
         for marker in (b'if(started||panel?.hidden)return',b'observer?.disconnect()',b'enhance("auth"',b'enhance("production"',b'if(panel?.hidden)'):
             self.assertIn(marker,script)
         self.assertIn(b'function enhance(name,run)',script)
+
+    def test_mobile_compression_and_versioned_ui(self):
+        import gzip
+        import hashlib
+        import re
+        code,headers,plain=self.request("/dashboard")
+        self.assertEqual(code,200)
+        code,packed_headers,packed=self.request("/dashboard",headers={"Accept-Encoding":"gzip"})
+        self.assertEqual(code,200)
+        self.assertEqual(packed_headers["content-encoding"],"gzip")
+        self.assertEqual(packed_headers["vary"],"Accept-Encoding")
+        self.assertEqual(packed_headers["cache-control"],"no-store")
+        self.assertEqual(gzip.decompress(packed),plain)
+        self.assertLess(len(packed),len(plain))
+        self.assertEqual(headers["content-security-policy"],packed_headers["content-security-policy"])
+        code,h,body=self.request("/dashboard",headers={"Accept-Encoding":"gzip;q=0, *;q=1"})
+        self.assertEqual(code,200)
+        self.assertNotIn("content-encoding",h)
+        self.assertEqual(body,plain)
+        for name in ("academy-shell.js","academy-shell.css","academy-aurora.js","academy-aurora.css"):
+            match=re.search(rb"/"+re.escape(name.encode())+rb"\\?v=([0-9a-f]{16})",plain)
+            self.assertIsNotNone(match)
+            code,_,asset=self.request(match.group(0).decode())
+            self.assertEqual(code,200)
+            self.assertEqual(match.group(1).decode(),hashlib.sha256(asset).hexdigest()[:16])
+        code,_,classic=self.request("/dashboard?view=classic")
+        self.assertEqual(code,200)
+        for name in (b"/academy-shell.js",b"/academy-shell.css",b"/academy-aurora.js",b"/academy-aurora.css"):
+            self.assertNotIn(name,classic)
+        self.assertIn(b'id="login"',classic)
+        self.assertIn(b'id="academyNav"',classic)
 
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):

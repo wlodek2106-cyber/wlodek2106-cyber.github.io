@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import json, os, re, hashlib, base64
+import json, os, re, hashlib, base64, gzip
 import time, threading
 from collections import OrderedDict
 from functools import lru_cache
@@ -38,21 +38,44 @@ def auth_retry_after(path,email):
     return 0
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
+@lru_cache(maxsize=4)
+def versioned_ui_asset(name):
+    # Deployment files are immutable; content hash prevents mixed UI revisions.
+    digest=hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()[:16]
+    return ("/"+name+"?v="+digest).encode("ascii")
+
+@lru_cache(maxsize=4)
+def compressed_page(body):
+    return gzip.compress(body,compresslevel=5,mtime=0)
+
+def accepts_gzip(value):
+    choices={}
+    for item in value.split(","):
+        name,*params=item.strip().lower().split(";")
+        quality=1.0
+        for param in params:
+            key,sep,val=param.strip().partition("=")
+            if key=="q" and sep:
+                try: quality=float(val)
+                except ValueError: quality=0.0
+        choices[name.strip()]=quality if 0<=quality<=1 else 0.0
+    return choices.get("gzip",choices.get("*",0))>0
+
 def dashboard_shell(body):
     if b'</style>' not in body or not body.rstrip().endswith(b'</html>'):
         return body
-    body=body.replace(b'</style>',b'</style><link rel="stylesheet" href="/academy-shell.css">',1)
+    body=body.replace(b'</style>',b'</style><link rel="stylesheet" href="'+versioned_ui_asset("academy-shell.css")+b'">',1)
     head,_,tail=body.rpartition(b'</html>')
-    return head+b'<script src="/academy-shell.js"></script></html>'+tail
+    return head+b'<script src="'+versioned_ui_asset("academy-shell.js")+b'"></script></html>'+tail
 
 AURORA_PAGES={"/","/dashboard","/free-ai","/creator-suite","/ai-workspace","/support","/command-center","/agency","/creator-analytics","/client-portal","/production-cost","/marketplace","/hire","/animation-studio","/music-studio","/website-builder","/automation-studio","/design-studio","/voice-studio","/local-media","/graduate-showcase"}
 
 def aurora_shell(body):
     if b'</style>' not in body or not body.rstrip().endswith(b'</html>'):
         return body
-    body=body.replace(b'</style>',b'</style><link rel="stylesheet" href="/academy-aurora.css">',1)
+    body=body.replace(b'</style>',b'</style><link rel="stylesheet" href="'+versioned_ui_asset("academy-aurora.css")+b'">',1)
     head,_,tail=body.rpartition(b'</html>')
-    return head+b'<script src="/academy-aurora.js"></script></html>'+tail
+    return head+b'<script src="'+versioned_ui_asset("academy-aurora.js")+b'"></script></html>'+tail
 
 # The public static dashboard is identical for all visitors; cache only two content variants.
 # The entire immutable HTML is the cache key, so edited scripts always get new hashes.
@@ -181,7 +204,7 @@ class Handler(BaseHTTPRequestHandler):
             body=Path(__file__).with_name("support.html" if path=="/support" else "command-center.html" if path=="/command-center" else "agency.html" if path=="/agency" else "creator-analytics.html" if path=="/creator-analytics" else "client-portal.html" if path=="/client-portal" else "production-cost.html" if path=="/production-cost" else "graduate-showcase.html" if path=="/graduate-showcase" else "veyra-lab.html" if path=="/veyra-lab" else "openmvs-lab.html" if path=="/openmvs-lab" else "openmotion-lab.html" if path=="/openmotion-lab" else "marketplace-preview.html" if path=="/marketplace-preview" else "hire.html" if path=="/hire" else "marketplace.html" if path=="/marketplace" else "ai-workspace.html" if path=="/ai-workspace" else "automation-studio.html" if path=="/automation-studio" else "website-builder.html" if path=="/website-builder" else "music-studio.html" if path=="/music-studio" else "animation-studio.html" if path=="/animation-studio" else "design-studio.html" if path=="/design-studio" else "voice-studio.html" if path=="/voice-studio" else "local-media.html" if path=="/local-media" else "creator-suite.html" if path=="/creator-suite" else "legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
             classic=parse_qs(urlsplit(self.path).query).get("view")==["classic"]
             if path in ("/","/dashboard"):
-                body=dashboard_shell(body)
+                if not classic: body=dashboard_shell(body)
                 # Static recovery link stays usable even if optional UI JavaScript fails.
                 recovery=(b'<p><a href="/dashboard">Aurora 3D / Modern interface</a></p>' if classic else
                           b'<p><a href="/dashboard?view=classic">Classic mode / Lite / Bez animacji</a></p>')
@@ -197,6 +220,10 @@ class Handler(BaseHTTPRequestHandler):
             elif path in ("/marketplace-preview","/production-cost"):
                 self.send_header("Content-Security-Policy","default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")
             self.send_header("Cache-Control","no-store")
+            self.send_header("Vary","Accept-Encoding")
+            if len(body)>=4096 and accepts_gzip(self.headers.get("Accept-Encoding","")):
+                body=compressed_page(body)
+                self.send_header("Content-Encoding","gzip")
             self.send_header("Content-Length",str(len(body)))
             self.end_headers()
             self.wfile.write(body)
