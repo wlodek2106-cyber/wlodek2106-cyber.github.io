@@ -3,6 +3,30 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_local_model_evaluation(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        spec=spec_from_file_location("local_engine",Path(__file__).with_name("local-ai-engine.py"))
+        engine=module_from_spec(spec);spec.loader.exec_module(engine)
+        names=["nemotron-3-nano:4b","qwen3:4b"]
+        calls=[];emitted=[]
+        def generate(model,role,task):
+            calls.append((model,role,task))
+            if model==names[1]:raise RuntimeError("fixture failure")
+            return "fixture answer"
+        times=iter([10,12,20,23])
+        report=engine.evaluate_models(names,"Explain percentages",emit=emitted.append,generate=generate,available=lambda:names,clock=lambda:next(times))
+        self.assertEqual(len(report["results"]),2)
+        self.assertEqual(calls,[(name,engine.ROLES["Teacher"],"Explain percentages") for name in names])
+        self.assertEqual(report["results"][0]["family"],"NVIDIA Nemotron")
+        self.assertEqual(report["results"][0]["seconds"],2)
+        self.assertEqual(report["results"][0]["status"],"ok")
+        self.assertEqual(report["results"][1]["status"],"error")
+        self.assertEqual(report["results"][1]["seconds"],3)
+        self.assertEqual(emitted,report["results"])
+        for bad in ([],[names[0],names[0]],["remote-cloud"],["x","y","z","a"]):
+            with self.assertRaises(ValueError):engine.evaluate_models(bad,"test",available=lambda:names)
+        with self.assertRaises(ValueError):engine.evaluate_models(names,"",available=lambda:names)
     def test_local_tool_bridge(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
