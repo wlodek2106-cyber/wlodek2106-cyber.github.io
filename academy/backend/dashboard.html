@@ -689,6 +689,11 @@ function renderMegaCatalog(host,p,lang){
  const w=megaWords[lang]||megaWords.en;
  const add=(parent,tag,label="")=>{const el=document.createElement(tag);el.textContent=label;parent.append(el);return el};
  const root=add(host,"section");root.className="card";add(root,"h3",w[0]);add(root,"p",w[1]);add(root,"small",w[14]);
+ if(p.access||p.owner_preview){
+  const labels=({en:["Download desktop tool bridge","Run installed Whisper.cpp, Piper and MarkItDown. Python 3 + Tkinter and external engines/models are required. No cloud API. Choose trusted executables; the bridge does not install them.","Download failed"],ru:["Скачать локальный AI Bridge","Запускает установленные Whisper.cpp, Piper и MarkItDown. Нужны Python 3 + Tkinter, внешние движки и модели. Без облачного API. Выбирай доверенные программы; Bridge не устанавливает их сам.","Ошибка скачивания"],uk:["Завантажити локальний AI Bridge","Запускає встановлені Whisper.cpp, Piper і MarkItDown. Потрібні Python 3 + Tkinter, зовнішні рушії й моделі. Без хмарного API. Обирай довірені програми; Bridge не встановлює їх.","Помилка завантаження"],pl:["Pobierz lokalny AI Bridge","Uruchamia zainstalowane Whisper.cpp, Piper i MarkItDown. Wymaga Python 3 + Tkinter oraz zewnętrznych silników i modeli. Bez chmurowego API. Wybieraj zaufane programy; Bridge ich nie instaluje.","Błąd pobierania"]})[lang];
+  add(root,"p",labels[1]);const download=add(root,"button",labels[0]);download.type="button";const result=add(root,"p");
+  download.onclick=async()=>{download.disabled=true;result.textContent="";try{const d=await api("/ai-mega/local-bridge");if(!root.isConnected)return;const bytes=Uint8Array.from(atob(d.source_base64),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=url;a.download="zer0life-local-tool-bridge.py";a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}catch(e){result.textContent=labels[2]}finally{download.disabled=false}};
+ }
  const button=add(root,"button",w[2]);button.type="button";const area=add(root,"div");area.hidden=true;
  button.onclick=async()=>{
   if(!area.hidden){area.hidden=true;area.replaceChildren();button.textContent=w[2];return}
