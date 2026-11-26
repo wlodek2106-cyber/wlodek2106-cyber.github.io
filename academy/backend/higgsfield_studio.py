@@ -11,7 +11,10 @@ LOCK = threading.Lock()
 SESSIONS = {}
 RATE = {}
 ID = re.compile(r"[A-Za-z0-9_-]{1,128}\Z")
-TERMINAL = {"completed", "failed", "nsfw", "canceled"}
+TERMINAL = {"completed", "failed", "nsfw", "canceled", "cancelled"}
+RESOLUTIONS = {"480p", "720p", "1080p", "4k"}
+RATIOS = {"16:9", "4:3", "1:1", "3:4", "9:16", "21:9"}
+GUARD_TTL = 86400
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -47,6 +50,20 @@ def upstream(key, path, payload=None):
 def valid_key(key):
     return isinstance(key, str) and 12 <= len(key) <= 1024 and all(33 <= ord(c) <= 126 for c in key) and not key.startswith("Key ")
 
+def generation_payload(body):
+    prompt = body.get("prompt")
+    duration = body.get("duration", 5)
+    resolution = body.get("resolution", "720p")
+    ratio = body.get("aspect_ratio", "16:9")
+    audio = body.get("generate_audio", True)
+    if body.get("confirm_charge") is not True or not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 4000:
+        raise ValueError("Invalid prompt or consent")
+    if type(duration) is not int or not 4 <= duration <= 15:
+        raise ValueError("Invalid duration")
+    if not isinstance(resolution, str) or resolution not in RESOLUTIONS or not isinstance(ratio, str) or ratio not in RATIOS or type(audio) is not bool:
+        raise ValueError("Invalid generation settings")
+    return {"prompt": prompt.strip(), "duration": duration, "resolution": resolution, "aspect_ratio": ratio, "generate_audio": audio}
+
 def safe_url(value):
     if not isinstance(value, str) or len(value) > 4096:
         return None
@@ -70,8 +87,11 @@ def dispatch(token, action, body):
     now = time.monotonic()
     with LOCK:
         for k in list(SESSIONS):
-            if SESSIONS[k]["expires"] <= now and not SESSIONS[k]["busy"]:
-                del SESSIONS[k]
+            item = SESSIONS[k]
+            if item["expires"] <= now and not item["busy"]:
+                item["key"] = None
+                if not (item["job"] or item["unknown"]) or item["guard_until"] <= now:
+                    del SESSIONS[k]
         for k in list(RATE):
             if RATE[k] <= now:
                 del RATE[k]
@@ -83,29 +103,44 @@ def dispatch(token, action, body):
             key = body.get("key")
             if not valid_key(key) or body.get("consent") is not True:
                 raise ValueError()
-            if session and (session["busy"] or session["job"] or session["unknown"]):
-                return 409, {"error": "Finish or disconnect the existing session first"}
+            fingerprint = hashlib.sha256(key.encode()).hexdigest()
+            if session and session["busy"]:
+                return 409, {"error": "Request in progress"}
+            if session and (session["job"] or session["unknown"]):
+                if session["fingerprint"] != fingerprint:
+                    return 409, {"error": "Use the original key to resolve the previous request"}
+                session["key"] = key
+                session["expires"] = now + TTL
+                return 200, {"session": "ready_unverified", "expires_in": TTL, "request_id": session["job"], "unknown": session["unknown"]}
             if len(SESSIONS) >= 100 and session is None:
                 return 503, {"error": "Studio temporarily full"}
-            SESSIONS[owner] = {"key": key, "expires": now + TTL, "busy": False, "job": None, "unknown": False}
+            SESSIONS[owner] = {"key": key, "fingerprint": fingerprint, "expires": now + TTL, "guard_until": now + GUARD_TTL, "busy": False, "job": None, "unknown": False}
             return 200, {"session": "ready_unverified", "expires_in": TTL}
         if action == "disconnect":
             if session and session["busy"]:
                 return 409, {"error": "Request in progress"}
-            SESSIONS.pop(owner, None)
+            if session and (session["job"] or session["unknown"]):
+                # Keep the pending-job guard without keeping the API secret.
+                session["key"] = None
+                session["expires"] = 0
+            else:
+                SESSIONS.pop(owner, None)
             return 200, {"session": "disconnected"}
-        if not session or session["expires"] <= now:
+        if not session or session["expires"] <= now or not session["key"]:
             return 409, {"error": "Reconnect your API key"}
         if session["busy"]:
             return 409, {"error": "Request in progress"}
         if action == "submit":
-            prompt = body.get("prompt")
-            if body.get("confirm_charge") is not True or not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 4000:
-                raise ValueError()
+            payload = generation_payload(body)
             if session["job"] or session["unknown"]:
                 return 409, {"error": "Resolve the previous request first"}
+            session["guard_until"] = now + GUARD_TTL
             path = MODEL
-            payload = {"prompt": prompt.strip(), "resolution": "720p", "generate_audio": True, "duration": 5, "aspect_ratio": "16:9"}
+        elif action == "reviewed":
+            if body.get("checked_provider_history") is not True or session["job"] or not session["unknown"]:
+                raise ValueError("Review the unknown request in the provider console first")
+            session["unknown"] = False
+            return 200, {"status": "reviewed"}
         elif action in ("status", "cancel"):
             job = session["job"]
             if not job or not ID.fullmatch(job):
