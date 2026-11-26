@@ -818,6 +818,7 @@ function renderMegaCatalog(host,p,lang){
      const link=add(card,"a",w[7]);if(/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(item.github)){link.href=item.github;link.target="_blank";link.rel="noopener noreferrer"}
      add(card,"p");
      const related=add(card,"a",w[8]);if(/^\/(free-ai|voice-studio|design-studio|animation-studio|music-studio|automation-studio|ai-workspace|openmvs-lab|dashboard\?module=knowledge)$/.test(item.academy)){related.href=item.academy+(item.academy.includes("?")?"&":"?")+"lang="+encodeURIComponent(lang);related.target="_blank";related.rel="noopener noreferrer"}
+     if(item.category==="human"){add(card,"p");const human=add(card,"a","Digital Human Lab");human.href="/animation-studio?lang="+encodeURIComponent(lang)+"#digital-human";human.target="_blank";human.rel="noopener noreferrer"}
     }
    }
    area.hidden=false;button.textContent=w[3];
