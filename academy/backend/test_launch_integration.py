@@ -498,6 +498,19 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(save_profile(cur,buyer_id,profile)["saved"])
                 self.assertEqual(load_profile(cur,buyer_id),profile)
                 self.assertEqual(load_profile(cur,partner_id),EMPTY)
+                from support_center import create as support_create,listing as support_list,thread as support_thread,reply as support_reply,close as support_close
+                ticket={"category":"ai","subject":"Synthetic support","body":"Test issue","consent":True}
+                with self.assertRaises(ValueError): support_create(cur,buyer_id,{**ticket,"consent":False})
+                stid=support_create(cur,buyer_id,ticket)["id"]
+                self.assertEqual(support_list(cur,buyer_id)["items"][0]["id"],stid)
+                self.assertEqual(support_list(cur,partner_id)["items"],[])
+                with self.assertRaises(PermissionError): support_thread(cur,partner_id,stid)
+                with self.assertRaises(PermissionError): support_reply(cur,partner_id,{"id":stid,"body":"Denied","consent":True})
+                self.assertEqual(support_reply(cur,owner_id,{"id":stid,"body":"Test response","consent":True},True)["status"],"answered")
+                self.assertEqual(support_thread(cur,buyer_id,stid)["messages"][-1]["role"],"admin")
+                self.assertEqual(support_reply(cur,buyer_id,{"id":stid,"body":"Follow up","consent":True})["status"],"open")
+                self.assertEqual(support_close(cur,buyer_id,stid)["status"],"closed")
+                with self.assertRaises(ValueError): support_reply(cur,buyer_id,{"id":stid,"body":"Closed","consent":True})
                 from career_pathway import collect as career_collect,pathway as career_pathway
                 self.assertTrue(any(x["lesson"]==1 for x in career_collect(cur,buyer_id)))
                 self.assertEqual(career_collect(cur,partner_id),[])

@@ -566,3 +566,22 @@ CREATE TABLE IF NOT EXISTS creator_agency_quality (
 -- Preserve monotonic revisions after erasing note contents on existing deployments.
 ALTER TABLE creator_agency_knowledge DROP CONSTRAINT IF EXISTS creator_agency_knowledge_content_check;
 ALTER TABLE creator_agency_knowledge ADD CONSTRAINT creator_agency_knowledge_content_check CHECK(char_length(content) BETWEEN 0 AND 3000);
+
+CREATE TABLE IF NOT EXISTS support_tickets (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ category text NOT NULL CHECK(category IN ('account','payment','learning','ai','marketplace','other')),
+ subject text NOT NULL CHECK(char_length(subject) BETWEEN 1 AND 120),
+ status text NOT NULL DEFAULT 'open' CHECK(status IN ('open','answered','closed')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS support_student_idx ON support_tickets(student_id,id DESC);
+CREATE TABLE IF NOT EXISTS support_messages (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ ticket_id bigint NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
+ role text NOT NULL CHECK(role IN ('student','admin')),
+ body text NOT NULL CHECK(char_length(body) BETWEEN 1 AND 2000),
+ created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS support_message_idx ON support_messages(ticket_id,id);
