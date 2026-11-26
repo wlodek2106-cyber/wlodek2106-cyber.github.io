@@ -1366,12 +1366,64 @@ function renderGameFactory(host,lang){
  test.onclick=()=>{results.replaceChildren();gameFactoryTests().forEach((ok,i)=>add(results,"li",(ok?"✓ ":"✗ ")+w.tests[i]+" — "+(ok?w.pass:w.fail)))};
 }
 
+const worldLabWords={"en":["3D & Virtual Worlds 27.0","Build a simple 3D scene from primitives, rotate the view, adjust lighting and export actual mesh geometry. Local procedural modelling, not AI-generated characters or a game engine.","Object","Box","Pyramid","Cylinder","X position","Y position","Z position","Size","Color (preview only)","Add object","Remove last","Rotate view","Light direction","Export OBJ","Run geometry tests","Scene empty or invalid input","Objects","Geometry checks passed","Geometry checks failed","OBJ exports geometry only; preview colors and lighting are not included. Import the file into Blender for further editing.","Open photogrammetry lab"],"ru":["3D & Virtual Worlds 27.0","Создай 3D-сцену из примитивов, вращай обзор, настраивай освещение и экспортируй настоящую геометрию. Локальное процедурное моделирование, а не генерация персонажей нейросетью или игровой движок.","Объект","Куб","Пирамида","Цилиндр","Позиция X","Позиция Y","Позиция Z","Размер","Цвет (только предпросмотр)","Добавить объект","Удалить последний","Вращение обзора","Направление света","Скачать OBJ","Запустить тесты геометрии","Пустая сцена или некорректные данные","Объекты","Проверки геометрии пройдены","Ошибка проверки геометрии","OBJ содержит только геометрию, без цветов и освещения предпросмотра. Импортируй файл в Blender для дальнейшего редактирования.","Открыть лабораторию фотограмметрии"],"uk":["3D & Virtual Worlds 27.0","Створи 3D-сцену з примітивів, обертай огляд, налаштовуй світло та експортуй справжню геометрію. Локальне процедурне моделювання, не генерація персонажів ШІ чи ігровий рушій.","Об’єкт","Куб","Піраміда","Циліндр","Позиція X","Позиція Y","Позиція Z","Розмір","Колір (лише перегляд)","Додати об’єкт","Видалити останній","Обертання огляду","Напрям світла","Завантажити OBJ","Запустити тести геометрії","Порожня сцена або некоректні дані","Об’єкти","Перевірки геометрії пройдено","Помилка перевірки геометрії","OBJ містить лише геометрію, без кольорів і світла перегляду. Імпортуй файл у Blender для редагування.","Відкрити лабораторію фотограмметрії"],"pl":["3D & Virtual Worlds 27.0","Zbuduj scenę 3D z brył, obracaj widok, ustaw oświetlenie i eksportuj rzeczywistą geometrię. Lokalne modelowanie proceduralne, nie generowanie postaci AI ani silnik gry.","Obiekt","Sześcian","Piramida","Cylinder","Pozycja X","Pozycja Y","Pozycja Z","Rozmiar","Kolor (tylko podgląd)","Dodaj obiekt","Usuń ostatni","Obrót widoku","Kierunek światła","Pobierz OBJ","Uruchom testy geometrii","Pusta scena lub nieprawidłowe dane","Obiekty","Testy geometrii zaliczone","Błąd testów geometrii","OBJ zawiera tylko geometrię, bez kolorów i światła podglądu. Zaimportuj plik do Blendera, aby go edytować.","Otwórz laboratorium fotogrametrii"]};
+function worldMesh(kind,x,y,z,size,color){
+ if(!["box","pyramid","cylinder"].includes(kind)||![x,y,z,size].every(Number.isFinite)||[x,y,z].some(n=>Math.abs(n)>5)||size<0.2||size>3||!/^#[0-9a-f]{6}$/i.test(color))throw Error("Invalid object");
+ let v=[],faces=[];
+ if(kind==="box"){v=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,-.5,.5],[-.5,-.5,.5],[-.5,.5,-.5],[.5,.5,-.5],[.5,.5,.5],[-.5,.5,.5]];faces=[[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]}
+ if(kind==="pyramid"){v=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,-.5,.5],[-.5,-.5,.5],[0,.5,0]];faces=[[0,1,2,3],[0,4,1],[1,4,2],[2,4,3],[3,4,0]]}
+ if(kind==="cylinder"){const n=16;for(const h of [-.5,.5])for(let i=0;i<n;i++){const a=i*2*Math.PI/n;v.push([.5*Math.cos(a),h,.5*Math.sin(a)])}faces.push(Array.from({length:n},(_,i)=>i),Array.from({length:n},(_,i)=>2*n-1-i));for(let i=0;i<n;i++){const j=(i+1)%n;faces.push([i,n+i,n+j,j])}}
+ return {kind,color,vertices:v.map(p=>[p[0]*size+x,p[1]*size+y,p[2]*size+z]),faces};
+}
+function worldObj(meshes){
+ if(!Array.isArray(meshes)||!meshes.length||meshes.length>20)throw Error("Scene size");
+ let offset=1;const lines=["# Zer0Life Academy — geometry only"];
+ meshes.forEach((m,i)=>{lines.push("o "+m.kind+"_"+(i+1));for(const v of m.vertices)lines.push("v "+v.map(n=>n.toFixed(6)).join(" "));for(const face of m.faces)lines.push("f "+face.map(n=>n+offset).join(" "));offset+=m.vertices.length});return lines.join("\n")+"\n";
+}
+function worldProjection(v,angle){
+ const a=angle*Math.PI/180,c=Math.cos(a),s=Math.sin(a),x=v[0]*c-v[2]*s,z=v[0]*s+v[2]*c;
+ return [x,v[1]*.866-z*.5,v[1]*.5+z*.866];
+}
+function worldDraw(canvas,meshes,angle,light){
+ const ctx=canvas.getContext("2d");if(!ctx)return;const W=canvas.width,H=canvas.height;ctx.fillStyle="#101522";ctx.fillRect(0,0,W,H);
+ const scale=Math.min(W,H)/20,project=p=>[W/2+p[0]*scale,H/2-p[1]*scale];
+ const grid=(a,b)=>{const p=project(worldProjection(a,angle)),q=project(worldProjection(b,angle));ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...q);ctx.stroke()};
+ ctx.strokeStyle="#36465d";ctx.lineWidth=1;for(let i=-7;i<=7;i++){grid([i,-1.5,-7],[i,-1.5,7]);grid([-7,-1.5,i],[7,-1.5,i])}
+ const polygons=[];const l=light*Math.PI/180,dir=[Math.cos(l)*.7,.7,Math.sin(l)*.7];
+ for(const m of meshes){const points=m.vertices.map(v=>worldProjection(v,angle));for(const f of m.faces){const a=m.vertices[f[0]],b=m.vertices[f[1]],c=m.vertices[f[2]],u=b.map((x,i)=>x-a[i]),v=c.map((x,i)=>x-a[i]),n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],len=Math.hypot(...n);const shade=.32+.68*Math.max(0,n.reduce((sum,x,i)=>sum+x*dir[i],0)/(len||1));const ps=f.map(i=>points[i]);polygons.push({ps,depth:ps.reduce((sum,p)=>sum+p[2],0)/ps.length,color:m.color,shade})}}
+ polygons.sort((a,b)=>a.depth-b.depth);
+ for(const p of polygons){const rgb=[1,3,5].map(i=>Math.min(255,Math.round(parseInt(p.color.slice(i,i+2),16)*p.shade)));ctx.fillStyle="rgb("+rgb.join(",")+")";ctx.strokeStyle="#101522";ctx.beginPath();p.ps.forEach((v,i)=>{const q=project(v);if(i===0)ctx.moveTo(...q);else ctx.lineTo(...q)});ctx.closePath();ctx.fill();ctx.stroke()}
+}
+function worldTests(){
+ const b=worldMesh("box",0,0,0,1,"#abcdef"),p=worldMesh("pyramid",1,2,3,2,"#123456"),c=worldMesh("cylinder",0,0,0,1,"#abcdef"),obj=worldObj([b,p,c]),lines=obj.trim().split("\n"),faces=lines.filter(x=>x.startsWith("f "));
+ let rejected=false;try{worldMesh("bad",0,0,0,1,"#123456")}catch{rejected=true}
+ let empty=false;try{worldObj([])}catch{empty=true}
+ return [b.vertices.length===8&&b.faces.length===6,p.vertices.length===5&&p.faces.length===5,c.vertices.length===32&&c.faces.length===18,lines.filter(x=>x.startsWith("v ")).length===45,faces.length===29,faces.every(x=>x.slice(2).split(" ").every(n=>Number(n)>=1&&Number(n)<=45)),p.vertices[4].join(",")==="1,3,3",worldProjection([1,2,3],90).every(Number.isFinite),rejected,empty];
+}
+function renderWorldLab(host,lang){
+ const w=worldLabWords[lang]||worldLabWords.en,add=(p,t,v="")=>{const e=document.createElement(t);e.textContent=v;p.append(e);return e};
+ const root=add(host,"details");root.className="card";add(root,"summary",w[0]);add(root,"p",w[1]);
+ const kind=add(add(root,"label",w[2]),"select");["box","pyramid","cylinder"].forEach((k,i)=>{const o=add(kind,"option",w[i+3]);o.value=k});kind.value="box";
+ const field=(label,type,value,min,max,step)=>{const e=add(add(root,"label",label),"input");e.type=type;e.value=String(value);if(min!==null){e.min=String(min);e.max=String(max);e.step=String(step)}return e};
+ const nums=[0,0,0,1].map((v,i)=>field(w[i+6],"number",v,i===3?.2:-5,i===3?3:5,.1));const color=field(w[10],"color","#8b5cf6",null,null,null);
+ const button=(label)=>{const b=add(root,"button",label);b.type="button";return b};
+ const create=button(w[11]),remove=button(w[12]),angle=field(w[13],"range",35,0,360,1),light=field(w[14],"range",45,0,360,1);
+ const canvas=add(root,"canvas");canvas.width=640;canvas.height=440;canvas.style.cssText="width:100%;max-width:640px;border-radius:12px";canvas.setAttribute("aria-label",w[0]);
+ const status=add(root,"p");status.setAttribute("role","status");const exp=button(w[15]),test=button(w[16]);const result=add(root,"p");result.setAttribute("role","status");add(root,"p",w[21]);const link=add(root,"a",w[22]);link.href="/openmvs-lab?lang="+encodeURIComponent(lang);
+ const meshes=[worldMesh("box",-1,0,0,1.5,"#8b5cf6"),worldMesh("pyramid",1,0,0,1.5,"#22b8cf")];
+ function redraw(){worldDraw(canvas,meshes,Number(angle.value),Number(light.value));status.textContent=w[18]+": "+meshes.length+"/20";remove.disabled=exp.disabled=!meshes.length;create.disabled=meshes.length>=20}
+ create.onclick=()=>{try{if(meshes.length>=20||nums.some(e=>!e.value.trim()))throw Error();meshes.push(worldMesh(kind.value,...nums.map(e=>Number(e.value)),color.value));redraw()}catch{status.textContent=w[17]}};
+ remove.onclick=()=>{meshes.pop();redraw()};angle.addEventListener("input",redraw);light.addEventListener("input",redraw);
+ exp.onclick=()=>{try{const url=URL.createObjectURL(new Blob([worldObj(meshes)],{type:"text/plain;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="zer0life-world.obj";a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}catch{status.textContent=w[17]}};
+ test.onclick=()=>{const checks=worldTests();result.textContent=(checks.every(Boolean)?w[19]:w[20])+" · "+checks.filter(Boolean).length+"/"+checks.length};redraw();
+}
+
 function renderCreatorJourney(p){
  const host=$("creatorJourney"),lang=$("lang").value;
  const w=({en:["From learning to client work","Create projects, build a portfolio and explore real orders. Earnings are not guaranteed.","Continue learning","Practice lab","Free AI tools","My portfolio","Publish a service","Browse jobs","No unlocked lesson yet","Paid course required for assignments and applications; browsing is available."],ru:["От обучения к заказам","Создавай проекты, собирай портфолио и ищи реальные заказы. Доход не гарантирован.","Продолжить обучение","Практическая лаборатория","Бесплатные AI-инструменты","Моё портфолио","Разместить услугу","Смотреть заказы","Нет доступных уроков","Для заданий и откликов нужен оплаченный курс; просмотр заказов доступен."],uk:["Від навчання до замовлень","Створюй проєкти, збирай портфоліо та шукай реальні замовлення. Дохід не гарантовано.","Продовжити навчання","Практична лабораторія","Безкоштовні AI-інструменти","Моє портфоліо","Розмістити послугу","Переглянути замовлення","Немає доступних уроків","Для завдань та відгуків потрібен оплачений курс; перегляд замовлень доступний."],pl:["Od nauki do zleceń","Twórz projekty, buduj portfolio i szukaj realnych zleceń. Zarobki nie są gwarantowane.","Kontynuuj naukę","Laboratorium praktyczne","Darmowe narzędzia AI","Moje portfolio","Opublikuj usługę","Przeglądaj zlecenia","Brak odblokowanych lekcji","Zadania i aplikacje wymagają opłaconego kursu; przeglądanie zleceń jest dostępne."]})[lang];
  host.replaceChildren();host.hidden=false;
  const add=(parent,tag,label)=>{const e=document.createElement(tag);e.textContent=label;parent.append(e);return e};
- add(host,"h2",w[0]);add(host,"p",w[1]);renderPersonalTeacher(host,lang);renderBusinessLaunch(host,lang);renderClientScopeLab(host,lang);renderClientSimulator(host,lang);renderProjectSimulator(host,lang);renderPortfolioBuilder(host,lang);renderCareerInterviewLab(host,lang);renderBusinessFactory(host,lang);renderAgencyPlanner(host,lang);renderAgentWorkforce(host,lang);renderAgentBuilder(host,lang);renderRagEvidenceLab(host,lang);renderSaasFactory(host,lang);renderAppFactory(host,lang);renderGameFactory(host,lang);renderReviewJournal(host,p,lang);renderMegaCatalog(host,p,lang);renderVIP2027(host,p,lang);renderEliteProjects(host,p,lang);
+ add(host,"h2",w[0]);add(host,"p",w[1]);renderPersonalTeacher(host,lang);renderBusinessLaunch(host,lang);renderClientScopeLab(host,lang);renderClientSimulator(host,lang);renderProjectSimulator(host,lang);renderPortfolioBuilder(host,lang);renderCareerInterviewLab(host,lang);renderBusinessFactory(host,lang);renderAgencyPlanner(host,lang);renderAgentWorkforce(host,lang);renderAgentBuilder(host,lang);renderRagEvidenceLab(host,lang);renderSaasFactory(host,lang);renderAppFactory(host,lang);renderGameFactory(host,lang);renderWorldLab(host,lang);renderReviewJournal(host,p,lang);renderMegaCatalog(host,p,lang);renderVIP2027(host,p,lang);renderEliteProjects(host,p,lang);
  if(p.trial)add(host,"p",trialWords[lang][2]);else if(!p.access)add(host,"p",w[9]);
  const grid=add(host,"div","");grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px";
  const unlocked=p.lessons.filter(x=>x.unlocked),next=unlocked.find(x=>!x.completed),practice=next||unlocked[unlocked.length-1];
