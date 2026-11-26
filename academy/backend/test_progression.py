@@ -3,6 +3,32 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_open_generative_bridge(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch,SimpleNamespace
+        spec=spec_from_file_location("open_gen_bridge",Path(__file__).with_name("open-generative-bridge.py"))
+        bridge=module_from_spec(spec);spec.loader.exec_module(bridge)
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);engine=root/"sd-cli";engine.touch()
+            model=root/"model.safetensors";model.touch()
+            output=root/"result.png"
+            prompt="A fictional landscape; original artwork"
+            args=bridge.command(engine,model,output,prompt,42)
+            self.assertEqual(args[args.index("-p")+1],prompt)
+            self.assertEqual(args[args.index("--steps")+1],"12")
+            self.assertEqual(args[args.index("-H")+1],"512")
+            def fake_run(args,**kwargs):
+                self.assertFalse(kwargs["shell"])
+                output.write_bytes(bytes.fromhex("89504e470d0a1a0a"))
+                return SimpleNamespace(returncode=0)
+            with patch.object(bridge.subprocess,"run",side_effect=fake_run):
+                report=bridge.execute(engine,model,output,prompt,42)
+            self.assertEqual(report["seed"],42)
+            self.assertEqual(report["output"],"result.png")
+            with self.assertRaises(ValueError):bridge.command(engine,model,output,prompt,42)
+            with self.assertRaises(ValueError):bridge.command(engine,model,root/"other.png",prompt,-1)
     def test_graduate_showcase_validation(self):
         from graduate_showcase import validate,CODE
         p={"headline":"Creator","bio":"Public work only","show_name":False,"projects":[{"title":"Film","description":"Example","url":"https://example.invalid/film"}]}
