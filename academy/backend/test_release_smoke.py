@@ -108,6 +108,22 @@ class ReleaseSmokeTests(unittest.TestCase):
             self.assertEqual(code,200)
             self.assertIn(mime,headers["content-type"])
             self.assertGreater(len(body),1000)
+    def test_aurora_assets(self):
+        from server import aurora_shell,dashboard_csp
+        original=b'<html><style>body{}</style><script>let original=1;</script></html>'
+        self.assertEqual(dashboard_csp(original),dashboard_csp(aurora_shell(original)))
+        for path in ("/dashboard","/free-ai","/creator-suite","/support","/agency","/production-cost"):
+            code,headers,body=self.request(path)
+            self.assertEqual(code,200)
+            self.assertIn(b'/academy-aurora.css',body)
+            self.assertIn(b'/academy-aurora.js',body)
+            if "content-security-policy" in headers:
+                self.assertIn("style-src 'self'",headers["content-security-policy"])
+        for asset,mime in (("/academy-aurora.css","text/css"),("/academy-aurora.js","javascript")):
+            code,headers,body=self.request(asset)
+            self.assertEqual(code,200)
+            self.assertIn(mime,headers["content-type"])
+            self.assertGreater(len(body),1000)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

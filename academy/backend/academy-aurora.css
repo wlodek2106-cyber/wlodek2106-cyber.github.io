@@ -1,0 +1,76 @@
+
+/* Zer0Life Aurora 2027 */
+body.zAurora,body.zAurora.z2027.signedIn{color-scheme:dark;background:radial-gradient(ellipse at 90% 0%,#281b49,transparent 48%),#090b16;color:#f2f1ff;--bg:#090b16;--panel:#151626;--line:#37304e;--muted:#bab6d2;--accent:#af94ff;--text:#f2f1ff}
+body.zAurora.z2027 #academySidebar{background:linear-gradient(165deg,#1b1930,#111222 65%);border-color:#38304f;box-shadow:0 16px 48px #0003}
+body.zAurora.z2027 #academyNav .navItem[aria-current=page]{background:linear-gradient(100deg,#49307d,#28213f);border-color:#7761ad;box-shadow:inset 0 0 16px #b38aff16}
+body.zAurora.z2027 #workspaceOverview>article,body.zAurora.z2027 #workspaceOverview>section,body.zAurora.z2027 #extra,body.zAurora.z2027 #lesson{background:linear-gradient(145deg,#1c1b32,#131524);border-color:#39334f}
+body.zAurora.z2027 #workspaceOverview{display:flex;flex-direction:column}
+body.zAurora.z2027 #workspaceOverview[hidden]{display:none!important}
+body.zAurora.z2027 #learningWidget{order:-5}
+body.zAurora.z2027 #trialWelcome{order:-6}
+body.zAurora.z2027 #creatorJourney{order:-2}
+body.zAurora.z2027 #checkout{order:5}
+body.zAurora.z2027 #widgetProgress{width:100%;height:10px;accent-color:#b29aff}
+body.zAurora .zOrb{display:inline-block;width:34px;height:34px;flex:none;position:relative;border-radius:11px;background:linear-gradient(145deg,#211b46,#11172c);box-shadow:inset 0 0 0 1px #8d70d5}
+body.zAurora .zOrb:before{content:"";position:absolute;inset:5px 8px;border:5px solid #c3a1ff;border-right-color:#6cb6ff;border-bottom-color:#8a5ce5;border-radius:50%;transform:rotate(38deg);box-shadow:0 0 12px #9d7dff88}
+body.zAurora .zAuroraHero,body.zAurora.z2027 #workspaceOverview>.zAuroraHero{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;min-height:300px;gap:16px;padding:clamp(20px,4vw,38px);border:1px solid #7962b1;border-radius:22px;background:radial-gradient(ellipse at 78% 80%,#7644a84a,transparent 55%),radial-gradient(ellipse at 100% 0,#234b824a,transparent 65%),linear-gradient(135deg,#171c35,#24183e 70%,#17172a);box-shadow:0 16px 50px #07061170,inset 0 1px #c8a9ff22;order:-10;margin-top:0}
+body.zAurora .zHeroCopy{position:relative;z-index:1;min-width:0}
+body.zAurora .zHeroEyebrow{color:#c8b8ff;letter-spacing:3px;font-size:10px;font-weight:800;margin:0 0 12px}
+body.zAurora .zHeroCopy h2,body.zAurora .zHeroCopy h1{font-size:clamp(29px,4.5vw,49px);font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin:0 0 14px;color:#fff}
+body.zAurora .zHeroCopy h2{background:linear-gradient(90deg,#fff,#c6a2ff,#9d94ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+body.zAurora .zHeroCopy p{font-size:15px;line-height:1.65;color:#d0cbe7;max-width:520px}
+body.zAurora .zActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+body.zAurora .zAction{font:inherit;font-size:13px;font-weight:700;line-height:1.35;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:11px;padding:10px 14px;margin:0;border:1px solid #7463a0;background:#28243e;color:#f4efff;cursor:pointer}
+body.zAurora .zAction.primary{background:linear-gradient(115deg,#7554d9,#a66ef2);border-color:#b19aef;color:#fff;box-shadow:0 7px 24px #8259e53a,inset 0 1px #ffffff35}
+body.zAurora .zAction svg{width:17px;height:17px;flex:none}
+body.zAurora .zStage{height:240px;display:grid;place-items:center;perspective:720px;position:relative;isolation:isolate;min-width:0;pointer-events:none}
+body.zAurora .zPedestal{position:absolute;bottom:13%;width:80%;max-width:245px;height:58px;border-radius:50%;transform:rotateX(48deg);border:2px solid #be9aff;box-shadow:0 0 24px #965bff77,inset 0 0 30px #925bff44,0 12px 0 #302354,0 15px 0 #8861cf,0 18px 30px #0008;background:radial-gradient(ellipse,#5b4474,#201e40 70%)}
+body.zAurora .zOrbit{position:absolute;width:92%;height:50%;border:1px solid #8f78dc88;border-radius:50%;transform:rotate(-17deg);box-shadow:0 0 18px #9577e92a}
+body.zAurora .zOrbit.second{width:82%;height:64%;transform:rotate(28deg);border-color:#639add55}
+body.zAurora .zCube{position:absolute;top:24%;width:112px;height:112px;transform-style:preserve-3d;animation:zCubeSpin 16s linear infinite;transform:rotateX(-21deg) rotateY(35deg)}
+body.zAurora .zFace{position:absolute;inset:0;display:grid;place-items:center;border:1.5px solid #d3bcff9e;border-radius:12px;background:linear-gradient(145deg,#b698ff24,#314c9844,#a36aee22);box-shadow:inset 0 0 24px #a689ff30,0 0 10px #9266e444}
+body.zAurora .zFace:nth-child(1){transform:translateZ(56px)}
+body.zAurora .zFace:nth-child(2){transform:rotateY(90deg) translateZ(56px)}
+body.zAurora .zFace:nth-child(3){transform:rotateY(180deg) translateZ(56px)}
+body.zAurora .zFace:nth-child(4){transform:rotateY(-90deg) translateZ(56px)}
+body.zAurora .zFace:nth-child(5){transform:rotateX(90deg) translateZ(56px)}
+body.zAurora .zFace:nth-child(6){transform:rotateX(-90deg) translateZ(56px)}
+body.zAurora .zCube .zOrb{width:68px;height:68px;background:transparent;box-shadow:none}
+body.zAurora .zCube .zOrb:before{inset:8px 15px;border-width:9px;box-shadow:0 0 22px #c79fff}
+body.zAurora .zSatellites{position:absolute;inset:0}
+body.zAurora .zSatellite{display:grid;place-items:center;position:absolute;width:44px;height:44px;border-radius:12px;color:#dfcdff;border:1px solid #a38bd899;background:linear-gradient(145deg,#57418d99,#242948bb);box-shadow:0 8px 20px #09071788,inset 0 1px #d1bcff44;transform:rotate(-9deg)}
+body.zAurora .zSatellite svg{width:23px;height:23px}
+body.zAurora .zSatellite:nth-child(1){left:3%;top:13%}
+body.zAurora .zSatellite:nth-child(2){right:2%;top:12%;transform:rotate(10deg)}
+body.zAurora .zSatellite:nth-child(3){left:7%;bottom:15%;transform:rotate(8deg)}
+body.zAurora .zSatellite:nth-child(4){right:4%;bottom:20%;transform:rotate(-12deg)}
+@keyframes zCubeSpin{from{transform:rotateX(-21deg) rotateY(35deg)}to{transform:rotateX(-21deg) rotateY(395deg)}}
+body.zAurora .zPaused .zCube{animation-play-state:paused}
+body.zAurora .zPause{position:absolute;right:10px;bottom:8px;min-height:36px;font-size:11px;padding:6px 9px;background:#171429;color:#d3c8f0;border:1px solid #53476c;border-radius:8px}
+body.zAurora .zTools{order:-3;margin:4px 0 18px;min-width:0}
+body.zAurora .zTools h2{font-size:21px;margin:10px 0 14px}
+body.zAurora .zToolGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:10px}
+body.zAurora .zTile{display:flex;flex-direction:column;gap:10px;min-height:112px;align-items:flex-start;justify-content:center;min-width:0;border-radius:15px;text-align:left;text-decoration:none;background:linear-gradient(150deg,#25223d,#171a2b);border:1px solid #45405d;color:#f0efff;padding:14px;margin:0;font:inherit;font-size:13px;line-height:1.4;font-weight:650;cursor:pointer;box-shadow:inset 0 1px #ffffff08}
+body.zAurora .zTile:hover{border-color:#ab8fe7;background:linear-gradient(150deg,#32284c,#1c2035)}
+body.zAurora .zTileIcon{width:43px;height:43px;display:grid;place-items:center;border-radius:11px;color:#e4d5ff;background:linear-gradient(145deg,#7653b9,#332651);border:1px solid #ad90ed88;box-shadow:inset 0 1px #ffffff33,0 4px 11px #08071088}
+body.zAurora .zTileIcon svg{width:24px;height:24px}
+body.zAurora .zTile:nth-child(4n+2) .zTileIcon{background:linear-gradient(145deg,#375b9c,#202b50);border-color:#78b6f888;color:#c1ddff}
+body.zAurora .zTile:nth-child(4n+3) .zTileIcon{background:linear-gradient(145deg,#915196,#402b58);border-color:#dc98dd88;color:#ffd5f9}
+body.zAurora .zTile:nth-child(4n+4) .zTileIcon{background:linear-gradient(145deg,#29776f,#233d48);border-color:#65c8c488;color:#b4f7ea}
+body.zAurora .zModuleHeader{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px;padding:12px;border:1px solid #38344d;border-radius:14px;background:#17182a}
+body.zAurora .zModuleHeader strong{display:flex;align-items:center;gap:8px;letter-spacing:.2px;font-size:13px}
+body.zAurora .zModuleHeader .zModuleNav{position:relative;margin-left:auto}
+body.zAurora .zModuleNav summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;min-height:44px;padding:8px 12px;border:1px solid #51466c;border-radius:10px;background:#26223e;color:#e4d9ff;font-weight:650;font-size:13px}
+body.zAurora .zModuleNav summary::-webkit-details-marker{display:none}
+body.zAurora .zModuleNav summary svg{width:19px;height:19px}
+body.zAurora .zModuleLinks{position:absolute;right:0;top:calc(100% + 7px);z-index:90;width:min(310px,calc(100vw - 36px));max-height:min(65vh,460px);overflow:auto;background:#1a1b2d;border:1px solid #615477;border-radius:14px;box-shadow:0 18px 48px #0009;padding:8px}
+body.zAurora .zModuleLinks a{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;text-decoration:none;font-size:13px;font-weight:600;min-height:44px;color:#ebe5ff;background:transparent;margin:0}
+body.zAurora .zModuleLinks a:hover{background:#332847}
+body.zAurora .zModuleLinks a svg{width:19px;height:19px;flex:none;color:#bba4ff}
+body.zAurora .zModuleHeader select{width:auto;max-width:100%;font-size:16px;min-height:44px;margin:0}
+body.zAurora:not(.z2027) main{max-width:1120px}
+body.zAurora:not(.z2027) main>section:not(.zAuroraHero),body.zAurora:not(.z2027) main>article{background:linear-gradient(145deg,#1b1b30,#151726);border-color:#3b3550}
+body.zAurora :is(a,button,summary):focus-visible{outline:2px solid #c7afff;outline-offset:3px}
+@media(max-width:900px){body.zAurora.z2027 #academyNav{background:linear-gradient(155deg,#1c1b31,#131525)}}
+@media(max-width:620px){body.zAurora .zAuroraHero,body.zAurora.z2027 #workspaceOverview>.zAuroraHero{grid-template-columns:1fr;gap:4px;padding:20px;min-height:auto}body.zAurora .zStage{height:178px;max-width:310px;width:100%;margin:0 auto;transform:scale(.85)}body.zAurora .zHeroCopy h2,body.zAurora .zHeroCopy h1{font-size:30px;letter-spacing:-.8px}body.zAurora .zActions{margin-top:14px;gap:8px}body.zAurora .zAction{flex:1;min-width:120px}body.zAurora .zToolGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}body.zAurora .zTile{min-height:104px;padding:11px}body.zAurora .zModuleHeader{padding:9px;gap:8px}body.zAurora .zModuleHeader strong{font-size:12px}body.zAurora .zModuleHeader .zOrb{width:30px;height:30px}body.zAurora .zModuleLinks{position:static;width:100%;box-shadow:none}body.zAurora .zModuleHeader .zModuleNav[open]{flex-basis:100%;order:3}}
+@media(prefers-reduced-motion:reduce){body.zAurora .zCube{animation:none!important;transform:rotateX(-21deg) rotateY(35deg)}body.zAurora *{scroll-behavior:auto!important}}
