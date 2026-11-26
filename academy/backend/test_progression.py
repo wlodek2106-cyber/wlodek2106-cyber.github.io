@@ -69,7 +69,10 @@ class ProgressTests(unittest.TestCase):
         self.assertFalse(any(g["items"] for g in catalog({"access":False,"plan":"elite"})["groups"]))
         self.assertEqual(sum(len(g["items"]) for g in catalog({"owner_preview":True})["groups"]),42)
         self.assertEqual(catalog({"access":True,"plan":"starter"},[]) ,catalog({"access":True,"plan":"starter"},"en"))
-        with patch("learning.student_progress",side_effect=PermissionError):
+        from types import SimpleNamespace
+        import sys
+        from unittest.mock import Mock
+        with patch.dict(sys.modules,{"learning":SimpleNamespace(student_progress=Mock(side_effect=PermissionError))}):
             with self.assertRaises(PermissionError):student_catalog(None,"ru")
     def test_extracted_production_suite_integrity(self):
         from production_suite import build
