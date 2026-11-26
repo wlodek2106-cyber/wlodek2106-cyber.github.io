@@ -107,8 +107,20 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(agency.detail(cur,buyer_id,aid)["finance"]["rewards"][0]["agreed_cents"],2000)
                 with self.assertRaises(PermissionError): agency.detail(cur,partner_id,aid)
                 self.assertIsNone(agency.detail(cur,buyer_id,aid)["tasks"][0]["assignee"])
+                from agency_knowledge import get as knowledge_get,save as knowledge_save
+                kb={"id":aid,"project":pid}
+                self.assertEqual(knowledge_get(cur,buyer_id,kb)["revision"],0)
+                with self.assertRaises(PermissionError): knowledge_get(cur,partner_id,kb)
+                with self.assertRaises(ValueError): knowledge_save(cur,buyer_id,{**kb,"revision":0,"content":"Brand rules"})
+                knowledge_save(cur,buyer_id,{**kb,"revision":0,"content":"Brand rules","consent":True})
+                with self.assertRaises(ValueError): knowledge_save(cur,buyer_id,{**kb,"revision":0,"content":"Stale","consent":True})
+                self.assertEqual(knowledge_get(cur,buyer_id,kb)["content"],"Brand rules")
                 from agency_workflow import create as workflow_create,assign as workflow_assign
                 agency.join(cur,partner_id,{"code":agency.invite(cur,buyer_id,aid)["code"],"alias":"Partner","consent":True})
+                self.assertEqual(knowledge_get(cur,partner_id,kb)["content"],"Brand rules")
+                with self.assertRaises(PermissionError): knowledge_save(cur,partner_id,{**kb,"revision":1,"content":"Forbidden","consent":True})
+                knowledge_save(cur,buyer_id,{**kb,"revision":1,"content":""})
+                self.assertEqual(knowledge_get(cur,partner_id,kb)["content"],"")
                 args={"id":aid,"project":pid,"template":"design","assignee":partner_id}
                 with self.assertRaises(PermissionError): workflow_create(cur,partner_id,args)
                 self.assertEqual(workflow_create(cur,buyer_id,args)["created"],5)

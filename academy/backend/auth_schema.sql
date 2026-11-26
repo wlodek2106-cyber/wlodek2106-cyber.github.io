@@ -546,3 +546,11 @@ ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS workflow_key text;
 ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS workflow_step integer;
 ALTER TABLE creator_agency_tasks ADD COLUMN IF NOT EXISTS depends_on bigint REFERENCES creator_agency_tasks(id) ON DELETE SET NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS creator_agency_workflow_step_idx ON creator_agency_tasks(agency_id,project_id,workflow_key,workflow_step) WHERE workflow_key IS NOT NULL;
+
+-- Explicit team-shared project context. No automatic AI ingestion.
+CREATE TABLE IF NOT EXISTS creator_agency_knowledge (
+ project_id bigint PRIMARY KEY REFERENCES creator_agency_projects(id) ON DELETE CASCADE,
+ content text NOT NULL CHECK(char_length(content) BETWEEN 1 AND 3000),
+ revision integer NOT NULL CHECK(revision>0),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);

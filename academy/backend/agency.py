@@ -137,6 +137,9 @@ def dispatch(token,action,b):
         if action=="remove": return remove(cur,sid,b)
         if action=="task": return task(cur,sid,b)
         if action=="status": return status(cur,sid,b)
+        if action in ("knowledge","knowledge-save"):
+            from agency_knowledge import get,save
+            return (get if action=="knowledge" else save)(cur,sid,b)
         if action in ("workflow","assign"):
             from agency_workflow import create as workflow_create,assign
             return (workflow_create if action=="workflow" else assign)(cur,sid,b)
