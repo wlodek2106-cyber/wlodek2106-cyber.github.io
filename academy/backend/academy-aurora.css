@@ -328,3 +328,28 @@ body.zAurora #creatorJourney>details{margin:9px 0;border:1px solid #4e4269;borde
 body.zAurora #creatorJourney>details>summary{padding:12px;min-height:44px;color:#e5d6ff;font-weight:650;cursor:pointer;overflow-wrap:anywhere}
 body.zAurora #creatorJourney>details[open]{border-color:#8d70bd;background:#211d34}
 @media(max-width:620px){body.zAurora .zProductionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora .zProductionTile{min-height:86px;padding:10px}body.zAurora .zLabSearch{align-items:stretch;flex-wrap:wrap}body.zAurora .zLabSearch input{flex:1 1 170px}}
+
+/* Social & Community 2027: private discussion search and voluntary sharing shortcuts. */
+body.zAurora .zSocialHub{order:-1;min-width:0;margin:14px 0 20px;padding:clamp(14px,3vw,22px);border:1px solid #69558d;border-radius:18px;background:radial-gradient(ellipse at top right,#7551a937,transparent 66%),linear-gradient(145deg,#27213d,#17192b)}
+body.zAurora .zSocialHub>h2{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:clamp(20px,3vw,26px);color:#ecddff}
+body.zAurora .zSocialHub>h2 svg{width:25px;height:25px;color:#c7abff}
+body.zAurora .zSocialGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:9px}
+body.zAurora .zSocialTile{display:flex;align-items:flex-start;flex-direction:column;justify-content:center;gap:8px;min-width:0;min-height:94px;padding:12px;margin:0;border:1px solid #53456b;border-radius:13px;background:#1b1c30;color:#eee4ff;font:inherit;font-size:13px;font-weight:650;text-align:left;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
+body.zAurora .zSocialTile:not(:disabled):hover{background:#35284d;border-color:#b299ea}
+body.zAurora .zSocialTile:disabled{opacity:.5;cursor:not-allowed}
+body.zAurora .zSocialTile[hidden]{display:none!important}
+body.zAurora .zSocialIcon{display:grid;place-items:center;width:35px;height:35px;border:1px solid #9574c9;border-radius:10px;background:linear-gradient(140deg,#7752b4,#3c2c55);box-shadow:2px 3px 0 #241a36;color:#ead8ff}
+body.zAurora .zSocialIcon svg{width:21px;height:21px}
+body.zAurora .zSocialNotice{color:#cabee1;font-size:12px;line-height:1.5;margin:14px 0 0}
+body.zAurora #extra.zCommunityPanel>div:has(>button){display:flex;flex-wrap:wrap;gap:8px}
+body.zAurora #extra .zCommunitySearch{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:12px;margin:14px 0;border:1px solid #5b4c78;border-radius:13px;background:#191a2b}
+body.zAurora #extra .zCommunitySearch input{min-width:0;width:100%;min-height:44px;font-size:16px;background:#111424;color:#f2eaff;border:1px solid #746094;border-radius:10px}
+body.zAurora #extra .zCommunitySearch button{min-height:44px;margin:0}
+body.zAurora #extra .zCommunitySearch>p,body.zAurora #extra .zCommunitySearch>small{grid-column:1/-1;margin:0;color:#d2c0e8;font-size:12px}
+body.zAurora #extra.zCommunityPanel article{min-width:0;overflow-wrap:anywhere;margin:12px 0;padding:clamp(12px,3vw,20px);background:linear-gradient(145deg,#27223a,#171b2d);border:1px solid #57496f;border-radius:14px}
+body.zAurora #extra.zCommunityPanel article h3{margin:0 0 6px;color:#ecddff;font-size:19px}
+body.zAurora #extra.zCommunityPanel article small{color:#cbb7eb}
+body.zAurora #extra .zSocialFiltered{display:none!important}
+body.zAurora #extra.zPortfolioPanel pre{padding:14px;border:1px solid #584a75;border-radius:12px;background:#1a1b2e;color:#e8dfff;white-space:pre-wrap;overflow-wrap:anywhere}
+body.zAurora #creatorJourney>details{scroll-margin-top:20px}
+@media(max-width:620px){body.zAurora .zSocialGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora .zSocialTile{min-height:84px;padding:10px}body.zAurora #extra .zCommunitySearch{grid-template-columns:minmax(0,1fr)}}
