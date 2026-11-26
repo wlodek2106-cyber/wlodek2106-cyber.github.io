@@ -99,7 +99,7 @@ catalog.forEach(([title,tag,url,desc])=>$("desktopModels").append(card(title,des
 creative.forEach(([title,url,desc])=>$("creative").append(card(title,desc,url)));
 $("lang").onchange=()=>{resetTeacherTurns();translate();teamTranslate();renderTeacherContext()};$("role").onchange=resetTeacherTurns;const params=new URLSearchParams(location.search);if(Object.hasOwn(locales,params.get("lang")))$("lang").value=params.get("lang");translate();if(Object.hasOwn(roles,params.get("role")))$("role").value=params.get("role");renderTeacherContext();
 const status=t=>$("status").textContent=t;
-function controls(){ hubControls();wfRender();personalControls();ragControls();factorySelect.disabled=factoryRevision.disabled=factoryExport.disabled=busy;renderPractice();if(teacherContext){$("lessonTeacherClear").disabled=busy;for(const b of $("lessonTeacherActions").children)b.disabled=busy}$("role").disabled=busy;$("lang").disabled=busy; $("teamRun").disabled=busy||!engine||loadedId!==$("model").value;$("teamExport").disabled=busy||!teamReport; $("discover").disabled=busy||!!lib;$("model").disabled=busy||!models.length;$("load").disabled=busy||!models.length;$("unload").disabled=busy||!engine;$("ask").disabled=busy||!engine||loadedId!==$("model").value;$("stop").disabled=!busy||!engine;}
+function controls(){ routerControls();hubControls();wfRender();personalControls();ragControls();factorySelect.disabled=factoryRevision.disabled=factoryExport.disabled=busy;renderPractice();if(teacherContext){$("lessonTeacherClear").disabled=busy;for(const b of $("lessonTeacherActions").children)b.disabled=busy}$("role").disabled=busy;$("lang").disabled=busy; $("teamRun").disabled=busy||!engine||loadedId!==$("model").value;$("teamExport").disabled=busy||!teamReport; $("discover").disabled=busy||!!lib;$("model").disabled=busy||!models.length;$("load").disabled=busy||!models.length;$("unload").disabled=busy||!engine;$("ask").disabled=busy||!engine||loadedId!==$("model").value;$("stop").disabled=!busy||!engine;}
 function selected(){return models.find(x=>x.model_id===$("model").value)}
 $("model").onchange=()=>{const m=selected();$("details").textContent=m?"Estimated VRAM: "+(m.vram_required_MB?Math.ceil(m.vram_required_MB)+" MB":"not specified")+" · model weights download on demand":"";controls()};
 $("discover").onclick=async()=>{busy=true;controls();try{if(!navigator.gpu||!await navigator.gpu.requestAdapter())throw Error("WebGPU unavailable. Use a compatible browser or the Ollama desktop instructions.");
@@ -351,4 +351,60 @@ hubRun.onclick=async()=>{
 hubDownload.onclick=()=>{if(!hubReport||busy)return;const url=URL.createObjectURL(new Blob([JSON.stringify(hubReport,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="zer0life-model-comparison.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 hubClear.onclick=()=>{if(busy)return;hubReport=null;hubResult.replaceChildren();hubStatus.textContent="";hubPrompt.value="";hubControls()};
 $("lang").addEventListener("change",hubTranslate);hubTranslate();
+const routerWords={"en":["Intelligent Model Router","Select an AI team","Resource preference","Balanced by task","Lowest estimated memory","Primary model","Reserve model","No model fits this limit","I agree to unload the active model and download the selected weights if needed.","Also allow one reserve download if the primary fails.","Load recommended model","Stop after current load","Ready","Failed","Stopped","Loading","The VRAM limit is an estimate, not measured free device memory. Routing uses model names, not verified quality. No paid API or remote inference is used.","Use this team in Agents Studio","No reserve model","Loading attempt","No model loaded"],"ru":["Intelligent Model Router","Выберите AI-команду","Приоритет ресурсов","Баланс под задачу","Минимальная оценка памяти","Основная модель","Резервная модель","Нет моделей в заданном лимите","Согласен выгрузить активную модель и при необходимости загрузить выбранные веса.","Разрешаю одну резервную загрузку при ошибке основной модели.","Загрузить рекомендуемую модель","Остановить после текущей загрузки","Готово","Ошибка","Остановлено","Загрузка","Лимит VRAM — оценка, а не измерение свободной памяти. Подбор по названиям моделей, а не проверенному качеству. Без платных API и удалённого инференса.","Выбрать эту команду в Agents Studio","Нет резервной модели","Попытка загрузки","Модель не загружена"],"uk":["Intelligent Model Router","Оберіть AI-команду","Пріоритет ресурсів","Баланс під завдання","Мінімальна оцінка пам'яті","Основна модель","Резервна модель","Немає моделей у межах ліміту","Згоден вивантажити активну модель і за потреби завантажити ваги.","Дозволяю одне резервне завантаження при помилці основного.","Завантажити рекомендовану модель","Зупинити після поточного завантаження","Готово","Помилка","Зупинено","Завантаження","Ліміт VRAM — оцінка, а не вимір вільної пам'яті. Добір за назвами моделей, не перевіреною якістю. Без платних API та віддаленого інференсу.","Обрати цю команду в Agents Studio","Немає резервної моделі","Спроба завантаження","Модель не завантажено"],"pl":["Intelligent Model Router","Wybierz zespół AI","Priorytet zasobów","Dopasowanie do zadania","Najmniejsza szacowana pamięć","Model główny","Model zapasowy","Brak modeli w limicie","Zgadzam się zwolnić aktywny model i pobrać wagi w razie potrzeby.","Zezwalam na jedno pobranie zapasowe po błędzie modelu głównego.","Wczytaj zalecany model","Zatrzymaj po bieżącym ładowaniu","Gotowe","Błąd","Zatrzymano","Ładowanie","Limit VRAM to szacunek, nie pomiar wolnej pamięci. Dobór według nazw modeli, nie zweryfikowanej jakości. Bez płatnych API i zdalnego wnioskowania.","Wybierz zespół w Agents Studio","Brak modelu zapasowego","Próba ładowania","Nie wczytano modelu"]};
+function routeModels(records,team,maxMB,mode){
+ const kinds={general:"general",learning:"general",film:"general",code:"code",marketing:"general",business:"reasoning",agents:"code",design:"general",quality:"reasoning",script:"general",audio:"general"};
+ if(!Object.hasOwn(kinds,team)||!["balanced","light"].includes(mode))throw Error("Invalid route");
+ const eligible=suggestModels(records,mode==="light"?"light":kinds[team],maxMB);
+ if(!eligible.length)return [];
+ const primary=eligible[0];
+ const reserve=records.filter(m=>typeof m.model_id==="string"&&m.model_id!==primary.model_id&&Number.isFinite(m.vram_required_MB)&&m.vram_required_MB>0&&m.vram_required_MB<=primary.vram_required_MB&&m.vram_required_MB<=maxMB).sort((a,b)=>a.vram_required_MB-b.vram_required_MB||a.model_id.localeCompare(b.model_id))[0];
+ return [primary,...(reserve?[reserve]:[])];
+}
+async function attemptRoute(candidates,allowFallback,load,stopped,emit){
+ const attempts=[];
+ for(const candidate of candidates.slice(0,allowFallback?2:1)){
+  if(stopped())return {status:"stopped",attempts};
+  emit(candidate.model_id,"loading");
+  try{await load(candidate.model_id);attempts.push({model:candidate.model_id,status:"loaded"});emit(candidate.model_id,"loaded");return {status:stopped()?"stopped":"ready",model:candidate.model_id,attempts}}
+  catch{attempts.push({model:candidate.model_id,status:"failed"});emit(candidate.model_id,"failed")}
+ }
+ return {status:stopped()?"stopped":"failed",attempts};
+}
+const router=document.createElement("section");router.id="model-router";hub.after(router);
+const routerText=[];const rt=(parent,tag,i)=>{const e=ha(parent,tag);routerText.push([e,i]);return e},rw=()=>routerWords[$("lang").value];
+rt(router,"h2",0);rt(router,"p",16);
+const routerTeamLabel=ha(router,"label");rt(routerTeamLabel,"span",1);const routerTeam=ha(routerTeamLabel,"select");for(const k of Object.keys(factoryTeams)){const o=ha(routerTeam,"option",k);o.value=k}
+const routerModeLabel=ha(router,"label");rt(routerModeLabel,"span",2);const routerMode=ha(routerModeLabel,"select");for(const [k,i] of [["balanced",3],["light",4]]){const o=rt(routerMode,"option",i);o.value=k}
+const routerMemoryLabel=ha(router,"label",hubW()[7]);const routerMemory=ha(routerMemoryLabel,"select");for(const mb of [2000,4000,6000,8500]){const o=ha(routerMemory,"option",String(mb));o.value=String(mb)}routerMemory.value="4000";
+const routerPreview=ha(router,"div"),rConsentLabel=ha(router,"label"),rConsent=ha(rConsentLabel,"input");rConsent.type="checkbox";rt(rConsentLabel,"span",8);
+const rFallbackLabel=ha(router,"label"),rFallback=ha(rFallbackLabel,"input");rFallback.type="checkbox";rt(rFallbackLabel,"span",9);
+const routerRun=rt(router,"button",10),routerStop=rt(router,"button",11),routerApply=rt(router,"button",17),routerStatus=ha(router,"p"),routerLog=ha(router,"div");routerStatus.setAttribute("role","status");
+let routing=false,routeCancelled=false,routeRows=[];
+function routerControls(){
+ routeRows=routeModels(models,routerTeam.value,Number(routerMemory.value),routerMode.value);
+ routerPreview.replaceChildren();
+ if(!routeRows.length)ha(routerPreview,"p",rw()[7]);
+ else{routeRows.forEach((m,i)=>ha(routerPreview,"p",rw()[5+i]+": "+m.model_id+" · "+Math.ceil(m.vram_required_MB)+" MB"));if(routeRows.length===1)ha(routerPreview,"p",rw()[18])}
+ for(const e of [routerTeam,routerMode,routerMemory,rConsent,rFallback,routerApply])e.disabled=busy;
+ rFallback.disabled=busy||routeRows.length<2;routerRun.disabled=busy||!lib||!routeRows.length||!rConsent.checked;routerStop.disabled=!routing;
+}
+function routerTranslate(){for(const [e,i] of routerText)e.textContent=rw()[i];routerMemoryLabel.firstChild.nodeValue=hubW()[7];for(let i=0;i<routerTeam.options.length;i++)routerTeam.options[i].textContent=factorySelect.options[i].textContent;routerControls()}
+for(const e of [routerTeam,routerMode,routerMemory])e.onchange=()=>{rConsent.checked=false;rFallback.checked=false;routerControls()};rConsent.onchange=routerControls;
+routerApply.onclick=()=>{if(busy)return;factorySelect.value=routerTeam.value;factorySelect.focus()};
+routerStop.onclick=()=>{if(routing)routeCancelled=true};
+routerRun.onclick=async()=>{
+ if(busy||!lib||!rConsent.checked||!routeRows.length)return;
+ const candidates=routeRows.slice(),fallback=rFallback.checked,team=routerTeam.value,l=rw();routing=true;routeCancelled=false;busy=true;rConsent.checked=false;rFallback.checked=false;routerLog.replaceChildren();routerStatus.textContent=l[15];controls();
+ try{
+  if(engine){try{await engine.unload()}catch{routerStatus.textContent=l[13];return}engine=null;loadedId=null}
+  const result=await attemptRoute(candidates,fallback,async id=>{
+   const next=await lib.CreateMLCEngine(id,{initProgressCallback:r=>{routerStatus.textContent=l[15]+" · "+id+" · "+Math.round(Math.max(0,Math.min(1,r.progress||0))*100)+"%"}});
+   engine=next;loadedId=id;$("model").value=id;
+  },()=>routeCancelled,(id,state)=>ha(routerLog,"p",l[19]+": "+id+" · "+l[{loading:15,loaded:12,failed:13}[state]]));
+  routerStatus.textContent=l[{ready:12,failed:13,stopped:14}[result.status]]+(result.model?" · "+result.model:" · "+l[20]);
+  if(result.status==="ready")factorySelect.value=team;
+ }finally{routing=false;busy=false;controls();$("model").onchange()}
+};
+$("lang").addEventListener("change",routerTranslate);routerTranslate();
 controls();
