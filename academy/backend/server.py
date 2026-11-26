@@ -37,7 +37,7 @@ def auth_retry_after(path,email):
         while len(_limits)>10000: _limits.popitem(last=False)
     return 0
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 def dashboard_shell(body):
     if b'</style>' not in body or not body.rstrip().endswith(b'</html>'):
         return body
@@ -149,8 +149,14 @@ class Handler(BaseHTTPRequestHandler):
             return
         if path in ("/","/graduate-showcase","/veyra-lab","/openmvs-lab","/openmotion-lab","/dashboard","/downloads","/reviews","/free-ai","/legal","/creator-suite","/local-media","/voice-studio","/design-studio","/animation-studio","/music-studio","/website-builder","/automation-studio","/ai-workspace","/marketplace","/hire","/marketplace-preview","/production-cost","/client-portal","/creator-analytics","/agency","/command-center","/support") and self.command=="GET":
             body=Path(__file__).with_name("support.html" if path=="/support" else "command-center.html" if path=="/command-center" else "agency.html" if path=="/agency" else "creator-analytics.html" if path=="/creator-analytics" else "client-portal.html" if path=="/client-portal" else "production-cost.html" if path=="/production-cost" else "graduate-showcase.html" if path=="/graduate-showcase" else "veyra-lab.html" if path=="/veyra-lab" else "openmvs-lab.html" if path=="/openmvs-lab" else "openmotion-lab.html" if path=="/openmotion-lab" else "marketplace-preview.html" if path=="/marketplace-preview" else "hire.html" if path=="/hire" else "marketplace.html" if path=="/marketplace" else "ai-workspace.html" if path=="/ai-workspace" else "automation-studio.html" if path=="/automation-studio" else "website-builder.html" if path=="/website-builder" else "music-studio.html" if path=="/music-studio" else "animation-studio.html" if path=="/animation-studio" else "design-studio.html" if path=="/design-studio" else "voice-studio.html" if path=="/voice-studio" else "local-media.html" if path=="/local-media" else "creator-suite.html" if path=="/creator-suite" else "legal.html" if path=="/legal" else "free-ai.html" if path=="/free-ai" else "reviews.html" if path=="/reviews" else "downloads.html" if path=="/downloads" else "dashboard.html").read_bytes()
-            if path in ("/","/dashboard"): body=dashboard_shell(body)
-            if path in AURORA_PAGES: body=aurora_shell(body)
+            classic=parse_qs(urlsplit(self.path).query).get("view")==["classic"]
+            if path in ("/","/dashboard"):
+                body=dashboard_shell(body)
+                # Static recovery link stays usable even if optional UI JavaScript fails.
+                recovery=(b'<p><a href="/dashboard">Aurora 3D / Modern interface</a></p>' if classic else
+                          b'<p><a href="/dashboard?view=classic">Classic mode / Lite / Bez animacji</a></p>')
+                body=body.replace(b'<section id="auth">',b'<section id="auth">'+recovery,1)
+            if path in AURORA_PAGES and not classic: body=aurora_shell(body)
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
             if path in ("/","/dashboard"):
