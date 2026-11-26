@@ -3,6 +3,38 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_extracted_production_suite_integrity(self):
+        from production_suite import build
+        from io import BytesIO
+        from zipfile import ZipFile
+        from tempfile import TemporaryDirectory
+        from pathlib import Path
+        from importlib.util import spec_from_file_location,module_from_spec
+        import json
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with ZipFile(BytesIO(build("ru"))) as z:z.extractall(root)
+            spec=spec_from_file_location("elite_launcher",root/"elite-production-launcher.py")
+            launcher=module_from_spec(spec);spec.loader.exec_module(launcher)
+            self.assertTrue(launcher.verify_bundle()[0])
+            filename="client-delivery-kit.py"
+            self.assertEqual(launcher.command(filename)[1],str(root/filename))
+            p=root/filename;original=p.read_bytes()
+            p.write_bytes(b"x"+original[1:])
+            self.assertFalse(launcher.verify_bundle()[0])
+            with self.assertRaises(ValueError):launcher.command(filename)
+            p.write_bytes(original)
+            self.assertTrue(launcher.verify_bundle()[0])
+            p.unlink()
+            self.assertFalse(launcher.verify_bundle()[0])
+            p.write_bytes(original)
+            manifest=root/"manifest.json";raw=manifest.read_bytes()
+            data=json.loads(raw);data["files"][0]["name"]="../outside.py"
+            manifest.write_text(json.dumps(data))
+            self.assertFalse(launcher.verify_bundle()[0])
+            manifest.write_bytes(raw)
+            self.assertTrue(launcher.verify_bundle()[0])
+            with self.assertRaises(ValueError):launcher.command("../outside.py")
     def test_production_suite_bundle(self):
         from production_suite import build,student_bundle,FILES,VERSION
         from io import BytesIO
