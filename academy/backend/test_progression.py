@@ -906,6 +906,23 @@ class ProgressTests(unittest.TestCase):
         def bal(i,owner,n):return {"accountIndex":i,"owner":owner,"mint":USDC_MINT,"uiTokenAmount":{"amount":str(n),"decimals":6}}
         tx={"blockTime":int(self.t.timestamp()),"transaction":{"signatures":[sig],"message":{"accountKeys":keys,"header":{"numRequiredSignatures":1,"numReadonlySignedAccounts":0,"numReadonlyUnsignedAccounts":3},"instructions":[ix(2,950000),ix(3,50000)]}},"meta":{"err":None,"preTokenBalances":[bal(1,payer,1000000),bal(2,recipient,0),bal(3,TREASURY,0)],"postTokenBalances":[bal(1,payer,0),bal(2,recipient,950000),bal(3,TREASURY,50000)]}}
         self.assertTrue(matches(tx,sig,payer,recipient,ref,100,self.t))
+        import copy
+        for value in (-1,True,False,7,1):
+            bad=copy.deepcopy(tx)
+            bad["transaction"]["message"]["instructions"][0]["programIdIndex"]=value
+            self.assertFalse(matches(bad,sig,payer,recipient,ref,100,self.t))
+        for value in (True,0,-1,8):
+            bad=copy.deepcopy(tx)
+            bad["transaction"]["message"]["header"]["numReadonlyUnsignedAccounts"]=value
+            self.assertFalse(matches(bad,sig,payer,recipient,ref,100,self.t))
+        for value in ("-1","1.0",1,True,"18446744073709551616","١"):
+            bad=copy.deepcopy(tx)
+            bad["meta"]["postTokenBalances"][0]["uiTokenAmount"]["amount"]=value
+            self.assertFalse(matches(bad,sig,payer,recipient,ref,100,self.t))
+        for amount in (1,99,101,14000,100000000):
+            parts=split(amount)
+            self.assertEqual(parts["fee_atomic"],amount*500)
+            self.assertEqual(parts["gross_atomic"],parts["fee_atomic"]+parts["freelancer_atomic"])
         tx["transaction"]["message"]["instructions"][1]=ix(3,49999)
         self.assertFalse(matches(tx,sig,payer,recipient,ref,100,self.t))
     def test_marketplace_unsigned_transaction(self):

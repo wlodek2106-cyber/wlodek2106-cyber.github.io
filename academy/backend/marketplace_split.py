@@ -34,7 +34,10 @@ def matches(tx,sig,payer,recipient,reference,cents,created):
         amounts=split(cents); meta=tx["meta"]; tr=tx["transaction"]
         if meta["err"] is not None or tx["blockTime"]<int(created.timestamp()) or tr["signatures"]!=[sig]: return False
         m=tr["message"]; keys=m["accountKeys"]; h=m["header"]
-        if len(keys)!=len(set(keys)) or h["numRequiredSignatures"]!=1 or keys[0]!=payer or h["numReadonlySignedAccounts"]!=0: return False
+        if not isinstance(keys,list) or not 1<=len(keys)<=256 or len(keys)!=len(set(keys)): return False
+        for account in keys: key(account)
+        if type(h["numRequiredSignatures"]) is not int or h["numRequiredSignatures"]!=1 or keys[0]!=payer or type(h["numReadonlySignedAccounts"]) is not int or h["numReadonlySignedAccounts"]!=0: return False
+        if type(h["numReadonlyUnsignedAccounts"]) is not int or not 1<=h["numReadonlyUnsignedAccounts"]<len(keys): return False
         if m.get("addressTableLookups") or any(meta.get("loadedAddresses",{}).get(k) for k in ("writable","readonly")): return False
         ro=len(keys)-h["numReadonlyUnsignedAccounts"]
         if reference not in keys or not ro<=keys.index(reference)<len(keys): return False
@@ -46,7 +49,9 @@ def matches(tx,sig,payer,recipient,reference,cents,created):
                 if b["uiTokenAmount"]["decimals"]!=6 or not b.get("owner"): raise ValueError("Invalid token balance")
                 idx=b["accountIndex"]
                 if type(idx) is not int or not 0<=idx<len(keys) or idx in out: raise ValueError("Invalid account index")
-                out[idx]=(b["owner"],int(b["uiTokenAmount"]["amount"]))
+                amount=b["uiTokenAmount"]["amount"]
+                if not isinstance(amount,str) or not 1<=len(amount)<=20 or not amount.isascii() or not amount.isdecimal() or int(amount)>2**64-1: raise ValueError("Invalid token amount")
+                out[idx]=(key(b["owner"]),int(amount))
             return out
         pre,post=balances("preTokenBalances"),balances("postTokenBalances")
         def delta(i,owner):
@@ -55,7 +60,9 @@ def matches(tx,sig,payer,recipient,reference,cents,created):
         expected={TREASURY:amounts["fee_atomic"],recipient:amounts["freelancer_atomic"]}
         seen=set(); sources={}
         for ix in m["instructions"]:
-            p=keys[ix["programIdIndex"]]
+            program=ix["programIdIndex"]
+            if type(program) is not int or not ro<=program<len(keys): return False
+            p=keys[program]
             if p==COMPUTE:
                 if ix["accounts"]: return False
                 continue

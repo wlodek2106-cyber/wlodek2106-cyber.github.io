@@ -781,6 +781,35 @@ class LaunchIntegration(unittest.TestCase):
                     showcase.withdraw(buyer)
                     self.assertFalse(showcase.public(published["code"])["found"])
                     with self.assertRaises(ValueError):elite.save(buyer,"film","Attempt to replace an approved test report.")
+                # Multiple paid applicants: isolate private contact, project room, and cross-job IDs.
+                second_id=accounts.register("second-"+suffix+"@example.invalid",password,"Test","Second")
+                cur.execute("INSERT INTO enrollments(student_id,plan,paid_at,payment_signature) VALUES (%s,'starter',now(),%s)",(second_id,"synthetic-second-"+suffix))
+                multi=job_create(cur,partner_id,{**job,"title":"Synthetic competing bids"})["id"]
+                other=job_create(cur,partner_id,{**job,"title":"Synthetic separate project"})["id"]
+                for project_id in (multi,other): job_moderate(cur,owner_id,{"id":project_id,"action":"open"})
+                chosen=job_apply(cur,buyer_id,{**bid,"id":multi,"share_reputation":True})["id"]
+                losing=job_apply(cur,second_id,{**bid,"id":multi,"alias":"Second","contact":"second@example.invalid"})["id"]
+                foreign=job_apply(cur,second_id,{**bid,"id":other})["id"]
+                with self.assertRaises(ValueError): job_transition(cur,partner_id,{"id":multi,"action":"select","application":foreign})
+                self.assertTrue(all(x["contact"] is None for x in job_applicants(cur,partner_id,{"id":multi})["items"]))
+                job_transition(cur,partner_id,{"id":multi,"action":"select","application":chosen})
+                candidates={x["id"]:x for x in job_applicants(cur,partner_id,{"id":multi})["items"]}
+                self.assertTrue(candidates[chosen]["selected"])
+                self.assertEqual(candidates[chosen]["contact"],"worker@example.invalid")
+                self.assertIsNotNone(candidates[chosen]["reputation"])
+                self.assertFalse(candidates[losing]["selected"])
+                self.assertIsNone(candidates[losing]["contact"])
+                self.assertIsNone(candidates[losing]["reputation"])
+                self.assertTrue(all(x["contact"] is None for x in job_applications(cur,second_id,{})["items"]))
+                for outsider in (second_id,owner_id):
+                    with self.assertRaises(PermissionError): room(cur,outsider,{"id":multi})
+                    with self.assertRaises(PermissionError): message(cur,outsider,{"id":multi,"body":"Denied"})
+                    with self.assertRaises(PermissionError): job_transition(cur,outsider,{"id":multi,"action":"deliver"})
+                    with self.assertRaises(PermissionError): payment_preview(cur,outsider,{"id":multi})
+                with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":multi,"action":"complete"})
+                handoff(cur,buyer_id,{"id":multi,"action":"deliver","body":"Synthetic final result"})
+                self.assertEqual(job_transition(cur,partner_id,{"id":multi,"action":"complete"})["status"],"completed")
+                with self.assertRaises(PermissionError): job_transition(cur,partner_id,{"id":multi,"action":"complete"})
                 raise Rollback()
         except Rollback:
             pass
