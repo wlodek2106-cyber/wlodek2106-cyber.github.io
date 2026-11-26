@@ -11,6 +11,7 @@ const catalog=[
 ["automation","business","⚙️","/automation-studio","Automation Studio",["Manual local text workflows and JSON export.","Локальные текстовые процессы и экспорт JSON.","Локальні текстові процеси та експорт JSON.","Lokalne procesy tekstowe i eksport JSON."]],
 ["projects","business","📋","/dashboard","Project Manager",["Private projects, deadlines and checklists in the student dashboard.","Личные проекты, сроки и задачи в кабинете ученика.","Приватні проєкти, терміни та завдання в кабінеті учня.","Prywatne projekty, terminy i zadania w panelu ucznia."]],
 ["learning","intelligence","🎓","/dashboard","Learning Assistant",["Personal seven-session study plan based on your progress.","Персональный план из семи занятий по учебному прогрессу.","Персональний план із семи занять за прогресом.","Osobisty plan siedmiu sesji na podstawie postępów."]],
+["rag","intelligence","🔎","/free-ai","Knowledge & RAG Studio",["Local document search and grounded answers from a compatible local model.","Локальный поиск по документам и ответы с источниками на совместимой модели.","Локальний пошук документів і відповіді з джерелами.","Lokalne wyszukiwanie dokumentów i odpowiedzi ze źródłami."]],
 ["knowledge","intelligence","📚","/dashboard","Knowledge Center",["Private notes, folders and course search in the student dashboard.","Личные конспекты, папки и поиск по курсу в кабинете ученика.","Приватні нотатки, папки й пошук у курсі в кабінеті учня.","Prywatne notatki, foldery i wyszukiwanie kursu w panelu ucznia."]],
 ["community","resources","💬","/dashboard","Community Hub",["Student discussions and collaboration in the dashboard.","Обсуждения и совместные проекты в кабинете ученика.","Обговорення й спільні проєкти у кабінеті учня.","Dyskusje i współpraca w panelu ucznia."]],
 ["marketplace","business","🛍️","/marketplace","Student Marketplace",["Public moderated student service listings.","Публичная витрина услуг учеников с модерацией.","Публічна вітрина послуг учнів із модерацією.","Publiczny katalog usług uczniów z moderacją."]],
@@ -31,7 +32,7 @@ function selectTools(items,query,category,onlyFavorites,favorites,index){
 function toolHref(id,path,lang){
  const query="?lang="+encodeURIComponent(lang);
  if(path==="/dashboard"&&["projects","marketing","knowledge","learning","community","career","jobs"].includes(id))return path+query+"&module="+id;
- return path+query+(id==="agents"?"#teamHeading":"");
+ return path+query+(id==="agents"?"#teamHeading":id==="rag"?"#rag-studio":"");
 }
 const $=id=>document.getElementById(id),storageKey="zer0life.workspace.favorites.v1",cats=["all","intelligence","creative","business","resources"];
 let favorites=new Set(),only=false,storageFailed=false;
