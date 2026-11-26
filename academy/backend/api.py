@@ -437,7 +437,7 @@ def dispatch(method,path,body,token):
         from checkout import active_invoice
         return 200,active_invoice(token)
     if path=="/checkout/create" and method=="POST":
-        if os.getenv("ACADEMY_CHECKOUT_READY")!="true":
+        if os.getenv("ACADEMY_CHECKOUT_READY")!="true" or os.getenv("ACADEMY_PAYMENTS_ENABLED")!="true":
             return 503,{"error":"Checkout not available"}
         from checkout import create_invoice
         return 201,create_invoice(token,body["plan"])
