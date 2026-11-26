@@ -1080,6 +1080,14 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_creator_experience_levels(self):
+        from reputation import experience_level
+        cases=[(0,0,None,"new"),(2,2,5.0,"new"),(3,0,None,"experienced"),
+               (10,5,4.0,"established"),(25,10,4.5,"expert"),(25,10,4.49,"established"),
+               (100,0,None,"experienced"),(25,9,5.0,"established"),(25,10,3.99,"experienced")]
+        for completed,reviews,rating,expected in cases:
+            with self.subTest(completed=completed,reviews=reviews,rating=rating):
+                self.assertEqual(experience_level(completed,reviews,rating),expected)
     def test_business_assistant(self):
         from business_assistant import report
         from datetime import date

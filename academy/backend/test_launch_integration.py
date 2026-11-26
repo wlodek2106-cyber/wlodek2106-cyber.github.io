@@ -169,6 +169,8 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["reputation"])
                 review_decide(cur,owner_id,{"id":jid,"action":"approved"})
                 self.assertEqual(rep_stats(cur,buyer_id)["rating"],4.0)
+                self.assertEqual(rep_stats(cur,buyer_id)["experience_level"],"new")
+                self.assertIsNone(job_applicants(cur,partner_id,{"id":jid})["items"][0]["reputation"])
                 from freelancer_analytics import report as freelancer_report
                 analytics=freelancer_report(cur,buyer_id,7)
                 self.assertEqual(analytics["all_time"]["applications"],1)

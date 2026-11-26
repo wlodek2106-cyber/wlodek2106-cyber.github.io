@@ -1,6 +1,16 @@
 """Order-linked reviews and consent-based applicant reputation. No payment verification."""
 from student_business import clean,ident
 
+def experience_level(completed, reviews, rating):
+    """Order-based milestones, not professional certification or payment verification."""
+    if completed >= 25 and reviews >= 10 and rating is not None and rating >= 4.5:
+        return "expert"
+    if completed >= 10 and reviews >= 5 and rating is not None and rating >= 4.0:
+        return "established"
+    if completed >= 3:
+        return "experienced"
+    return "new"
+
 def stats(cur,sid):
     cur.execute("""SELECT count(*) FROM academy_jobs j JOIN academy_job_applications a
         ON a.job_id=j.id AND a.id=j.selected_application WHERE a.student_id=%s AND j.status='completed'""",(sid,))
@@ -9,11 +19,14 @@ def stats(cur,sid):
         JOIN academy_jobs j ON j.id=r.job_id JOIN academy_job_applications a ON a.job_id=j.id AND a.id=j.selected_application
         WHERE a.student_id=%s AND j.status='completed' AND r.status='approved'""",(sid,))
     n,avg=cur.fetchone()
-    cur.execute("""SELECT count(p.lesson),EXISTS(SELECT 1 FROM certificates c JOIN enrollments e2 ON e2.id=c.enrollment_id WHERE e2.student_id=%s AND e2.paid_at IS NOT NULL)
+    cur.execute("""SELECT count(p.lesson),EXISTS(SELECT 1 FROM enrollments e2 WHERE e2.student_id=%s AND e2.paid_at IS NOT NULL AND
+        (EXISTS(SELECT 1 FROM certificates c WHERE c.enrollment_id=e2.id)
+        OR EXISTS(SELECT 1 FROM elite_certificates ec WHERE ec.enrollment_id=e2.id)))
         FROM enrollments e LEFT JOIN lesson_progress p ON p.enrollment_id=e.id AND p.score>=80
         WHERE e.student_id=%s AND e.paid_at IS NOT NULL""",(sid,sid))
     lessons,cert=cur.fetchone()
-    return {"completed_orders":completed,"review_count":n,"rating":round(float(avg),2) if avg is not None else None,"completed_lessons":lessons,"certificate_issued":bool(cert)}
+    rating=round(float(avg),2) if avg is not None else None
+    return {"completed_orders":completed,"review_count":n,"rating":rating,"completed_lessons":lessons,"certificate_issued":bool(cert),"experience_level":experience_level(completed,n,rating)}
 
 def submit(cur,sid,b):
     jid=ident(b["id"]); rating=b["rating"]
