@@ -107,7 +107,7 @@ class ProgressTests(unittest.TestCase):
                 self.assertEqual(len(payload["tasks"]),19)
                 self.assertFalse(any(t["done"] for t in payload["tasks"]))
                 self.assertTrue(all(len(t["title"])<=120 for t in payload["tasks"]))
-                self.assertEqual(payload["brief"],"Demo\\n\\nClient brief")
+                self.assertEqual(payload["brief"],"Demo\n\nClient brief")
             with patch("creative_workflow.dispatch",return_value={"id":7}) as save:
                 result=create_team_project("session",{"day":1,"roles":["design"],"lang":"ru","title":"Project","kind":"video","id":999})
                 self.assertEqual(result,{"id":7,"tasks":4,"automatic_execution":False})
@@ -152,6 +152,24 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(set(result["review"][0]),{"day","latest","attempts","due"})
         self.assertNotIn("email",result)
         self.assertEqual(snapshot({"lessons":[]},{"items":[]})["next_day"],None)
+    def test_delivery_history_summary(self):
+        from project_room import delivery_summary,room_delivery
+        from unittest.mock import Mock
+        from datetime import datetime,timezone
+        schedule={"done":2,"total":3}
+        cur=Mock()
+        cur.fetchone.return_value=(3,2)
+        cur.fetchall.return_value=[(9,"revise","Please review",datetime(2026,11,26,tzinfo=timezone.utc))]
+        result=room_delivery(cur,41,"assigned",schedule)
+        self.assertEqual(result["deliveries"],3)
+        self.assertEqual(result["revisions"],2)
+        self.assertEqual(result["open_milestones"],1)
+        self.assertEqual(result["recent_events"][0]["kind"],"revise")
+        self.assertTrue(result["advisory_only"])
+        self.assertEqual(cur.execute.call_args.args[1],(41,))
+        self.assertIn("LIMIT 10",cur.execute.call_args.args[0])
+        self.assertEqual(delivery_summary("assigned",{"done":0,"total":0},(0,0),[])["recent_events"],[])
+
     def test_project_schedule(self):
         from project_schedule import due_date,summarize
         from datetime import date

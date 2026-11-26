@@ -504,3 +504,5 @@ body.zAurora .zFactory>a{display:inline-flex;align-items:center;margin:8px;color
 body.zAurora .zFactoryProject{border:1px solid #665184;border-radius:12px;padding:12px;margin-top:14px;min-width:0}
 body.zAurora .zFactoryProject summary{cursor:pointer;padding:8px 0;font-weight:650}
 body.zAurora .zFactoryProject input{width:100%;box-sizing:border-box;min-height:44px;padding:8px;margin:6px 0;color:#eee5ff;background:#19192c;border:1px solid #78669d;border-radius:10px;font-size:16px}
+
+body.zAurora .zDeliveryCenter{border:1px solid #665184;border-radius:12px;padding:12px;margin:12px 0;overflow-wrap:anywhere}body.zAurora .zDeliveryCenter summary{cursor:pointer;font-weight:650;padding:8px 0}body.zAurora .zDeliveryCenter article{padding:8px;margin:6px 0}body.zAurora .zDeliveryCenter button{min-height:44px}

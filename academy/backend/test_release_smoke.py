@@ -462,6 +462,13 @@ class ReleaseSmokeTests(unittest.TestCase):
         for marker in (b'requestedLesson=true',b'!requestedLesson||panel.hidden||overview.hidden||lesson.hidden',b'lesson.scrollIntoView({block:"start",behavior:"auto"})'):
             self.assertIn(marker,script)
 
+    def test_delivery_center_assets(self):
+        for path in ("/academy-aurora.js","/client-portal.js"):
+            code,_,script=self.request(path)
+            self.assertEqual(code,200)
+            self.assertIn(b"function renderDeliveryCenter(",script)
+            self.assertIn(b"zer0life-delivery-report.txt",script)
+
     def test_agent_project_assets(self):
         code,_,script=self.request("/academy-aurora.js")
         self.assertEqual(code,200)

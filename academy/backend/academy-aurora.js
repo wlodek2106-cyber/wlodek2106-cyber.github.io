@@ -289,6 +289,7 @@ function dashboard(){
    enhance("business-studio",()=>{businessStudioDesign();});
    enhance("workforce",()=>{workforceDesign();});
    enhance("factory",()=>{factoryDesign();});
+   enhance("delivery-center",installDeliveryCenter);
    enhance("command-dock",()=>{commandDockDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
@@ -955,7 +956,7 @@ function factoryDesign(){
  projectSave.onclick=async()=>{
    if(projectBusy||projectSaved||!data||panel.hidden||!allowed(data.day)||typeof api!=="function")return;
    const title=projectTitle.value.trim(),custom=brief.value.trim();
-   if(!title||Array.from(data.deliverable+"\\n\\n"+custom).length>2000){projectStatus.textContent=pw()[12];return}
+   if(!title||Array.from(data.deliverable+"\n\n"+custom).length>2000){projectStatus.textContent=pw()[12];return}
    if(!confirm(pw()[14]))return;
    const id=seq,payload={day:data.day,roles:data.stages.map(s=>s.role),lang:data.language,title,kind:projectKind.value,due:projectDue.value,custom_brief:custom};projectBusy=true;projectSync();
    try{const r=await api("/agents/project",payload);if(id!==seq||panel.hidden)return;projectSaved=true;projectStatus.textContent=pw()[11]+" · #"+r.id+" · "+r.tasks}
@@ -991,6 +992,28 @@ function factoryDesign(){
  new MutationObserver(schedule).observe(days,{subtree:true,childList:true,attributes:true,attributeFilter:["disabled","data-state"]});
  new MutationObserver(()=>{if(panel.hidden){brief.value="";projectTitle.value="";projectDue.value="";team=["design","video","project"];invalidate()}else sync()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  factoryRefresh=schedule;sync();
+}
+const deliveryCenterWords={
+ en:["Client Delivery Center","Deliveries","Revision requests","Milestones","Open milestones","Recent handoffs (latest 10)","Delivery","Revision","Download handoff report","No handoffs yet","Private record; does not certify quality or payment. Review before sharing.","Status"],
+ ru:["Client Delivery Center","Сдано версий","Запросы правок","Этапы проекта","Незакрытые этапы","История сдачи (последние 10)","Сдача","Правки","Скачать отчёт о сдаче","Пока нет сдач","Личная запись; не подтверждает качество или оплату. Проверь перед передачей.","Статус"],
+ uk:["Client Delivery Center","Здано версій","Запити правок","Етапи проєкту","Незакриті етапи","Історія здачі (останні 10)","Здача","Правки","Завантажити звіт","Здач ще немає","Приватний запис; не підтверджує якість чи оплату. Перевір перед передаванням.","Статус"],
+ pl:["Client Delivery Center","Oddane wersje","Prośby o poprawki","Etapy projektu","Otwarte etapy","Historia oddań (ostatnie 10)","Oddanie","Poprawki","Pobierz raport","Brak oddań","Prywatny zapis; nie potwierdza jakości ani płatności. Sprawdź przed udostępnieniem.","Status"]};
+function renderDeliveryCenter(host,d,lang){
+ const x=d.delivery;if(!x||x.advisory_only!==true)return;
+ const w=deliveryCenterWords[lang]||deliveryCenterWords.en,root=document.createElement("details");root.className="zDeliveryCenter";host.append(root);root.open=true;
+ const make=(p,tag,t="")=>{const n=document.createElement(tag);n.textContent=t;p.append(n);return n};
+ make(root,"summary",w[0]);const lines=[w[0],w[11]+": "+x.status,w[1]+": "+x.deliveries,w[2]+": "+x.revisions,w[3]+": "+x.milestones_done+"/"+x.milestones_total,w[4]+": "+x.open_milestones];
+ for(const line of lines.slice(1))make(root,"p",line);
+ make(root,"h3",w[5]);const events=Array.isArray(x.recent_events)?x.recent_events.slice(0,10):[];
+ if(!events.length)make(root,"p",w[9]);
+ for(const e of events){const label=w[e.kind==="deliver"?6:7]+" · "+e.created_at;const row=make(root,"article");make(row,"strong",label);make(row,"p",e.body);lines.push(label,e.body)}
+ make(root,"p",w[10]);lines.push(w[10]);const b=make(root,"button",w[8]);b.type="button";b.onclick=()=>{if(!root.isConnected)return;const address=URL.createObjectURL(new Blob([lines.join("\n\n")],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=address;a.download="zer0life-delivery-report.txt";a.click();setTimeout(()=>URL.revokeObjectURL(address),1000)};
+}
+function installDeliveryCenter(){
+ // Keep the original schedule renderer and return contract. Only add presentation.
+ if(typeof renderProjectSchedule!=="function")return;
+ const original=renderProjectSchedule;
+ renderProjectSchedule=function(host,d,lang){const w=original(host,d,lang);try{renderDeliveryCenter(host,d,lang)}catch(e){console.warn("Delivery presentation",e.name)}return w};
 }
 function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();workforceRefresh?.();factoryRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}

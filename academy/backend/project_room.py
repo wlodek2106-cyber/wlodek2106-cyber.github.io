@@ -10,6 +10,21 @@ def access(cur,sid,jid):
     if not row or sid not in (client,row[0]): raise PermissionError("Room unavailable")
     return ("client" if sid==client else "freelancer"),status,row[1]
 
+def delivery_summary(status,schedule,counts,events):
+    """Read-only handoff history; no payment or quality certification."""
+    return {"status":status,"deliveries":counts[0],"revisions":counts[1],
+            "milestones_done":schedule["done"],"milestones_total":schedule["total"],
+            "open_milestones":schedule["total"]-schedule["done"],
+            "recent_events":events,"history_limit":10,"advisory_only":True}
+
+def room_delivery(cur,jid,status,schedule):
+    # Caller has already checked membership and locked the job row.
+    cur.execute("SELECT count(*) FILTER (WHERE kind='deliver'),count(*) FILTER (WHERE kind='revise') FROM academy_job_messages WHERE job_id=%s",(jid,))
+    counts=cur.fetchone()
+    cur.execute("SELECT id,kind,body,created_at FROM academy_job_messages WHERE job_id=%s AND kind IN ('deliver','revise') ORDER BY id DESC LIMIT 10",(jid,))
+    events=[{"id":i,"kind":k,"body":b,"created_at":t.isoformat()} for i,k,b,t in cur.fetchall()]
+    return delivery_summary(status,schedule,counts,events)
+
 def room(cur,sid,b):
     jid=ident(b["id"]);role,status,quote=access(cur,sid,jid)
     from project_schedule import summarize
@@ -19,7 +34,8 @@ def room(cur,sid,b):
     cur.execute("SELECT id,role,kind,body,created_at FROM academy_job_messages WHERE job_id=%s AND id>%s ORDER BY id LIMIT 51",(jid,cursor(b)))
     rows=cur.fetchall()
     items=[{"id":i,"role":r,"kind":k,"body":t,"created_at":at.isoformat()} for i,r,k,t,at in rows[:50]]
-    return {"role":role,"status":status,"quote_cents":quote,"milestones":schedule["items"],"schedule":{k:v for k,v in schedule.items() if k!="items"},"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
+    delivery=room_delivery(cur,jid,status,schedule)
+    return {"role":role,"status":status,"quote_cents":quote,"milestones":schedule["items"],"schedule":{k:v for k,v in schedule.items() if k!="items"},"delivery":delivery,"items":items,"next_after":items[-1]["id"] if len(rows)>50 else None}
 
 def append(cur,jid,role,kind,body):
     cur.execute("SELECT count(*) FROM academy_job_messages WHERE job_id=%s",(jid,))
