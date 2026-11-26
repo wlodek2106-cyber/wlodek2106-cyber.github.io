@@ -482,3 +482,6 @@ CREATE TABLE IF NOT EXISTS student_review_notes (
  reviewed_at timestamptz NOT NULL DEFAULT now(),
  PRIMARY KEY(student_id,lesson)
 );
+
+-- Optional agreed calendar deadline per project milestone (UTC date).
+ALTER TABLE academy_job_milestones ADD COLUMN IF NOT EXISTS due_date date;
