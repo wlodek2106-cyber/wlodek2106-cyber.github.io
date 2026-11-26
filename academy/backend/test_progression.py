@@ -420,6 +420,21 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(summarize(0,0,[])["gross_atomic"],"0")
         with self.assertRaises(ValueError): validate_period(True)
         with self.assertRaises(ValueError): validate_period(1000)
+    def test_trial_funnel(self):
+        from founder import trial_funnel
+        from unittest.mock import Mock
+        cur=Mock()
+        cur.fetchone.return_value=(20,10,8,3,5,1,1,0,1)
+        result=trial_funnel(cur,self.t,self.t+timedelta(days=7))
+        self.assertEqual(result["attempt_rate"],50)
+        self.assertEqual(result["pass_rate"],80)
+        self.assertEqual(result["conversion_rate"],37.5)
+        self.assertEqual(result["plans"],{"starter":1,"pro":1,"vip":0,"elite":1})
+        sql,params=cur.execute.call_args.args
+        self.assertEqual(sql.count("%s"),len(params))
+        self.assertIn("p.passed_at<c.paid_at",sql)
+        cur.fetchone.return_value=(0,0,0,0,0,0,0,0,0)
+        self.assertIsNone(trial_funnel(cur,self.t,self.t)["conversion_rate"])
     def test_founder_activity_helpers(self):
         from founder import daily_activity,percent
         self.assertIsNone(percent(0,0))
