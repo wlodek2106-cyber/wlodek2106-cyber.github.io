@@ -825,10 +825,10 @@ function businessStudioDesign(){
  businessStudioRefresh=schedule;sync();
 }
 const commandDockWords={
- en:["Creator Command Center","Choose a workspace","Personal Teacher","Project Mentor","Career Center","Business Studio","AI Production","Portfolio","Find jobs","AI Support","Close workspace","Open full Command Center","Only one workspace is expanded at a time. Access remains account-dependent.","AI Agent Workforce","AI Agent Factory"],
- ru:["Creator Command Center","Выбери рабочий раздел","Персональный преподаватель","Наставник проектов","Карьера","Бизнес-студия","AI Production","Портфолио","Найти заказы","AI-поддержка","Закрыть раздел","Полный Command Center","Одновременно открыт один рабочий раздел. Доступ определяется аккаунтом.","AI Agent Workforce","AI Agent Factory"],
- uk:["Creator Command Center","Обери робочий розділ","Персональний викладач","Наставник проєктів","Кар'єра","Бізнес-студія","AI Production","Портфоліо","Знайти замовлення","ШІ-підтримка","Закрити розділ","Повний Command Center","Одночасно відкрито один робочий розділ. Доступ визначає акаунт.","AI Agent Workforce","AI Agent Factory"],
- pl:["Creator Command Center","Wybierz obszar pracy","Osobisty nauczyciel","Mentor projektów","Kariera","Studio biznesowe","AI Production","Portfolio","Znajdź zlecenia","Wsparcie AI","Zamknij obszar","Pełne Command Center","Jednocześnie otwarty jest jeden obszar. Dostęp zależy od konta.","AI Agent Workforce","AI Agent Factory"]};
+ en:["Creator Command Center","Choose a workspace","Personal Teacher","Project Mentor","Career Center","Business Studio","AI Production","Portfolio","Find jobs","AI Support","Close workspace","Open full Command Center","Only one workspace is expanded at a time. Access remains account-dependent.","AI Agent Workforce","AI Agent Factory","AI Model Hub","Smart Router"],
+ ru:["Creator Command Center","Выбери рабочий раздел","Персональный преподаватель","Наставник проектов","Карьера","Бизнес-студия","AI Production","Портфолио","Найти заказы","AI-поддержка","Закрыть раздел","Полный Command Center","Одновременно открыт один рабочий раздел. Доступ определяется аккаунтом.","AI Agent Workforce","AI Agent Factory","AI Model Hub","Smart Router"],
+ uk:["Creator Command Center","Обери робочий розділ","Персональний викладач","Наставник проєктів","Кар'єра","Бізнес-студія","AI Production","Портфоліо","Знайти замовлення","ШІ-підтримка","Закрити розділ","Повний Command Center","Одночасно відкрито один робочий розділ. Доступ визначає акаунт.","AI Agent Workforce","AI Agent Factory","AI Model Hub","Smart Router"],
+ pl:["Creator Command Center","Wybierz obszar pracy","Osobisty nauczyciel","Mentor projektów","Kariera","Studio biznesowe","AI Production","Portfolio","Znajdź zlecenia","Wsparcie AI","Zamknij obszar","Pełne Command Center","Jednocześnie otwarty jest jeden obszar. Dostęp zależy od konta.","AI Agent Workforce","AI Agent Factory","AI Model Hub","Smart Router"]};
 let commandDockRefresh=null;
 function commandDockDesign(){
  const overview=$("workspaceOverview"),panel=$("panel"),nav=$("academyNav");if(!overview||!panel||!nav)return;
@@ -862,6 +862,8 @@ function commandDockDesign(){
  shortcut(7,"image","portfolioButton",()=>$("portfolioButton").click());
  shortcut(8,"briefcase","jobsButton",()=>$("jobsButton").click());
  shortcut(9,"headphones",null,()=>{location.href=url("/support")});
+ shortcut(15,"cpu",null,()=>{location.href=url("/free-ai#model-hub")});
+ shortcut(16,"workflow",null,()=>{location.href=url("/free-ai#model-router")});
  const full=el("a","zCommandFull");full.href=url("/command-center");links.push([full,"/command-center"]);hub.append(full);
  close.onclick=()=>{const prior=selected;choose(null);prior?.b.focus()};
  function sync(){

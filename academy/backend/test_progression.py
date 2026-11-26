@@ -362,6 +362,19 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(read(cur,17)["draft"],data)
         with patch.dict(sys.modules,{"accounts":SimpleNamespace(authenticate=lambda token:None),"database":SimpleNamespace(transaction=Mock())}):
             with self.assertRaises(PermissionError):dispatch(None,"read",{})
+    def test_installed_local_model_router(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        spec=spec_from_file_location("router_engine",Path(__file__).with_name("local-ai-engine.py"))
+        engine=module_from_spec(spec);spec.loader.exec_module(engine)
+        g=1024**3
+        rows=[{"name":"qwen3:4b","size":3*g},{"name":"qwen-coder:3b","size":2*g},{"name":"deepseek-r1:7b","size":5*g},{"name":"remote-cloud","size":g},{"name":"remote","size":g,"remote_host":"remote"},{"name":"invalid","size":True}]
+        self.assertEqual(engine.recommend_local_models(rows,"code",4)[0]["name"],"qwen-coder:3b")
+        self.assertEqual(engine.recommend_local_models(rows,"reasoning",8)[0]["name"],"deepseek-r1:7b")
+        self.assertEqual(engine.recommend_local_models(rows,"light",8)[0]["name"],"qwen-coder:3b")
+        self.assertEqual(engine.recommend_local_models(rows,"general",1),[])
+        self.assertEqual(len(engine.installed_catalog(rows)),3)
+        with self.assertRaises(ValueError):engine.recommend_local_models(rows,"code",True)
     def test_local_model_evaluation(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path

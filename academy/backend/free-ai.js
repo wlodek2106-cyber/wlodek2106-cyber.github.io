@@ -428,3 +428,6 @@ contextClear.onclick=()=>{if(busy||contextReading)return;contextArea.value="";co
 contextExport.onclick=()=>{if(busy||contextReading)return;const text=validContext(contextArea.value);if(!text)return;const url=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="zer0life-project-context.txt";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $("lang").addEventListener("change",contextTranslate);contextTranslate();
 controls();
+
+// The hub and router are dynamically created; resolve only these known anchors after rendering.
+if(["#model-hub","#model-router"].includes(location.hash)){const target=document.getElementById(location.hash.slice(1));if(target){requestAnimationFrame(()=>target.scrollIntoView({block:"start",behavior:"auto"}))}}

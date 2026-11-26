@@ -456,6 +456,18 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"def run_team(",engine)
         self.assertIn(b"def validate_team(",engine)
 
+    def test_model_router_entrypoints(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        self.assertIn(b"/free-ai#model-hub",script)
+        self.assertIn(b"/free-ai#model-router",script)
+        code,_,script=self.request("/free-ai.js")
+        self.assertEqual(code,200)
+        self.assertIn(b'["#model-hub","#model-router"]',script)
+        code,_,engine=self.request("/local-ai-engine.py")
+        self.assertEqual(code,200)
+        self.assertIn(b"def recommend_local_models(",engine)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
