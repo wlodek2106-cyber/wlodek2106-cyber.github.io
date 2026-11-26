@@ -3,6 +3,46 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_local_narration_render(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        import wave
+        from ad_production import subtitle_draft
+        spec=spec_from_file_location("narration",Path(__file__).with_name("local-narration-studio.py"))
+        n=module_from_spec(spec);spec.loader.exec_module(n)
+        data=subtitle_draft(15,["Hello","","Test","Done"])["voice_plan"]
+        self.assertEqual(data["captions"][1],"")
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);exe=root/"espeak-ng";exe.touch()
+            out=root/"voice.wav"
+            def mock_run(args,**kw):
+                self.assertFalse(kw["shell"])
+                self.assertEqual(args[-1],"--stdin")
+                with wave.open(args[args.index("-w")+1],"wb") as w:
+                    w.setnchannels(1);w.setsampwidth(2);w.setframerate(16000)
+                    w.writeframes(bytes([1,0])*16000)
+                return SimpleNamespace(returncode=0)
+            with patch.object(n.subprocess,"run",side_effect=mock_run) as mock:
+                report=n.render(exe,data,"en",170,out)
+                self.assertEqual(mock.call_count,3)
+                self.assertEqual(report["duration"],15)
+                with wave.open(str(out),"rb") as w:
+                    self.assertEqual(w.getnframes(),15*16000)
+                    w.setpos(3*16000)
+                    self.assertEqual(w.readframes(5*16000),bytes(5*16000*2))
+                with self.assertRaises(ValueError):n.render(exe,data,"en",170,out)
+                with self.assertRaises(ValueError):n.render(exe,data,"en",221,root/"bad.wav")
+            def long_run(args,**kw):
+                with wave.open(args[args.index("-w")+1],"wb") as w:
+                    w.setnchannels(1);w.setsampwidth(2);w.setframerate(16000)
+                    w.writeframes(bytes(4*16000*2))
+                return SimpleNamespace(returncode=0)
+            with patch.object(n.subprocess,"run",side_effect=long_run):
+                with self.assertRaises(ValueError):n.render(exe,data,"en",170,root/"long.wav")
+            self.assertFalse((root/"long.wav").exists())
     def test_subtitle_draft(self):
         from ad_production import subtitle_draft,student_subtitles
         from unittest.mock import patch
