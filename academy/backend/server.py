@@ -265,6 +265,26 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
     do_GET=handle_api
     do_POST=handle_api
+def release_db_verified():
+    commit=os.getenv("RENDER_GIT_COMMIT")
+    proof=Path(__file__).with_name(".academy-db-release-check")
+    return bool(commit and proof.is_file() and proof.read_text().strip()==commit)
+
+def run_release_db_checks():
+    import unittest
+    from test_accounts_integration import AccountIntegration
+    result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(AccountIntegration))
+    if not result.wasSuccessful() or result.testsRun!=1 or result.skipped:
+        raise RuntimeError("Account integration check failed")
+    from test_checkout_integration import CheckoutIntegration
+    checkout_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(CheckoutIntegration))
+    if not checkout_result.wasSuccessful() or checkout_result.testsRun!=1 or checkout_result.skipped:
+        raise RuntimeError("Checkout integration check failed")
+    from test_launch_integration import LaunchIntegration
+    launch_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(LaunchIntegration))
+    if not launch_result.wasSuccessful() or launch_result.testsRun<1 or launch_result.skipped:
+        raise RuntimeError("Launch integration check failed")
+
 def initialize():
     if os.getenv("ACADEMY_DATABASE_URL"):
         import subprocess, sys
@@ -277,22 +297,19 @@ def initialize():
         passkey_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PasskeyTests))
         if not passkey_result.wasSuccessful() or passkey_result.testsRun<5:
             raise RuntimeError("Passkey security checks failed")
-        from test_accounts_integration import AccountIntegration
         from test_payment_policy import PaymentPolicyTests
         payment_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PaymentPolicyTests))
         if not payment_result.wasSuccessful() or payment_result.testsRun<6:
             raise RuntimeError('Payment policy check failed')
-        result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(AccountIntegration))
-        if not result.wasSuccessful() or result.testsRun!=1 or result.skipped:
-            raise RuntimeError("Account integration check failed")
-        from test_checkout_integration import CheckoutIntegration
-        checkout_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(CheckoutIntegration))
-        if not checkout_result.wasSuccessful() or checkout_result.testsRun!=1 or checkout_result.skipped:
-            raise RuntimeError("Checkout integration check failed")
-        from test_launch_integration import LaunchIntegration
-        launch_result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(LaunchIntegration))
-        if not launch_result.wasSuccessful() or launch_result.testsRun<1 or launch_result.skipped:
-            raise RuntimeError("Launch integration check failed")
+        # A successful build-stage DB regression is valid only for this exact release.
+        # If Render did not expose the DB during build, keep the full startup gate.
+        if not release_db_verified():
+            run_release_db_checks()
+        else:
+            print("Database release checks verified during build",flush=True)
+        from database import ready
+        if not ready():
+            raise RuntimeError("Database readiness check failed")
     from certificate_mail import configured,run
     if configured():
         threading.Thread(target=run,daemon=True,name="certificate-email").start()

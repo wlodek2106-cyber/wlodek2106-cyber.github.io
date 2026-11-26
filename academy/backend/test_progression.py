@@ -1331,4 +1331,12 @@ def load_tests(loader, tests, pattern):
     if os.environ.get("RENDER") == "true" or os.environ.get("RENDER_SERVICE_NAME") == "zer0life-academy":
         requirements = Path(__file__).with_name("requirements.txt")
         subprocess.run([sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "-r", str(requirements)], check=True)
+        # Run rollback-only integration against the provisioned Academy DB before deployment.
+        # Do not run migrations here; the currently live service may still use that schema.
+        proof=Path(__file__).with_name(".academy-db-release-check")
+        proof.unlink(missing_ok=True)
+        commit=os.getenv("RENDER_GIT_COMMIT")
+        if commit and os.getenv("ACADEMY_DATABASE_URL"):
+            subprocess.run([sys.executable,"-c","from server import run_release_db_checks; run_release_db_checks()"],check=True,timeout=900)
+            proof.write_text(commit,encoding="utf-8")
     return tests
