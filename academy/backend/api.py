@@ -38,6 +38,9 @@ def dispatch(method,path,body,token):
     if path in ("/marketplace-pay/qr","/marketplace-pay/preview","/marketplace-pay/wallet","/marketplace-pay/create","/marketplace-pay/settle","/marketplace-pay/treasury","/marketplace-pay/treasury-preflight","/marketplace-pay/reconcile","/marketplace-pay/admin-reconcile","/marketplace-pay/cancel-unissued") and method=="POST":
         from marketplace_payments import dispatch as pay_dispatch
         return 200,pay_dispatch(token,path.rsplit("/",1)[1],body)
+    if path in ("/higgsfield/connect","/higgsfield/disconnect","/higgsfield/submit","/higgsfield/status","/higgsfield/cancel") and method=="POST":
+        from higgsfield_studio import dispatch as hf_dispatch
+        return hf_dispatch(token,path.rsplit("/",1)[1],body)
     if path=="/admin/acquisition" and method=="GET":
         from acquisition import admin_report
         return 200,admin_report(token)
