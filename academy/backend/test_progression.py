@@ -50,6 +50,21 @@ class ProgressTests(unittest.TestCase):
         self.assertIsNone(agenda({"lessons":[]},{"items":[]},15)["focus"])
         for v in (0,45,True,"30"):
             with self.assertRaises(ValueError): agenda(p,j,v)
+    def test_adaptive_practice_focus(self):
+        from adaptive_study import practice_focus
+        self.assertIsNone(practice_focus(None,"ru"))
+        for lang in ("en","ru","uk","pl"):
+            tasks=[]
+            for level in ("foundation","reinforce","challenge"):
+                d=practice_focus({"day":2,"level":level,"latest":75},lang)
+                self.assertEqual(d["day"],2)
+                self.assertEqual(d["level"],level)
+                self.assertFalse(d["official_grading"])
+                self.assertEqual(d["evidence"],"quiz_summary_only")
+                self.assertNotIn("latest",d)
+                tasks.append(d["task"])
+            self.assertEqual(len(set(tasks)),3)
+        with self.assertRaises(ValueError):practice_focus(None,"invalid")
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}

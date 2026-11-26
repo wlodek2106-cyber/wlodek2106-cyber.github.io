@@ -402,3 +402,15 @@ body.zAurora .zOnboardingShortcut{display:flex;align-items:center;gap:8px;min-wi
 body.zAurora .zOnboardingShortcut svg{flex:none;width:20px;height:20px;color:#c1a5f5}
 body.zAurora .zOnboardingNotice{font-size:12px;line-height:1.5;color:#c8bddb;margin:12px 0 0}
 @media(max-width:620px){body.zAurora .zOnboardingActions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Private teacher daily session. */
+body.zAurora .zTeacherCenter{min-width:0;margin:14px 0;padding:18px;border:1px solid #746096;border-radius:18px;background:linear-gradient(145deg,#27213f,#171b2c)}
+body.zAurora .zTeacherCenter h2{margin:0 0 8px;color:#ebddff;font-size:clamp(18px,4vw,24px)}
+body.zAurora .zTeacherCenter p{line-height:1.5;overflow-wrap:anywhere}
+body.zAurora .zTeacherControls,body.zAurora .zTeacherActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+body.zAurora .zTeacherControls select{flex:1;min-width:100px;min-height:44px;font-size:16px;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px}
+body.zAurora .zTeacherControls button,body.zAurora .zTeacherActions button{min-height:44px;margin:0}
+body.zAurora .zTeacherTimeline{display:grid;gap:8px;margin:12px 0}
+body.zAurora .zTeacherTimeBlock{display:flex;justify-content:space-between;gap:12px;background:#211c35;border:1px solid #5a4877;border-radius:10px;padding:12px;color:#e7dbfb}
+body.zAurora .zTeacherNotice{color:#c9bddc;font-size:12px;margin:12px 0 0}
+@media(max-width:480px){body.zAurora .zTeacherControls,body.zAurora .zTeacherActions{display:grid;grid-template-columns:minmax(0,1fr)}}

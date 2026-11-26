@@ -377,6 +377,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         self.assertIn(b"zOnboardingShortcut[hidden]",style)
 
+    def test_personal_teacher_center_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'function teacherCenterDesign()',b'"/teacher/plan"',b'id!==requestId',b'accessible(f.day)',b'quiz summaries',b'enhance("teacher-center"'):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        self.assertIn(b"zTeacherTimeline",style)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

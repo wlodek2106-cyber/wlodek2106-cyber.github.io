@@ -273,6 +273,7 @@ function dashboard(){
    enhance("administration",()=>{administrationDesign();});
    enhance("compact",()=>{compactOverview();});
    enhance("onboarding",()=>{onboardingDesign();});
+   enhance("teacher-center",()=>{teacherCenterDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -612,7 +613,60 @@ function onboardingDesign(){
  observer.observe(nav,{subtree:true,attributes:true,attributeFilter:["hidden","disabled"]});
  onboardingRefresh=schedule;schedule();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();motion()}
+const teacherCenterWords={
+ en:["Personal Teacher","Your daily study session","Session length","minutes","Build my session","Preparing your session…","Could not load your study session. Try again.","No available lesson yet.","Day","Latest quiz score","Not attempted","Foundation","Reinforce","Challenge","Review","Learn","Practice","Reflect","Suggested exercise","Open lesson","Practice brief","Rules-based recommendations from quiz summaries, not a diagnosis of individual mistakes or an official grade.","Review due","Private session · no external AI request"],
+ ru:["Personal Teacher","Твоя учебная сессия","Продолжительность","мин","Составить занятие","Подбираем занятие…","Не удалось загрузить занятие. Попробуй ещё раз.","Пока нет доступного урока.","День","Последний балл экзамена","Нет попыток","Основы","Закрепление","Продвинутый уровень","Повторение","Обучение","Практика","Рефлексия","Рекомендуемое упражнение","Открыть урок","Практический бриф","Рекомендации на основе итоговых баллов, а не диагностика конкретных ошибок или официальная оценка.","Пора повторить","Приватная сессия · без внешнего AI-запроса"],
+ uk:["Personal Teacher","Твоя навчальна сесія","Тривалість","хв","Скласти заняття","Підбираємо заняття…","Не вдалося завантажити заняття. Спробуй ще раз.","Поки немає доступного уроку.","День","Останній бал іспиту","Немає спроб","Основи","Закріплення","Просунутий рівень","Повторення","Навчання","Практика","Рефлексія","Рекомендована вправа","Відкрити урок","Практичний бриф","Рекомендації на основі підсумкових балів, а не діагностика окремих помилок чи офіційна оцінка.","Час повторити","Приватна сесія · без зовнішнього ШІ-запиту"],
+ pl:["Personal Teacher","Twoja sesja nauki","Czas trwania","min","Ułóż sesję","Przygotowujemy sesję…","Nie udało się wczytać sesji. Spróbuj ponownie.","Brak dostępnej lekcji.","Dzień","Ostatni wynik egzaminu","Brak prób","Podstawy","Utrwalenie","Poziom zaawansowany","Powtórka","Nauka","Praktyka","Refleksja","Zalecane ćwiczenie","Otwórz lekcję","Brief praktyczny","Zalecenia oparte na wynikach, nie diagnoza poszczególnych błędów ani oficjalna ocena.","Czas na powtórkę","Prywatna sesja · bez zewnętrznego zapytania AI"]};
+let teacherCenterRefresh=null;
+function teacherCenterDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),days=$("days");if(!overview||!panel||!days)return;
+ const w=()=>teacherCenterWords[locale()]||teacherCenterWords.en;
+ const hub=el("section","zTeacherCenter"),head=el("h2"),caption=el("p"),controls=el("div","zTeacherControls"),duration=el("select"),generate=el("button","zAction primary"),status=el("p"),result=el("div","zTeacherResult"),notice=el("p","zTeacherNotice");
+ hub.id="zTeacherCenter";generate.type="button";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+ for(const n of [15,30,60]){const option=el("option");option.value=String(n);duration.append(option)}duration.value="30";
+ controls.append(duration,generate);hub.append(head,caption,controls,status,result,notice);
+ const onboarding=$("zOnboarding");if(onboarding)onboarding.after(hub);else overview.prepend(hub);
+ let requestId=0,lastLanguage=locale(),last=null;
+ const reset=()=>{requestId++;last=null;result.replaceChildren();status.textContent="";generate.disabled=false};
+ const accessible=day=>Array.from(days.querySelectorAll("button[data-day]")).find(n=>Number(n.dataset.day)===day&&!n.disabled);
+ const render=d=>{
+   result.replaceChildren();if(!d?.focus){status.textContent=w()[7];return}
+   const f=d.focus,level={foundation:11,reinforce:12,challenge:13}[f.level],heading=el("h3","",w()[8]+" "+f.day+" · "+w()[level]),score=el("p","",w()[9]+": "+(f.latest===null?w()[10]:String(f.latest)+"/100")+(f.due?" · "+w()[22]:""));
+   result.append(heading,score);
+   const list=el("div","zTeacherTimeline");
+   for(const item of d.items||[]){const i={review:14,learn:15,practice:16,reflect:17}[item.kind];if(i===undefined)continue;const row=el("div","zTeacherTimeBlock");row.append(el("strong","",w()[i]),el("span","",String(item.minutes)+" "+w()[3]));list.append(row)}
+   result.append(list);
+   if(d.practice_focus?.task)result.append(el("h4","",w()[18]),el("p","",d.practice_focus.task));
+   if(d.brief?.deliverable){result.append(el("h4","",w()[20]),el("p","",d.brief.deliverable))}
+   const actions=el("div","zTeacherActions"),open=el("button","zAction",w()[19]),practice=el("button","zAction",w()[20]);
+   open.type=practice.type="button";open.disabled=practice.disabled=!accessible(f.day);
+   open.onclick=()=>{if(!panel.hidden)accessible(f.day)?.click()};
+   practice.onclick=()=>{if(!panel.hidden&&accessible(f.day)&&typeof openPractice==="function")openPractice(f.day)};
+   actions.append(open,practice);result.append(actions);status.textContent=w()[23];
+ };
+ generate.onclick=async()=>{
+   if(panel.hidden||typeof api!=="function")return;
+   const id=++requestId,language=locale();generate.disabled=true;result.replaceChildren();last=null;status.textContent=w()[5];
+   try{
+     const data=await api("/teacher/plan",{minutes:Number(duration.value),lang:language});
+     if(id!==requestId||panel.hidden||locale()!==language||!hub.isConnected)return;
+     last=data;render(data);
+   }catch(error){if(id===requestId&&!panel.hidden)status.textContent=w()[6]}
+   finally{if(id===requestId)generate.disabled=false}
+ };
+ duration.onchange=reset;
+ function sync(){
+   if(locale()!==lastLanguage){lastLanguage=locale();reset()}
+   head.textContent=w()[0];caption.textContent=w()[1];generate.textContent=w()[4];notice.textContent=w()[21];duration.setAttribute("aria-label",w()[2]);
+   for(const option of duration.options)option.textContent=option.value+" "+w()[3];
+ }
+ new MutationObserver(()=>{if(panel.hidden)reset()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ // Invalidate recommendations when original lesson controls are replaced or permissions change.
+ new MutationObserver(()=>{if(last?.focus&&!accessible(last.focus.day))reset()}).observe(days,{childList:true,subtree:true,attributes:true,attributeFilter:["disabled","data-state"]});
+ teacherCenterRefresh=sync;sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
