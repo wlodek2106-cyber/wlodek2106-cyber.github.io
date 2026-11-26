@@ -386,6 +386,19 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertEqual(code,200)
         self.assertIn(b"zTeacherTimeline",style)
 
+    def test_discreet_recovery_controls(self):
+        code,_,body=self.request("/dashboard")
+        self.assertEqual(code,200)
+        self.assertIn(b'id="zRecoveryLink"',body)
+        self.assertIn(b'href="/dashboard?view=classic"',body)
+        auth=body.split(b'<section id="auth">',1)[1].split(b'</section>',1)[0]
+        self.assertNotIn(b'zRecoveryLink',auth)
+        self.assertNotIn(b'Classic mode / Lite / Bez animacji',body)
+        code,_,js=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        self.assertIn(b'b.setAttribute("aria-label",title)',js)
+        self.assertIn(b'b.title=title',js)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

@@ -414,3 +414,9 @@ body.zAurora .zTeacherTimeline{display:grid;gap:8px;margin:12px 0}
 body.zAurora .zTeacherTimeBlock{display:flex;justify-content:space-between;gap:12px;background:#211c35;border:1px solid #5a4877;border-radius:10px;padding:12px;color:#e7dbfb}
 body.zAurora .zTeacherNotice{color:#c9bddc;font-size:12px;margin:12px 0 0}
 @media(max-width:480px){body.zAurora .zTeacherControls,body.zAurora .zTeacherActions{display:grid;grid-template-columns:minmax(0,1fr)}}
+
+/* Discreet accessible controls; leave the sign-in form clear. */
+body.zAurora .zPause,body.zAurora .zAuthArt .zPause{display:grid;place-items:center;box-sizing:border-box;width:44px;height:44px;min-height:44px;padding:0;font-size:17px;line-height:1;right:4px;bottom:4px;border-radius:50%;background:#171429a8;color:#d8c8fa;border:1px solid #685983;box-shadow:none}
+body.zAurora .zPause[hidden]{display:none!important}
+body.zAurora .zPause:focus-visible{outline:2px solid #b99af3;outline-offset:3px}
+#zRecoveryLink[hidden]{display:none!important}

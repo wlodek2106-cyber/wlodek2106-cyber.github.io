@@ -206,9 +206,9 @@ class Handler(BaseHTTPRequestHandler):
             if path in ("/","/dashboard"):
                 if not classic: body=dashboard_shell(body)
                 # Static recovery link stays usable even if optional UI JavaScript fails.
-                recovery=(b'<p><a href="/dashboard">Aurora 3D / Modern interface</a></p>' if classic else
-                          b'<p><a href="/dashboard?view=classic">Classic mode / Lite / Bez animacji</a></p>')
-                body=body.replace(b'<section id="auth">',b'<section id="auth">'+recovery,1)
+                recovery=(b'<p id="zRecoveryLink" style="text-align:center;font-size:12px;opacity:.78"><a href="/dashboard">Modern interface</a></p>' if classic else
+                          b'<p id="zRecoveryLink" style="text-align:center;font-size:12px;opacity:.78"><a href="/dashboard?view=classic">Display options</a></p>')
+                body=body.replace(b'</noscript></section><p style="text-align:center">',b'</noscript></section>'+recovery+b'<p style="text-align:center">',1)
             if path in AURORA_PAGES and not classic: body=aurora_shell(body)
             self.send_response(200)
             self.send_header("Content-Type","text/html; charset=utf-8")
