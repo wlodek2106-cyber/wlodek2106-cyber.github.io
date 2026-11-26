@@ -3,6 +3,17 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_graduate_showcase_validation(self):
+        from graduate_showcase import validate,CODE
+        p={"headline":"Creator","bio":"Public work only","show_name":False,"projects":[{"title":"Film","description":"Example","url":"https://example.invalid/film"}]}
+        self.assertEqual(validate(p),p)
+        self.assertTrue(CODE.fullmatch("a"*32))
+        self.assertFalse(CODE.fullmatch("a"*31))
+        for url in ("javascript:alert(1)","http://example.invalid","https://user:pass@example.invalid","https://example.invalid/a b"):
+            with self.assertRaises(ValueError):validate(dict(p,projects=[dict(p["projects"][0],url=url)]))
+        with self.assertRaises(ValueError):validate(dict(p,show_name=1))
+        with self.assertRaises(ValueError):validate(dict(p,projects=[]))
+        with self.assertRaises(ValueError):validate(dict(p,private_submission="hidden"))
     def test_elite_review_rubric(self):
         from elite_program import RUBRIC,validate_review
         self.assertEqual(sum(RUBRIC.values()),100)
