@@ -57,6 +57,12 @@ class HttpBoundary(unittest.TestCase):
                 with req("/creator-suite") as r:
                     self.assertEqual(r.status,200)
                     self.assertIn(b"creator-suite.js",r.read())
+                with req("/client-portal") as r:
+                    self.assertIn("connect-src 'self'",r.headers["Content-Security-Policy"])
+                    self.assertIn("noindex",r.headers["X-Robots-Tag"])
+                    self.assertIn(b'client-portal.js',r.read())
+                with req("/client-portal.js") as r:
+                    self.assertIn(b'/jobs/mine',r.read())
                 with req("/production-cost") as r:
                     self.assertIn("connect-src 'none'",r.headers["Content-Security-Policy"])
                     self.assertIn(b'production-cost.js',r.read())
