@@ -3,6 +3,22 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_subtitle_draft(self):
+        from ad_production import subtitle_draft,student_subtitles
+        from unittest.mock import patch
+        d=subtitle_draft(15,["Привет","", "Тест","Готово"])
+        self.assertIn("00:00:00,000 --> 00:00:03,000",d["srt"])
+        self.assertIn("00:00:08,000 --> 00:00:12,000",d["srt"])
+        self.assertIn("00:00:12,000 --> 00:00:15,000",d["srt"])
+        self.assertEqual(d["narration"],"Привет\n\nТест\n\nГотово")
+        self.assertEqual(d["warnings"],[])
+        self.assertEqual(subtitle_draft(15,["a"*120,"","",""])["warnings"],[1])
+        for bad in (["","","",""],["<b>test</b>","","",""],["a"*161,"","",""],["one"]):
+            with self.assertRaises(ValueError):subtitle_draft(15,bad)
+        with patch("elite_program.access",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):student_subtitles("token",15,["A","","",""])
+        with patch("elite_program.access",return_value={"owner_preview":True}):
+            self.assertTrue(student_subtitles("token",15,["A","","",""])["draft"])
     def test_commercial_video_assembler(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
@@ -29,6 +45,16 @@ class ProgressTests(unittest.TestCase):
             self.assertIn("concat=n=4:v=1:a=0",cmd[cmd.index("-filter_complex")+1])
             self.assertIn("apad,atrim=duration=15",cmd[cmd.index("-filter_complex")+1])
             self.assertIn("-an",assembler.build_command(exe,p,clips,None,out))
+            narration=root/"voice.wav";narration.touch()
+            subtitles=root/"captions.srt";subtitles.touch()
+            mixed=assembler.build_command(exe,p,clips,audio,out,narration,subtitles)
+            self.assertEqual(mixed.count("-i"),7)
+            self.assertIn("amix=inputs=2",mixed[mixed.index("-filter_complex")+1])
+            self.assertIn("6:s:0",mixed)
+            self.assertIn("mov_text",mixed)
+            voice_only=assembler.build_command(exe,p,clips,None,out,narration,subtitles)
+            self.assertIn("5:s:0",voice_only)
+            self.assertNotIn("-an",voice_only)
             with self.assertRaises(ValueError):assembler.build_command(exe,p,clips[:3],None,out)
             def fake_run(args,**kwargs):
                 self.assertFalse(kwargs["shell"])
