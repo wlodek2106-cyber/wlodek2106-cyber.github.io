@@ -31,11 +31,41 @@ def issue_certificate(token):
             raise PermissionError("Complete all required lessons and provide your name")
         return result
 
+ELITE_PROGRAM="AI Studio & Business | ELITE"
+def issue_elite_certificate(token):
+    student=authenticate(token)
+    if student is None: raise PermissionError("Authentication required")
+    with transaction() as cur:
+        cur.execute("""SELECT e.id,s.first_name,s.last_name FROM enrollments e
+            JOIN students s ON s.id=e.student_id
+            WHERE e.student_id=%s AND e.plan='elite' AND e.paid_at IS NOT NULL FOR UPDATE OF e""",(student,))
+        row=cur.fetchone()
+        if not row or not row[1] or not row[2]:
+            raise PermissionError("Paid ELITE enrollment and full name required")
+        eid,first,last=row
+        cur.execute("SELECT count(*) FROM lesson_progress WHERE enrollment_id=%s AND lesson BETWEEN 1 AND 45 AND score>=80",(eid,))
+        if cur.fetchone()[0]!=45:raise PermissionError("Complete all 45 core lessons")
+        cur.execute("""SELECT count(*),round(avg(review_score),2) FROM elite_projects
+            WHERE student_id=%s AND review_status='approved' AND review_score>=80 AND reviewed_at IS NOT NULL""",(student,))
+        count,average=cur.fetchone()
+        if count!=5:raise PermissionError("All five ELITE projects must be approved")
+        cur.execute("""INSERT INTO elite_certificates(enrollment_id,verification_code,recipient_name,average_score)
+            VALUES (%s,%s,%s,%s) ON CONFLICT(enrollment_id) DO NOTHING""",(eid,"ELITE-"+secrets.token_urlsafe(24),first+" "+last,average))
+        cur.execute("SELECT verification_code,issued_at,recipient_name,average_score FROM elite_certificates WHERE enrollment_id=%s",(eid,))
+        code,issued,name,score=cur.fetchone()
+        return {"code":code,"issued_at":issued.isoformat(),"recipient_name":name,"program":ELITE_PROGRAM,
+                "lessons":45,"projects":5,"average_score":float(score),"credential":"elite"}
+
 def verify_certificate(code):
     with transaction() as cur:
+        if code.startswith("ELITE-"):
+            cur.execute("SELECT issued_at FROM elite_certificates WHERE verification_code=%s",(code,))
+            row=cur.fetchone()
+            return {"valid":bool(row),"issued_at":row[0].isoformat() if row else None,
+                    **({"credential":"elite","program":ELITE_PROGRAM,"projects":5,"lessons":45} if row else {})}
         cur.execute("SELECT issued_at FROM certificates WHERE verification_code=%s",(code,))
         row=cur.fetchone()
-        return {"valid":bool(row),"issued_at":row[0].isoformat() if row else None}
+        return {"valid":bool(row),"issued_at":row[0].isoformat() if row else None,**({"credential":"core"} if row else {})}
 
 def certificate_pdf(record):
     from io import BytesIO
@@ -59,12 +89,16 @@ def certificate_pdf(record):
         c.setFont("AcademyCertificate",size)
         c.drawCentredString(w/2,y,value)
     line("ZER0LIFE AI CREATOR ACADEMY",h-100,18)
-    line("Certificate of Completion",h-165,32)
+    line("ELITE Professional Certificate" if record.get("credential")=="elite" else "Certificate of Completion",h-165,32)
     line("Presented to",h-215,16)
     for i,name in enumerate(simpleSplit(record["recipient_name"],"AcademyCertificate",25,w-120)):
         line(name,h-255-i*32,25)
     line(record["program"],170,18)
-    line(str(record.get("lessons",30))+" lessons completed | "+record["issued_at"][:10],135,14)
+    if record.get("credential")=="elite":
+        line("45 lessons | 5 approved projects | Average: "+str(record["average_score"])+"/100",135,14)
+        line("Issued "+record["issued_at"][:10]+" | Academy-issued credential",112,11)
+    else:
+        line(str(record.get("lessons",30))+" lessons completed | "+record["issued_at"][:10],135,14)
     line("Verification: "+record["code"],90,11)
     line("zer0life-academy.onrender.com",65,10)
     c.showPage()
