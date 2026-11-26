@@ -473,3 +473,12 @@ CREATE TABLE IF NOT EXISTS student_practice_drafts (
  revision integer NOT NULL CHECK(revision>0),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Private learner reflections, one per lesson; not an exam score.
+CREATE TABLE IF NOT EXISTS student_review_notes (
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ lesson integer NOT NULL CHECK(lesson BETWEEN 1 AND 45),
+ reflection text NOT NULL CHECK(char_length(reflection) BETWEEN 5 AND 1200),
+ reviewed_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(student_id,lesson)
+);
