@@ -3,6 +3,22 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_project_schedule(self):
+        from project_schedule import due_date,summarize
+        from datetime import date
+        today=date(2026,11,26)
+        self.assertIsNone(due_date("",today))
+        self.assertEqual(due_date("2026-11-26",today),today)
+        for value in ("2026-11-25","2029-01-01","2026-02-30","20261126",True):
+            with self.assertRaises(ValueError):due_date(value,today)
+        data=summarize([{"id":1,"done":False,"due_date":"2026-11-25"},{"id":2,"done":False,"due_date":"2026-11-26"},{"id":3,"done":True,"due_date":"2026-11-25"},{"id":4,"done":False,"due_date":None},{"id":5,"done":False,"due_date":"2026-11-29"}],today)
+        self.assertEqual(data["percent"],20)
+        self.assertEqual(data["overdue"],1)
+        self.assertEqual(data["due_today"],1)
+        self.assertEqual(data["unscheduled"],1)
+        self.assertEqual([x["schedule_state"] for x in data["items"]],["overdue","due_today","done","unscheduled","upcoming"])
+        self.assertIsNone(summarize([],today)["percent"])
+        self.assertTrue(data["advisory_only"])
     def test_freelance_assistant(self):
         from freelance_assistant import estimate_job
         job={"id":1,"title":"Design","category":"design","brief":"One poster","budget_cents":12000}
