@@ -3,6 +3,51 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_local_tool_bridge(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        import wave
+        spec=spec_from_file_location("local_bridge",Path(__file__).with_name("local-tool-bridge.py"))
+        bridge=module_from_spec(spec);spec.loader.exec_module(bridge)
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);exe=root/"fake-tool";exe.write_text("test");exe.chmod(0o700)
+            source=root/"speech.txt";source.write_text("Hello",encoding="utf-8")
+            model=root/"voice.onnx";model.write_bytes(b"fixture")
+            Path(str(model)+".json").write_text("{}")
+            calls=[]
+            def fake(command,**options):
+                calls.append((command,options))
+                self.assertFalse(options["shell"])
+                self.assertEqual(options["timeout"],300)
+                if "-m" in command and "-otxt" not in command:
+                    self.assertEqual(options["input"],b"Hello\n")
+                    with wave.open(command[-1],"wb") as w:
+                        w.setparams((1,2,16000,1,"NONE","not compressed"));w.writeframes(b"\0\0")
+                else:
+                    output=Path(command[-1]+(".txt" if "-otxt" in command else ""))
+                    output.write_text("Converted",encoding="utf-8")
+            output=root/"voice.wav"
+            bridge.run("Piper",exe,source,model,output,runner=fake)
+            self.assertTrue(output.is_file())
+            with self.assertRaises(FileExistsError):bridge.run("Piper",exe,source,model,output,runner=fake)
+            md=root/"doc.md"
+            bridge.run("MarkItDown",exe,source,None,md,runner=fake)
+            self.assertEqual(md.read_text(),"Converted")
+            audio=root/"audio.wav"
+            with wave.open(str(audio),"wb") as w:
+                w.setparams((1,2,16000,1,"NONE","not compressed"));w.writeframes(b"\0\0")
+            whisper=root/"ggml.bin";whisper.write_bytes(b"fixture")
+            transcript=root/"transcript.txt"
+            bridge.run("Whisper.cpp",exe,audio,whisper,transcript,runner=fake)
+            self.assertEqual(transcript.read_text(),"Converted")
+            self.assertIn("-otxt",calls[-1][0])
+            self.assertEqual(len(calls),3)
+            with self.assertRaises(ValueError):bridge.run("MarkItDown",exe,audio,None,root/"bad.md",runner=fake)
+            self.assertFalse((root/"bad.md").exists())
+            with self.assertRaises(ValueError):bridge.run("Unknown",exe,source,None,root/"bad.md",runner=fake)
+            with self.assertRaises(ValueError):bridge.run("MarkItDown",exe,source,None,root/"empty.md",runner=lambda *a,**k:None)
+            self.assertFalse((root/"empty.md").exists())
     def test_ai_mega_catalog(self):
         from ai_mega_catalog import ROWS, PLANS, LANGS, catalog, student_catalog
         from unittest.mock import patch
