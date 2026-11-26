@@ -6,6 +6,7 @@ from urllib.parse import urlsplit
 
 BASE = "https://api.higgsfield.ai"
 MODEL = "/bytedance/seedance-2.0/text-to-video"
+MODEL_PRESETS = {"seedream_v5_pro": {"path": "/bytedance/seedream/v5.0/pro/text-to-image", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "1:1"}}, "kling_image_4_0": {"path": "/kling-image/v4.0/text-to-image", "kind": "image", "settings": {"resolution": "2k", "aspect_ratio": "16:9"}}, "recraft_v4_1": {"path": "/recraft/v4.1/text-to-image", "kind": "image", "settings": {"resolution": "1k", "aspect_ratio": "1:1", "output_format": "jpg"}}, "qwen_image_3": {"path": "/alibaba/qwen-image-3/text-to-image", "kind": "image", "settings": {"resolution": "1k", "aspect_ratio": "1:1", "prompt_extend": True, "enable_thinking": True, "prompt_extend_mode": "direct"}}, "soul_2": {"path": "/higgsfield-ai/soul/v2/standard", "kind": "image", "settings": {"seed": None, "batch_size": 1, "resolution": "720p", "aspect_ratio": "4:3", "enhance_prompt": True}}, "kling_video_4_0": {"path": "/kling-video/v4.0/text-to-video", "kind": "video", "settings": {"duration": 10, "resolution": "1080p", "aspect_ratio": "16:9"}}, "wan_3_0": {"path": "/alibaba/wan-3.0/text-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "1080p", "aspect_ratio": "adaptive", "generate_audio": True, "enable_thinking": False}}, "wan_3_0_prime": {"path": "/alibaba/wan-3.0-prime/text-to-video", "kind": "video", "settings": {"duration": 5, "resolution": "1080p", "aspect_ratio": "adaptive", "generate_audio": True, "enable_thinking": False}}}
 TTL = 1800
 LOCK = threading.Lock()
 SESSIONS = {}
@@ -63,6 +64,21 @@ def generation_payload(body):
     if not isinstance(resolution, str) or resolution not in RESOLUTIONS or not isinstance(ratio, str) or ratio not in RATIOS or type(audio) is not bool:
         raise ValueError("Invalid generation settings")
     return {"prompt": prompt.strip(), "duration": duration, "resolution": resolution, "aspect_ratio": ratio, "generate_audio": audio}
+
+def selected_request(body):
+    model = body.get("model", "seedance_2_0")
+    if not isinstance(model, str):
+        raise ValueError("Invalid model")
+    if model == "seedance_2_0":
+        return MODEL, generation_payload(body), "video"
+    config = MODEL_PRESETS.get(model)
+    if not config:
+        raise ValueError("Unsupported API model")
+    prompt = body.get("prompt")
+    if body.get("confirm_charge") is not True or not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 4000:
+        raise ValueError("Invalid prompt or consent")
+    # Fixed, documented initial settings. Never accept a caller-supplied endpoint or arbitrary provider fields.
+    return config["path"], {"prompt": prompt.strip(), **config["settings"]}, config["kind"]
 
 def safe_url(value):
     if not isinstance(value, str) or len(value) > 4096:
@@ -131,11 +147,11 @@ def dispatch(token, action, body):
         if session["busy"]:
             return 409, {"error": "Request in progress"}
         if action == "submit":
-            payload = generation_payload(body)
+            path, payload, kind = selected_request(body)
             if session["job"] or session["unknown"]:
                 return 409, {"error": "Resolve the previous request first"}
             session["guard_until"] = now + GUARD_TTL
-            path = MODEL
+            session["kind"] = kind
         elif action == "reviewed":
             if body.get("checked_provider_history") is not True or session["job"] or not session["unknown"]:
                 raise ValueError("Review the unknown request in the provider console first")
@@ -170,12 +186,21 @@ def dispatch(token, action, body):
                 status = "pending"
             output = {"status": status, "request_id": session["job"]}
             if status == "completed":
-                video = result.get("video")
-                url = safe_url(video.get("url")) if isinstance(video, dict) else None
-                if url:
-                    output["video_url"] = url
+                if session.get("kind") == "image":
+                    images = result.get("images")
+                    urls = [safe_url(item.get("url")) for item in images[:8] if isinstance(item, dict)] if isinstance(images, list) else []
+                    urls = [url for url in urls if url]
+                    if urls:
+                        output["image_urls"] = urls
+                    else:
+                        return 200, {"status": "pending", "request_id": session["job"], "error_code": "result_unavailable"}
                 else:
-                    return 200, {"status": "pending", "request_id": session["job"], "error_code": "result_unavailable"}
+                    video = result.get("video")
+                    url = safe_url(video.get("url")) if isinstance(video, dict) else None
+                    if url:
+                        output["video_url"] = url
+                    else:
+                        return 200, {"status": "pending", "request_id": session["job"], "error_code": "result_unavailable"}
             if status in TERMINAL:
                 session["job"] = None
             return 200, output

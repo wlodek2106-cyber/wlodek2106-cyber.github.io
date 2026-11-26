@@ -42,3 +42,24 @@ class HiggsfieldStudioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.call("reviewed",{"checked_provider_history":False})
         self.assertEqual(self.call("reviewed",{"checked_provider_history":True})[0],200)
+
+    def test_model_presets_and_untrusted_path(self):
+        for name, config in h.MODEL_PRESETS.items():
+            with self.subTest(model=name):
+                path, payload, kind = h.selected_request({"model":name,"prompt":" test ","confirm_charge":True,"path":"https://evil.invalid","resolution":"8k"})
+                self.assertEqual(path, config["path"])
+                self.assertEqual(payload, {"prompt":"test", **config["settings"]})
+                self.assertEqual(kind, config["kind"])
+        for invalid in ["https://evil.invalid", "unavailable", [], None]:
+            with self.subTest(model=invalid), self.assertRaises(ValueError):
+                h.selected_request({"model":invalid,"prompt":"test","confirm_charge":True})
+        with self.assertRaises(ValueError):
+            h.selected_request({"model":"seedream_v5_pro","prompt":"test","confirm_charge":False})
+
+    def test_image_result_and_no_leak(self):
+        self.call("connect",{"key":"example:secret123","consent":True})
+        with patch.object(h,"upstream",return_value={"request_id":"image_123"}) as provider:
+            self.call("submit",{"model":"seedream_v5_pro","prompt":"test","confirm_charge":True})
+            self.assertEqual(provider.call_args.args[1],"/bytedance/seedream/v5.0/pro/text-to-image")
+        with patch.object(h,"upstream",return_value={"status":"completed","images":[{"url":"https://example.com/a.png"},{"url":"javascript:bad"},{"url":"https://user:password@example.com/b.png"}]}):
+            self.assertEqual(self.call("status",{})[1],{"status":"completed","request_id":"image_123","image_urls":["https://example.com/a.png"]})
