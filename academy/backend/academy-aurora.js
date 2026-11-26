@@ -251,7 +251,7 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();productionDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -324,7 +324,53 @@ function businessDesign(){
  businessRefresh=()=>{for(const [n,i] of labels)n.textContent=bw()[i];for(const fn of refreshers)fn()};businessRefresh();
  if(dashboard&&$("portfolioButton"))new MutationObserver(()=>{for(const fn of refreshers)fn()}).observe($("portfolioButton"),{attributes:true,attributeFilter:["hidden","disabled"]});
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();motion()}
-document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
+const productionWords={
+ en:["AI Production Center","Create with your own tools","Find a lab by name","All labs","Labs found","No matching labs","Show all","Higgsfield · graduate access","External provider credits; check prices before generating.","Local/browser tools may require downloads or compatible hardware.","Film & video","Digital characters","AI agents","3D reconstruction","Motion lab","Image & design","Music & sound","Voice","Web & apps","Local AI","Creator labs","Open lab"],
+ ru:["AI Production Center","Создавай с помощью своих инструментов","Найти лабораторию по названию","Все лаборатории","Найдено лабораторий","Ничего не найдено","Показать все","Higgsfield · доступ выпускникам","Кредиты внешнего сервиса; проверяй цены до генерации.","Локальные инструменты могут требовать загрузки моделей и совместимого устройства.","Кино и видео","Цифровые персонажи","AI-агенты","3D-реконструкция","Motion Lab","Изображения и дизайн","Музыка и звук","Голос","Сайты и приложения","Локальный AI","Лаборатории авторов","Открыть лабораторию"],
+ uk:["AI Production Center","Створюй зі своїми інструментами","Знайти лабораторію за назвою","Усі лабораторії","Знайдено лабораторій","Нічого не знайдено","Показати всі","Higgsfield · доступ випускникам","Кредити зовнішнього сервісу; перевір ціни перед генерацією.","Локальні інструменти можуть потребувати завантаження моделей і сумісного пристрою.","Кіно та відео","Цифрові персонажі","AI-агенти","3D-реконструкція","Motion Lab","Зображення й дизайн","Музика та звук","Голос","Сайти й застосунки","Локальний ШІ","Лабораторії авторів","Відкрити лабораторію"],
+ pl:["AI Production Center","Twórz własnymi narzędziami","Znajdź laboratorium po nazwie","Wszystkie laboratoria","Znalezione laboratoria","Brak wyników","Pokaż wszystkie","Higgsfield · dostęp absolwentów","Kredyty zewnętrznego dostawcy; sprawdź ceny przed generowaniem.","Narzędzia lokalne mogą wymagać pobrania modeli i zgodnego urządzenia.","Film i wideo","Postacie cyfrowe","Agenci AI","Rekonstrukcja 3D","Motion Lab","Obrazy i projektowanie","Muzyka i dźwięk","Głos","Strony i aplikacje","Lokalne AI","Laboratoria twórców","Otwórz laboratorium"]};
+let productionRefresh=null;
+function productionDesign(){
+ const journey=$("creatorJourney"),main=document.querySelector("main"),dashboard=!!journey,path=location.pathname;
+ if(!dashboard&&(!main||!["/ai-workspace","/creator-suite","/free-ai"].includes(path)))return;
+ const pw=()=>productionWords[locale()]||productionWords.en;
+ const labels=[];function tr(n,i){labels.push([n,i]);n.textContent=pw()[i];return n}
+ const box=el("section","zProductionHub"),head=el("h2"),grid=el("div","zProductionGrid");
+ head.append(icon("layers"),tr(el("span"),0));box.append(head,tr(el("p"),1),grid);
+ const linksData=[["/animation-studio",10,"video"],["/openmvs-lab",13,"box"],["/openmotion-lab",14,"workflow"],["/design-studio",15,"palette"],["/music-studio",16,"music"],["/voice-studio",17,"mic"],["/website-builder",18,"code"],["/free-ai",19,"cpu"]];
+ const labQueries=[[11,"users","influencer|digital human|инфлюенсер|інфлюенсер|influencerzy|персонаж"],[12,"network","agent|агент"],[7,"video","higgsfield"],[20,"layers",""]];
+ const normalize=s=>s.normalize("NFKD").replace(/\p{M}/gu,"").toLowerCase().replace(/ł/g,"l");
+ function tileNode(tag,i,glyph){const n=el(tag,"zProductionTile");const art=el("span","zProductionIcon");art.append(icon(glyph));n.append(art,tr(el("span"),i));grid.append(n);return n}
+ for(const [p,i,g] of linksData){const a=tileNode("a",i,g);a.href=url(p);links.push([a,p])}
+ const filters=el("div","zLabSearch"),input=el("input"),clear=tr(el("button","zAction"),6),count=el("p","zLabCount");
+ input.type="search";input.maxLength=100;input.autocomplete="off";clear.type="button";count.setAttribute("role","status");filters.append(input,clear);
+ let preset=null,requested=false;
+ function cards(){return journey?Array.from(journey.querySelectorAll(":scope > details")).filter(n=>!n.hidden):[]}
+ function apply(){
+   if(!journey)return;const q=normalize(input.value.trim()),need=q.split(/\s+/).filter(Boolean),all=cards();let found=0;
+   for(const card of all){const title=normalize(card.querySelector(":scope > summary")?.textContent||"");const match=preset!==null?(!preset||preset.split("|").some(x=>title.includes(normalize(x)))):need.every(x=>title.includes(x));card.classList.toggle("zLabFiltered",!match);if(match)found++}
+   const message=found?pw()[4]+": "+found+" / "+all.length:pw()[5];if(count.textContent!==message)count.textContent=message;
+ }
+ function focusLabs(i,query){if(!journey)return;preset=query;input.value=query?pw()[i]:"";apply();filters.scrollIntoView({block:"start",behavior:"auto"});input.focus({preventScroll:true})}
+ for(const [i,g,q] of labQueries){
+   if(dashboard){const b=tileNode("button",i,g);b.type="button";b.onclick=()=>focusLabs(i,q)}
+   else{const a=tileNode("a",i,g),p="/dashboard?lab="+encodeURIComponent(i);a.href=url(p);links.push([a,p])}
+ }
+ const note=el("div","zProductionNote");note.append(tr(el("p"),9),tr(el("p"),8));box.append(note);
+ if(dashboard){
+   box.id="zProductionHub";journey.before(box);box.append(filters,count);
+   input.addEventListener("input",()=>{preset=null;apply()});clear.onclick=()=>{preset=null;input.value="";apply();input.focus()};
+   const refresh=()=>{
+     apply();
+     if(!requested&&cards().length&&!journey.hidden&&!$("panel")?.hidden){requested=true;const v=new URLSearchParams(location.search).get("lab"),spec=labQueries.find(x=>String(x[0])===v);if(spec)focusLabs(spec[0],spec[2])}
+   };
+   new MutationObserver(refresh).observe(journey,{childList:true,attributes:true,attributeFilter:["hidden"]});
+   if($("panel"))new MutationObserver(refresh).observe($("panel"),{attributes:true,attributeFilter:["hidden"]});
+   refresh();
+ }else{const anchor=main.querySelector(":scope > .zModuleHero,:scope > .zAuroraHero")||main.querySelector(":scope > header,:scope > nav");if(anchor)anchor.after(box);else main.prepend(box)}
+ productionRefresh=()=>{for(const [n,i] of labels)n.textContent=pw()[i];input.placeholder=pw()[2];input.setAttribute("aria-label",pw()[2]);if(preset!==null&&preset){const spec=labQueries.find(x=>x[2]===preset);if(spec)input.value=pw()[spec[0]]}apply()};productionRefresh();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();motion()}
+document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
