@@ -303,3 +303,28 @@ body.zAurora.zBusinessPage #items>article>small{align-self:flex-start;padding:3p
 body.zAurora.zBusinessPage #items>article>h2{font-size:21px;line-height:1.3;margin:5px 0}
 body.zAurora.zBusinessPage #result>article{background:linear-gradient(145deg,#27213c,#17192b);border:1px solid #5b4b78;border-radius:15px;padding:16px;margin:12px 0}
 @media(max-width:620px){body.zAurora .zBusinessGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora .zBusinessLink{min-height:84px;padding:10px}body.zAurora .zBusinessLocalNav button{flex:1;min-width:0}body.zAurora.zBusinessPage #report .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* AI Production Center: actual existing studios and searchable labs. */
+body.zAurora .zProductionHub{margin:14px 0 20px;padding:clamp(14px,3vw,24px);border:1px solid #6a568e;border-radius:18px;background:radial-gradient(ellipse at top right,#704bad42,transparent 65%),linear-gradient(145deg,#25213a,#16192a);min-width:0}
+body.zAurora.z2027 #workspaceOverview>.zProductionHub{order:-3}
+body.zAurora.z2027 #workspaceOverview>#creatorJourney{order:-2}
+body.zAurora .zProductionHub>h2{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:clamp(20px,3vw,27px);color:#efe3ff}
+body.zAurora .zProductionHub>h2 svg{width:27px;height:27px;color:#c9a9ff}
+body.zAurora .zProductionHub>p{margin:0 0 14px;color:#cec3e2}
+body.zAurora .zProductionGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px}
+body.zAurora .zProductionTile{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:9px;min-width:0;min-height:105px;padding:12px;margin:0;border:1px solid #56476f;border-radius:14px;text-align:left;text-decoration:none;font:inherit;font-size:13px;font-weight:650;color:#f2eaff;background:linear-gradient(150deg,#28213b,#191b2d);cursor:pointer;overflow-wrap:anywhere}
+body.zAurora .zProductionTile:hover{background:#35264e;border-color:#b096e7}
+body.zAurora .zProductionTile:focus-visible{outline:2px solid #d8bdff;outline-offset:3px}
+body.zAurora .zProductionIcon{display:grid;place-items:center;width:39px;height:39px;border:1px solid #9675d0;border-radius:11px;background:linear-gradient(140deg,#7854b8,#392951);color:#ecd9ff;box-shadow:3px 4px 0 #20192f}
+body.zAurora .zProductionIcon svg{width:23px;height:23px}
+body.zAurora .zProductionNote{margin:14px 0 10px;padding:10px 12px;border:1px solid #514368;border-radius:11px;background:#1a192a}
+body.zAurora .zProductionNote p{margin:5px 0;color:#d1c5e5;font-size:12px;line-height:1.5}
+body.zAurora .zLabSearch{display:flex;gap:8px;align-items:center;margin:16px 0 8px;scroll-margin-top:18px}
+body.zAurora .zLabSearch input{flex:1;min-width:0;width:100%;min-height:44px;font-size:16px;border:1px solid #6c5891;border-radius:10px;background:#131626;color:#eee7ff}
+body.zAurora .zLabSearch button{margin:0;white-space:normal;min-height:44px}
+body.zAurora .zLabCount{font-size:13px;color:#d1bff4}
+body.zAurora #creatorJourney>details.zLabFiltered{display:none!important}
+body.zAurora #creatorJourney>details{margin:9px 0;border:1px solid #4e4269;border-radius:13px;background:#1a1b2d;min-width:0}
+body.zAurora #creatorJourney>details>summary{padding:12px;min-height:44px;color:#e5d6ff;font-weight:650;cursor:pointer;overflow-wrap:anywhere}
+body.zAurora #creatorJourney>details[open]{border-color:#8d70bd;background:#211d34}
+@media(max-width:620px){body.zAurora .zProductionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}body.zAurora .zProductionTile{min-height:86px;padding:10px}body.zAurora .zLabSearch{align-items:stretch;flex-wrap:wrap}body.zAurora .zLabSearch input{flex:1 1 170px}}
