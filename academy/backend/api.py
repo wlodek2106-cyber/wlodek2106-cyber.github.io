@@ -335,6 +335,9 @@ def dispatch(method,path,body,token):
             raise PermissionError("Paid course access required")
         source=Path(__file__).with_name("local-tool-bridge.py").read_bytes()
         return 200,{"source_base64":base64.b64encode(source).decode("ascii"),"filename":"zer0life-local-tool-bridge.py"}
+    if path in ("/review-journal/list","/review-journal/review","/review-journal/delete") and method=="POST":
+        from review_journal import dispatch as journal_dispatch
+        return 200,journal_dispatch(token,path.rsplit("/",1)[1],body)
     if path in ("/student-practice/read","/student-practice/save") and method=="POST":
         from student_practice import dispatch as practice_dispatch
         return 200,practice_dispatch(token,path.rsplit("/",1)[1],body)
