@@ -43,8 +43,8 @@ def catalog(token,lang):
     from database import transaction
     sid=authenticate(token)
     with transaction() as cur:
-        cur.execute("SELECT project,evidence,updated_at FROM elite_projects WHERE student_id=%s",(sid,))
-        saved={k:{"evidence":e,"updated_at":t.isoformat()} for k,e,t in cur.fetchall()}
+        cur.execute("SELECT project,evidence,updated_at,review_status,review_score,review_feedback,revision FROM elite_projects WHERE student_id=%s",(sid,))
+        saved={k:{"evidence":e,"updated_at":t.isoformat(),"status":status,"score":score,"feedback":feedback,"revision":rev} for k,e,t,status,score,feedback,rev in cur.fetchall()}
     is_open=unlocked(p)
     return {"unlocked":is_open,"projects":[{"id":k,"title":title,"days":3,**({"steps":steps.get(lang,steps["en"]),"links":links,"submission":saved.get(k)} if is_open else {})} for k,title,steps,links in PROJECTS]}
 def save(token,project,evidence):
@@ -56,5 +56,43 @@ def save(token,project,evidence):
     from database import transaction
     sid=authenticate(token)
     with transaction() as cur:
-        cur.execute("INSERT INTO elite_projects(student_id,project,evidence) VALUES (%s,%s,%s) ON CONFLICT(student_id,project) DO UPDATE SET evidence=EXCLUDED.evidence,updated_at=now()",(sid,project,evidence.strip()))
+        cur.execute("INSERT INTO elite_projects(student_id,project,evidence) VALUES (%s,%s,%s) ON CONFLICT(student_id,project) DO UPDATE SET evidence=EXCLUDED.evidence,updated_at=now(),revision=elite_projects.revision+1,review_status=\'pending\',review_score=NULL,review_feedback=NULL,reviewed_at=NULL WHERE elite_projects.review_status<>\'approved\'",(sid,project,evidence.strip()))
+        if cur.rowcount!=1: raise ValueError("Approved project is locked")
     return {"saved":True,"reviewed":False}
+
+RUBRIC={"brief":25,"quality":25,"evidence":20,"rights":20,"presentation":10}
+def validate_review(project,revision,scores,feedback):
+    if project not in {x[0] for x in PROJECTS} or type(revision) is not int or revision<1:
+        raise ValueError("Invalid project revision")
+    if not isinstance(scores,dict) or set(scores)!=set(RUBRIC) or any(type(v) is not int or not 0<=v<=RUBRIC[k] for k,v in scores.items()):
+        raise ValueError("Invalid rubric scores")
+    if not isinstance(feedback,str) or not 10<=len(feedback.strip())<=4000:
+        raise ValueError("Provide 10–4000 characters of feedback")
+    total=sum(scores.values())
+    return total,"approved" if total>=80 else "revision",feedback.strip()
+
+def review_queue(token,status="pending",offset=0):
+    from partners import owner
+    from database import transaction
+    owner(token)
+    if status not in ("pending","revision","approved") or type(offset) is not int or not 0<=offset<=100000:
+        raise ValueError("Invalid review filter")
+    with transaction() as cur:
+        cur.execute("""SELECT p.student_id,p.project,p.evidence,p.revision,p.review_status,p.review_score,p.review_feedback,p.updated_at,s.first_name,s.last_name
+            FROM elite_projects p JOIN students s ON s.id=p.student_id
+            WHERE p.review_status=%s ORDER BY p.updated_at,p.student_id,p.project LIMIT 31 OFFSET %s""",(status,offset))
+        rows=cur.fetchall()
+    return {"items":[{"student_id":sid,"project":project,"evidence":evidence,"revision":rev,"status":state,"score":score,"feedback":feedback,"updated_at":updated.isoformat(),"name":" ".join(x for x in (first,last) if x)} for sid,project,evidence,rev,state,score,feedback,updated,first,last in rows[:30]],"next_offset":offset+30 if len(rows)>30 else None,"rubric":RUBRIC}
+
+def review_project(token,student_id,project,revision,scores,feedback):
+    from partners import owner
+    from database import transaction
+    reviewer=owner(token)
+    if type(student_id) is not int or student_id<1 or student_id==reviewer:
+        raise PermissionError("Independent review required")
+    total,status,feedback=validate_review(project,revision,scores,feedback)
+    with transaction() as cur:
+        cur.execute("""UPDATE elite_projects SET review_status=%s,review_score=%s,review_feedback=%s,reviewed_at=now()
+            WHERE student_id=%s AND project=%s AND revision=%s AND review_status='pending'""",(status,total,feedback,student_id,project,revision))
+        if cur.rowcount!=1:raise ValueError("Project changed or was already reviewed; refresh the queue")
+    return {"status":status,"score":total}
