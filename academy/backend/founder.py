@@ -39,6 +39,36 @@ def daily_activity(start,days,rows):
     return [{"date":(start+timedelta(days=i)).date().isoformat(),
              **{k:data.get((start+timedelta(days=i)).date(),{}).get(k,0) for k in keys}} for i in range(days)]
 
+def trial_funnel(cur,start,now):
+    # Registration cohort. First exam before payment is evidence of a free trial;
+    # merely opening an unpaid enrollment is not counted as participation.
+    cur.execute("""WITH cohort AS (
+        SELECT s.id,e.id AS eid,e.paid_at,e.plan
+        FROM students s LEFT JOIN enrollments e ON e.student_id=s.id
+        WHERE s.created_at BETWEEN %s AND %s
+    ), stages AS (
+        SELECT c.*,
+        EXISTS(SELECT 1 FROM quiz_attempts q WHERE q.enrollment_id=c.eid AND q.lesson=1
+          AND q.attempted_at<=%s AND (c.paid_at IS NULL OR q.attempted_at<c.paid_at)) AS attempted,
+        EXISTS(SELECT 1 FROM lesson_progress p WHERE p.enrollment_id=c.eid AND p.lesson=1
+          AND p.passed_at<=%s AND (c.paid_at IS NULL OR p.passed_at<c.paid_at)) AS passed
+        FROM cohort c
+    )
+    SELECT count(*),count(*) FILTER(WHERE attempted),count(*) FILTER(WHERE passed),
+        count(*) FILTER(WHERE passed AND paid_at<=%s),
+        count(*) FILTER(WHERE passed AND paid_at IS NULL),
+        count(*) FILTER(WHERE passed AND paid_at<=%s AND plan='starter'),
+        count(*) FILTER(WHERE passed AND paid_at<=%s AND plan='pro'),
+        count(*) FILTER(WHERE passed AND paid_at<=%s AND plan='vip'),
+        count(*) FILTER(WHERE passed AND paid_at<=%s AND plan='elite')
+    FROM stages""",(start,now,now,now,now,now,now,now,now))
+    registered,attempted,passed,paid,waiting,*counts=cur.fetchone()
+    return {"registered":registered,"attempted":attempted,"passed":passed,"paid_after_pass":paid,
+            "passed_unpaid":waiting,"attempt_rate":percent(attempted,registered),
+            "pass_rate":percent(passed,attempted),"conversion_rate":percent(paid,passed),
+            "plans":dict(zip(("starter","pro","vip","elite"),counts)),
+            "basis":"registration_cohort_pre_payment_exam"}
+
 def activity(cur,start,now,days):
     cur.execute("""SELECT count(*),count(*) FILTER(WHERE e.paid_at IS NOT NULL),
         count(*) FILTER(WHERE r.student_id IS NOT NULL),
@@ -79,7 +109,7 @@ def activity(cur,start,now,days):
         "registration_to_paid_percent":percent(paid,registered),"referred_to_paid_percent":percent(paid_referred,referred),
         "started":started,"finished":finished,"completion_percent":percent(finished,paid)},
         "cohort":{"registered":cohort,"paid":cohort_paid,"conversion_percent":percent(cohort_paid,cohort)},
-        "exam_active_students":active,"totals":totals,"series":series,"moderation":moderation}
+        "trial_funnel":trial_funnel(cur,start,now),"exam_active_students":active,"totals":totals,"series":series,"moderation":moderation}
 
 def report(cur,days,now=None):
     validate_period(days)
