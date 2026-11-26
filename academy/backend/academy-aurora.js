@@ -525,7 +525,7 @@ function compactOverview(){
    labsToggle=v=>{open=v;sync()};b.onclick=()=>labsToggle(!open);relabellers.push(sync);sync();
  }
  compactRefresh=()=>{for(const fn of relabellers)fn()};
- if(new URLSearchParams(location.search).has("lab"))expandOverviewHub(".zProductionHub");
+ if(new URLSearchParams(location.search).has("lab")){expandOverviewHub(".zProductionHub");revealCreatorLabs()}
 }
 function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
