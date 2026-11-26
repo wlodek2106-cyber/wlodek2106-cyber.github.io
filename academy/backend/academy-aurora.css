@@ -461,3 +461,21 @@ body.zAurora .zStudioAction p{font-size:13px;margin:6px 0 0;color:#c9bddc}
 body.zAurora .zBusinessStudioLinks{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 body.zAurora .zBusinessStudio button{min-height:44px}
 body.zAurora .zBusinessStudioNote{font-size:12px;line-height:1.5;color:#c9bddc}
+
+/* Creator command dock: compact navigation and one generated workspace at a time. */
+body.zAurora .zCommandDock{min-width:0;margin:14px 0;padding:16px;border:1px solid #746096;border-radius:18px;background:linear-gradient(145deg,#25203d,#171b2c)}
+body.zAurora.z2027 #workspaceOverview>.zOnboarding{order:-6}
+body.zAurora.z2027 #workspaceOverview>.zCommandDock{order:-5}
+body.zAurora .zCommandDock h2{margin:0 0 8px;color:#ebddff;font-size:clamp(18px,4vw,24px)}
+body.zAurora .zCommandGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:9px;margin:12px 0}
+body.zAurora .zCommandTile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:86px;min-width:0;margin:0;padding:11px;text-align:left;font:inherit;font-size:13px;font-weight:650;overflow-wrap:anywhere;border:1px solid #665486;border-radius:12px;background:#221d36;color:#eee3ff}
+body.zAurora .zCommandIcon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#49336f;color:#d5b9ff}
+body.zAurora .zCommandIcon svg{width:20px;height:20px}
+body.zAurora .zCommandTile[aria-expanded=true]{border-color:#b99af3;background:#392b57}
+body.zAurora .zCommandTile[hidden],body.zAurora .zCommandBody[hidden],body.zAurora .zCommandClose[hidden],body.zAurora .zCommandInactive{display:none!important}
+body.zAurora .zCommandBody{min-width:0;scroll-margin-top:16px}
+body.zAurora .zCommandBody>section,body.zAurora .zCommandBody>details{margin:8px 0;box-sizing:border-box;max-width:100%}
+body.zAurora .zCommandClose{min-height:44px;background:#302746;color:#eee3ff;border:1px solid #776298;border-radius:10px;margin:6px 0}
+body.zAurora .zCommandNote{font-size:12px;line-height:1.5;color:#c9bddc;margin:10px 0}
+body.zAurora .zCommandFull{display:inline-flex;align-items:center;min-height:44px;font-size:13px;color:#d2b9ff}
+@media(max-width:620px){body.zAurora .zCommandGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}

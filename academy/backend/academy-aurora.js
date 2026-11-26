@@ -277,6 +277,7 @@ function dashboard(){
    enhance("project-mentor",()=>{projectMentorDesign();});
    enhance("career-center",()=>{careerCenterDesign();});
    enhance("business-studio",()=>{businessStudioDesign();});
+   enhance("command-dock",()=>{commandDockDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -821,7 +822,58 @@ function businessStudioDesign(){
  new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});
  businessStudioRefresh=schedule;sync();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();motion()}
+const commandDockWords={
+ en:["Creator Command Center","Choose a workspace","Personal Teacher","Project Mentor","Career Center","Business Studio","AI Production","Portfolio","Find jobs","AI Support","Close workspace","Open full Command Center","Only one workspace is expanded at a time. Access remains account-dependent."],
+ ru:["Creator Command Center","Выбери рабочий раздел","Персональный преподаватель","Наставник проектов","Карьера","Бизнес-студия","AI Production","Портфолио","Найти заказы","AI-поддержка","Закрыть раздел","Полный Command Center","Одновременно открыт один рабочий раздел. Доступ определяется аккаунтом."],
+ uk:["Creator Command Center","Обери робочий розділ","Персональний викладач","Наставник проєктів","Кар'єра","Бізнес-студія","AI Production","Портфоліо","Знайти замовлення","ШІ-підтримка","Закрити розділ","Повний Command Center","Одночасно відкрито один робочий розділ. Доступ визначає акаунт."],
+ pl:["Creator Command Center","Wybierz obszar pracy","Osobisty nauczyciel","Mentor projektów","Kariera","Studio biznesowe","AI Production","Portfolio","Znajdź zlecenia","Wsparcie AI","Zamknij obszar","Pełne Command Center","Jednocześnie otwarty jest jeden obszar. Dostęp zależy od konta."]};
+let commandDockRefresh=null;
+function commandDockDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),nav=$("academyNav");if(!overview||!panel||!nav)return;
+ const words=()=>commandDockWords[locale()]||commandDockWords.en;
+ const hub=el("section","zCommandDock"),head=el("h2"),intro=el("p"),grid=el("div","zCommandGrid"),body=el("div","zCommandBody"),close=el("button","zCommandClose"),note=el("p","zCommandNote");
+ hub.id="zCommandDock";body.id="zCommandBody";close.type="button";close.hidden=true;body.hidden=true;hub.append(head,intro,grid,close,body,note);
+ const onboarding=$("zOnboarding");if(onboarding)onboarding.after(hub);else overview.prepend(hub);
+ const permitted=id=>{const n=$(id);return !panel.hidden&&!!n&&!n.disabled&&!n.closest("[hidden]")};
+ const panels=[["zTeacherCenter",2,"graduation",null],["zProjectMentor",3,"clipboard-check",null],["zCareerCenter",4,"briefcase","careerButton"],["zBusinessStudio",5,"chart","businessButton"]];
+ const entries=[];let selected=null;
+ function tile(i,glyph){
+   const b=el("button","zCommandTile"),art=el("span","zCommandIcon"),label=el("span");b.type="button";art.append(icon(glyph));b.append(art,label);grid.append(b);return {b,label,i};
+ }
+ function available(entry){return !panel.hidden&&(!entry.permission||permitted(entry.permission))}
+ function choose(entry,focus=false){
+   if(entry&&!available(entry))entry=null;
+   selected=entry;
+   for(const e of entries){if(!e.target)continue;const active=e===selected;e.target.classList.toggle("zCommandInactive",!active);e.b.setAttribute("aria-expanded",String(active));if(active&&e.target.tagName==="DETAILS")e.target.open=true}
+   const open=!!selected;body.hidden=!open;close.hidden=!open;
+   if(open&&focus){body.scrollIntoView({block:"start",behavior:"auto"});close.focus({preventScroll:true})}
+ }
+ for(const [id,i,glyph,permission] of panels){
+   const target=$(id);if(!target)continue;
+   // Move generated UI only; original lesson, navigation and checkout controls stay in place.
+   const entry={...tile(i,glyph),target,permission};entry.b.setAttribute("aria-controls",id);entry.b.setAttribute("aria-expanded","false");entry.b.onclick=()=>choose(selected===entry?null:entry,true);entries.push(entry);body.append(target);
+ }
+ function shortcut(i,glyph,permission,action){
+   const entry={...tile(i,glyph),permission};entry.b.onclick=()=>{if(available(entry))action()};entries.push(entry);
+ }
+ shortcut(6,"layers",null,()=>{const p=$("zProductionHub");if(p){expandOverviewHub(".zProductionHub");p.scrollIntoView({block:"start",behavior:"auto"})}else location.href=url("/ai-workspace")});
+ shortcut(7,"image","portfolioButton",()=>$("portfolioButton").click());
+ shortcut(8,"briefcase","jobsButton",()=>$("jobsButton").click());
+ shortcut(9,"headphones",null,()=>{location.href=url("/support")});
+ const full=el("a","zCommandFull");full.href=url("/command-center");links.push([full,"/command-center"]);hub.append(full);
+ close.onclick=()=>{const prior=selected;choose(null);prior?.b.focus()};
+ function sync(){
+   head.textContent=words()[0];intro.textContent=words()[1];close.textContent=words()[10];full.textContent=words()[11];note.textContent=words()[12];
+   if(selected&&!available(selected))choose(null);
+   for(const e of entries){if(e.label.textContent!==words()[e.i])e.label.textContent=words()[e.i];const hidden=!available(e);if(e.b.hidden!==hidden)e.b.hidden=hidden}
+   if(panel.hidden){choose(null)}
+ }
+ let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
+ new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ new MutationObserver(schedule).observe(nav,{subtree:true,attributes:true,attributeFilter:["hidden","disabled"]});
+ commandDockRefresh=schedule;choose(null);sync();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();careerCenterRefresh?.();businessStudioRefresh?.();commandDockRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
