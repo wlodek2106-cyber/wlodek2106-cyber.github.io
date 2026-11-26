@@ -277,6 +277,9 @@ def dispatch(method,path,body,token):
     if path=="/elite/ad-production/plan" and method=="POST":
         from ad_production import student_plan
         return 200,student_plan(token,body["brief"],body.get("lang","en"))
+    if path=="/elite/ad-production/subtitles" and method=="POST":
+        from ad_production import student_subtitles
+        return 200,student_subtitles(token,body["duration"],body["captions"])
     if path=="/elite/ad-production/assembler" and method=="GET":
         from elite_program import access,unlocked
         if not unlocked(access(token)):
