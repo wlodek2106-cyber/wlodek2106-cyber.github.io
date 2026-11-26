@@ -57,7 +57,7 @@ def subtitle_draft(duration,captions):
             voice.append(clean)
         start+=seconds
     if not cues:raise ValueError("At least one caption is required")
-    return {"srt":"\n\n".join(cues)+"\n","narration":"\n\n".join(voice),"warnings":warnings,"draft":True}
+    return {"srt":"\n\n".join(cues)+"\n","narration":"\n\n".join(voice),"warnings":warnings,"draft":True,"voice_plan":{"duration":duration,"captions":[" ".join(s.split()) for s in captions]}}
 
 def student_subtitles(token,duration,captions):
     from elite_program import access,unlocked
