@@ -42,6 +42,31 @@ def run_task(model,mode,task,emit=lambda x:None):
         result=chat(model,role,task+"\n\nPrior stages (reference data):\n"+"\n\n".join(report)[-12000:])
         stage=title+"\n"+result;report.append(stage);emit(stage)
     return "\n\n".join(report)
+def model_family(name):
+    return "NVIDIA Nemotron" if re.search(r"(?:^|/)nemotron(?:[-:.]|$)",name,re.I) else "Local model"
+
+def evaluate_models(models,task,emit=lambda x:None,generate=chat,available=local_models,clock=None):
+    """Same prompt, same role, sequential runs; no automatic grading or cloud."""
+    import time
+    clock=clock or time.monotonic
+    if not isinstance(models,(list,tuple)) or not 1<=len(models)<=3 or any(not isinstance(m,str) for m in models) or len(set(models))!=len(models):
+        raise ValueError("Select one to three distinct local models")
+    if not isinstance(task,str) or not 1<=len(task.strip())<=4000:raise ValueError("Enter 1–4000 characters")
+    installed=set(available())
+    if any(m not in installed for m in models):raise ValueError("Select installed local models only")
+    results=[]
+    for model in models:
+        start=clock()
+        result={"model":model,"family":model_family(model)}
+        try:
+            result["answer"]=generate(model,ROLES["Teacher"],task)
+            result["status"]="ok"
+        except Exception as exc:
+            result["status"]="error";result["error"]=str(exc)[:500]
+        result["seconds"]=round(max(0,clock()-start),3)
+        results.append(result);emit(result)
+    return {"results":results,"note":"Compare answers against lesson references manually. Latency is elapsed time, not a standardized benchmark."}
+
 def load_workflow(path):
     p=Path(path)
     if p.stat().st_size>1_000_000:raise ValueError("Workflow exceeds 1 MB")
@@ -73,7 +98,7 @@ def main():
         nonlocal busy
         if busy:return
         busy=True;status.set("Running locally…")
-        for b in (refresh,start,comfy):b.configure(state="disabled")
+        for b in (refresh,start,comfy,compare):b.configure(state="disabled")
         def call():
             try:fn()
             except Exception as e:events.put(("error",str(e)))
@@ -87,6 +112,21 @@ def main():
         m,role=model.get(),mode.get()
         output.configure(state="normal");output.delete("1.0","end");output.configure(state="disabled")
         worker(lambda:run_task(m,role,q,lambda s:events.put(("text",s))))
+    def compare_fn():
+        q=task.get("1.0","end").strip()
+        if not q or len(q)>4000:messagebox.showerror("Input","Enter 1–4000 characters.");return
+        dialog=tk.Toplevel(root);dialog.title("Compare local models");dialog.transient(root)
+        ttk.Label(dialog,text="Select up to 3 installed models. Compare Nemotron, Qwen or others using the same prompt.").pack(padx=12,pady=8)
+        choices=tk.Listbox(dialog,selectmode="multiple",width=58,height=8,exportselection=False);choices.pack(padx=12,pady=8)
+        for name in models["values"]:choices.insert("end",name)
+        def confirm():
+            picked=[choices.get(i) for i in choices.curselection()]
+            if not 1<=len(picked)<=3:messagebox.showerror("Models","Select 1–3 models.",parent=dialog);return
+            dialog.destroy()
+            output.configure(state="normal");output.delete("1.0","end");output.configure(state="disabled")
+            worker(lambda:evaluate_models(picked,q,lambda r:events.put(("text",json.dumps(r,ensure_ascii=False,indent=2)))))
+        ttk.Button(dialog,text="Compare",command=confirm).pack(pady=8)
+        dialog.grab_set()
     def comfy_fn():
         path=filedialog.askopenfilename(filetypes=[("ComfyUI API workflow","*.json")])
         if not path:return
@@ -105,6 +145,7 @@ def main():
     buttons=ttk.Frame(root);buttons.pack(fill="x",padx=12)
     start=ttk.Button(buttons,text="Run local AI",command=start_fn);start.pack(side="left")
     comfy=ttk.Button(buttons,text="Submit reviewed ComfyUI workflow",command=comfy_fn);comfy.pack(side="left",padx=8)
+    compare=ttk.Button(buttons,text="Compare models",command=compare_fn);compare.pack(side="left",padx=8)
     ttk.Button(buttons,text="Save report",command=save_fn).pack(side="left")
     ttk.Label(root,textvariable=status,wraplength=820).pack(pady=8)
     def poll():
@@ -118,7 +159,7 @@ def main():
                 elif k=="error":show("Error: "+v)
                 elif k=="done":
                     busy=False;status.set("Finished — see report for errors or results.")
-                    for b in (refresh,start,comfy):b.configure(state="normal")
+                    for b in (refresh,start,comfy,compare):b.configure(state="normal")
         except queue.Empty:pass
         root.after(150,poll)
     root.after(150,poll);root.mainloop()
