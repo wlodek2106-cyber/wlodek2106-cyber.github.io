@@ -36,3 +36,30 @@ def student_plan(token,data,lang):
     from elite_program import access,unlocked
     if not unlocked(access(token)):raise PermissionError("Complete core lessons first")
     return plan(data,lang)
+
+
+def subtitle_draft(duration,captions):
+    """Four manually edited scene cues; timing is a draft, not speech recognition."""
+    import textwrap
+    if type(duration) is not int or duration not in DURATIONS or not isinstance(captions,list) or len(captions)!=4:
+        raise ValueError("Invalid subtitle timeline")
+    def stamp(seconds):
+        return f"{seconds//3600:02}:{seconds//60%60:02}:{seconds%60:02},000"
+    cues=[];warnings=[];start=0;voice=[]
+    for i,(caption,seconds) in enumerate(zip(captions,DURATIONS[duration])):
+        if not isinstance(caption,str) or len(caption)>160 or any(ord(c)<32 and c not in "\n\t" for c in caption) or "<" in caption or ">" in caption:
+            raise ValueError("Use plain subtitle text, maximum 160 characters per scene")
+        clean=" ".join(caption.split())
+        if clean:
+            lines=textwrap.wrap(clean,width=42)
+            if len(lines)>2 or len(clean)/seconds>17:warnings.append(i+1)
+            cues.append(f"{len(cues)+1}\n{stamp(start)} --> {stamp(start+seconds)}\n"+"\n".join(lines))
+            voice.append(clean)
+        start+=seconds
+    if not cues:raise ValueError("At least one caption is required")
+    return {"srt":"\n\n".join(cues)+"\n","narration":"\n\n".join(voice),"warnings":warnings,"draft":True}
+
+def student_subtitles(token,duration,captions):
+    from elite_program import access,unlocked
+    if not unlocked(access(token)):raise PermissionError("Complete core lessons first")
+    return subtitle_draft(duration,captions)
