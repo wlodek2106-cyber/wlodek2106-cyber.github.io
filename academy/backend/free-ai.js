@@ -1,5 +1,7 @@
 const $=id=>document.getElementById(id);
 const catalog=[
+["NVIDIA Nemotron 3 Nano 4B","nemotron-3-nano:4b","https://github.com/NVIDIA-NeMo/Nemotron","Local teacher and agents · 2.8–2.9 GB weights; additional RAM required"],
+["NVIDIA Nemotron 3 Nano 30B","nemotron-3-nano:30b","https://github.com/NVIDIA-NeMo/Nemotron","Advanced local reasoning · 18–24 GB weights; additional RAM required"],
 ["Qwen3 0.6B","qwen3:0.6b","https://github.com/QwenLM/Qwen3","Lightweight tutor"],
 ["Qwen3 1.7B","qwen3:1.7b","https://github.com/QwenLM/Qwen3","General tutor"],
 ["Qwen3 4B","qwen3:4b","https://github.com/QwenLM/Qwen3","Project review"],
