@@ -3,6 +3,38 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_student_practice_drafts(self):
+        from student_practice import validate,read,save,dispatch
+        from unittest.mock import Mock,patch
+        from types import SimpleNamespace
+        import sys,json
+        body={"revision":0,"fields":["a","b","c","d"],"checks":[True,False,True],"device":"phone"}
+        rev,data=validate(body)
+        self.assertEqual(rev,0)
+        self.assertEqual(data["fields"],body["fields"])
+        for bad in ({"revision":True},{"fields":["a"]},{"checks":[1,False,True]},{"device":"unknown"},{"fields":["x"*1201,"","",""]}):
+            with self.assertRaises(ValueError):validate({**body,**bad})
+        cur=Mock()
+        cur.fetchone.return_value=None
+        self.assertEqual(read(cur,17),{"revision":0,"draft":None})
+        self.assertEqual(cur.execute.call_args.args[1],(17,))
+        cur.fetchone.return_value=(1,)
+        self.assertEqual(save(cur,17,body),{"saved":True,"revision":1})
+        sql,args=cur.execute.call_args.args
+        self.assertIn("ON CONFLICT(student_id) DO NOTHING",sql)
+        self.assertEqual(args[0],17)
+        self.assertEqual(json.loads(args[1]),data)
+        cur.fetchone.return_value=(2,)
+        self.assertEqual(save(cur,17,{**body,"revision":1}),{"saved":True,"revision":2})
+        sql,args=cur.execute.call_args.args
+        self.assertIn("WHERE student_id=%s AND revision=%s",sql)
+        self.assertEqual(args[1:],(17,1))
+        cur.fetchone.return_value=None
+        self.assertEqual(save(cur,17,{**body,"revision":1}),{"saved":False,"conflict":True})
+        cur.fetchone.return_value=(data,2,self.t)
+        self.assertEqual(read(cur,17)["draft"],data)
+        with patch.dict(sys.modules,{"accounts":SimpleNamespace(authenticate=lambda token:None),"database":SimpleNamespace(transaction=Mock())}):
+            with self.assertRaises(PermissionError):dispatch(None,"read",{})
     def test_local_model_evaluation(self):
         from importlib.util import spec_from_file_location,module_from_spec
         from pathlib import Path
