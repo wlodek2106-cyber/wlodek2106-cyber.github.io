@@ -26,5 +26,5 @@ def list_projects(token):
     student=authenticate(token)
     if not student: raise PermissionError("Authentication required")
     with transaction() as cur:
-        cur.execute("SELECT p.id,p.lesson,p.submission,p.submitted_at,p.score,p.feedback FROM project_submissions p JOIN enrollments e ON e.id=p.enrollment_id WHERE e.student_id=%s ORDER BY p.id DESC LIMIT 300",(student,))
-        return {"items":[{"id":r[0],"lesson":r[1],"submission":r[2],"submitted_at":r[3].isoformat(),"score":r[4],"feedback":r[5]} for r in cur.fetchall()]}
+        cur.execute("SELECT p.id,p.lesson,p.submission,p.submitted_at,p.score,p.feedback,p.rubric_scores,p.reviewed_at FROM project_submissions p JOIN enrollments e ON e.id=p.enrollment_id WHERE e.student_id=%s ORDER BY p.id DESC LIMIT 300",(student,))
+        return {"items":[{"id":r[0],"lesson":r[1],"submission":r[2],"submitted_at":r[3].isoformat(),"score":r[4],"feedback":r[5],"rubric_scores":r[6],"reviewed_at":r[7].isoformat() if r[7] else None,"practical_passed":(r[4]>=80 and r[6]["rights"]>=12) if r[6] is not None and r[4] is not None else None} for r in cur.fetchall()]}
