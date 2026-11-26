@@ -280,6 +280,12 @@ def dispatch(method,path,body,token):
     if path=="/elite/ad-production/subtitles" and method=="POST":
         from ad_production import student_subtitles
         return 200,student_subtitles(token,body["duration"],body["captions"])
+    if path=="/elite/ad-production/quality-check" and method=="GET":
+        from elite_program import access,unlocked
+        if not unlocked(access(token)):
+            raise PermissionError("Complete core lessons first")
+        import base64
+        return 200,{"source_base64":base64.b64encode(Path(__file__).with_name("delivery-quality-check.py").read_bytes()).decode("ascii")}
     if path=="/elite/ad-production/narration" and method=="GET":
         from elite_program import access,unlocked
         if not unlocked(access(token)):
