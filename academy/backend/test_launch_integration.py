@@ -377,7 +377,16 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(incident_advance(cur,args)["revision"],2)
                 with self.assertRaises(ValueError): incident_advance(cur,args)
                 with self.assertRaises(ValueError): incident_advance(cur,{**args,"revision":2,"state":"resolved"})
+                from recovery_assistant import save as recovery_save,CHECKS as RECOVERY_CHECKS
+                with self.assertRaises(ValueError): incident_advance(cur,{**args,"revision":2,"state":"resolved","verified":True})
+                check={k:True for k in RECOVERY_CHECKS}
+                rec={"id":inc["id"],"revision":2,"version":0,"checks":check,"evidence":"Synthetic functional checks","consent":True}
+                recovery_save(cur,{**rec,"checks":{**check,"scope":False}})
+                with self.assertRaises(ValueError): incident_advance(cur,{**args,"revision":2,"state":"resolved","verified":True})
+                with self.assertRaises(ValueError): recovery_save(cur,rec)
+                recovery_save(cur,{**rec,"version":1})
                 incident_advance(cur,{**args,"revision":2,"state":"resolved","verified":True})
+                self.assertTrue(incident_detail(cur,inc["id"])["recovery"]["checks"]["scope"])
                 self.assertTrue(incident_detail(cur,inc["id"])["events"][-1]["verified"])
                 self.assertEqual(incident_detail(cur,inc["id"])["state"],"resolved")
                 diagnostics=security_inspect(cur)

@@ -94,6 +94,12 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_recovery_checklist_validation(self):
+        from recovery_assistant import validate,CHECKS
+        good={k:True for k in CHECKS}
+        self.assertEqual(validate(good," Test evidence ",True),"Test evidence")
+        for checks,note,consent in (({}, "evidence",True),({**good,"scope":1},"evidence",True),(good,"",True),(good,"evidence",False)):
+            with self.assertRaises(ValueError):validate(checks,note,consent)
     def test_incident_transitions(self):
         from incident_manager import validate_transition
         for a,b in (("detected","investigating"),("investigating","mitigated"),("resolved","investigating")):

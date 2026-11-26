@@ -37,7 +37,10 @@ def detail(cur,iid):
     if not row: raise ValueError("Incident unavailable")
     m,v,t,s,r=row
     cur.execute("SELECT state,note,verified,created_at FROM system_incident_events WHERE incident_id=%s ORDER BY id",(iid,))
-    return {"id":iid,"module":m,"severity":v,"title":t,"state":s,"revision":r,"events":[{"state":k,"note":n,"verified":f,"at":d.isoformat()} for k,n,f,d in cur.fetchall()]}
+    events=[{"state":k,"note":n,"verified":f,"at":d.isoformat()} for k,n,f,d in cur.fetchall()]
+    from recovery_assistant import read
+    return {"id":iid,"module":m,"severity":v,"title":t,"state":s,"revision":r,"events":events,
+            "recovery":read(cur,iid,r-1 if s=="resolved" else r)}
 
 def advance(cur,b):
     iid=ident(b.get("id"));revision=ident(b.get("revision"));note=clean(b.get("note"),2000,True)
@@ -49,6 +52,9 @@ def advance(cur,b):
     target=b.get("state");verified=b.get("verified",False)
     if type(verified) is not bool: raise ValueError("Invalid verification")
     validate_transition(row[0],target,verified)
+    if target=="resolved":
+        from recovery_assistant import require_ready
+        require_ready(cur,iid,revision)
     cur.execute("UPDATE system_incidents SET state=%s,revision=revision+1,updated_at=now() WHERE id=%s",(target,iid))
     cur.execute("INSERT INTO system_incident_events(incident_id,state,note,verified) VALUES (%s,%s,%s,%s)",(iid,target,note,verified if target=="resolved" else False))
     return {"revision":revision+1}
@@ -62,4 +68,7 @@ def dispatch(token,action,b):
         if action=="create": return create(cur,b)
         if action=="detail": return detail(cur,b.get("id"))
         if action=="advance": return advance(cur,b)
+        if action=="recovery":
+            from recovery_assistant import save
+            return save(cur,b)
     raise ValueError("Invalid action")

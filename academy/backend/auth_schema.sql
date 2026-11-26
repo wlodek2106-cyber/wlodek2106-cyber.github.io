@@ -624,3 +624,13 @@ CREATE TABLE IF NOT EXISTS system_incident_events (
  CHECK((state='resolved')=verified)
 );
 CREATE INDEX IF NOT EXISTS system_incident_events_idx ON system_incident_events(incident_id,id);
+
+CREATE TABLE IF NOT EXISTS system_incident_recovery (
+ incident_id bigint NOT NULL REFERENCES system_incidents(id) ON DELETE CASCADE,
+ incident_revision integer NOT NULL CHECK(incident_revision BETWEEN 1 AND 100),
+ version integer NOT NULL CHECK(version BETWEEN 1 AND 100),
+ checks jsonb NOT NULL CHECK(jsonb_typeof(checks)='object'),
+ evidence text NOT NULL CHECK(char_length(evidence) BETWEEN 1 AND 2000),
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(incident_id,incident_revision)
+);
