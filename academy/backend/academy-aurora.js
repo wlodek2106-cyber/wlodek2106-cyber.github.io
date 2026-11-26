@@ -274,6 +274,7 @@ function dashboard(){
    enhance("compact",()=>{compactOverview();});
    enhance("onboarding",()=>{onboardingDesign();});
    enhance("teacher-center",()=>{teacherCenterDesign();});
+   enhance("project-mentor",()=>{projectMentorDesign();});
    enhance("navigation-icons",()=>{
      const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());
      for(const n of document.querySelectorAll("#academyNav .navItem")){
@@ -666,7 +667,57 @@ function teacherCenterDesign(){
  new MutationObserver(()=>{if(last?.focus&&!accessible(last.focus.day))reset()}).observe(days,{childList:true,subtree:true,attributes:true,attributeFilter:["disabled","data-state"]});
  teacherCenterRefresh=sync;sync();
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();motion()}
+const mentorWords={
+ en:["Project Mentor","Prepare evidence for a real project or a course assignment.","Choose an available lesson","Day","Goal and audience","Result and evidence","Tools and workflow","Tests and limitations","Rights and consent","Revisions and next steps","Check evidence","Reviewing…","Evidence provided","Send to portfolio for manual review","Submitted","Check failed. Try again.","No available lessons.","All six fields must be completed. This checks presence, not quality or authenticity.","Submission may have been received. Check your portfolio before retrying.","Send this draft for review?","Use your own files and do not include client secrets.","Open portfolio","Draft changed. Check again before sending."],
+ ru:["Project Mentor","Подготовь материалы реального проекта или учебного задания.","Выбери доступный урок","День","Цель и аудитория","Результат и доказательства","Инструменты и процесс","Тесты и ограничения","Права и согласие","Правки и следующие шаги","Проверить материалы","Проверяем…","Заполнено разделов","Отправить в портфолио на ручную проверку","Отправлено","Проверка не удалась. Попробуй снова.","Нет доступных уроков.","Заполни все шесть разделов. Проверяется наличие материалов, а не их качество или подлинность.","Заявка могла быть получена. Проверь портфолио перед повторной отправкой.","Отправить этот черновик на проверку?","Используй собственные файлы, не добавляй секреты клиентов.","Открыть портфолио","Черновик изменён. Проверь его повторно."],
+ uk:["Project Mentor","Підготуй матеріали реального проєкту або навчального завдання.","Обери доступний урок","День","Мета й аудиторія","Результат і докази","Інструменти й процес","Тести й обмеження","Права та згода","Правки й наступні кроки","Перевірити матеріали","Перевіряємо…","Заповнено розділів","Надіслати до портфоліо на ручну перевірку","Надіслано","Перевірка не вдалася. Спробуй ще раз.","Немає доступних уроків.","Заповни всі шість розділів. Перевіряється наявність, а не якість чи справжність.","Заявку могли отримати. Перевір портфоліо перед повтором.","Надіслати чернетку на перевірку?","Використовуй власні файли й не додавай секрети клієнтів.","Відкрити портфоліо","Чернетку змінено. Перевір її повторно."],
+ pl:["Project Mentor","Przygotuj materiały projektu lub zadania szkoleniowego.","Wybierz dostępną lekcję","Dzień","Cel i odbiorcy","Rezultat i dowody","Narzędzia i proces","Testy i ograniczenia","Prawa i zgoda","Poprawki i kolejne kroki","Sprawdź materiały","Sprawdzamy…","Uzupełnione sekcje","Wyślij do portfolio do ręcznej oceny","Przesłano","Nie udało się sprawdzić. Spróbuj ponownie.","Brak dostępnych lekcji.","Uzupełnij sześć sekcji. Sprawdzana jest obecność, nie jakość ani autentyczność.","Zgłoszenie mogło zostać przyjęte. Sprawdź portfolio przed ponowieniem.","Wysłać szkic do oceny?","Używaj własnych plików i nie podawaj sekretów klientów.","Otwórz portfolio","Szkic zmieniony. Sprawdź ponownie."]};
+let mentorRefresh=null;
+function projectMentorDesign(){
+ const overview=$("workspaceOverview"),panel=$("panel"),days=$("days");if(!overview||!panel||!days)return;
+ const w=()=>mentorWords[locale()]||mentorWords.en;
+ const hub=el("details","zProjectMentor"),summary=el("summary"),title=el("span"),intro=el("p"),day=el("select"),fieldGrid=el("div","zMentorFields"),status=el("p"),out=el("div","zMentorChecks"),check=el("button","zAction primary"),send=el("button","zAction"),portfolio=el("button","zAction"),note=el("p");
+ hub.id="zProjectMentor";summary.append(icon("briefcase"),title);hub.append(summary,intro,day,fieldGrid,note,check,status,out,send,portfolio);
+ check.type=send.type=portfolio.type="button";send.disabled=true;status.setAttribute("role","status");
+ const keys=["goal","deliverable","process","verification","rights","revision"],fields={};
+ for(const key of keys){const label=el("label"),span=el("span"),input=el("textarea");input.rows=3;input.maxLength=1200;label.append(span,input);fieldGrid.append(label);fields[key]={span,input}}
+ const anchor=$("zTeacherCenter")||$("zOnboarding");if(anchor)anchor.after(hub);else overview.append(hub);
+ let revision=0,approved=null,busy=false,submitting=false,signature="";
+ function invalidate(clear=false){revision++;approved=null;send.disabled=true;out.replaceChildren();status.textContent=clear?"":w()[22];if(!submitting){busy=false;check.disabled=!day.value}if(clear)for(const f of Object.values(fields))f.input.value=""}
+ const accessible=n=>Array.from(days.querySelectorAll("button[data-day]")).some(b=>Number(b.dataset.day)===n&&!b.disabled);
+ function refresh(){
+   const available=Array.from(days.querySelectorAll("button[data-day]")).filter(b=>!b.disabled).map(b=>b.dataset.day),next=JSON.stringify([locale(),available]);if(next!==signature){signature=next;const old=day.value;day.replaceChildren();for(const n of available){const option=el("option","",w()[3]+" "+n);option.value=n;day.append(option)}if(available.includes(old))day.value=old;invalidate(false);status.textContent=available.length?"":w()[16]}
+   title.textContent=w()[0];intro.textContent=w()[1];day.setAttribute("aria-label",w()[2]);keys.forEach((k,i)=>fields[k].span.textContent=w()[4+i]);check.textContent=w()[10];send.textContent=w()[13];portfolio.textContent=w()[21];note.textContent=w()[17]+" "+w()[20];check.disabled=busy||submitting||!day.value;send.disabled=submitting||!approved||!accessible(Number(day.value));portfolio.hidden=!!$("portfolioButton")?.hidden;
+ }
+ day.onchange=()=>invalidate();for(const f of Object.values(fields))f.input.oninput=()=>invalidate();
+ check.onclick=async()=>{
+   if(busy||submitting||panel.hidden||!accessible(Number(day.value))||typeof api!=="function")return;
+   const id=++revision,lesson=Number(day.value),lang=locale(),payload=Object.fromEntries(keys.map(k=>[k,fields[k].input.value]));
+   approved=null;busy=true;check.disabled=true;send.disabled=true;out.replaceChildren();status.textContent=w()[11];
+   try{
+     if(new TextEncoder().encode(JSON.stringify({day:lesson,fields:payload,lang})).length>15500)throw Error("Draft too large");
+     const d=await api("/portfolio/draft-review",{day:lesson,fields:payload,lang});
+     if(id!==revision||panel.hidden||lang!==locale()||!accessible(lesson))return;
+     status.textContent=w()[12]+": "+d.provided_count+" / "+d.total;
+     for(const item of d.checks||[]){const row=el("div","zMentorCheck");row.append(el("strong","",(item.provided?"✓ ":"○ ")+item.label),el("p","",item.suggestion));out.append(row)}
+     if(d.ready_for_submission===true&&typeof d.case_study==="string")approved={lesson,caseStudy:d.case_study};
+   }catch(e){if(id===revision&&!panel.hidden)status.textContent=w()[15]}
+   finally{if(id===revision){busy=false;refresh()}}
+ };
+ send.onclick=async()=>{
+   if(!approved||busy||submitting||panel.hidden||!accessible(approved.lesson)||!confirm(w()[19]))return;
+   const data=approved,id=++revision;approved=null;submitting=true;refresh();
+   for(const f of Object.values(fields))f.input.disabled=true;day.disabled=true;
+   try{const result=await api("/portfolio",{day:data.lesson,submission:data.caseStudy});if(id===revision&&!panel.hidden)status.textContent=w()[14]+" #"+result.id}
+   catch(e){if(id===revision&&!panel.hidden)status.textContent=w()[18]}
+   finally{submitting=false;for(const f of Object.values(fields))f.input.disabled=false;day.disabled=false;refresh()}
+ };
+ portfolio.onclick=()=>{const b=$("portfolioButton");if(b&&!b.disabled&&!b.hidden&&!panel.hidden)b.click()};
+ new MutationObserver(refresh).observe(days,{childList:true,subtree:true,attributes:true,attributeFilter:["disabled","data-state"]});
+ new MutationObserver(()=>{if(panel.hidden){invalidate(true);hub.open=false}else refresh()}).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ mentorRefresh=refresh;refresh();
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();productionRefresh?.();socialRefresh?.();adminRefresh?.();compactRefresh?.();onboardingRefresh?.();teacherCenterRefresh?.();mentorRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}productionDesign()}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();

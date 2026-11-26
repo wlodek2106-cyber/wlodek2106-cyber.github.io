@@ -65,6 +65,21 @@ class ProgressTests(unittest.TestCase):
                 tasks.append(d["task"])
             self.assertEqual(len(set(tasks)),3)
         with self.assertRaises(ValueError):practice_focus(None,"invalid")
+    def test_mentor_draft_review_access(self):
+        from unittest.mock import patch
+        from project_reviewer import draft_review,FIELDS
+        fields={k:"Evidence for "+k for k in FIELDS}
+        with patch("learning.require_lesson") as access:
+            result=draft_review("session",1,fields,"ru")
+            access.assert_called_once_with("session",1)
+            self.assertTrue(result["ready_for_submission"])
+            self.assertFalse(result["official_grade"])
+            self.assertEqual(result["engine"],"presence_check_only")
+            fields["rights"]=""
+            self.assertFalse(draft_review("session",1,fields,"en")["ready_for_submission"])
+        with patch("learning.require_lesson",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):draft_review("session",2,fields,"en")
+        with self.assertRaises(ValueError):draft_review("session",True,fields,"en")
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}

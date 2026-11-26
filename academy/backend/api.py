@@ -179,6 +179,9 @@ def dispatch(method,path,body,token):
     if path in ("/admin/practical/pending","/admin/practical/grade") and method=="POST":
         from practical_assessment import dispatch as practical_dispatch
         return 200,practical_dispatch(token,path.rsplit("/",1)[1],body)
+    if path=="/portfolio/draft-review" and method=="POST":
+        from project_reviewer import draft_review
+        return 200,draft_review(token,body.get("day"),body.get("fields"),body.get("lang","en"))
     if path=="/portfolio/review" and method=="POST":
         from project_reviewer import student_review
         return 200,student_review(token,body["project"],body["fields"],body.get("lang","en"))

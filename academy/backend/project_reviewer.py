@@ -36,3 +36,14 @@ def student_review(token,project,fields,lang):
     result=review(row[0],fields,lang)
     result["project_id"]=project
     return result
+
+
+def draft_review(token,day,fields,lang):
+    """Review a draft only for an entitled lesson; no writes or AI provider calls."""
+    from learning import require_lesson
+    if type(day) is not int or not 1<=day<=45 or not isinstance(lang,str) or lang not in LABELS:
+        raise ValueError("Invalid lesson or language")
+    require_lesson(token,day)
+    result=review(day,fields,lang)
+    result["ready_for_submission"]=result["provided_count"]==result["total"]
+    return result

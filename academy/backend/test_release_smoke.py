@@ -399,6 +399,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b'b.setAttribute("aria-label",title)',js)
         self.assertIn(b'b.title=title',js)
 
+    def test_project_mentor_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'function projectMentorDesign()',b'"/portfolio/draft-review"',b'd.ready_for_submission===true',b'confirm(w()[19])',b'accessible(approved.lesson)',b'enhance("project-mentor"'):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        self.assertIn(b"zMentorFields",style)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
