@@ -12,10 +12,16 @@ CHECKS={
 "paid_invoice_without_matching_enrollment":"""SELECT count(*) FROM payment_invoices i WHERE i.paid_at IS NOT NULL AND NOT EXISTS
 (SELECT 1 FROM enrollments e WHERE e.student_id=i.student_id AND e.payment_signature=i.signature AND e.plan=i.plan AND e.paid_at IS NOT NULL)""",
 "certificate_without_complete_course":"""SELECT count(*) FROM certificates c JOIN enrollments e ON e.id=c.enrollment_id WHERE e.paid_at IS NULL OR
-(SELECT count(*) FROM lesson_progress p WHERE p.enrollment_id=e.id AND p.score>=80 AND p.lesson BETWEEN 1 AND CASE WHEN e.plan='vip' THEN 45 ELSE 30 END)
-<>CASE WHEN e.plan='vip' THEN 45 ELSE 30 END""",
+(SELECT count(*) FROM lesson_progress p WHERE p.enrollment_id=e.id AND p.score>=80 AND p.lesson BETWEEN 1 AND CASE WHEN e.plan IN ('vip','elite') THEN 45 ELSE 30 END)
+<>CASE WHEN e.plan IN ('vip','elite') THEN 45 ELSE 30 END""",
 "paid_partner_without_signature":"SELECT count(*) FROM influencer_payouts WHERE status='paid' AND (payout_signature IS NULL OR paid_at IS NULL)",
 "invalid_project_tasks":"SELECT count(*) FROM creative_workflows WHERE jsonb_typeof(tasks)<>'array'",
+"agency_owner_without_membership":"""SELECT count(*) FROM creator_agencies a WHERE NOT EXISTS
+(SELECT 1 FROM creator_agency_members m WHERE m.agency_id=a.id AND m.student_id=a.owner_id)""",
+"agency_task_project_mismatch":"""SELECT count(*) FROM creator_agency_tasks t JOIN creator_agency_projects p ON p.id=t.project_id WHERE t.agency_id<>p.agency_id""",
+"agency_task_dependency_mismatch":"""SELECT count(*) FROM creator_agency_tasks t JOIN creator_agency_tasks p ON p.id=t.depends_on
+WHERE t.agency_id<>p.agency_id OR t.project_id IS DISTINCT FROM p.project_id OR t.workflow_key IS DISTINCT FROM p.workflow_key OR t.workflow_step IS DISTINCT FROM p.workflow_step+1""",
+"agency_active_task_without_completed_predecessor":"""SELECT count(*) FROM creator_agency_tasks t JOIN creator_agency_tasks p ON p.id=t.depends_on WHERE t.status IN ('doing','done') AND p.status<>'done'""",
 "invalid_community_parent":"SELECT count(*) FROM community_posts p JOIN community_posts t ON t.id=p.parent_id WHERE t.parent_id IS NOT NULL OR p.category<>t.category",
 "approved_service_without_paid_student":"SELECT count(*) FROM marketplace_services m WHERE m.status='approved' AND NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id=m.student_id AND e.paid_at IS NOT NULL)"
 }

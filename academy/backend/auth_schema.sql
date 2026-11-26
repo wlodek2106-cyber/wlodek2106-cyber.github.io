@@ -550,7 +550,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS creator_agency_workflow_step_idx ON creator_ag
 -- Explicit team-shared project context. No automatic AI ingestion.
 CREATE TABLE IF NOT EXISTS creator_agency_knowledge (
  project_id bigint PRIMARY KEY REFERENCES creator_agency_projects(id) ON DELETE CASCADE,
- content text NOT NULL CHECK(char_length(content) BETWEEN 1 AND 3000),
+ content text NOT NULL CHECK(char_length(content) BETWEEN 0 AND 3000),
  revision integer NOT NULL CHECK(revision>0),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -562,3 +562,7 @@ CREATE TABLE IF NOT EXISTS creator_agency_quality (
  evidence text NOT NULL CHECK(char_length(evidence) BETWEEN 1 AND 2000),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Preserve monotonic revisions after erasing note contents on existing deployments.
+ALTER TABLE creator_agency_knowledge DROP CONSTRAINT IF EXISTS creator_agency_knowledge_content_check;
+ALTER TABLE creator_agency_knowledge ADD CONSTRAINT creator_agency_knowledge_content_check CHECK(char_length(content) BETWEEN 0 AND 3000);

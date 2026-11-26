@@ -120,7 +120,13 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertEqual(knowledge_get(cur,partner_id,kb)["content"],"Brand rules")
                 with self.assertRaises(PermissionError): knowledge_save(cur,partner_id,{**kb,"revision":1,"content":"Forbidden","consent":True})
                 knowledge_save(cur,buyer_id,{**kb,"revision":1,"content":""})
-                self.assertEqual(knowledge_get(cur,partner_id,kb)["content"],"")
+                empty=knowledge_get(cur,partner_id,kb)
+                self.assertEqual(empty["content"],"")
+                self.assertEqual(empty["revision"],2)
+                with self.assertRaises(ValueError): knowledge_save(cur,buyer_id,{**kb,"revision":0,"content":"Stale initial draft","consent":True})
+                knowledge_save(cur,buyer_id,{**kb,"revision":2,"content":"New brand rules","consent":True})
+                self.assertEqual(knowledge_get(cur,partner_id,kb)["revision"],3)
+                with self.assertRaises(ValueError): knowledge_save(cur,buyer_id,{**kb,"revision":1,"content":"Stale pre-delete draft","consent":True})
                 args={"id":aid,"project":pid,"template":"design","assignee":partner_id}
                 with self.assertRaises(PermissionError): workflow_create(cur,partner_id,args)
                 self.assertEqual(workflow_create(cur,buyer_id,args)["created"],5)
@@ -353,7 +359,10 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertGreaterEqual(report["activity"]["alltime"]["paid_referred"],1)
                 self.assertIn("students",admin.statistics(owner))
                 from security_center import inspect as security_inspect,report as security_report
-                self.assertIn("database_checks_pass",security_inspect(cur))
+                diagnostics=security_inspect(cur)
+                self.assertIn("database_checks_pass",diagnostics)
+                for key in ("agency_owner_without_membership","agency_task_project_mismatch","agency_task_dependency_mismatch","agency_active_task_without_completed_predecessor"):
+                    self.assertIn(key,diagnostics["checks"])
                 self.assertEqual(security_inspect(cur)["backup_status"],"not_verified")
                 with self.assertRaises(PermissionError): security_report(partner)
                 from student_business import save_client,save_order,overview as business_overview,delete as business_delete

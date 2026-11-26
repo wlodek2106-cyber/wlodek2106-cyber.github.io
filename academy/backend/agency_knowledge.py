@@ -20,7 +20,9 @@ def save(cur,sid,b):
     if type(rev) is not int or rev!=prior["revision"]: raise ValueError("Refresh stale note")
     content=clean(b["content"],3000)
     if not content:
-        cur.execute("DELETE FROM creator_agency_knowledge WHERE project_id=%s",(pid,))
+        # Retain only an empty revision marker, not the deleted text.
+        if rev:
+            cur.execute("UPDATE creator_agency_knowledge SET content='',revision=revision+1,updated_at=now() WHERE project_id=%s",(pid,))
         return {"deleted":True}
     if b.get("consent") is not True: raise ValueError("Sharing consent required")
     cur.execute("""INSERT INTO creator_agency_knowledge(project_id,content,revision) VALUES (%s,%s,1)
