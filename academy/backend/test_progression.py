@@ -94,6 +94,16 @@ class ProgressTests(unittest.TestCase):
         with self.assertRaises(ValueError):estimate_job(job,{**body,"fee_scenario":"true"})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"hours":0})
         with self.assertRaises(ValueError):estimate_job(job,{**body,"rate":-1})
+    def test_launch_control_package_coverage(self):
+        from launch_control import packages
+        coverage={lang:{kind:{"missing":list(range(31,46))} for kind in ("lesson","exam")} for lang in ("en","ru","uk","pl")}
+        rows=packages({"coverage":coverage})
+        self.assertEqual([x["plan"] for x in rows],["starter","pro","vip","elite"])
+        self.assertEqual([x["private_slots"] for x in rows],[240,240,240,240])
+        self.assertEqual([x["target"] for x in rows],[240,240,360,360])
+        self.assertEqual([x["price_usdc"] for x in rows],[199,499,999,1999])
+        coverage["ru"]["exam"]["missing"].append(1)
+        self.assertEqual(packages({"coverage":coverage})[0]["private_slots"],239)
     def test_recovery_checklist_validation(self):
         from recovery_assistant import validate,CHECKS
         good={k:True for k in CHECKS}

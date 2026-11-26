@@ -244,6 +244,9 @@ def dispatch(method,path,body,token):
     if path in tuple("/admin/incidents/"+x for x in ("list","create","detail","advance","recovery")) and method=="POST":
         from incident_manager import dispatch as incident_dispatch
         return 200,incident_dispatch(token,path.rsplit("/",1)[1],body)
+    if path=="/admin/launch-control" and method=="POST":
+        from launch_control import report
+        return 200,report(token)
     if path=="/admin/system-monitor" and method=="POST":
         from system_monitor import report
         return 200,report(token,body.get("minutes",15))

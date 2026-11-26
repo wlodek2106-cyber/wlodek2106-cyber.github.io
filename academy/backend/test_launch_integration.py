@@ -389,6 +389,13 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(incident_detail(cur,inc["id"])["recovery"]["checks"]["scope"])
                 self.assertTrue(incident_detail(cur,inc["id"])["events"][-1]["verified"])
                 self.assertEqual(incident_detail(cur,inc["id"])["state"],"resolved")
+                from launch_control import collect as launch_collect,report as launch_report
+                with self.assertRaises(PermissionError): launch_report(partner)
+                launch_snapshot=launch_collect(cur)
+                self.assertEqual(len(launch_snapshot["packages"]),4)
+                self.assertFalse(launch_snapshot["commercial_approved"])
+                self.assertFalse(launch_snapshot["live_payment_tested"])
+                self.assertFalse(launch_snapshot["launch"]["marketplace_payments"]["enabled"])
                 diagnostics=security_inspect(cur)
                 self.assertIn("database_checks_pass",diagnostics)
                 for key in ("agency_owner_without_membership","agency_task_project_mismatch","agency_task_dependency_mismatch","agency_active_task_without_completed_predecessor"):
