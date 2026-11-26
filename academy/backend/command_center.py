@@ -30,6 +30,8 @@ def report(token):
     with transaction() as cur:
         cur.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
         data=agency_snapshot(cur,sid)
+        from support_center import counters
+        data["support_unread"]=counters(cur,sid)["unread"]
     return {"private":True,"as_of":datetime.now(timezone.utc).isoformat(),
         "learning":{"completed":sum(x["completed"] for x in lessons),"total":len(lessons),
         "available":sum(x["unlocked"] for x in lessons),

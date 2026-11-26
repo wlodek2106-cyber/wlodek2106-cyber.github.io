@@ -16,17 +16,35 @@ def create(cur,sid,b):
     cur.execute("SELECT count(*),count(*) FILTER(WHERE status<>'closed') FROM support_tickets WHERE student_id=%s",(sid,))
     total,active=cur.fetchone()
     if total>=200 or active>=5: raise ValueError("Ticket limit")
-    cur.execute("INSERT INTO support_tickets(student_id,category,subject) VALUES (%s,%s,%s) RETURNING id",(sid,category,subject))
+    cur.execute("INSERT INTO support_tickets(student_id,category,subject,admin_unread) VALUES (%s,%s,%s,true) RETURNING id",(sid,category,subject))
     tid=cur.fetchone()[0]
     cur.execute("INSERT INTO support_messages(ticket_id,role,body) VALUES (%s,'student',%s)",(tid,body))
     return {"id":tid,"status":"open"}
 
-def listing(cur,sid,admin=False,before=None):
-    cur.execute("""SELECT id,category,subject,status,updated_at FROM support_tickets
-      WHERE (%s OR student_id=%s) AND id<%s ORDER BY id DESC LIMIT 51""",(admin,sid,cursor_value(before)))
+def counters(cur,sid,admin=False):
+    cur.execute("""SELECT count(*) FILTER(WHERE status='open'),count(*) FILTER(WHERE status='answered'),
+       count(*) FILTER(WHERE status='closed'),count(*) FILTER(WHERE CASE WHEN %s THEN admin_unread ELSE student_unread END)
+       FROM support_tickets WHERE (%s OR student_id=%s)""",(admin,admin,sid))
+    opened,answered,closed,unread=cur.fetchone()
+    return {"open":opened,"answered":answered,"closed":closed,"unread":unread}
+
+def filters(status,category):
+    if status is not None and (not isinstance(status,str) or status not in ("open","answered","closed")):
+        raise ValueError("Invalid status")
+    if category is not None and (not isinstance(category,str) or category not in CATEGORIES):
+        raise ValueError("Invalid category")
+    return status,category
+
+def listing(cur,sid,admin=False,before=None,status=None,category=None):
+    status,category=filters(status,category)
+    cur.execute("""SELECT id,category,subject,status,updated_at,
+      CASE WHEN %s THEN admin_unread ELSE student_unread END
+      FROM support_tickets WHERE (%s OR student_id=%s) AND id<%s
+      AND (%s::text IS NULL OR status=%s) AND (%s::text IS NULL OR category=%s)
+      ORDER BY id DESC LIMIT 51""",(admin,admin,sid,cursor_value(before),status,status,category,category))
     rows=cur.fetchall()
-    items=[{"id":i,"category":c,"subject":s,"status":st,"updated_at":at.isoformat()} for i,c,s,st,at in rows[:50]]
-    return {"items":items,"next_before":items[-1]["id"] if len(rows)>50 else None,"admin":admin}
+    items=[{"id":i,"category":c,"subject":s,"status":st,"updated_at":at.isoformat(),"unread":unread} for i,c,s,st,at,unread in rows[:50]]
+    return {"items":items,"next_before":items[-1]["id"] if len(rows)>50 else None,"admin":admin,"counts":counters(cur,sid,admin)}
 
 def access(cur,sid,tid,admin=False):
     cur.execute("SELECT student_id,subject,category,status FROM support_tickets WHERE id=%s FOR UPDATE",(ident(tid),))
@@ -36,6 +54,7 @@ def access(cur,sid,tid,admin=False):
 
 def thread(cur,sid,tid,admin=False):
     _,subject,category,state=access(cur,sid,tid,admin)
+    cur.execute("UPDATE support_tickets SET admin_unread=false WHERE id=%s" if admin else "UPDATE support_tickets SET student_unread=false WHERE id=%s",(tid,))
     cur.execute("SELECT id,role,body,created_at FROM support_messages WHERE ticket_id=%s ORDER BY id",(tid,))
     return {"id":tid,"subject":subject,"category":category,"status":state,
             "messages":[{"id":i,"role":r,"body":b,"created_at":at.isoformat()} for i,r,b,at in cur.fetchall()]}
@@ -50,12 +69,13 @@ def reply(cur,sid,b,admin=False):
     role="admin" if admin else "student"
     state="answered" if admin else "open"
     cur.execute("INSERT INTO support_messages(ticket_id,role,body) VALUES (%s,%s,%s)",(tid,role,body))
-    cur.execute("UPDATE support_tickets SET status=%s,updated_at=now() WHERE id=%s",(state,tid))
+    cur.execute("UPDATE support_tickets SET status=%s,updated_at=now(),student_unread=%s,admin_unread=%s WHERE id=%s",(state,admin,not admin,tid))
     return {"status":state}
 
 def close(cur,sid,tid,admin=False):
-    access(cur,sid,tid,admin)
-    cur.execute("UPDATE support_tickets SET status='closed',updated_at=now() WHERE id=%s",(tid,))
+    _,_,_,state=access(cur,sid,tid,admin)
+    if state!="closed":
+        cur.execute("UPDATE support_tickets SET status='closed',updated_at=now(),student_unread=%s,admin_unread=%s WHERE id=%s",(admin,not admin,tid))
     return {"status":"closed"}
 
 def dispatch(token,action,b):
@@ -71,7 +91,7 @@ def dispatch(token,action,b):
     if type(admin) is not bool or admin and not allowed: raise PermissionError("Owner required")
     with transaction() as cur:
         if action=="admin": return {"allowed":allowed}
-        if action=="list": return listing(cur,sid,admin,b.get("before"))
+        if action=="list": return listing(cur,sid,admin,b.get("before"),b.get("status"),b.get("category"))
         if action=="create": return create(cur,sid,b)
         if action=="thread": return thread(cur,sid,b.get("id"),admin)
         if action=="reply": return reply(cur,sid,b,admin)

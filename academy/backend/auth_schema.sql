@@ -585,3 +585,8 @@ CREATE TABLE IF NOT EXISTS support_messages (
  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS support_message_idx ON support_messages(ticket_id,id);
+
+-- Unread indicators are per audience, never message previews.
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS student_unread boolean NOT NULL DEFAULT false;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS admin_unread boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS support_admin_open_idx ON support_tickets(status,id DESC);

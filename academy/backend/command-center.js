@@ -62,7 +62,7 @@ function acquisitionPanel(root){
  for(const [i,path] of [[25,"/free-ai#personal-teacher"],[28,"/production-cost"],[29,"/marketplace"],[30,"/dashboard"]]){const p=add(s,"p");link(p,l[i],path)}
 }
 function render(){document.documentElement.lang=$("lang").value;document.querySelectorAll("[data-i]").forEach(e=>e.textContent=w()[Number(e.dataset.i)]);$("tools").replaceChildren();for(const [i,path] of tools){const a=add($("tools"),"article");link(a,w()[i],path)}
- link(add($("tools"),"article"),"AI Support Center","/support");
+ link(add($("tools"),"article"),"AI Support Center"+(data?.support_unread?" · "+data.support_unread:""),"/support");
  const root=$("report");root.replaceChildren();if(!data)return;const l=data.learning,section=add(root,"section");add(section,"h2",w()[8]);add(section,"p",w()[9]+": "+l.completed+"/"+l.total);const p=add(section,"progress");p.max=l.total;p.value=l.completed;p.setAttribute("aria-label",w()[9]);add(section,"p",w()[10]+": "+l.available+"/"+l.total);add(section,"p",l.next===null?w()[12]:w()[11]+": "+l.next);link(section,w()[26],"/dashboard");
  studyPanel(root);careerPanel(root);acquisitionPanel(root);
  const ag=add(root,"section");add(ag,"h2",w()[13]+" · "+data.agencies.length);if(!data.agencies.length)add(ag,"p",w()[24]);for(const a of data.agencies){const box=add(ag,"article");add(box,"h3",a.name+" · "+w()[a.owner?22:23]);add(box,"p",w()[14]+": "+a.projects+" · "+w()[15]+": "+a.done+"/"+a.tasks);add(box,"p",w()[16]+": "+a.assigned_open);link(box,w()[21],"/agency",{agency:a.id})}

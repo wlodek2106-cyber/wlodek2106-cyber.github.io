@@ -15,7 +15,7 @@ DATASETS={
 "projects":"SELECT p.id,p.lesson,p.submission,p.submitted_at,p.score,p.feedback FROM project_submissions p JOIN enrollments e ON e.id=p.enrollment_id WHERE e.student_id=%s ORDER BY p.id DESC",
 "certificates":"SELECT c.verification_code,c.issued_at,c.recipient_name FROM certificates c JOIN enrollments e ON e.id=c.enrollment_id WHERE e.student_id=%s",
 "invoices":"SELECT id,plan,asset,amount_atomic,reference,recipient,created_at,expires_at,signature,paid_at FROM payment_invoices WHERE student_id=%s ORDER BY created_at DESC",
-"support_tickets":"SELECT id,category,subject,status,created_at,updated_at FROM support_tickets WHERE student_id=%s ORDER BY id",
+"support_tickets":"SELECT id,category,subject,status,created_at,updated_at,student_unread FROM support_tickets WHERE student_id=%s ORDER BY id",
 "support_messages":"SELECT m.id,m.ticket_id,m.role,m.body,m.created_at FROM support_messages m JOIN support_tickets t ON t.id=m.ticket_id WHERE t.student_id=%s ORDER BY m.id",
 "payment_support":"SELECT t.id,t.invoice_id,t.signature,t.status,t.note,t.verification,t.created_at,t.checked_at,t.closed_at FROM payment_support t JOIN payment_invoices i ON i.id=t.invoice_id WHERE i.student_id=%s ORDER BY t.id DESC",
 "tutor_history":"SELECT id,lesson,mode,language,question,answer,created_at FROM tutor_history WHERE student_id=%s ORDER BY id DESC",
