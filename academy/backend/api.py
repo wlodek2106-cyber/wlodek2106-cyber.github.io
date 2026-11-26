@@ -62,6 +62,9 @@ def dispatch(method,path,body,token):
     if path=="/reviews/remove" and method=="POST":
         from reviews import remove
         return 200,remove(token)
+    if path=="/agents/playbook" and method=="POST":
+        from agent_workforce import student_playbook
+        return 200,student_playbook(token,body.get("day"),body.get("role"),body.get("lang","en"))
     if path=="/tutor/models" and method=="GET":
         from accounts import authenticate
         from ai_models import status

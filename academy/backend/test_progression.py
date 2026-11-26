@@ -80,6 +80,23 @@ class ProgressTests(unittest.TestCase):
         with patch("learning.require_lesson",side_effect=PermissionError):
             with self.assertRaises(PermissionError):draft_review("session",2,fields,"en")
         with self.assertRaises(ValueError):draft_review("session",True,fields,"en")
+    def test_agent_workforce_playbooks(self):
+        from unittest.mock import patch
+        from agent_workforce import student_playbook,ROLES
+        with patch("practice_lab.student_brief",return_value={"deliverable":"Example"}) as brief:
+            for lang in ("en","ru","uk","pl"):
+                for role in ROLES:
+                    d=student_playbook("session",1,role,lang)
+                    self.assertEqual(d["role"],role)
+                    self.assertEqual(len(d["steps"]),3)
+                    self.assertFalse(d["external_request"])
+                    self.assertFalse(d["official_grade"])
+                    self.assertFalse(d["automatic_execution"])
+            self.assertEqual(brief.call_count,24)
+        with patch("practice_lab.student_brief",side_effect=PermissionError):
+            with self.assertRaises(PermissionError):student_playbook("session",2,"code","en")
+        for day,role,lang in [(True,"code","en"),(1,"unknown","en"),(1,"code","unknown")]:
+            with self.assertRaises(ValueError):student_playbook("session",day,role,lang)
     def test_teacher_snapshot(self):
         from teacher_profile import snapshot
         p={"lessons":[{"day":1,"unlocked":True,"completed":True},{"day":2,"unlocked":True,"completed":False},{"day":3,"unlocked":False,"completed":False}],"email":"private"}

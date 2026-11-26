@@ -437,6 +437,15 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"zCommandGrid",style)
         self.assertIn(b"zCommandInactive{display:none!important}",style)
 
+    def test_agent_workforce_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b'function workforceDesign()',b'"/agents/playbook"',b'd.external_request!==false',b'available(lesson)',b'["zWorkforce",13,"network",null]',b'enhance("workforce"'):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        self.assertIn(b"zWorkforceRoles",style)
+
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):
