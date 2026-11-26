@@ -79,6 +79,21 @@ class LaunchIntegration(unittest.TestCase):
                 self.assertTrue(learning.student_progress(buyer)["lessons"][0]["completed"])
                 with self.assertRaises(PermissionError): exams.start_exam(buyer,1,bank)
                 with self.assertRaises(PermissionError): certificates.issue_certificate(buyer)
+                import agency
+                aid=agency.create(cur,buyer_id,{"name":"Test team","alias":"Creator"})["id"]
+                with self.assertRaises(PermissionError): agency.detail(cur,partner_id,aid)
+                with self.assertRaises(PermissionError): agency.create(cur,partner_id,{"name":"No access","alias":"Client"})
+                invitation=agency.invite(cur,buyer_id,aid)
+                agency.join(cur,partner_id,{"code":invitation["code"],"alias":"Partner","consent":True})
+                with self.assertRaises(PermissionError): agency.join(cur,owner_id,{"code":invitation["code"],"alias":"Other","consent":True})
+                self.assertFalse(agency.detail(cur,partner_id,aid)["owner"])
+                with self.assertRaises(PermissionError): agency.invite(cur,partner_id,aid)
+                tid=agency.task(cur,buyer_id,{"id":aid,"title":"Test task","assignee":partner_id})["id"]
+                with self.assertRaises(PermissionError): agency.task(cur,partner_id,{"id":aid,"title":"Denied"})
+                self.assertEqual(agency.status(cur,partner_id,{"id":aid,"task":tid,"status":"done"})["status"],"done")
+                agency.remove(cur,buyer_id,{"id":aid,"member":partner_id})
+                with self.assertRaises(PermissionError): agency.detail(cur,partner_id,aid)
+                self.assertIsNone(agency.detail(cur,buyer_id,aid)["tasks"][0]["assignee"])
                 self.assertTrue(reviews.publish(buyer,5,"Test review only",True)["published"])
                 self.assertTrue(reviews.remove(buyer)["removed"])
                 from marketplace import save as market_save,mine as market_mine,listing as market_list,decide as market_decide,withdraw as market_withdraw,public_detail as market_detail

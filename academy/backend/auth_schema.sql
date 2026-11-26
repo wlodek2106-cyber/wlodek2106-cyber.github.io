@@ -489,3 +489,34 @@ ALTER TABLE academy_job_milestones ADD COLUMN IF NOT EXISTS due_date date;
 -- Practical assessment evidence; legacy scores remain unchanged.
 ALTER TABLE project_submissions ADD COLUMN IF NOT EXISTS rubric_scores jsonb;
 ALTER TABLE project_submissions ADD COLUMN IF NOT EXISTS reviewed_at timestamptz;
+
+-- Private agency workspaces; invitation secrets are stored only as hashes.
+CREATE TABLE IF NOT EXISTS creator_agencies (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ owner_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ name text NOT NULL CHECK(char_length(name) BETWEEN 1 AND 120),
+ created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS creator_agencies_owner_idx ON creator_agencies(owner_id);
+CREATE TABLE IF NOT EXISTS creator_agency_members (
+ agency_id bigint NOT NULL REFERENCES creator_agencies(id) ON DELETE CASCADE,
+ student_id bigint NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+ alias text NOT NULL CHECK(char_length(alias) BETWEEN 1 AND 80),
+ PRIMARY KEY(agency_id,student_id)
+);
+CREATE INDEX IF NOT EXISTS creator_agency_members_student_idx ON creator_agency_members(student_id);
+CREATE TABLE IF NOT EXISTS creator_agency_invites (
+ agency_id bigint PRIMARY KEY REFERENCES creator_agencies(id) ON DELETE CASCADE,
+ digest char(64) UNIQUE NOT NULL,
+ expires_at timestamptz NOT NULL
+);
+CREATE TABLE IF NOT EXISTS creator_agency_tasks (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ agency_id bigint NOT NULL REFERENCES creator_agencies(id) ON DELETE CASCADE,
+ title text NOT NULL CHECK(char_length(title) BETWEEN 1 AND 160),
+ assignee_id bigint,
+ status text NOT NULL DEFAULT 'todo' CHECK(status IN ('todo','doing','done')),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ FOREIGN KEY (agency_id,assignee_id) REFERENCES creator_agency_members(agency_id,student_id)
+);
+CREATE INDEX IF NOT EXISTS creator_agency_tasks_agency_idx ON creator_agency_tasks(agency_id);
