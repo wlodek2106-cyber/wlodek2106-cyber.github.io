@@ -91,6 +91,17 @@ class ReleaseSmokeTests(unittest.TestCase):
         self.assertIn(b"academySidebar",body)
         self.assertIn("frame-ancestors 'none'",headers["content-security-policy"])
 
+    def test_mobile_accessibility_markup(self):
+        for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
+            with self.subTest(page=path):
+                code,_,body=self.request(path)
+                self.assertEqual(code,200)
+                for marker in (b"viewport-fit=cover",b"academy-mobile-accessibility-v1",b"prefers-reduced-motion",b"safe-area-inset-bottom"):
+                    self.assertIn(marker,body)
+                if path in ("/support","/command-center","/agency","/client-portal","/creator-analytics"):
+                    self.assertIn(b'autocomplete="username" autocapitalize="none"',body)
+                    self.assertIn(b'aria-live="polite" aria-atomic="true"',body)
+                    self.assertIn(b'id="private" hidden tabindex="-1"',body)
     def test_offline_database_fails_closed(self):
         with patch.dict(os.environ,{"ACADEMY_DATABASE_URL":""}):
             code,_,body=self.request("/health")

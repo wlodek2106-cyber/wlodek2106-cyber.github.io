@@ -1,5 +1,32 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>ZER0LIFE | Free AI Studio</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="referrer" content="no-referrer"><title>ZER0LIFE | Free AI Studio</title><style>
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#2b204b,transparent 60%),#090a12;color:#f5f4ff;font:16px/1.6 system-ui}main{max-width:1000px;margin:auto;padding:24px 18px 70px}header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}a{color:#c7b6ff}h1{font-size:clamp(36px,7vw,64px);line-height:1.08;letter-spacing:-2px;margin:36px 0 10px}section,article{background:#141522;border:1px solid #343148;border-radius:20px;padding:20px;margin:16px 0}p,small{color:#b9b9cf}label{display:block;margin:10px 0}button,select,textarea{font:inherit;border-radius:10px;min-height:44px;padding:10px 12px}select,textarea{width:100%;background:#0b0d16;color:#eee;border:1px solid #3e3d54}button{background:#b4a3ff;color:#171127;font-weight:700;border:0;cursor:pointer;margin:6px 5px 6px 0}button:disabled{opacity:.45;cursor:not-allowed}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0a0c16;padding:14px;border-radius:12px;font:inherit}progress{width:100%;accent-color:#b4a3ff}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.grid article{margin:0}.tag{color:#c8b9ff;letter-spacing:2px;font-size:12px}header select{width:auto} [hidden]{display:none!important}
+
+/* academy-mobile-accessibility-v1 */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:12px}
+body{overflow-wrap:anywhere}
+main{min-width:0;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-bottom:max(48px,env(safe-area-inset-bottom))}
+section,article,.grid>*{min-width:0}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+input,textarea,select,button{font-size:16px;max-width:100%;min-width:0}
+textarea{display:block;width:100%;resize:vertical;background:#0d0f1b;color:#fff;border:1px solid #55536b;padding:10px;border-radius:9px;font:inherit;font-size:16px}
+button,select{min-height:44px;white-space:normal;overflow-wrap:anywhere}
+input[type=checkbox]{display:inline-block!important;width:24px!important;height:24px;min-height:24px!important;min-width:24px;margin:8px 8px 8px 0;vertical-align:middle;accent-color:#b6a5ff}
+nav a,header a{display:inline-flex;align-items:center;min-height:44px;padding:6px 2px}
+summary{cursor:pointer;padding:10px 0;min-height:44px}
+button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex="-1"]:focus-visible{outline:2px solid #c7b6ff;outline-offset:3px}
+pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere}
+img,video,canvas{max-width:100%;height:auto}
+@media(max-width:480px){
+ main{padding-top:max(14px,env(safe-area-inset-top));padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+ section,article{padding:12px}
+ h1{font-size:clamp(26px,8vw,38px);line-height:1.2;letter-spacing:normal}
+ button{margin:4px 0;max-width:100%}
+ #loginBox button{width:100%}
+ nav,header{gap:8px}
+ dl{grid-template-columns:minmax(0,1fr) minmax(0,auto)}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style></head><body><main><header><strong>ZER0LIFE / FREE AI</strong><a href="/dashboard">Academy</a><a href="/support">AI Support Center</a><a href="/creator-suite">Open Source Creator Suite</a><a href="/animation-studio">Video &amp; Animation Studio</a><a href="/music-studio">Music &amp; Sound Studio</a><a href="/website-builder">Website Builder</a><a href="/automation-studio">Automation Studio</a><a href="/ai-workspace">AI Workspace</a><a href="#model-hub">AI Model Hub</a><select id="lang" aria-label="Language"><option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="pl">Polski</option></select></header>
 <div class="tag">LOCAL INFERENCE / NO PAID API</div><h1 id="title">Your local AI studio.</h1><p id="intro"></p>
 <section><h2 id="browserHeading">Browser AI</h2><p id="notice"></p><button id="discover">Check models</button><label id="modelLabel" for="model">Model</label><select id="model" disabled></select><p id="details"></p><button id="load" disabled>Download / load model</button><button id="unload" disabled>Unload model</button><progress id="bar" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite"></p>
