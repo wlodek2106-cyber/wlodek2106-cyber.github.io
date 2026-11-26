@@ -251,7 +251,7 @@ function learningDesign(){
  observer.observe(panel,{attributes:true,attributeFilter:["hidden"]});
  learningRefresh=schedule;schedule();
 }
-function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+function dashboard(){const overview=$("workspaceOverview");authDesign();overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();profileDesign();learningDesign();businessDesign();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){
  const h=document.querySelector("main>header,main>nav");if(!h)return;
  h.classList.add("zModuleHeader");let brand=h.querySelector(":scope > strong");
@@ -285,7 +285,46 @@ function moduleDesign(){
  if(tag){tag.classList.add("zModuleKicker");copy.append(tag)}else copy.append(kicker);
  copy.append(heading);if(intro)copy.append(intro);
 }
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();motion()}
-document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
+const businessWords={
+ en:["Creator Business","Find work","Services marketplace","My services","My portfolio","Client portal","Agency","Analytics","Cost calculator","New project","My projects","Project detail","My agencies","Agency details","Back to top","Business workspace"],
+ ru:["Creator Business","Найти заказы","Биржа услуг","Мои услуги","Моё портфолио","Кабинет клиента","Агентство","Аналитика","Калькулятор затрат","Новый проект","Мои проекты","Детали проекта","Мои агентства","Детали агентства","Наверх","Бизнес-кабинет"],
+ uk:["Creator Business","Знайти замовлення","Біржа послуг","Мої послуги","Моє портфоліо","Кабінет клієнта","Агенція","Аналітика","Калькулятор витрат","Новий проєкт","Мої проєкти","Деталі проєкту","Мої агенції","Деталі агенції","Вгору","Бізнес-кабінет"],
+ pl:["Creator Business","Znajdź zlecenia","Giełda usług","Moje usługi","Moje portfolio","Panel klienta","Agencja","Analityka","Kalkulator kosztów","Nowy projekt","Moje projekty","Szczegóły projektu","Moje agencje","Szczegóły agencji","Do góry","Panel biznesowy"]};
+let businessRefresh=null;
+function businessDesign(){
+ const main=document.querySelector("main"),dashboard=!!$("workspaceOverview"),path=location.pathname;
+ const businessPages=["/marketplace","/hire","/client-portal","/agency","/creator-analytics","/production-cost","/graduate-showcase"];
+ if(!dashboard&&(!main||!businessPages.includes(path)))return;
+ const bw=()=>businessWords[locale()]||businessWords.en;
+ const labels=[],refreshers=[];
+ const text=(node,i)=>{labels.push([node,i]);node.textContent=bw()[i];return node};
+ const bar=el("section","zBusinessHub"),head=el("h2"),grid=el("div","zBusinessGrid");
+ head.append(icon("briefcase"),text(el("span"),0));bar.append(head,grid);
+ const routes=[["/dashboard?module=jobs",1,"briefcase"],["/marketplace",2,"users"],["/dashboard?module=marketplace",3,"layers"],["/client-portal",5,"users"],["/agency",6,"network"],["/creator-analytics",7,"chart"],["/production-cost",8,"wallet"]];
+ function decorate(a,i,glyph){const art=el("span","zBusinessIcon");art.append(icon(glyph));a.append(art,text(el("span"),i));grid.append(a);return a}
+ for(const [p,i,glyph] of routes){const a=el("a","zBusinessLink");a.href=url(p);links.push([a,p]);if(!dashboard&&p===path)a.setAttribute("aria-current","page");decorate(a,i,glyph)}
+ if(dashboard){
+   const port=$("portfolioButton");if(port){const a=el("button","zBusinessLink");a.type="button";decorate(a,4,"image");a.onclick=()=>{if(!port.hidden&&!port.disabled)port.click()};refreshers.push(()=>{a.hidden=port.hidden||port.disabled||!!port.closest("[hidden]")})}
+   $("workspaceOverview").append(bar);
+ }else{
+   document.body.classList.add("zBusinessPage");
+   const anchor=main.querySelector(":scope > .zModuleHero,:scope > section.hero")||main.querySelector(":scope > nav,:scope > header");if(anchor)anchor.after(bar);else main.prepend(bar);
+   const privateBox=$("private");
+   if(privateBox&&(path==="/client-portal"||path==="/agency")){
+     const nav=el("nav","zBusinessLocalNav");nav.setAttribute("aria-label",bw()[15]);
+     const create=privateBox.querySelector(":scope > section");
+     const specs=path==="/client-portal"?[[create,9],[$("jobs"),10],[$("detail"),11]]:[[create,9],[$("list"),12],[$("detail"),13]];
+     for(const [target,i] of specs){if(!target)continue;const b=el("button","zAction");b.type="button";text(b,i);nav.append(b);
+       b.onclick=()=>{if(privateBox.hidden||target.hidden)return;target.scrollIntoView({block:"start",behavior:"auto"});const focus=target.querySelector("h2,h3,input,button");if(focus){if(!focus.matches("input,button"))focus.tabIndex=-1;focus.focus({preventScroll:true})}};
+       const sync=()=>{b.hidden=target.hidden||(i===13&&!target.childElementCount)};refreshers.push(sync);new MutationObserver(sync).observe(target,{childList:true,attributes:true,attributeFilter:["hidden"]});
+     }
+     privateBox.prepend(nav);refreshers.push(()=>nav.setAttribute("aria-label",bw()[15]));
+   }
+ }
+ businessRefresh=()=>{for(const [n,i] of labels)n.textContent=bw()[i];for(const fn of refreshers)fn()};businessRefresh();
+ if(dashboard&&$("portfolioButton"))new MutationObserver(()=>{for(const fn of refreshers)fn()}).observe($("portfolioButton"),{attributes:true,attributeFilter:["hidden","disabled"]});
+}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();authRelabel?.();profileRefresh?.();learningRefresh?.();businessRefresh?.();motion()}
+document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();moduleDesign();businessDesign();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();
