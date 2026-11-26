@@ -3,6 +3,42 @@ from datetime import datetime, timedelta, timezone
 from progression import eligible, quiz_passed
 
 class ProgressTests(unittest.TestCase):
+    def test_commercial_video_assembler(self):
+        from importlib.util import spec_from_file_location,module_from_spec
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from ad_production import plan
+        spec=spec_from_file_location("assembler",Path(__file__).with_name("commercial-video-assembler.py"))
+        assembler=module_from_spec(spec);spec.loader.exec_module(assembler)
+        brief={"product":"Mug","audience":"Adults","benefit":"Handle","evidence":"","cta":"Visit shop","style":"Natural light","duration":15,"format":"9:16"}
+        p=assembler.validate_plan(plan(brief))
+        self.assertEqual(p["seconds"],[3,5,4,3])
+        self.assertEqual((p["width"],p["height"]),(1080,1920))
+        with self.assertRaises(ValueError):assembler.validate_plan(dict(plan(brief),scenes=[]))
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp);exe=root/"ffmpeg";exe.touch()
+            clips=[root/f"shot{i}.mp4" for i in range(4)]
+            for f in clips:f.touch()
+            audio=root/"sound.wav";audio.touch()
+            out=root/"result.mp4"
+            cmd=assembler.build_command(exe,p,clips,audio,out)
+            self.assertEqual(cmd.count("-i"),5)
+            self.assertIn("libx264",cmd)
+            self.assertIn("concat=n=4:v=1:a=0",cmd[cmd.index("-filter_complex")+1])
+            self.assertIn("apad,atrim=duration=15",cmd[cmd.index("-filter_complex")+1])
+            self.assertIn("-an",assembler.build_command(exe,p,clips,None,out))
+            with self.assertRaises(ValueError):assembler.build_command(exe,p,clips[:3],None,out)
+            def fake_run(args,**kwargs):
+                self.assertFalse(kwargs["shell"])
+                Path(args[-1]).write_bytes(b"mock output"*20)
+                return SimpleNamespace(returncode=0,stderr=b"")
+            with patch.object(assembler.subprocess,"run",side_effect=fake_run):
+                report=assembler.assemble(exe,p,clips,audio,out)
+                self.assertEqual(report["planned_duration"],15)
+                self.assertTrue(out.is_file())
+                with self.assertRaises(ValueError):assembler.assemble(exe,p,clips,audio,out)
     def test_ad_production_plan(self):
         from ad_production import plan,student_plan,FORMATS
         from unittest.mock import patch
