@@ -124,6 +124,15 @@ class ReleaseSmokeTests(unittest.TestCase):
             self.assertEqual(code,200)
             self.assertIn(mime,headers["content-type"])
             self.assertGreater(len(body),1000)
+    def test_aurora_course_and_mobile_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"zCourseCards",b"zBottomNav",b"button[data-day]",b"dataset.state",b"panel.append(...items)",b"b.disabled"):
+            self.assertIn(marker,script)
+        code,_,style=self.request("/academy-aurora.css")
+        self.assertEqual(code,200)
+        for marker in (b"zCourseArt",b"zBottomItem",b"safe-area-inset-bottom",b"zDrawerOpen"):
+            self.assertIn(marker,style)
     def test_mobile_accessibility_markup(self):
         for path in ("/support","/command-center","/agency","/client-portal","/creator-analytics","/graduate-showcase","/free-ai","/production-cost"):
             with self.subTest(page=path):

@@ -23,9 +23,88 @@ function motion(){for(const [n,b] of scenes){n.classList.toggle("zPaused",paused
 function hero(dash){const n=el("section","zAuroraHero");n.id=dash?"zAcademyHero":"zStudioHero";const copy=el("div","zHeroCopy");copy.append(el("div","zHeroEyebrow","ZER0LIFE / ACADEMY 2027"));if(dash)copy.append(label(el("h2"),0),label(el("p"),2));else{const title=$("title"),intro=$("intro"),tag=document.querySelector("main>.tag");if(tag)copy.append(tag);if(title)copy.append(title);if(intro)copy.append(intro)}const actions=el("div","zActions");if(dash)actions.append(action(3,"play",study,"zAction primary"),route("/ai-workspace",4,"wand-sparkles"));else actions.append(action(4,"cpu",()=>{$("discover")?.scrollIntoView({block:"center",behavior:"auto"});$("discover")?.focus()},"zAction primary"),route("/dashboard",6,"graduation"));copy.append(actions);n.append(copy,stage());const pause=el("button","zPause");pause.type="button";pause.onclick=()=>{paused=!paused;motion()};n.append(pause);scenes.push([n,pause]);return n}
 function tiles(){const n=el("div","zTools");n.id="zAcademyTools";n.append(label(el("h2"),20));const grid=el("div","zToolGrid");for(const [path,i,ico] of tools)grid.append(tile(path,i,ico));n.append(grid);return n}
 function quick(){const n=el("div","zTools");n.id="zQuickActions";n.style.order="-7";n.append(label(el("h2"),5));const g=el("div","zToolGrid");for(const [i,ico,fn] of [[3,"play",study],[22,"workflow",()=>go("workflowButton","/creator-suite")],[31,"bell",()=>go("notificationsButton","/command-center")],[17,"settings",()=>go("securityButton","/support")]]){const b=action(i,ico,fn,"zTile"),wrap=el("span","zTileIcon");wrap.append(b.firstChild);b.prepend(wrap);g.append(b)}n.append(g);return n}
-function dashboard(){const overview=$("workspaceOverview");overview.prepend(hero(true),quick(),tiles());const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
+const courseWords={"en":["AI foundations & prompts","Image & photography","Video, characters & sound","Content, marketing & AI agents","Portfolio & creator business","Web & mobile development","AI agent development","Home","Learn","AI Studio","Jobs","Menu","Lessons completed","Available","Locked","Your course modules","Choose a module","Lessons","No lessons available"],"ru":["Основы AI и промпты","Изображения и фотография","Видео, персонажи и звук","Контент, маркетинг и AI-агенты","Портфолио и бизнес","Сайты и мобильные приложения","Разработка AI-агентов","Главная","Учёба","AI Studio","Заказы","Меню","Уроков пройдено","Доступно","Закрыто","Твои учебные модули","Выбрать модуль","Уроки","Нет доступных уроков"],"uk":["Основи AI та промпти","Зображення й фотографія","Відео, персонажі та звук","Контент, маркетинг та AI-агенти","Портфоліо й бізнес","Сайти та мобільні застосунки","Розробка AI-агентів","Головна","Навчання","AI Studio","Замовлення","Меню","Уроків пройдено","Доступно","Закрито","Твої навчальні модулі","Обрати модуль","Уроки","Немає доступних уроків"],"pl":["Podstawy AI i prompty","Obrazy i fotografia","Wideo, postacie i dźwięk","Treści, marketing i agenci AI","Portfolio i biznes","Strony i aplikacje mobilne","Tworzenie agentów AI","Start","Nauka","AI Studio","Zlecenia","Menu","Ukończone lekcje","Dostępne","Zablokowane","Twoje moduły kursu","Wybierz moduł","Lekcje","Brak dostępnych lekcji"]},cw=()=>courseWords[locale()];
+const tracks=[[1,6,"cpu"],[7,9,"image"],[10,17,"video"],[18,24,"workflow"],[25,30,"briefcase"],[31,40,"code"],[41,45,"network"]];
+let courseRefresh=null,courseRelabel=null,bottomRefresh=null;
+function courseCards(){
+ const days=$("days"),heading=$("learningHeading");if(!days||!heading)return;
+ const host=el("div","zCourseCards");host.id="zCourseCards";
+ heading.before(host);
+ const title=el("h2");const grid=el("div","zCourseGrid");host.append(title,grid);
+ let selected=null,lastNodes=[],cards=[];
+ function selectTrack(index,scroll=false){
+   selected=index;
+   for(const item of cards){item.button.setAttribute("aria-pressed",String(item.index===index));item.panel.hidden=item.index!==index}
+   if(scroll)days.scrollIntoView({block:"start",behavior:"auto"});
+ }
+ function relabel(){
+   title.textContent=cw()[15];heading.textContent=cw()[17];
+   for(const item of cards){
+    item.name.textContent=cw()[item.index];item.meta.textContent=item.done+" / "+item.total+" · "+cw()[12];
+    item.info.textContent=cw()[13]+": "+item.available+" · "+cw()[14]+": "+item.locked;
+    item.button.setAttribute("aria-label",cw()[16]+": "+cw()[item.index]+". "+item.meta.textContent);
+    item.bar.setAttribute("aria-label",cw()[item.index]+": "+item.meta.textContent);
+    item.panel.setAttribute("aria-label",cw()[item.index]);
+   }
+ }
+ const observer=new MutationObserver(()=>refresh());
+ function observe(){observer.observe(days,{childList:true})}
+ function refresh(){
+   const buttons=Array.from(days.querySelectorAll("button[data-day]"));
+   if(buttons.length===lastNodes.length&&buttons.every((n,i)=>n===lastNodes[i]))return;
+   lastNodes=buttons;observer.disconnect();
+   grid.replaceChildren();cards=[];
+   // Move original lesson controls only; keep their server-derived state, events and disabled flags.
+   const fragments=[];
+   for(const [index,[from,to,ico]] of tracks.entries()){
+     const items=buttons.filter(b=>Number(b.dataset.day)>=from&&Number(b.dataset.day)<=to);
+     if(!items.length)continue;
+     const done=items.filter(b=>b.dataset.state==="completed").length,available=items.filter(b=>b.dataset.state==="open").length,locked=items.filter(b=>b.dataset.state==="locked").length;
+     const button=el("button","zCourseCard");button.type="button";button.dataset.track=String(index);
+     const art=el("span","zCourseArt");art.append(icon(ico));const name=el("strong","zCourseName"),meta=el("span","zCourseMeta"),info=el("span","zCourseInfo"),bar=el("progress","zCourseProgress");bar.max=items.length;bar.value=done;
+     button.append(art,name,meta,bar,info);grid.append(button);
+     const panel=el("div","zCourseDays");panel.dataset.track=String(index);panel.append(...items);fragments.push(panel);
+     cards.push({index,button,name,meta,info,bar,panel,done,total:items.length,available,locked});
+     button.onclick=()=>selectTrack(index,true);
+   }
+   if(buttons.length){days.replaceChildren(...fragments);days.classList.add("zGroupedDays")}
+   else days.classList.remove("zGroupedDays");
+   host.hidden=!cards.length;
+   const preferred=cards.find(x=>x.index===selected)||cards.find(x=>x.available>0)||cards.find(x=>x.locked>0)||cards[0];
+   if(preferred)selectTrack(preferred.index);
+   relabel();observe();
+ }
+ // All existing shortcuts can still call the original lesson button, including a collapsed module.
+ days.addEventListener("click",e=>{const b=e.target.closest("button[data-day]");if(!b||b.disabled)return;const item=cards.find(x=>x.panel.contains(b));if(item)selectTrack(item.index)},{capture:true});
+ courseRefresh=refresh;courseRelabel=relabel;observe();refresh();
+}
+function bottomNav(){
+ const panel=$("panel"),nav=$("academyNav"),toggle=$("mobileNavToggle"),side=$("academySidebar");if(!panel||!nav||!toggle||!side)return;
+ const bar=el("nav","zBottomNav");bar.id="zBottomNav";
+ const entries=[];
+ const home=()=>{$("homeNav")?.click();$("academyWorkspace")?.scrollIntoView({block:"start",behavior:"auto"})};
+ const learn=()=>{$("homeNav")?.click();$("zCourseCards")?.scrollIntoView({block:"start",behavior:"auto"})};
+ const jobs=()=>go("jobsButton","/hire");
+ for(const [idx,ico,fn] of [[7,"layout-dashboard",home],[8,"graduation",learn],[9,"wand-sparkles",()=>{location.href=url("/ai-workspace")}],[10,"briefcase",jobs],[11,"menu",()=>toggle.click()]]){
+   const b=el("button","zBottomItem");b.type="button";const text=el("span");b.append(icon(ico),text);b.onclick=fn;bar.append(b);entries.push([b,text,idx]);
+ }
+ function sync(){
+   bar.hidden=panel.hidden||side.classList.contains("expanded");
+   for(const [b,text,idx] of entries){
+     text.textContent=cw()[idx];
+     const current=idx===7&&$("homeNav")?.getAttribute("aria-current")==="page"||idx===10&&$("jobsButton")?.getAttribute("aria-current")==="page";
+     if(current)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
+   }
+   bar.setAttribute("aria-label",cw()[11]);
+ }
+ bottomRefresh=sync;panel.append(bar);
+ new MutationObserver(sync).observe(panel,{attributes:true,attributeFilter:["hidden"]});
+ new MutationObserver(sync).observe(side,{attributes:true,attributeFilter:["class"]});
+ new MutationObserver(sync).observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-current"]});sync();
+}
+function dashboard(){const overview=$("workspaceOverview");overview.prepend(hero(true),quick(),tiles());courseCards();bottomNav();const mark=document.querySelector(".sideMark");if(mark)mark.replaceChildren(orb());for(const n of document.querySelectorAll("#academyNav .navItem")){const name=navIcons[n.id]||navMap[n.getAttribute("href")?.split("?")[0]]?.[1];if(name&&n.firstElementChild)n.firstElementChild.replaceWith(icon(name))}const eye=document.querySelector(".workspaceTop .eyebrow");if(eye)eye.textContent="ZER0LIFE / ACADEMY 2027"}
 function moduleHeader(){const h=document.querySelector("main>header");if(!h)return;const original=Array.from(h.children).filter(n=>n.tagName==="A");if(!original.length)return;h.classList.add("zModuleHeader");h.querySelector("strong")?.prepend(orb());const d=el("details","zModuleNav"),summary=el("summary");summary.append(icon("menu"),label(el("span"),26));const box=el("div","zModuleLinks");for(const a of original){const p=a.getAttribute("href"),data=navMap[p?.split("?")[0]];if(data){a.replaceChildren(icon(data[1]),label(el("span"),data[0]));if(p.startsWith("/")&&!p.startsWith("//"))links.push([a,p])}else a.prepend(icon("folder"));box.append(a)}d.append(summary,box);h.insertBefore(d,lang?.parentElement===h?lang:null);d.addEventListener("click",e=>{if(e.target.closest("a"))d.open=false});document.addEventListener("click",e=>{if(!d.contains(e.target))d.open=false});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.open){d.open=false;summary.focus()}})}
-function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);motion()}
+function update(){for(const [n,i] of localized)n.textContent=w()[i];for(const [a,p] of links)a.href=url(p);courseRelabel?.();bottomRefresh?.();motion()}
 document.body.classList.add("zAurora");if($("workspaceOverview"))dashboard();else{moduleHeader();if(location.pathname==="/free-ai"&&$("title")&&$("intro")){const h=document.querySelector("main>header"),n=hero(false);if(h)h.after(n);else document.querySelector("main")?.prepend(n)}}
 lang?.addEventListener("change",update);reduced.addEventListener?.("change",motion);document.addEventListener("visibilitychange",motion);update();
 })();

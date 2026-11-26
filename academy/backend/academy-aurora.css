@@ -74,3 +74,35 @@ body.zAurora :is(a,button,summary):focus-visible{outline:2px solid #c7afff;outli
 @media(max-width:900px){body.zAurora.z2027 #academyNav{background:linear-gradient(155deg,#1c1b31,#131525)}}
 @media(max-width:620px){body.zAurora .zAuroraHero,body.zAurora.z2027 #workspaceOverview>.zAuroraHero{grid-template-columns:1fr;gap:4px;padding:20px;min-height:auto}body.zAurora .zStage{height:178px;max-width:310px;width:100%;margin:0 auto;transform:scale(.85)}body.zAurora .zHeroCopy h2,body.zAurora .zHeroCopy h1{font-size:30px;letter-spacing:-.8px}body.zAurora .zActions{margin-top:14px;gap:8px}body.zAurora .zAction{flex:1;min-width:120px}body.zAurora .zToolGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}body.zAurora .zTile{min-height:104px;padding:11px}body.zAurora .zModuleHeader{padding:9px;gap:8px}body.zAurora .zModuleHeader strong{font-size:12px}body.zAurora .zModuleHeader .zOrb{width:30px;height:30px}body.zAurora .zModuleLinks{position:static;width:100%;box-shadow:none}body.zAurora .zModuleHeader .zModuleNav[open]{flex-basis:100%;order:3}}
 @media(prefers-reduced-motion:reduce){body.zAurora .zCube{animation:none!important;transform:rotateX(-21deg) rotateY(35deg)}body.zAurora *{scroll-behavior:auto!important}}
+
+/* Course modules + mobile dock. Real lesson controls remain in #days. */
+body.zAurora .zCourseCards{margin:8px 0 14px;min-width:0}
+body.zAurora .zCourseCards h2{font-size:21px;margin:10px 0 14px}
+body.zAurora .zCourseGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,205px),1fr));gap:12px}
+body.zAurora .zCourseCard{display:flex;flex-direction:column;align-items:stretch;gap:7px;min-width:0;width:100%;margin:0;padding:12px;text-align:left;border:1px solid #4c416e;border-radius:17px;background:linear-gradient(150deg,#262340,#171927);color:#f4efff;font:inherit;cursor:pointer}
+body.zAurora .zCourseCard[aria-pressed=true]{border-color:#c1a5ff;box-shadow:0 0 0 1px #a586f366,inset 0 0 18px #9d77ed15}
+body.zAurora .zCourseArt{position:relative;isolation:isolate;overflow:hidden;display:grid;place-items:center;height:89px;border-radius:11px;background:radial-gradient(ellipse at 50% 75%,#9869e977,transparent 64%),linear-gradient(135deg,#29234c,#16172c);border:1px solid #6651a1}
+body.zAurora .zCourseArt:before{content:"";position:absolute;width:85px;height:30px;bottom:8px;transform:rotateX(55deg) rotate(-12deg);border:1px solid #d0b5ff;border-radius:50%;box-shadow:0 0 14px #9867ff88;z-index:-1}
+body.zAurora .zCourseArt svg{width:46px;height:46px;transform:perspective(220px) rotateY(-19deg) rotateX(10deg);color:#eee0ff;filter:drop-shadow(3px 4px 0 #624798) drop-shadow(0 0 8px #aa83ff)}
+body.zAurora .zCourseCard:nth-child(2n) .zCourseArt{background:radial-gradient(ellipse at 50% 75%,#468ec977,transparent 64%),linear-gradient(135deg,#213b55,#17182f)}
+body.zAurora .zCourseCard:nth-child(3n) .zCourseArt{background:radial-gradient(ellipse at 50% 75%,#b65bbb77,transparent 64%),linear-gradient(135deg,#43284b,#19182f)}
+body.zAurora .zCourseName{font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+body.zAurora .zCourseMeta,body.zAurora .zCourseInfo{font-size:11px;font-weight:400;color:#c5bedc}
+body.zAurora .zCourseProgress{width:100%;height:7px;accent-color:#b398ff}
+body.zAurora.z2027 #days.zGroupedDays{display:block}
+body.zAurora .zCourseDays{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:9px}
+body.zAurora .zCourseDays[hidden],body.zAurora .zCourseCards[hidden],body.zAurora .zBottomNav[hidden]{display:none!important}
+body.zAurora .zCourseDays button{margin:0;min-width:0;font-size:13px}
+body.zAurora .zCourseDays button[data-state=completed]{border:1px solid #497d79;background:#23433e;color:#c4f5df}
+body.zAurora .zCourseDays button[data-state=open]{border:1px solid #a995ed;background:linear-gradient(130deg,#46357d,#2c2856);color:#fff}
+body.zAurora .zCourseDays button[data-state=locked]{border:1px solid #3f3b56;background:#202132;color:#a8a3b8;opacity:.8}
+body.zAurora .zBottomNav{display:none}
+@media(max-width:900px){
+ body.zAurora.z2027.signedIn{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+ body.zAurora .zBottomNav{position:fixed;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;bottom:0;left:0;right:0;z-index:900;background:#141425f5;border-top:1px solid #4f426e;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));box-shadow:0 -10px 28px #08071188}
+ body.zAurora .zBottomItem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:53px;border:1px solid transparent;background:none;color:#b9b1d1;margin:0;padding:5px 1px;min-width:0;border-radius:10px;font:inherit;font-size:10px;line-height:1.2;font-weight:650;overflow-wrap:anywhere}
+ body.zAurora .zBottomItem svg{width:22px;height:22px;color:#c1a8ff}
+ body.zAurora .zBottomItem[aria-current=page]{background:#33264e;border-color:#7158a3;color:#fff}
+ body.zAurora.zDrawerOpen .zBottomNav{display:none!important}
+}
+@media(max-width:620px){body.zAurora .zCourseGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}body.zAurora .zCourseCard{padding:9px;gap:6px}body.zAurora .zCourseArt{height:73px}body.zAurora .zCourseArt svg{width:36px;height:36px}body.zAurora .zCourseName{font-size:12px}body.zAurora .zCourseDays{grid-template-columns:repeat(2,minmax(0,1fr))}}
