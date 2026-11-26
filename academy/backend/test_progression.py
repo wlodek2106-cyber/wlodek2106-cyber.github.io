@@ -1080,6 +1080,13 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(result["outstanding_cents"],"2000")
         self.assertEqual(result["cash_margin_cents"],"6500")
         with self.assertRaises(ValueError): order_values({"client_id":1,"title":"X","status":"lead","agreed":"5","received":"6","expense":"0"})
+    def test_creator_analytics_recommendations(self):
+        from creator_analytics import recommendations
+        c={"applications":0,"selection_percent":None}
+        f={"cash_margin_cents":"-100"}
+        self.assertEqual(recommendations(c,f,[],{"action_count":1}),["review_orders","review_costs","send_proposals","publish_portfolio"])
+        self.assertEqual(recommendations({"applications":5,"selection_percent":0},{"cash_margin_cents":"0"},[{"published":1}],{"action_count":0}),["improve_proposals"])
+        self.assertEqual(recommendations({"applications":10,"selection_percent":30},{"cash_margin_cents":"500"},[{"published":2}],{"action_count":0}),[])
     def test_creator_experience_levels(self):
         from reputation import experience_level
         cases=[(0,0,None,"new"),(2,2,5.0,"new"),(3,0,None,"experienced"),
