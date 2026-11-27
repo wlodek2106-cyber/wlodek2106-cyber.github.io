@@ -116,3 +116,26 @@ test("production rejects wrong stage and unsafe title",()=>{
  assert.throws(()=>pipeline.handoff("film",0,"x".repeat(161)));
  assert.throws(()=>pipeline.handoff("film",0,"a\n b"));
 });
+
+const qualityEnd=source.indexOf("const productionQualityWords=",productionStart);
+assert.ok(qualityEnd>productionStart);
+const quality=vm.runInNewContext(source.slice(productionStart,qualityEnd)+"\n({report:productionQualityReport,keys:qualityKeys,plans:productionPlans})");
+const allPass=Object.fromEntries(Array.from(quality.keys,k=>[k,"pass"]));
+for(const [kind,ids] of Object.entries(quality.plans)){
+ test("production quality ready "+kind,()=>{
+  const r=quality.report(kind,ids.filter(x=>x!==6),1,allPass,"review");
+  assert.equal(r.self_recorded_ready_for_handoff,true);
+  assert.equal(r.client_accepted,false);
+  assert.equal(r.verified_by_academy,false);
+ });
+ test("production quality incomplete "+kind,()=>assert.equal(quality.report(kind,[],1,allPass,"").self_recorded_ready_for_handoff,false));
+ test("production quality failed "+kind,()=>assert.equal(quality.report(kind,ids,1,{...allPass,rights:"fail"},"").self_recorded_ready_for_handoff,false));
+}
+test("quality rejects invalid version, checks, notes and stage IDs",()=>{
+ assert.throws(()=>quality.report("film",[],0,allPass,""));
+ assert.throws(()=>quality.report("film",[],10000,allPass,""));
+ assert.throws(()=>quality.report("film",[],1,{...allPass,unknown:"pass"},""));
+ assert.throws(()=>quality.report("film",[],1,{...allPass,scope:"approved"},""));
+ assert.throws(()=>quality.report("film",[],1,allPass,"a".repeat(1201)));
+ assert.throws(()=>quality.report("film",[99],1,allPass,""));
+});
