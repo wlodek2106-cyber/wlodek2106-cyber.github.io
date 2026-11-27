@@ -568,3 +568,13 @@ body.zAurora .zLearningOS progress{width:100%;accent-color:#b6a5ff}
 body.zAurora .zLearningOSRow{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border:1px solid #665184;border-radius:9px;margin:6px 0;padding:9px}
 body.zAurora .zLearningOS .zAction{min-height:44px;margin:4px 6px 4px 0}
 body.zAurora .zLearningOS [hidden],body.zAurora .zLearningOS[hidden]{display:none!important}
+
+body.zAurora .zMockExam{border:1px solid #665184;border-radius:14px;padding:14px;margin-top:14px;min-width:0;overflow-wrap:anywhere}
+body.zAurora .zMockExam summary{font-weight:700;cursor:pointer;padding:10px 0;min-height:44px}
+body.zAurora .zMockExam fieldset{border:1px solid #665184;border-radius:10px;margin:12px 0;padding:10px;min-width:0}
+body.zAurora .zMockExam legend{font-weight:650;max-width:100%;white-space:normal}
+body.zAurora .zMockExam label{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 0}
+body.zAurora .zMockExam input[type=radio]{width:22px;height:22px;flex:none;accent-color:#b6a5ff}
+body.zAurora .zMockExam textarea{width:100%;box-sizing:border-box;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px;padding:10px;font-size:16px}
+body.zAurora .zMockExam .zAction{min-height:44px;margin:4px 6px 4px 0}
+body.zAurora .zMockExam [hidden],body.zAurora .zMockExam[hidden]{display:none!important}
