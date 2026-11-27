@@ -508,3 +508,20 @@ body.zAurora .zFactoryProject input{width:100%;box-sizing:border-box;min-height:
 body.zAurora .zDeliveryCenter{border:1px solid #665184;border-radius:12px;padding:12px;margin:12px 0;overflow-wrap:anywhere}body.zAurora .zDeliveryCenter summary{cursor:pointer;font-weight:650;padding:8px 0}body.zAurora .zDeliveryCenter article{padding:8px;margin:6px 0}body.zAurora .zDeliveryCenter button{min-height:44px}
 
 body.zAurora .zCreatorEvidence{border:1px solid #665184;border-radius:12px;padding:12px;margin:14px 0;min-width:0}body.zAurora .zCreatorEvidence summary{cursor:pointer;font-weight:650;padding:8px 0}body.zAurora .zEvidenceRows{display:grid;gap:6px;margin:10px 0}body.zAurora .zCreatorEvidence button{min-height:44px}
+
+/* Career mentor: accessible, compact forms for the mobile dashboard. */
+body.zAurora .zCareerMentor{border:1px solid #665184;border-radius:12px;padding:12px;margin:14px 0;min-width:0;overflow-wrap:anywhere}
+body.zAurora .zCareerMentor summary{cursor:pointer;font-weight:650;padding:8px 0}
+body.zAurora .zCareerMentor label{display:grid;gap:6px;margin:12px 0}
+body.zAurora .zCareerMentor textarea,body.zAurora .zCareerMentor select{width:100%;box-sizing:border-box;min-height:44px;padding:10px;color:#eee5ff;background:#19192c;border:1px solid #78669d;border-radius:10px;font-size:16px}
+body.zAurora .zCareerMentor button,body.zAurora .zCareerMentor a.zAction{min-height:44px;margin:4px 6px 4px 0}
+body.zAurora .zCareerMentor [hidden],body.zAurora .zCareerMentor[hidden]{display:none!important}
+body.zAurora .zEvidenceNext li{padding:6px 0;overflow-wrap:anywhere}
+
+/* Agency operations overview */
+.agencyOperations .agencyOpsMetrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:10px;margin:16px 0}
+.agencyOperations .agencyOpsMetric{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px;border:1px solid #665184;border-radius:12px;background:#19192c}
+.agencyOperations .agencyOpsMetric span{font-size:13px;color:#d6c9ef;overflow-wrap:anywhere}
+.agencyOperations .agencyOpsMetric strong{font-size:25px;font-variant-numeric:tabular-nums;color:#f0e8ff}
+.agencyOperations select{display:block;width:100%;margin:6px 0 12px}
+.agencyOperations a{display:inline-flex;min-height:44px;align-items:center;margin-right:14px}
