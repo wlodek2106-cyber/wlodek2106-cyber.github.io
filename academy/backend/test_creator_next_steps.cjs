@@ -170,3 +170,25 @@ test("asset rejects duplicates and over-limit manifest",()=>{
  assert.throws(()=>asset.manifest("constructor",[a]));
  assert.throws(()=>asset.manifest("film",[{...a,path:"private"}]));
 });
+
+const deliveryEnd=source.indexOf("const productionDeliveryWords=",productionStart);
+assert.ok(deliveryEnd>productionStart);
+const delivery=vm.runInNewContext(source.slice(productionStart,deliveryEnd)+"\n({report:productionDeliveryReport,plans:productionPlans,keys:qualityKeys,entry:productionAssetEntry})");
+for(const [kind,ids] of Object.entries(delivery.plans)){
+ const review={revision:2,checks:Object.fromEntries(Array.from(delivery.keys,k=>[k,"pass"])),notes:"private internal note"};
+ const final=delivery.entry("final.pdf","document",1,"owned",true),draft=delivery.entry("internal","document",1,"restricted",false),unknown=delivery.entry("image","image",1,"unknown",true);
+ test("delivery ready and privacy "+kind,()=>{
+  const r=delivery.report(kind,ids.filter(x=>x!==6),review,[final,draft]);
+  assert.equal(r.self_recorded_ready_for_handoff,true);
+  assert.equal(r.assets.length,1);assert.equal(r.assets[0].name,"final.pdf");
+  assert.equal(r.revision,2);assert.equal(r.files_included,false);assert.equal(r.client_accepted,false);
+  assert.equal(r.rights_verified,false);assert.equal(r.verified_by_academy,false);
+  assert.equal(JSON.stringify(r).includes("private internal note"),false);
+ });
+ for(const [checked,items,key] of [[[],[final],"quality"],[ids,[],"no_assets"],[ids,[unknown],"rights"]]){
+  test("delivery blocker "+kind+" "+key,()=>{
+   const r=delivery.report(kind,checked,review,items);
+   assert.equal(r.self_recorded_ready_for_handoff,false);assert.ok(r.blockers.includes(key));
+  });
+ }
+}
