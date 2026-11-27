@@ -139,3 +139,34 @@ test("quality rejects invalid version, checks, notes and stage IDs",()=>{
  assert.throws(()=>quality.report("film",[],1,allPass,"a".repeat(1201)));
  assert.throws(()=>quality.report("film",[99],1,allPass,""));
 });
+
+const assetEnd=source.indexOf("const productionAssetWords=",productionStart);
+assert.ok(assetEnd>productionStart);
+const asset=vm.runInNewContext(source.slice(productionStart,assetEnd)+"\n({entry:productionAssetEntry,manifest:productionAssetManifest,plans:productionPlans})");
+for(const kind of Object.keys(asset.plans)){
+ test("asset register "+kind,()=>{
+ const a=asset.entry("video.mp4","video",1,"licensed",true);
+ const b=asset.entry("image.png","image",2,"unknown",true);
+ const c=asset.entry("draft.txt","document",1,"restricted",false);
+ const report=asset.manifest(kind,[a,b,c]);
+ assert.equal(report.selected_count,2);
+ assert.equal(report.selected_needing_rights_review,1);
+ assert.equal(report.files_included,false);
+ assert.equal(report.rights_verified,false);
+ assert.equal(asset.manifest(kind,[a]).selected_rights_self_recorded,true);
+ });
+}
+test("asset rejects invalid paths and values",()=>{
+ assert.throws(()=>asset.entry("../secret.txt","document",1,"owned",true));
+ assert.throws(()=>asset.entry("a","unknown",1,"owned",true));
+ assert.throws(()=>asset.entry("a","image",0,"owned",true));
+ assert.throws(()=>asset.entry("a","image",1,"verified",true));
+ assert.throws(()=>asset.entry("a","image",1,"owned","true"));
+});
+test("asset rejects duplicates and over-limit manifest",()=>{
+ const a=asset.entry("a","image",1,"owned",true);
+ assert.throws(()=>asset.manifest("film",[a,a]));
+ assert.throws(()=>asset.manifest("film",Array(101).fill(a)));
+ assert.throws(()=>asset.manifest("constructor",[a]));
+ assert.throws(()=>asset.manifest("film",[{...a,path:"private"}]));
+});
