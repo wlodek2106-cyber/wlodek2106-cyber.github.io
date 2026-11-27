@@ -192,3 +192,34 @@ for(const [kind,ids] of Object.entries(delivery.plans)){
   });
  }
 }
+
+const learningStart=source.indexOf("const learningOSLanguages=");
+const learningEnd=source.indexOf("const learningOSWords=",learningStart);
+assert.ok(learningStart>=0&&learningEnd>learningStart);
+const learning=vm.runInNewContext(source.slice(learningStart,learningEnd)+"\n({week:learningOSWeek,prompt:learningOSPrompt})");
+for(const minutes of [15,30,60])for(const sessions of [3,5,7])for(const level of ["foundation","reinforce","challenge"]){
+ test("learning schedule "+minutes+" "+sessions+" "+level,()=>{
+  const w=learning.week(minutes,sessions,level);
+  assert.equal(w.total_minutes,minutes*sessions);
+  assert.equal(w.items.length,sessions);
+  assert.equal(w.items.at(-1).mode,"commercial");
+  assert.equal(w.items.every((x,i)=>x.session===i+1&&x.minutes===minutes),true);
+ });
+}
+for(const mode of ["explain","recall","practice","commercial"])for(const lang of ["en","ru","uk","pl"]){
+ test("learning coaching "+mode+" "+lang,()=>{
+  const p=learning.prompt(1,"foundation",mode,lang,"Example task","Example attempt");
+  assert.ok(p.includes("Example task")&&p.includes("Example attempt"));
+  assert.ok(p.includes("not an official grade"));
+ });
+}
+test("learning rejects unsupported schedule and prompts",()=>{
+ assert.throws(()=>learning.week(90,5,"foundation"));
+ assert.throws(()=>learning.week(30,4,"foundation"));
+ assert.throws(()=>learning.week(30,5,"unknown"));
+ assert.throws(()=>learning.prompt(0,"foundation","practice","en","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","exam","en","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","constructor","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","en","",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","en","Task","x".repeat(1201)));
+});
