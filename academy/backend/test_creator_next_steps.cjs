@@ -46,3 +46,18 @@ for(const args of [["constructor","en",""],["portfolio","bad",""],["portfolio","
    assert.throws(()=>mentor.build(...args));
  });
 }
+
+test("acquisition task coverage and translations",()=>{
+ const start=source.indexOf("const careerMentorTaskLabels=");
+ const end=source.indexOf("function careerMentorDesign(",start);
+ assert.ok(start>=0&&end>start);
+ const localized=vm.runInNewContext(source.slice(start,end)+"\n({labels:careerMentorTaskLabels,links:careerMentorLinkWords})");
+ for(const lang of Object.keys(mentor.languages)){
+   assert.deepEqual(Object.keys(localized.labels[lang]).sort(),Object.keys(mentor.tasks).sort());
+   assert.equal(localized.links[lang].length,5);
+   for(const label of Object.values(localized.labels[lang]))assert.ok(typeof label==="string"&&label.trim());
+ }
+ for(const k of ["audience","offer","promotion","outreach","pipeline"])assert.ok(Object.hasOwn(mentor.tasks,k));
+ assert.match(mentor.tasks.outreach,/Do not scrape/);
+ assert.match(mentor.tasks.audience,/Do not claim to have searched/);
+});
