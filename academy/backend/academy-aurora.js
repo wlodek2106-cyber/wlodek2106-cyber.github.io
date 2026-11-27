@@ -1031,12 +1031,28 @@ function creatorNextSteps(x){
  if(x.submitted===0)steps.push(1);
  else if(x.reviewed<x.submitted)steps.push(2);
  if(["none","withdrawn","rejected"].includes(x.listing_status))steps.push(3);
+ else if(x.listing_status==="pending")steps.push(9);
+ else if(x.listing_status==="blocked")steps.push(10);
  if(x.completed_orders===0&&x.listing_status==="approved")steps.push(4);
  if(x.completed_orders>0&&x.approved_reviews===0)steps.push(5);
  if(x.certificate_issued===false)steps.push(6);
  else if(x.showcase_published===false)steps.push(7);
  return (steps.length?steps:[8]).slice(0,3);
 }
+function validCreatorEvidence(d){
+ return !!d&&d.private===true&&d.official_credential===false&&d.payment_verified===false&&
+ ["submitted","reviewed","project_lessons","completed_orders","approved_reviews","completed_lessons"].every(k=>Number.isSafeInteger(d[k])&&d[k]>=0)&&
+ d.reviewed<=d.submitted&&d.project_lessons<=d.submitted&&d.approved_reviews<=d.completed_orders&&
+ ["none","pending","approved","rejected","blocked","withdrawn"].includes(d.listing_status)&&
+ typeof d.certificate_issued==="boolean"&&typeof d.showcase_published==="boolean"&&(!d.showcase_published||d.certificate_issued)&&
+ (d.rating===null||(typeof d.rating==="number"&&Number.isFinite(d.rating)&&d.rating>=1&&d.rating<=5));
+}
+const creatorNextActions={
+ en:["Open","Your listing is under review. Check its status later.","Your listing is blocked. Contact support for clarification."],
+ ru:["Открыть","Услуга на модерации. Проверь статус позже.","Услуга заблокирована. Обратись в поддержку за разъяснением."],
+ uk:["Відкрити","Послуга на модерації. Перевір статус пізніше.","Послугу заблоковано. Звернися до підтримки за роз'ясненням."],
+ pl:["Otwórz","Oferta jest w moderacji. Sprawdź status później.","Oferta jest zablokowana. Skontaktuj się z pomocą."]};
+const creatorNextNav={1:"homeNav",2:"portfolioButton",3:"marketplaceButton",4:"jobsButton",5:"jobsButton",6:"homeNav",8:"portfolioButton",9:"marketplaceButton"};
 let creatorEvidenceRefresh=null;
 function creatorEvidenceDesign(){
  const hub=$("zCareerCenter"),panel=$("panel"),nav=$("academyNav"),career=$("careerButton");if(!hub||!panel||!nav||!career)return;
@@ -1047,10 +1063,10 @@ function creatorEvidenceDesign(){
  let data=null,request=0,busy=false,lastAccess=false;
  const allowed=()=>!panel.hidden&&!career.disabled&&!career.closest("[hidden]");
  function entries(){if(!data)return [];const x=data,t=w(),yes=v=>t[v===true?13:14],states={none:19,pending:20,approved:21,rejected:22,blocked:23,withdrawn:24};return [[2,x.submitted],[3,x.reviewed],[4,x.project_lessons],[5,x.completed_orders],[6,x.approved_reviews],[7,x.rating===null?t[15]:x.rating+" / 5"],[8,x.completed_lessons],[9,yes(x.certificate_issued)],[10,t[states[x.listing_status]??19]],[11,yes(x.showcase_published)]]}
- function draw(){rows.replaceChildren();for(const [i,v] of entries()){const row=el("div","zCareerStage");row.append(el("span","",w()[i]),el("strong","",String(v)));rows.append(row)}const visible=Boolean(data)&&!busy&&allowed();nextTitle.hidden=nextList.hidden=!visible;nextList.replaceChildren();if(visible){const t=creatorNextWords[locale()]||creatorNextWords.en;nextTitle.textContent=t[0];for(const i of creatorNextSteps(data))nextList.append(el("li","",t[i]))}exportBtn.disabled=!visible}
+ function draw(){rows.replaceChildren();for(const [i,v] of entries()){const row=el("div","zCareerStage");row.append(el("span","",w()[i]),el("strong","",String(v)));rows.append(row)}const visible=Boolean(data)&&!busy&&allowed();nextTitle.hidden=nextList.hidden=!visible;nextList.replaceChildren();if(visible){const t=creatorNextWords[locale()]||creatorNextWords.en;nextTitle.textContent=t[0];const actions=creatorNextActions[locale()]||creatorNextActions.en;for(const i of creatorNextSteps(data)){const item=el("li"),desc=el("p","",i===9?actions[1]:i===10?actions[2]:t[i]);item.append(desc);const target=$(creatorNextNav[i]||"");const available=()=>allowed()&&target&&!target.disabled&&!target.closest("[hidden]");if(available()){const b=el("button","zAction",actions[0]);b.type="button";b.setAttribute("aria-label",actions[0]+": "+desc.textContent);b.onclick=()=>{if(available())target.click()};item.append(b)}else if(i===7||i===10){const a=el("a","zAction",actions[0]);a.href=url(i===7?"/graduate-showcase":"/support");a.setAttribute("aria-label",actions[0]+": "+desc.textContent);item.append(a)}nextList.append(item)}}exportBtn.disabled=!visible}
  function reset(){request++;data=null;busy=false;status.textContent="";section.open=false;draw()}
  function sync(){const access=allowed();if(lastAccess&&!access)reset();lastAccess=access;section.hidden=!access;head.textContent=w()[0];load.textContent=w()[1];exportBtn.textContent=w()[12];note.textContent=w()[18];load.disabled=busy||!access;draw()}
- load.onclick=async()=>{if(!allowed()||busy||typeof api!=="function")return;const id=++request;busy=true;data=null;status.textContent=w()[16];sync();try{const d=await api("/career/evidence");if(id!==request||!allowed())return;if(d.private!==true||d.official_credential!==false)throw Error("Invalid evidence");data=d;status.textContent=""}catch(e){if(id===request&&allowed())status.textContent=w()[17]}finally{if(id===request){busy=false;sync()}}};
+ load.onclick=async()=>{if(!allowed()||busy||typeof api!=="function")return;const id=++request;busy=true;data=null;status.textContent=w()[16];sync();try{const d=await api("/career/evidence");if(id!==request||!allowed())return;if(!validCreatorEvidence(d))throw Error("Invalid evidence");data=d;status.textContent=""}catch(e){if(id===request&&allowed())status.textContent=w()[17]}finally{if(id===request){busy=false;sync()}}};
  exportBtn.onclick=()=>{if(!data||busy||!allowed())return;const text=[w()[0],...entries().map(([i,v])=>w()[i]+": "+v),w()[18]].join("\n");const address=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=el("a");a.href=address;a.download="zer0life-creator-evidence.txt";a.click();setTimeout(()=>URL.revokeObjectURL(address),1000)};
  let pending=false;const schedule=()=>{if(!pending){pending=true;queueMicrotask(()=>{pending=false;sync()})}};
  new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:["hidden"]});new MutationObserver(schedule).observe(nav,{subtree:true,attributes:true,attributeFilter:["disabled","hidden"]});window.addEventListener("pagehide",reset);window.addEventListener("pageshow",schedule);creatorEvidenceRefresh=schedule;sync();
