@@ -61,3 +61,16 @@ test("acquisition task coverage and translations",()=>{
  assert.match(mentor.tasks.outreach,/Do not scrape/);
  assert.match(mentor.tasks.audience,/Do not claim to have searched/);
 });
+
+const agencySource=fs.readFileSync(path.join(__dirname,"agency.js"),"utf8");
+new vm.Script(agencySource);
+const agencyStart=agencySource.indexOf("function agencyTaskFlags("),agencyEnd=agencySource.indexOf("const agencyOpsWords=",agencyStart);
+assert.ok(agencyStart>=0&&agencyEnd>agencyStart);
+const taskView=vm.runInNewContext(agencySource.slice(agencyStart,agencyEnd)+"\nagencyTaskView");
+const agencyTasks=[{id:1,status:"done",project:7,assignee:1,due:"2026-11-25"},{id:2,status:"todo",project:7,depends_on:1,assignee:null,due:"2026-11-26"},{id:3,status:"doing",project:7,depends_on:2,assignee:1,due:"2026-11-27"},{id:4,status:"todo",project:null,depends_on:99,assignee:null,due:null}];
+const today="2026-11-27";
+test("agency aggregate counts",()=>assert.deepEqual({...taskView(agencyTasks,"all","all",today).counts},{all:4,todo:2,doing:1,done:1,overdue:1,blocked:2,unassigned:2}));
+for(const [project,filter,date,expected] of [["7","blocked",today,[3]],["none","all",today,[4]],["7","overdue",today,[2]],["all","unassigned",today,[2,4]],["all","done",today,[1]],["all","overdue",null,[]],["7","unknown",today,[]]]){
+ test("agency filter "+project+" "+filter+" "+date,()=>assert.deepEqual(Array.from(taskView(agencyTasks,project,filter,date).visible),expected));
+}
+test("agency empty workspace",()=>assert.deepEqual({...taskView([],"all","all",today).counts},{all:0,todo:0,doing:0,done:0,overdue:0,blocked:0,unassigned:0}));
