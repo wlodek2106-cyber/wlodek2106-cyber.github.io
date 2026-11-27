@@ -1,0 +1,37 @@
+name: Academy release checks
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'academy/**'
+      - '.github/workflows/academy-release-checks.yml'
+permissions:
+  contents: read
+concurrency:
+  group: academy-release-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  academy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: academy/backend
+    env:
+      ACADEMY_DATABASE_URL: ''
+      ACADEMY_CHECKOUT_READY: 'false'
+      ACADEMY_PAYMENTS_ENABLED: 'false'
+      ACADEMY_ADMIN_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: JavaScript syntax and regression tests
+        run: |
+          node --check academy-aurora.js
+          node --check agency.js
+          node --test test_creator_next_steps.cjs
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Python progression and local HTTP smoke tests
+        run: python -m unittest test_progression
