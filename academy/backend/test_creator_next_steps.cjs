@@ -259,3 +259,21 @@ test("review prompts request feedback and withhold solutions",()=>{
  assert.match(review.prompt(x,"feedback"),/reference data/);
  assert.throws(()=>review.prompt(x,"exam"));
 });
+
+const mockStart=source.indexOf("const mockExamKey="),mockEnd=source.indexOf("function learningMockExamDesign(",mockStart);
+assert.ok(mockStart>=0&&mockEnd>mockStart);
+const mock=vm.runInNewContext(source.slice(mockStart,mockEnd)+"\n({grade:learningMockGrade,key:mockExamKey,questions:mockExamQuestions,words:mockExamWords})");
+test("practice exam complete but never grants credentials",()=>{
+ const x=mock.grade(mock.key);assert.equal(x.complete,true);assert.equal(x.percent,100);assert.equal(x.official_grade,false);assert.equal(x.certificate_eligible,false);
+});
+test("practice exam incomplete and missed topics",()=>{
+ const x=mock.grade({brief:0,verify:2});assert.equal(x.answered,2);assert.equal(x.correct,1);assert.equal(x.percent,17);assert.equal(x.complete,false);assert.equal(x.review.length,5);
+ assert.ok(x.review.includes("brief"));assert.equal(x.review.includes("verify"),false);
+});
+test("practice exam validates answer fields",()=>{
+ for(const x of [null,[],{constructor:1},{brief:"1"},{brief:3},{brief:-1},{official_grade:100}])assert.throws(()=>mock.grade(x));
+});
+for(const lang of ["en","ru","uk","pl"])test("practice exam translations "+lang,()=>{
+ assert.equal(mock.questions[lang].length,6);assert.equal(mock.words[lang].length,14);
+ for(const row of mock.questions[lang]){assert.equal(row.length,5);assert.ok(row.every(x=>typeof x==="string"&&x.trim()))}
+});
