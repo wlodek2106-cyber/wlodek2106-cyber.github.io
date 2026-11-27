@@ -543,3 +543,10 @@ body.zAurora .zProductionQuality label{display:grid;gap:6px;margin:10px 0}
 body.zAurora .zProductionQuality textarea{display:block;width:100%;min-height:88px;box-sizing:border-box;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px;padding:10px;font-size:16px;resize:vertical}
 body.zAurora .zProductionQuality [role=status]{font-weight:650}
 body.zAurora .zProductionQuality[hidden]{display:none!important}
+
+body.zAurora .zProductionAssets{border:1px solid #665184;border-radius:12px;margin-top:14px;padding:12px;min-width:0}
+body.zAurora .zProductionAssets label{display:grid;gap:6px;margin:10px 0}
+body.zAurora .zProductionAssets input:not([type=checkbox]){width:100%;min-height:44px;box-sizing:border-box;background:#19192c;color:#eee5ff;border:1px solid #78669d;border-radius:10px;padding:10px;font-size:16px}
+body.zAurora .zProductionAssets input[type=checkbox]{width:24px;height:24px;accent-color:#b6a5ff}
+body.zAurora .zAssetRow{border:1px solid #665184;border-radius:10px;padding:8px;margin:8px 0;overflow-wrap:anywhere}
+body.zAurora .zProductionAssets[hidden]{display:none!important}
