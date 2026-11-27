@@ -27,3 +27,22 @@ for(const [patch,expected] of cases)test("career steps "+expected.join(","),()=>
 for(const patch of [null,{private:false},{payment_verified:true},{submitted:-1},{reviewed:1},{listing_status:"unknown"},{rating:6},{showcase_published:true},{completed_lessons:"1"}])test("invalid evidence "+JSON.stringify(patch),()=>{
  assert.equal(valid(patch===null?null:{...fixture,...patch}),false);
 });
+
+const mentorStart=source.indexOf("const mentorTasks=");
+const mentorEnd=source.indexOf("const careerMentorWords=",mentorStart);
+assert.ok(mentorStart>=0&&mentorEnd>mentorStart);
+const mentor=vm.runInNewContext(source.slice(mentorStart,mentorEnd)+"\n({build:buildCareerMentorPrompt,tasks:mentorTasks,languages:mentorLanguages})");
+for(const task of Object.keys(mentor.tasks))for(const language of Object.keys(mentor.languages)){
+ test("mentor "+task+" "+language,()=>{
+   const p=mentor.build(task,language,"Example brief");
+   assert.ok(p.includes(mentor.tasks[task]));
+   assert.ok(p.includes(mentor.languages[language]));
+   assert.ok(p.includes("Example brief"));
+   assert.ok(p.includes("do not fabricate credentials"));
+ });
+}
+for(const args of [["constructor","en",""],["portfolio","bad",""],["portfolio","en","a".repeat(1201)],["portfolio","en",null]]){
+ test("mentor rejects invalid "+String(args[0])+" "+String(args[1])+" "+String(args[2]).length,()=>{
+   assert.throws(()=>mentor.build(...args));
+ });
+}
