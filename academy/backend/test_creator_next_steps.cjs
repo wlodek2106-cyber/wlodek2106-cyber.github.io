@@ -90,3 +90,29 @@ test("production translations and stage routes",()=>{
  for(const lang of ["en","ru","uk","pl"]){assert.equal(production.words[lang].length,31);for(const label of production.words[lang])assert.ok(label.trim())}
  for(const stages of Object.values(production.plans)){assert.equal(new Set(stages).size,stages.length);for(const id of stages)assert.ok(production.routes[id].startsWith("/"))}
 });
+
+const pipeline=vm.runInNewContext(source.slice(productionStart,productionEnd)+"\n({handoff:productionHandoff,snapshot:productionSnapshot,parse:parseProductionSnapshot})");
+const freeSource=fs.readFileSync(path.join(__dirname,"free-ai.js"),"utf8");
+const handStart=freeSource.indexOf("function handoff(team,title)"),handEnd=freeSource.indexOf("const factoryWords=",handStart);
+assert.ok(handStart>=0&&handEnd>handStart);
+const parseHandoff=vm.runInNewContext(freeSource.slice(handStart,handEnd)+"\nparseHandoff");
+for(const [kind,stages] of Object.entries(production.plans)){
+ for(const id of stages)test("production handoff "+kind+" "+id,()=>{
+   const payload=pipeline.handoff(kind,id,"Example stage");
+   assert.equal(parseHandoff(payload).task,"Example stage");
+   assert.equal(parseHandoff(payload).team,payload.team);
+ });
+ test("production project snapshot roundtrip "+kind,()=>{
+   const p=pipeline.snapshot(kind,[stages[0]]);
+   assert.equal(JSON.stringify(pipeline.parse(p)),JSON.stringify(p));
+ });
+}
+for(const value of [null,{}, {version:1,kind:"zer0life_production_plan",project:"film",checked:[99]},{version:1,kind:"zer0life_production_plan",project:"film",checked:[0,0]},{version:1,kind:"zer0life_production_plan",project:"constructor",checked:[]}]){
+ test("production rejects snapshot "+JSON.stringify(value),()=>assert.throws(()=>pipeline.parse(value)));
+}
+test("production rejects wrong stage and unsafe title",()=>{
+ assert.throws(()=>pipeline.handoff("film",13,"Example"));
+ assert.throws(()=>pipeline.handoff("film",0,""));
+ assert.throws(()=>pipeline.handoff("film",0,"x".repeat(161)));
+ assert.throws(()=>pipeline.handoff("film",0,"a\n b"));
+});
