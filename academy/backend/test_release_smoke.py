@@ -468,6 +468,14 @@ class ReleaseSmokeTests(unittest.TestCase):
         for marker in (b"function creatorEvidenceDesign(",b"/career/evidence",b"zCreatorEvidence",b"zer0life-creator-evidence.txt"):
             self.assertIn(marker,script)
 
+    def test_creator_next_steps_assets(self):
+        code,_,script=self.request("/academy-aurora.js")
+        self.assertEqual(code,200)
+        for marker in (b"function creatorNextSteps(x)",b"creatorNextWords[locale()]",b"zEvidenceNext",
+                       b"nextList.replaceChildren()",b"steps.length?steps:[8]",b'window.addEventListener("pagehide",reset)',
+                       b'window.addEventListener("pageshow",schedule)'):
+            self.assertIn(marker,script)
+
     def test_delivery_center_assets(self):
         for path in ("/academy-aurora.js","/client-portal.js"):
             code,_,script=self.request(path)
