@@ -74,3 +74,19 @@ for(const [project,filter,date,expected] of [["7","blocked",today,[3]],["none","
  test("agency filter "+project+" "+filter+" "+date,()=>assert.deepEqual(Array.from(taskView(agencyTasks,project,filter,date).visible),expected));
 }
 test("agency empty workspace",()=>assert.deepEqual({...taskView([],"all","all",today).counts},{all:0,todo:0,doing:0,done:0,overdue:0,blocked:0,unassigned:0}));
+
+const productionStart=source.indexOf("const productionPlans=");
+const productionEnd=source.indexOf("function productionOSDesign(",productionStart);
+assert.ok(productionStart>=0&&productionEnd>productionStart);
+const production=vm.runInNewContext(source.slice(productionStart,productionEnd)+"\n({plans:productionPlans,state:productionPlanState,routes:productionStageRoutes,words:productionOSWords})");
+for(const [kind,stages] of Object.entries(production.plans)){
+ test("production empty "+kind,()=>{const p=production.state(kind,[]);assert.equal(p.completed,0);assert.equal(p.total,stages.length);assert.equal(p.next,stages[0])});
+ test("production partial "+kind,()=>{const p=production.state(kind,[stages[0]]);assert.equal(p.completed,1);assert.equal(p.next,stages[1])});
+ test("production complete "+kind,()=>{const p=production.state(kind,[...stages,...stages,999,"0"]);assert.equal(p.completed,stages.length);assert.equal(p.next,null)});
+}
+test("production rejects invalid inputs",()=>{assert.throws(()=>production.state("constructor",[]));assert.throws(()=>production.state("film",null))});
+test("production translations and stage routes",()=>{
+ assert.equal(Object.keys(production.plans).length,6);
+ for(const lang of ["en","ru","uk","pl"]){assert.equal(production.words[lang].length,31);for(const label of production.words[lang])assert.ok(label.trim())}
+ for(const stages of Object.values(production.plans)){assert.equal(new Set(stages).size,stages.length);for(const id of stages)assert.ok(production.routes[id].startsWith("/"))}
+});
