@@ -550,3 +550,10 @@ body.zAurora .zProductionAssets input:not([type=checkbox]){width:100%;min-height
 body.zAurora .zProductionAssets input[type=checkbox]{width:24px;height:24px;accent-color:#b6a5ff}
 body.zAurora .zAssetRow{border:1px solid #665184;border-radius:10px;padding:8px;margin:8px 0;overflow-wrap:anywhere}
 body.zAurora .zProductionAssets[hidden]{display:none!important}
+
+body.zAurora .zProductionDelivery{border:1px solid #665184;border-radius:12px;margin-top:14px;padding:12px;min-width:0;overflow-wrap:anywhere}
+body.zAurora .zProductionDelivery [role=status]{font-weight:700}
+body.zAurora .zProductionDelivery ul{padding-inline-start:24px}
+body.zAurora .zProductionDelivery li{margin:6px 0}
+body.zAurora .zProductionDelivery button:disabled{opacity:.55;cursor:not-allowed}
+body.zAurora .zProductionDelivery[hidden]{display:none!important}
