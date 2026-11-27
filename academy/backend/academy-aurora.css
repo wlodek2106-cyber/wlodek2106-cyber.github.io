@@ -517,3 +517,11 @@ body.zAurora .zCareerMentor textarea,body.zAurora .zCareerMentor select{width:10
 body.zAurora .zCareerMentor button,body.zAurora .zCareerMentor a.zAction{min-height:44px;margin:4px 6px 4px 0}
 body.zAurora .zCareerMentor [hidden],body.zAurora .zCareerMentor[hidden]{display:none!important}
 body.zAurora .zEvidenceNext li{padding:6px 0;overflow-wrap:anywhere}
+
+/* Agency operations overview */
+.agencyOperations .agencyOpsMetrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:10px;margin:16px 0}
+.agencyOperations .agencyOpsMetric{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px;border:1px solid #665184;border-radius:12px;background:#19192c}
+.agencyOperations .agencyOpsMetric span{font-size:13px;color:#d6c9ef;overflow-wrap:anywhere}
+.agencyOperations .agencyOpsMetric strong{font-size:25px;font-variant-numeric:tabular-nums;color:#f0e8ff}
+.agencyOperations select{display:block;width:100%;margin:6px 0 12px}
+.agencyOperations a{display:inline-flex;min-height:44px;align-items:center;margin-right:14px}
