@@ -71,7 +71,7 @@ function teacherReviewRate(item,passed,today){
  const v=teacherReviewItem(item.topic,item.attempt,item.stage,item.due);
  if(typeof passed!=="boolean"||!Number.isSafeInteger(today)||today<0||today>3649900||v.due>today)throw Error("Invalid review rating");
  const stage=passed?Math.min(v.stage+1,reviewIntervals.length-1):0;
- return teacherReviewItem(v.topic,v.attempt,stage,today+(passed?reviewIntervals[stage]:1));
+ return teacherReviewItem(v.topic,v.attempt,stage,today+(passed?reviewIntervals[v.stage]:1));
 }
 function teacherReviewSnapshot(day,items){
  if(!Number.isInteger(day)||day<1||day>45||!Array.isArray(items)||items.length>30)throw Error("Invalid review list");
