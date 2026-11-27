@@ -74,3 +74,121 @@ for(const [project,filter,date,expected] of [["7","blocked",today,[3]],["none","
  test("agency filter "+project+" "+filter+" "+date,()=>assert.deepEqual(Array.from(taskView(agencyTasks,project,filter,date).visible),expected));
 }
 test("agency empty workspace",()=>assert.deepEqual({...taskView([],"all","all",today).counts},{all:0,todo:0,doing:0,done:0,overdue:0,blocked:0,unassigned:0}));
+
+const productionStart=source.indexOf("const productionPlans=");
+const productionEnd=source.indexOf("function productionOSDesign(",productionStart);
+assert.ok(productionStart>=0&&productionEnd>productionStart);
+const production=vm.runInNewContext(source.slice(productionStart,productionEnd)+"\n({plans:productionPlans,state:productionPlanState,routes:productionStageRoutes,words:productionOSWords})");
+for(const [kind,stages] of Object.entries(production.plans)){
+ test("production empty "+kind,()=>{const p=production.state(kind,[]);assert.equal(p.completed,0);assert.equal(p.total,stages.length);assert.equal(p.next,stages[0])});
+ test("production partial "+kind,()=>{const p=production.state(kind,[stages[0]]);assert.equal(p.completed,1);assert.equal(p.next,stages[1])});
+ test("production complete "+kind,()=>{const p=production.state(kind,[...stages,...stages,999,"0"]);assert.equal(p.completed,stages.length);assert.equal(p.next,null)});
+}
+test("production rejects invalid inputs",()=>{assert.throws(()=>production.state("constructor",[]));assert.throws(()=>production.state("film",null))});
+test("production translations and stage routes",()=>{
+ assert.equal(Object.keys(production.plans).length,6);
+ for(const lang of ["en","ru","uk","pl"]){assert.equal(production.words[lang].length,31);for(const label of production.words[lang])assert.ok(label.trim())}
+ for(const stages of Object.values(production.plans)){assert.equal(new Set(stages).size,stages.length);for(const id of stages)assert.ok(production.routes[id].startsWith("/"))}
+});
+
+const pipeline=vm.runInNewContext(source.slice(productionStart,productionEnd)+"\n({handoff:productionHandoff,snapshot:productionSnapshot,parse:parseProductionSnapshot})");
+const freeSource=fs.readFileSync(path.join(__dirname,"free-ai.js"),"utf8");
+const handStart=freeSource.indexOf("function handoff(team,title)"),handEnd=freeSource.indexOf("const factoryWords=",handStart);
+assert.ok(handStart>=0&&handEnd>handStart);
+const parseHandoff=vm.runInNewContext(freeSource.slice(handStart,handEnd)+"\nparseHandoff");
+for(const [kind,stages] of Object.entries(production.plans)){
+ for(const id of stages)test("production handoff "+kind+" "+id,()=>{
+   const payload=pipeline.handoff(kind,id,"Example stage");
+   assert.equal(parseHandoff(payload).task,"Example stage");
+   assert.equal(parseHandoff(payload).team,payload.team);
+ });
+ test("production project snapshot roundtrip "+kind,()=>{
+   const p=pipeline.snapshot(kind,[stages[0]]);
+   assert.equal(JSON.stringify(pipeline.parse(p)),JSON.stringify(p));
+ });
+}
+for(const value of [null,{}, {version:1,kind:"zer0life_production_plan",project:"film",checked:[99]},{version:1,kind:"zer0life_production_plan",project:"film",checked:[0,0]},{version:1,kind:"zer0life_production_plan",project:"constructor",checked:[]}]){
+ test("production rejects snapshot "+JSON.stringify(value),()=>assert.throws(()=>pipeline.parse(value)));
+}
+test("production rejects wrong stage and unsafe title",()=>{
+ assert.throws(()=>pipeline.handoff("film",13,"Example"));
+ assert.throws(()=>pipeline.handoff("film",0,""));
+ assert.throws(()=>pipeline.handoff("film",0,"x".repeat(161)));
+ assert.throws(()=>pipeline.handoff("film",0,"a\n b"));
+});
+
+const qualityEnd=source.indexOf("const productionQualityWords=",productionStart);
+assert.ok(qualityEnd>productionStart);
+const quality=vm.runInNewContext(source.slice(productionStart,qualityEnd)+"\n({report:productionQualityReport,keys:qualityKeys,plans:productionPlans})");
+const allPass=Object.fromEntries(Array.from(quality.keys,k=>[k,"pass"]));
+for(const [kind,ids] of Object.entries(quality.plans)){
+ test("production quality ready "+kind,()=>{
+  const r=quality.report(kind,ids.filter(x=>x!==6),1,allPass,"review");
+  assert.equal(r.self_recorded_ready_for_handoff,true);
+  assert.equal(r.client_accepted,false);
+  assert.equal(r.verified_by_academy,false);
+ });
+ test("production quality incomplete "+kind,()=>assert.equal(quality.report(kind,[],1,allPass,"").self_recorded_ready_for_handoff,false));
+ test("production quality failed "+kind,()=>assert.equal(quality.report(kind,ids,1,{...allPass,rights:"fail"},"").self_recorded_ready_for_handoff,false));
+}
+test("quality rejects invalid version, checks, notes and stage IDs",()=>{
+ assert.throws(()=>quality.report("film",[],0,allPass,""));
+ assert.throws(()=>quality.report("film",[],10000,allPass,""));
+ assert.throws(()=>quality.report("film",[],1,{...allPass,unknown:"pass"},""));
+ assert.throws(()=>quality.report("film",[],1,{...allPass,scope:"approved"},""));
+ assert.throws(()=>quality.report("film",[],1,allPass,"a".repeat(1201)));
+ assert.throws(()=>quality.report("film",[99],1,allPass,""));
+});
+
+const assetEnd=source.indexOf("const productionAssetWords=",productionStart);
+assert.ok(assetEnd>productionStart);
+const asset=vm.runInNewContext(source.slice(productionStart,assetEnd)+"\n({entry:productionAssetEntry,manifest:productionAssetManifest,plans:productionPlans})");
+for(const kind of Object.keys(asset.plans)){
+ test("asset register "+kind,()=>{
+ const a=asset.entry("video.mp4","video",1,"licensed",true);
+ const b=asset.entry("image.png","image",2,"unknown",true);
+ const c=asset.entry("draft.txt","document",1,"restricted",false);
+ const report=asset.manifest(kind,[a,b,c]);
+ assert.equal(report.selected_count,2);
+ assert.equal(report.selected_needing_rights_review,1);
+ assert.equal(report.files_included,false);
+ assert.equal(report.rights_verified,false);
+ assert.equal(asset.manifest(kind,[a]).selected_rights_self_recorded,true);
+ });
+}
+test("asset rejects invalid paths and values",()=>{
+ assert.throws(()=>asset.entry("../secret.txt","document",1,"owned",true));
+ assert.throws(()=>asset.entry("a","unknown",1,"owned",true));
+ assert.throws(()=>asset.entry("a","image",0,"owned",true));
+ assert.throws(()=>asset.entry("a","image",1,"verified",true));
+ assert.throws(()=>asset.entry("a","image",1,"owned","true"));
+});
+test("asset rejects duplicates and over-limit manifest",()=>{
+ const a=asset.entry("a","image",1,"owned",true);
+ assert.throws(()=>asset.manifest("film",[a,a]));
+ assert.throws(()=>asset.manifest("film",Array(101).fill(a)));
+ assert.throws(()=>asset.manifest("constructor",[a]));
+ assert.throws(()=>asset.manifest("film",[{...a,path:"private"}]));
+});
+
+const deliveryEnd=source.indexOf("const productionDeliveryWords=",productionStart);
+assert.ok(deliveryEnd>productionStart);
+const delivery=vm.runInNewContext(source.slice(productionStart,deliveryEnd)+"\n({report:productionDeliveryReport,plans:productionPlans,keys:qualityKeys,entry:productionAssetEntry})");
+for(const [kind,ids] of Object.entries(delivery.plans)){
+ const review={revision:2,checks:Object.fromEntries(Array.from(delivery.keys,k=>[k,"pass"])),notes:"private internal note"};
+ const final=delivery.entry("final.pdf","document",1,"owned",true),draft=delivery.entry("internal","document",1,"restricted",false),unknown=delivery.entry("image","image",1,"unknown",true);
+ test("delivery ready and privacy "+kind,()=>{
+  const r=delivery.report(kind,ids.filter(x=>x!==6),review,[final,draft]);
+  assert.equal(r.self_recorded_ready_for_handoff,true);
+  assert.equal(r.assets.length,1);assert.equal(r.assets[0].name,"final.pdf");
+  assert.equal(r.revision,2);assert.equal(r.files_included,false);assert.equal(r.client_accepted,false);
+  assert.equal(r.rights_verified,false);assert.equal(r.verified_by_academy,false);
+  assert.equal(JSON.stringify(r).includes("private internal note"),false);
+ });
+ for(const [checked,items,key] of [[[],[final],"quality"],[ids,[],"no_assets"],[ids,[unknown],"rights"]]){
+  test("delivery blocker "+kind+" "+key,()=>{
+   const r=delivery.report(kind,checked,review,items);
+   assert.equal(r.self_recorded_ready_for_handoff,false);assert.ok(r.blockers.includes(key));
+  });
+ }
+}
