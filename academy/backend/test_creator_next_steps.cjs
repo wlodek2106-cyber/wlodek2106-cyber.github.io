@@ -192,3 +192,88 @@ for(const [kind,ids] of Object.entries(delivery.plans)){
   });
  }
 }
+
+const learningStart=source.indexOf("const learningOSLanguages=");
+const learningEnd=source.indexOf("const learningOSWords=",learningStart);
+assert.ok(learningStart>=0&&learningEnd>learningStart);
+const learning=vm.runInNewContext(source.slice(learningStart,learningEnd)+"\n({week:learningOSWeek,prompt:learningOSPrompt})");
+for(const minutes of [15,30,60])for(const sessions of [3,5,7])for(const level of ["foundation","reinforce","challenge"]){
+ test("learning schedule "+minutes+" "+sessions+" "+level,()=>{
+  const w=learning.week(minutes,sessions,level);
+  assert.equal(w.total_minutes,minutes*sessions);
+  assert.equal(w.items.length,sessions);
+  assert.equal(w.items.at(-1).mode,"commercial");
+  assert.equal(w.items.every((x,i)=>x.session===i+1&&x.minutes===minutes),true);
+ });
+}
+for(const mode of ["explain","recall","practice","commercial"])for(const lang of ["en","ru","uk","pl"]){
+ test("learning coaching "+mode+" "+lang,()=>{
+  const p=learning.prompt(1,"foundation",mode,lang,"Example task","Example attempt");
+  assert.ok(p.includes("Example task")&&p.includes("Example attempt"));
+  assert.ok(p.includes("not an official grade"));
+ });
+}
+test("learning rejects unsupported schedule and prompts",()=>{
+ assert.throws(()=>learning.week(90,5,"foundation"));
+ assert.throws(()=>learning.week(30,4,"foundation"));
+ assert.throws(()=>learning.week(30,5,"unknown"));
+ assert.throws(()=>learning.prompt(0,"foundation","practice","en","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","exam","en","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","constructor","Task",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","en","",""));
+ assert.throws(()=>learning.prompt(1,"foundation","practice","en","Task","x".repeat(1201)));
+});
+
+const reviewStart=freeSource.indexOf("const reviewIntervals=");
+const reviewEnd=freeSource.indexOf("const reviewWords=",reviewStart);
+assert.ok(reviewStart>=0&&reviewEnd>reviewStart);
+const review=vm.runInNewContext(freeSource.slice(reviewStart,reviewEnd)+"\n({item:teacherReviewItem,rate:teacherReviewRate,snapshot:teacherReviewSnapshot,parse:parseTeacherReview,prompt:teacherReviewPrompt})");
+for(const [stage,interval] of [1,3,7,14,30].entries()){
+ test("review recall interval "+stage,()=>{
+  const x=review.item("Concept","My attempt",stage,100);
+  const r=review.rate(x,true,100);
+  assert.equal(r.due,100+interval);assert.equal(r.stage,Math.min(stage+1,4));
+ });
+ test("review failed recall "+stage,()=>{
+  const r=review.rate(review.item("Concept","Attempt",stage,100),false,100);
+  assert.equal(r.due,101);assert.equal(r.stage,0);
+ });
+}
+test("review lesson-bound export and import",()=>{
+ const s=review.snapshot(4,[review.item("Concept","Attempt",0,100)]);
+ assert.equal(JSON.stringify(review.parse(s,4)),JSON.stringify(s));
+ assert.throws(()=>review.parse(s,5));
+ assert.throws(()=>review.parse({...s,official_grade:100},4));
+});
+test("review rejects invalid entries and premature ratings",()=>{
+ assert.throws(()=>review.item("","Attempt",0,100));
+ assert.throws(()=>review.item("Concept","x".repeat(501),0,100));
+ assert.throws(()=>review.item("Concept","",5,100));
+ assert.throws(()=>review.rate(review.item("Concept","",0,101),true,100));
+ assert.throws(()=>review.snapshot(1,Array(31).fill(review.item("Concept","",0,100))));
+});
+test("review prompts request feedback and withhold solutions",()=>{
+ const x=review.item("Concept","Attempt",0,100);
+ assert.match(review.prompt(x,"retry"),/without revealing a solution/);
+ assert.match(review.prompt(x,"feedback"),/supported mistakes/);
+ assert.match(review.prompt(x,"feedback"),/reference data/);
+ assert.throws(()=>review.prompt(x,"exam"));
+});
+
+const mockStart=source.indexOf("const mockExamKey="),mockEnd=source.indexOf("function learningMockExamDesign(",mockStart);
+assert.ok(mockStart>=0&&mockEnd>mockStart);
+const mock=vm.runInNewContext(source.slice(mockStart,mockEnd)+"\n({grade:learningMockGrade,key:mockExamKey,questions:mockExamQuestions,words:mockExamWords})");
+test("practice exam complete but never grants credentials",()=>{
+ const x=mock.grade(mock.key);assert.equal(x.complete,true);assert.equal(x.percent,100);assert.equal(x.official_grade,false);assert.equal(x.certificate_eligible,false);
+});
+test("practice exam incomplete and missed topics",()=>{
+ const x=mock.grade({brief:0,verify:2});assert.equal(x.answered,2);assert.equal(x.correct,1);assert.equal(x.percent,17);assert.equal(x.complete,false);assert.equal(x.review.length,5);
+ assert.ok(x.review.includes("brief"));assert.equal(x.review.includes("verify"),false);
+});
+test("practice exam validates answer fields",()=>{
+ for(const x of [null,[],{constructor:1},{brief:"1"},{brief:3},{brief:-1},{official_grade:100}])assert.throws(()=>mock.grade(x));
+});
+for(const lang of ["en","ru","uk","pl"])test("practice exam translations "+lang,()=>{
+ assert.equal(mock.questions[lang].length,6);assert.equal(mock.words[lang].length,14);
+ for(const row of mock.questions[lang]){assert.equal(row.length,5);assert.ok(row.every(x=>typeof x==="string"&&x.trim()))}
+});
